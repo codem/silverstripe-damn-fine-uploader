@@ -1,0 +1,20 @@
+---
+Name: damnfineuploader
+---
+Codem\DamnFineUploader\UploadField:
+  # config for fineuploader
+  finuploader:
+    - element: ''
+    - autoUpload: false
+    - interceptSubmit: false
+    - validation:
+        - itemLimit: 3
+        - sizeLimit: 5242880
+    - debug: false
+    - request:
+        - endpoint: ''
+    - retry:
+        - enableAuto: false
+    - deleteFile:
+        - enabled: false
+        - endpoint: ''

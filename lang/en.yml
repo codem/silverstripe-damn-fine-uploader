@@ -1,0 +1,7 @@
+en:
+  Codem\DamnFineUploader\UploadField:
+    UPLOAD_A_FILE: 'Upload a file'
+    PROCESSING_FILES: 'Processing files'
+    CANCEL: 'Cancel'
+    RETRY: 'Retry'
+    DELETE: 'Delete'
