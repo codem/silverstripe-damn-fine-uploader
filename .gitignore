@@ -1,1 +1,4 @@
 /node_modules
+/package-lock.json
+client/dist/js/main
+/client/dist/js/main.js

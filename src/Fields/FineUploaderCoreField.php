@@ -1,11 +1,14 @@
 <?php
 namespace Codem\DamnFineUploader;
 use Silverstripe\Forms\FileField;
+use Silverstripe\Forms\FormField;
 use SilverStripe\View\Requirements;
 use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\Control\HTTP_Request;
 use SilverStripe\Control\HTTP_Response;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FileUploadReceiver;
+use SilverStripe\Forms\FileHandleField;
 use Exception;
 
 /**
@@ -15,40 +18,45 @@ use Exception;
  *			You can enable a standalone drag-drop style interface by setting autoUpload to true, file submissions will then be directed through this field's upload method
  *			Read More: https://docs.fineuploader.com/branch/master/features/forms.html
  */
-class UploadField extends FileField {
+class FineUploaderCoreField extends FormField implements FileHandleField {
+
+	use FileUploadReceiver;
 
 	const IMPLEMENTATION_TRADITIONAL_CORE = 'traditionalcore';
 	const IMPLEMENTATION_TRADITIONAL_UI = 'traditionalui';
 
 	protected $lib_config;//fineuploader configuration
-	protected $request_endpoint, $delete_endpoint;// custom endpoints
+	protected $option_delete, $option_request = [];//custom request/delete settings
 	protected $default_accepted_types = ['image/jpg','image/gif','image/webp','image/jpeg'];// default to images for now
 
-	protected $implementation;
+	protected $implementation = self::IMPLEMENTATION_TRADITIONAL_CORE;
+
+	/**
+	 * @config
+	 * @var array
+	 */
+	private static $allowed_actions = [
+			'upload'
+	];
 
 	public function __construct($name, $title = null, $value = null) {
 		//$this->setUploaderDefaultConfig();
 		parent::__construct($name, $title, $value);
 	}
 
+	protected function setRequirements() {
+		Requirements::set_force_js_to_bottom(true);
+		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditional.core.js');
+		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.core.js');
+		Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/dfu.core.css');
+  }
+
 	/**
 	 * Based on the implementation, set library requirements and the template to use
 	 */
 	protected function libraryRequirements() {
 
-		switch($this->implementation) {
-			case self::IMPLEMENTATION_TRADITIONAL_UI:
-				Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditionalui.js');
-				Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/traditionalui.css');
-				$this->template = "FineUploaderField_ui";
-				break;
-			case self::IMPLEMENTATION_TRADITIONAL_CORE:
-			default:
-				Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditionalcore.js');
-				Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/traditionalcore.css');
-				$this->template = "FineUploaderField_core";
-				break;
-		}
+		$this->setRequirements();
 
 		if(!$this->lib_config) {
 			$this->setUploaderDefaultConfig();
@@ -73,15 +81,7 @@ class UploadField extends FileField {
 	 * Returns the current implementation or self::IMPLEMENTATION_TRADITIONAL_CORE if not set/handled
 	 */
 	public function getImplementation() {
-		switch($this->implementation) {
-			case self::IMPLEMENTATION_TRADITIONAL_CORE:
-			case self::IMPLEMENTATION_TRADITIONAL_UI:
-				return $this->implementation;
-				break;
-			default:
-				return self::IMPLEMENTATION_TRADITIONAL_CORE;
-				break;
-		}
+		return self::IMPLEMENTATION_TRADITIONAL_CORE;
 	}
 
 	/**
@@ -92,13 +92,43 @@ class UploadField extends FileField {
 		$this->lib_config = $this->config()->fineuploader;
 		// element options
 		$form = $this->getForm();
-		$this->lib_config['element'] = ($form ? $form->getHTMLID() : "");// the containing form id attribute
+		//$this->lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
 		$this->lib_config['autoUpload'] = false;// do not auto upload by default
 
 		// form options
 		$this->lib_config['form'] = [];
 		$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
 
+		// request endpoint
+		$this->lib_config['request'] = [
+			'endpoint' => $this->Link('upload')
+		];
+
+	}
+
+	/**
+	 * @note allows uploads via a custom path, by default this field's path to the Upload method is used
+	 * @param array $request see https://docs.fineuploader.com/branch/master/api/options.html#request
+	 */
+	public function setOptionRequest(array $request) {
+		$this->option_request = $request;
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
+		$this->lib_config['request'] = $request;
+		return $this;
+	}
+
+	/**
+	 * @note allows deletes of uploads via a custom path
+	 */
+	public function setOptionDelete(array $delete) {
+		$this->option_delete = $delete;
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
+		$this->lib_config['deleteFile'] = $delete;
+		return $this;
 	}
 
 	public function getUploaderConfigValue($category, $key) {
@@ -154,30 +184,13 @@ class UploadField extends FileField {
 		}
 	}
 
-	/**
-	 * @note allows uploads via a custom path, by default this field's path to the Upload method is used
-	 */
-	public function setRequestEndpoint($path) {
-		$this->request_endpoint = $path;
-		return $this;
-	}
-
-	/**
-	 * @note allows deletes of uploads via a custom path
-	 */
-	public function setDeleteEndpoint($path) {
-		$this->delete_endpoint = $path;
-		return $this;
-	}
-
 	public function Field($properties = array()) {
 		$this->libraryRequirements();
-		parent::Field($properties);
+		return parent::Field($properties);
 	}
 
 
 	public function FieldHolder($properties = array ()) {
-			$this->libraryRequirements();
 			return parent::FieldHolder($properties);
 	}
 
@@ -185,7 +198,6 @@ class UploadField extends FileField {
 	 * The Small Field Holder is the large holder
 	 */
 	public function SmallFieldHolder($properties = array ()) {
-			$this->libraryRequirements();
 			return parent::FieldHolder($properties);
 	}
 
@@ -281,19 +293,6 @@ class UploadField extends FileField {
 
 	public function validate($validator) {
 
-	}
-
-	/**
-	 * Method to save this form field into the given {@link DataObject}.
-	 *
-	 * By default, makes use of $this->dataValue()
-	 *
-	 * @param DataObjectInterface $record DataObject to save data into
-	 */
-	public function saveInto(DataObjectInterface $record) {
-		if($this->name) {
-			$record->setCastedField($this->name, $this->dataValue());
-		}
 	}
 
 	/**

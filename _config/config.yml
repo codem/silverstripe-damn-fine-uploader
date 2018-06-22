@@ -1,20 +1,16 @@
 ---
 Name: damnfineuploader
 ---
-Codem\DamnFineUploader\UploadField:
+Codem\DamnFineUploader\FineUploaderCoreField:
   # config for fineuploader
   fineuploader:
-    - element: ''
-    - autoUpload: false
-    - interceptSubmit: false
-    - validation:
-        - itemLimit: 3
-        - sizeLimit: 5242880
-    - debug: false
-    - request:
-        - endpoint: ''
-    - retry:
-        - enableAuto: false
-    - deleteFile:
-        - enabled: false
-        - endpoint: ''
+    autoUpload: true
+    interceptSubmit: false
+    validation:
+      itemLimit: 3
+      sizeLimit: 5242880
+    debug: false
+    retry:
+      enableAuto: false
+    deleteFile:
+      enabled: false
