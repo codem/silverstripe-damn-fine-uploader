@@ -8,6 +8,7 @@
 		"uploads",
 		"fineuploader"
 	],
+	"homepage": "",
 	"license": "BSD-3-Clause",
 	"authors": [{
 		"name": "James Ellis"
@@ -19,6 +20,11 @@
 		"phpunit/phpunit": "^3 || ^4 || ^5"
 	},
 	"extra": {
-		"installer-name": "dfu"
+		"installer-name": "dfu",
+		"expose": [
+				"client/dist/js",
+				"client/dist/styles",
+				"client/dist/assets"
+		]
 	}
 }
