@@ -38,14 +38,14 @@ class UploadField extends FileField {
 
 		switch($this->implementation) {
 			case self::IMPLEMENTATION_TRADITIONAL_UI:
-				Requirements::javascript('codem/dfu: client/dist/js/traditionalui.js');
-				Requirements::css('codem/dfu: client/dist/styles/traditionalui.css');
+				Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditionalui.js');
+				Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/traditionalui.css');
 				$this->template = "FineUploaderField_ui";
 				break;
 			case self::IMPLEMENTATION_TRADITIONAL_CORE:
 			default:
-				Requirements::javascript('codem/dfu: client/dist/js/traditionalcore.js');
-				Requirements::css('codem/dfu: client/dist/styles/traditionalcore.css');
+				Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditionalcore.js');
+				Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/traditionalcore.css');
 				$this->template = "FineUploaderField_core";
 				break;
 		}
