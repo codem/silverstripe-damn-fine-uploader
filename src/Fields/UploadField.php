@@ -2,6 +2,11 @@
 namespace Codem\DamnFineUploader;
 use Silverstripe\Forms\FileField;
 use SilverStripe\View\Requirements;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\Control\HTTP_Request;
+use SilverStripe\Control\HTTP_Response;
+use SilverStripe\Core\Config\Config;
+use Exception;
 
 /**
  * @note Provides a field to handle FineUploader uploads. FineUploade
@@ -22,7 +27,7 @@ class UploadField extends FileField {
 	protected $implementation;
 
 	public function __construct($name, $title = null, $value = null) {
-		$this->setUploaderDefaultConfig();
+		//$this->setUploaderDefaultConfig();
 		parent::__construct($name, $title, $value);
 	}
 
@@ -43,6 +48,10 @@ class UploadField extends FileField {
 				Requirements::css('codem/dfu: client/dist/styles/traditionalcore.css');
 				$this->template = "FineUploaderField_core";
 				break;
+		}
+
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
 		}
 
 		if(!isset($this->lib_config->validation->acceptFiles)) {
@@ -80,23 +89,29 @@ class UploadField extends FileField {
 	 */
 	protected function setUploaderDefaultConfig() {
 		// set default lib_config from yml
-		$this->lib_config = $this->config()->lib;
+		$this->lib_config = $this->config()->fineuploader;
 		// element options
-		$this->lib_config->element = $this->getForm()->getHTMLID();// the containing form id attribute
-		$this->lib_config->autoUpload = false;// do not auto upload by default
+		$form = $this->getForm();
+		$this->lib_config['element'] = ($form ? $form->getHTMLID() : "");// the containing form id attribute
+		$this->lib_config['autoUpload'] = false;// do not auto upload by default
+
 		// form options
-		$this->lib_config->form = new stdClass;
-		$this->lib_config->form->autoUpload = false;// do not auto upload by default
+		$this->lib_config['form'] = [];
+		$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
+
 	}
 
 	public function getUploaderConfigValue($category, $key) {
-		if(isset($this->lib_config->$category->$key)) {
-			return $this->lib_config->$category->$key;
+		if(isset($this->lib_config[$category][$key])) {
+			return $this->lib_config[$category][$key];
 		}
 		return null;
 	}
 
 	public function getUploaderConfig() {
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
 		return json_encode($this->lib_config);
 	}
 
@@ -114,10 +129,10 @@ class UploadField extends FileField {
 	 */
 	public function setAcceptedTypes(array $types) {
 		if(!isset($this->lib_config->validation)) {
-			$this->lib_config->validation = new stdClass;
+			$this->lib_config['validation'] = [];
 		}
-		$this->lib_config->validation->acceptFiles = implode(",", $types);// this could inckude
-		$this->lib_config->validation->allowedExtensions = $this->getExtensionsForTypes($types);//TODO
+		$this->lib_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
+		$this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);//TODO
 		return $this;
 	}
 
@@ -153,6 +168,11 @@ class UploadField extends FileField {
 	public function setDeleteEndpoint($path) {
 		$this->delete_endpoint = $path;
 		return $this;
+	}
+
+	public function Field($properties = array()) {
+		$this->libraryRequirements();
+		parent::Field($properties);
 	}
 
 
@@ -191,7 +211,7 @@ class UploadField extends FileField {
 		if(strpos($type, "/") !== false) {
 			$parts = explode('/', $mimetype);
 			$parsed = array(
-				'type' => $parts[0]
+				'type' => $parts[0],
 				'subtype' => $parts[1],
 			);
 		}
@@ -285,11 +305,10 @@ class UploadField extends FileField {
 	 *      upload_tmp_dir - an invalid or non-writable tmp dir will cause error #6 or #7
 	 * @note depending on the size of the uploads allowed, you may like to increase the max input/execution time for these requests
 	 *
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
-	 * @return SS_HTTPResponse
+	 * @param HTTP_Request $request
+	 * @return HTTP_Response
 	 */
-	public function upload(SS_HTTPRequest $request) {
+	public function upload(HTTP_Request $request) {
 			// do this in a containing method
 			// check for the uploaded file
 			// check for permissions
