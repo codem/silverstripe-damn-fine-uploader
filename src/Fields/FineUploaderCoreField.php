@@ -4,8 +4,8 @@ use Silverstripe\Forms\FileField;
 use Silverstripe\Forms\FormField;
 use SilverStripe\View\Requirements;
 use SilverStripe\ORM\DataObjectInterface;
-use SilverStripe\Control\HTTP_Request;
-use SilverStripe\Control\HTTP_Response;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
@@ -40,7 +40,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	];
 
 	public function __construct($name, $title = null, $value = null) {
-		//$this->setUploaderDefaultConfig();
+		$this->constructFileUploadReceiver();
+		// When creating new files, rename on conflict
+		$this->getUpload()->setReplaceFile(false);
+
 		parent::__construct($name, $title, $value);
 	}
 
@@ -93,11 +96,11 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		// element options
 		$form = $this->getForm();
 		//$this->lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
-		$this->lib_config['autoUpload'] = false;// do not auto upload by default
+		//$this->lib_config['autoUpload'] = false;// do not auto upload by default
 
 		// form options
 		$this->lib_config['form'] = [];
-		$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
+		//$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
 
 		// request endpoint
 		$this->lib_config['request'] = [
@@ -295,6 +298,16 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	}
 
+	public function sign_uuid($uuid) {
+		$key = Config::inst()->get('Codem\DamnFineUploader\FineUploaderCoreField', 'signing_key');
+		if($key) {
+			$token = hash_hmac ( "sha256" , $uuid, $key, false );
+			return $token;
+		} else {
+			return $uuid;
+		}
+	}
+
 	/**
 	 * Action to handle upload of a single file
 	 * @note the PHP settings to consider here are file_uploads, upload_max_filesize, post_max_size, upload_tmp_dir
@@ -304,16 +317,71 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 *      upload_tmp_dir - an invalid or non-writable tmp dir will cause error #6 or #7
 	 * @note depending on the size of the uploads allowed, you may like to increase the max input/execution time for these requests
 	 *
-	 * @param HTTP_Request $request
-	 * @return HTTP_Response
+	 * @param SilverStripe\Control\HTTPRequest $request
+	 * @return SilverStripe\Control\HTTPResponse
 	 */
-	public function upload(HTTP_Request $request) {
-			// do this in a containing method
-			// check for the uploaded file
-			// check for permissions
-			// check for file errors e.g bad type
-			// check for php errors
-			// load into a File object or the type of file configured
+	public function upload(HTTPRequest $request) {
+		try {
+			$post = $request->postVars();
+			if(empty($post)) {
+				throw new InvalidFileException("No file data provided");
+			}
+
+			if(empty($post['qquuid'])) {
+				throw new InvalidFileException("Required data not received");
+			}
+
+			// qqfile is populated from $_FILES['qqfile']
+			if(empty($post['qqfile']['tmp_name'])) {
+				throw new InvalidFileException("Required data not received");
+			}
+
+			if(!$this->isUploadedFile($post['qqfile']['tmp_name'])) {
+				throw new InvalidFileException("The upload could not be saved");
+			}
+
+				// do this in a containing method
+				// check for the uploaded file
+				// check for permissions
+				// check for file errors e.g bad type
+				// check for php errors
+				// load into a File object or the type of file configured
+			$file = $this->saveTemporaryFile($post['qqfile'], $error);
+			if($error) {
+				throw new InvalidFileException($error);
+			}
+
+			$uuid = $this->sign_uuid($post['qquuid']);
+
+			// save file UUID
+			$file->DFU = $uuid;
+			$file->write();
+
+			$result = [
+				'success' => true,
+				// TODO sign the UID to prevent tampering
+				'newUuid' => $uuid
+			];
+			return (new HTTPResponse(json_encode($result)))->addHeader('Content-Type', 'application/json');
+
+		} catch (InvalidFileException $e) {
+			$error = $e->getMessage();
+		} catch (Exception $e) {
+			$error = "General error";
+		}
+
+		$result = [
+			'success' => false,
+			'error' => $error,
+
+			'message' => [
+					'type' => 'error',
+					'value' => $error,
+			]
+		];
+		$this->getUpload()->clearErrors();
+		return (new HTTPResponse(json_encode($result), 400))->addHeader('Content-Type', 'application/json');
+
 	}
 
 }

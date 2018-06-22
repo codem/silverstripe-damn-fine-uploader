@@ -3,6 +3,7 @@ Name: damnfineuploader
 ---
 Codem\DamnFineUploader\FineUploaderCoreField:
   # config for fineuploader
+  signing_key : 'SAMPLEONLY'
   fineuploader:
     autoUpload: true
     interceptSubmit: false

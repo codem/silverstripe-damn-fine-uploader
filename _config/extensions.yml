@@ -1,0 +1,6 @@
+---
+Name: dfu_extensions
+---
+SilverStripe\Assets\File:
+  extensions:
+    - 'Codem\DamnFineUploader\FileExtension'
