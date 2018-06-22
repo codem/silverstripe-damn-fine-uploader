@@ -3,7 +3,7 @@ Name: damnfineuploader
 ---
 Codem\DamnFineUploader\UploadField:
   # config for fineuploader
-  finuploader:
+  fineuploader:
     - element: ''
     - autoUpload: false
     - interceptSubmit: false
