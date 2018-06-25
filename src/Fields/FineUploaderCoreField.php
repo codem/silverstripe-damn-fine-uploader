@@ -9,6 +9,7 @@ use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
+use SilverStripe\Control\HTTP;
 use Exception;
 
 /**
@@ -24,6 +25,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	const IMPLEMENTATION_TRADITIONAL_CORE = 'traditionalcore';
 	const IMPLEMENTATION_TRADITIONAL_UI = 'traditionalui';
+	const UUID_NAME = 'dfu_uuid';
 
 	protected $lib_config;//fineuploader configuration
 	protected $option_delete, $option_request = [];//custom request/delete settings
@@ -50,6 +52,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	protected function setRequirements() {
 		Requirements::set_force_js_to_bottom(true);
 		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditional.core.js');
+		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.common.js');
 		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.core.js');
 		Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/dfu.core.css');
   }
@@ -102,9 +105,35 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		$this->lib_config['form'] = [];
 		//$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
 
+		// messages
+		$this->lib_config['messages'] = [
+			'emptyError' => _t('DamnFineUploader.ZERO_BYTES', 'The file {file} seems to be empty'),
+			'noFilesError' => _t('DamnFineUploader.NO_FILES', 'No files were submitted'),
+			'minSizeError' => _t('DamnFineUploader.FILE_SMALL', 'The file is too small, please upload a file larger than {minSizeLimit}'),
+			'sizeError' => _t('DamnFineUploader.FILE_LARGE', 'The file is too large, please upload a file smaller than {sizeLimit}'),
+			'maxHeightImageError' => _t('DamnFineUploader.IMAGE_TALL', 'The image height is greater than the maximum allowed height'),
+			'maxWidthImageError' => _t('DamnFineUploader.IMAGE_SHORT', 'The image height is smaller than the minimum allowed height'),
+			'minHeightImageError' => _t('DamnFineUploader.IMAGE_WIDE', 'The image width is greater than the maximum allowed width'),
+			'minWidthImageError' => _t('DamnFineUploader.IMAGE_NARROW', 'The image width is smaller than the minimum allowed width'),
+			'tooManyItemsError' => _t('DamnFineUploader.MAX_ITEMS', 'The maximum number of items ({itemLimit}) has been reached'),
+			'typeError' => _t('DamnFineUploader.TYPE_ERROR', '{file} has an invalid extension. Valid extension(s): {extensions}'),
+		];
+
+		// text
+		$this->lib_config['text'] = [
+			'defaultResponseError' => _t('DamnFineUploader.GENERAL_ERROR', 'The upload failed due to an unknown reason')
+		];
+
 		// request endpoint
+		$token = $form->getSecurityToken();
 		$this->lib_config['request'] = [
-			'endpoint' => $this->Link('upload')
+			'method' => 'POST',
+			'uuidName' => self::UUID_NAME,
+			'requireSuccessJson' => true,
+			'endpoint' => $this->Link('upload'),
+			'params' => [
+				$token->getName() => $token->getValue()
+			]
 		];
 
 	}
@@ -124,6 +153,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	/**
 	 * @note allows deletes of uploads via a custom path
+	 * This requires your own delete implementation with checks and balances
 	 */
 	public function setOptionDelete(array $delete) {
 		$this->option_delete = $delete;
@@ -178,13 +208,15 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @note this is used as a guide for frontend validation only
 	 */
 	final protected function getExtensionsForTypes($types) {
-		//
-		$extensions = array();
+		$mime_types = HTTP::config()->uninherited('MimeTypes');
+		$keys = [];
 		foreach($types as $type) {
-			return [
-
-			];
+			$result = array_keys($mime_types, $type);
+			if(is_array($result)) {
+				$keys = array_merge($keys,$result);
+			}
 		}
+		return $keys;
 	}
 
 	public function Field($properties = array()) {
@@ -298,14 +330,26 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	}
 
-	public function sign_uuid($uuid) {
-		$key = Config::inst()->get('Codem\DamnFineUploader\FineUploaderCoreField', 'signing_key');
-		if($key) {
-			$token = hash_hmac ( "sha256" , $uuid, $key, false );
-			return $token;
-		} else {
-			return $uuid;
+	/**
+	 * Sign the UUID provided by FineUploader, using a key,
+	 * @param string $uuid provided by Fine Uploader
+	 * @returns string
+	 */
+	public static function sign_uuid($uuid, $form_security_token) {
+		$key = Config::inst()->get('Codem\DamnFineUploader\FineUploaderCoreField','signing_key');
+		if(empty($key)) {
+			throw new \Exception("Cannot get file by token if no signing key is set");
 		}
+		$token = hash_hmac ( "sha256" , $uuid . $form_security_token, $key, false );
+		return $token;
+	}
+
+	/**
+	 * @returns string the value returned as newUuid to the client uploader
+	 */
+	protected function getUuid($uuid, $form_security_token) {
+		$token = self::sign_uuid($uuid, $form_security_token);
+		return $token;
 	}
 
 	/**
@@ -327,7 +371,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 				throw new InvalidFileException("No file data provided");
 			}
 
-			if(empty($post['qquuid'])) {
+			if(empty($post[ self::UUID_NAME ])) {
 				throw new InvalidFileException("Required data not received");
 			}
 
@@ -340,10 +384,18 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 				throw new InvalidFileException("The upload could not be saved");
 			}
 
+			$form = $this->getForm();
+			$token = $form->getSecurityToken();
+			if(empty($post[ $token->getName() ])) {
+				throw new MissingDataException("The upload request is missing required information");
+			}
+
+			$form_security_token = $post[ $token->getName() ];
+
 				// do this in a containing method
 				// check for the uploaded file
 				// check for permissions
-				// check for file errors e.g bad type
+				// check for file errors e.g bad type, bad extension
 				// check for php errors
 				// load into a File object or the type of file configured
 			$file = $this->saveTemporaryFile($post['qqfile'], $error);
@@ -351,19 +403,21 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 				throw new InvalidFileException($error);
 			}
 
-			$uuid = $this->sign_uuid($post['qquuid']);
+			$uuid = $this->getUuid($post[ self::UUID_NAME ], $form_security_token);
 
-			// save file UUID
-			$file->DFU = $uuid;
+			// save the token, together with the Form Security ID for the form used to upload the file
+			// TODO create a folder and assign that as the parent
+			$file->DFU = $uuid . "|" . $form_security_token;
 			$file->write();
 
 			$result = [
 				'success' => true,
-				// TODO sign the UID to prevent tampering
 				'newUuid' => $uuid
 			];
 			return (new HTTPResponse(json_encode($result)))->addHeader('Content-Type', 'application/json');
 
+		} catch (MissingDataException $e) {
+			$error = $e->getMessage();
 		} catch (InvalidFileException $e) {
 			$error = $e->getMessage();
 		} catch (Exception $e) {

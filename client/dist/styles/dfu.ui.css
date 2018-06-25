@@ -4,3 +4,30 @@
 body {
   border : none;
 }
+
+/**
+ * Icon path overrides
+ */
+.qq-gallery .qq-edit-filename-icon {
+    background: url("../assets/edit.gif");
+}
+.qq-gallery .qq-delete-icon {
+    background: url("../assets/trash.gif");
+}
+.qq-gallery .qq-retry-icon {
+    background: url("../assets/retry.gif");
+}
+.qq-gallery .qq-continue-icon {
+    background: url("../assets/continue.gif");
+}
+.qq-gallery .qq-pause-icon {
+    background: url("../assets/pause.gif");
+}
+
+.qq-gallery .qq-upload-spinner {
+    background: url("../assets/loading.gif");
+}
+
+.qq-gallery .qq-drop-processing-spinner {
+    background: url("../assets/processing.gif");
+}

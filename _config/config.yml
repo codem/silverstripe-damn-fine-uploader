@@ -6,12 +6,21 @@ Codem\DamnFineUploader\FineUploaderCoreField:
   signing_key : 'SAMPLEONLY'
   fineuploader:
     autoUpload: true
-    interceptSubmit: false
+    maxConnections: 3
+    multiple: true
+    warnBeforeUnload: true
+    form:
+      interceptSubmit: false
     validation:
       itemLimit: 3
       sizeLimit: 5242880
-    debug: false
+      image:
+        maxHeight : 1440
+        maxWidth : 2560
+    debug: true
     retry:
       enableAuto: false
     deleteFile:
       enabled: false
+    scaling:
+      defaultQuality: 90
