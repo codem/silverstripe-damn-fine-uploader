@@ -1,7 +1,18 @@
 en:
-  Codem\DamnFineUploader\UploadField:
+  DamnFineUploader:
     UPLOAD_A_FILE: 'Upload a file'
     PROCESSING_FILES: 'Processing files'
     CANCEL: 'Cancel'
     RETRY: 'Retry'
     DELETE: 'Delete'
+    MAX_ITEMS: 'The maximum number of items ({itemLimit}) has been reached'
+    TYPE_ERROR: '{file} has an invalid extension. Valid extension(s): {extensions}'
+    ZERO_BYTES: 'The file {file} seems to be empty'
+    NO_FILES: 'No files were submitted'
+    FILE_SMALL: 'The file is too small, please upload a file larger than {minSizeLimit}'
+    FILE_LARGE: 'The file is too large, please upload a file smaller than {sizeLimit}'
+    IMAGE_TALL: 'The image height is greater than the maximum allowed height'
+    IMAGE_SHORT: 'The image height is smaller than the minimum allowed height'
+    IMAGE_WIDE: 'The image width is greater than the maximum allowed width'
+    IMAGE_NARROW: 'The image width is smaller than the minimum allowed width'
+    GENERAL_ERROR: 'The upload failed due to an unknown reason'
