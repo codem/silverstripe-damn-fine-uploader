@@ -1,7 +1,13 @@
 'use strict';
+
+import qq from 'fine-uploader/lib/core';
+import DFU from '../js/common.js';
+import dfu_core_css from '../styles/core.css';
+
 const dfu_uploaders_core = Array.from(document.getElementsByClassName('dfu-uploader-core'));
 if(dfu_uploaders_core) {
   var dfu = new DFU();
+  dfu.init();
   for(const e of dfu_uploaders_core) {
     try {
       var config = JSON.parse(e.dataset.config);

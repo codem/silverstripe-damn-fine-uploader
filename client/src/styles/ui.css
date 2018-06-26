@@ -1,5 +1,5 @@
 /**
- * mainui.css
+ * styles/dfu.ui.css
  */
 body {
   border : none;
@@ -7,7 +7,6 @@ body {
 
 /**
  * Icon path overrides
- */
 .qq-gallery .qq-edit-filename-icon {
     background: url("../assets/edit.gif");
 }
@@ -31,3 +30,4 @@ body {
 .qq-gallery .qq-drop-processing-spinner {
     background: url("../assets/processing.gif");
 }
+*/

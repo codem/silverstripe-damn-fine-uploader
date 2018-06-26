@@ -51,11 +51,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	protected function setRequirements() {
 		Requirements::set_force_js_to_bottom(true);
-		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditional.core.js');
-		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.common.js');
-		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.core.js');
-		Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/dfu.core.css');
-  }
+		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/core.js');
+		Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/core.css');
+	}
 
 	/**
 	 * Based on the implementation, set library requirements and the template to use

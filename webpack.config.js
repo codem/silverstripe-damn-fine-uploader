@@ -1,6 +1,8 @@
 'use strict';
 const Path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PATHS = {
   // the root path, where your webpack.config.js is located.
   ROOT: Path.resolve(),
@@ -15,46 +17,62 @@ const PATHS = {
   DIST: Path.resolve('client/dist')
 };
 
+const build_for = (process.env.NODE_ENV !== 'production' ? 'development' : 'production');
+
 module.exports = {
-  mode : 'development',
-  entry : PATHS.SRC + '/index.js',
+  mode : build_for,
+  entry : {
+    core: PATHS.SRC + '/js/core.js',
+    ui: PATHS.SRC + '/js/ui.js'
+  },
   output: {
     path: PATHS.DIST,
-    filename: 'js/[name]'
+    filename: 'js/[name].js'
   },
+  module: {
+    rules: [
+      {
+         test: /\.css$/,
+         use: [
+           {
+               loader: MiniCssExtractPlugin.loader,
+               options: {
+                 publicPath: '../'
+               }
+            },
+           'css-loader'
+         ]
+      },
+      {
+          test: /\.(png|jpg|gif)$/,
+          use: [
+            {
+              loader: 'file-loader',
+              options : {
+                emitFile: true,
+                name: 'assets/[name].[ext]'
+              }
+            }
+          ]
+      }
+    ]
+  },
+
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new UglifyjsWebpackPlugin({
+
+      })
+    ]
+  },
+
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "styles/[name].css",
+      chunkFilename: "styles/[name].css"
+    }),
     new CopyWebpackPlugin([
-      // Core
-      {
-        'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/fine-uploader.core.js',
-        'to' : PATHS.DIST + '/js/traditional.core.js',
-      },
-      {
-        'from' : PATHS.SRC + '/js/dfu.core.js',
-        'to' : PATHS.DIST + '/js/dfu.core.js',
-      },
-      {
-        'from' : PATHS.SRC + '/styles/dfu.core.css',
-        'to' : PATHS.DIST + '/styles/dfu.core.css',
-      },
-      // UI
-      {
-        'from' : PATHS.SRC + '/js/dfu.ui.js',
-        'to' : PATHS.DIST + '/js/dfu.ui.js',
-      },
-      {
-        'from' : PATHS.SRC + '/styles/dfu.ui.css',
-        'to' : PATHS.DIST + '/styles/dfu.ui.css',
-      },
-      {
-        'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/fine-uploader.js',
-        'to' : PATHS.DIST + '/js/traditional.ui.js',
-      },
-      {
-        'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/fine-uploader-gallery.css',
-        'to' : PATHS.DIST + '/styles/traditional.ui.gallery.css',
-      },
-      // ASSETS (UI)
       {
         'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
         'to' : PATHS.DIST + '/assets/[name].[ext]',

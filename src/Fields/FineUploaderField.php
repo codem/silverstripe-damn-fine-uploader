@@ -11,11 +11,8 @@ class FineUploaderField extends FineUploaderCoreField {
 
   protected function setRequirements() {
     Requirements::set_force_js_to_bottom(true);
-    Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/traditional.ui.js');
-    Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.common.js');
-    Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/dfu.ui.js');
-    Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/traditional.ui.gallery.css');
-    Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/dfu.ui.css');
+    Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/ui.js');
+    Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/ui.css');
   }
 
 	/**
