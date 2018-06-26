@@ -20,9 +20,9 @@ class FileExtension extends DataExtension {
    * Given a uuid of a file and the form's security id, retrieve an uploaded file
    * @param string $uuid the file uuid sent by back on upload as newUuid and submitted with the form
    * @param string $form_security_token the Security Token value from the form, sent to the uploader with each upload
-   * @param boolean $unstrust when true, the uploader token will be removed when the file is retrieved. Warning: this will mean you can no longer retrieve the file using this method again.
+   * @param boolean $unstrust when true (the default), the uploader token will be removed when the file is retrieved. Warning: this will mean you can no longer retrieve the file using this method again.
    */
-  public function getByDfuToken($uuid, $form_security_token, $untrust = false) {
+  public function getByDfuToken($uuid, $form_security_token, $untrust = true) {
     $token = $uuid . "|" . $form_security_token;
     $file = File::get()->filter(["DFU" => $token])->first();
     if(!empty($file->ID) && $untrust) {
