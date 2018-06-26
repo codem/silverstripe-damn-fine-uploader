@@ -10,9 +10,11 @@ if(dfu_uploaders_core) {
   dfu.init();
   for(const e of dfu_uploaders_core) {
     try {
+      var button_id = e.id + '-button';
       var config = JSON.parse(e.dataset.config);
       config.element = document.getElementById(e.id);
-      config.template = "qq-template-" + e.id;
+      config.button = document.getElementById(button_id);
+      config.template = '';
       config.callbacks = {
         onComplete: function(id, name, responseJSON, xhr) {
           dfu.onComplete(e, id, name, responseJSON, xhr);

@@ -1,6 +1,14 @@
 /**
- * styles/dfu.core.css
+ * styles/core.css
  */
-body {
- border : none;
+.dfu-uploader-core {
+  background : #eee;
+  display : inline-block;
+}
+
+.dfu-uploader-core > .dfu-uploader-core-button {
+  border : 1px solid #000;
+  padding : 6px 12px;
+  color : #000;
+  border-radius : 4px;
 }
