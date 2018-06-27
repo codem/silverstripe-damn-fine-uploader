@@ -66,7 +66,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			$this->setUploaderDefaultConfig();
 		}
 
-		if(!isset($this->lib_config->validation->acceptFiles)) {
+		if(!isset($this->lib_config['validation']['acceptFiles'])) {
 			// if these haven't been set, set default types
 			$this->setAcceptedTypes( $this->default_accepted_types );
 		}
@@ -189,7 +189,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @note set the accepted types for this form
 	 */
 	public function setAcceptedTypes(array $types) {
-		if(!isset($this->lib_config->validation)) {
+		if(!isset($this->lib_config['validation'])) {
 			$this->lib_config['validation'] = [];
 		}
 		$this->lib_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
