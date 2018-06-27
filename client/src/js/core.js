@@ -51,6 +51,18 @@ if(dfu_uploaders_core) {
         },
         onValidate : function(data, button) {},
         onSubmit: function(id, file_name) {
+
+          if('validation' in config
+              && 'itemLimit' in config.validation
+              && config.validation.itemLimit > 0) {
+
+              var uploads = this.getUploads();
+              if(uploads && uploads.length > config.validation.itemLimit) {
+                return false;
+              }
+
+          }
+
           var fn = document.createElement('th');
           fn.setAttribute('class','filename');
           fn.textContent = file_name;
@@ -91,7 +103,7 @@ if(dfu_uploaders_core) {
             return false;
           };
           ops.appendChild(rmv);
-
+          return true;
         },
         onSubmitDelete : function(id) {
           var file = document.getElementById(upload_element.id + "-upload-" + id);
