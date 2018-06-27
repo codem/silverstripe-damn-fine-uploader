@@ -12,3 +12,28 @@
   color : #000;
   border-radius : 4px;
 }
+
+table.dfu-uploader-core-files {
+  border : 1px solid #000;
+  width : 100%;
+  color : #000;
+  background : #fff;
+  border-collapse: collapse;
+}
+
+table.dfu-uploader-core-files tr > th {
+  background-color : #eee;
+  border : 1px solid #000;
+  color : #000;
+  text-align : left;
+  font-weight : bold;
+  padding : 4px 8px;
+}
+
+table.dfu-uploader-core-files tr > td {
+  background-color : #fff;
+  border : 1px solid #000;
+  text-align : left;
+  color : #000;
+  padding : 4px 8px;
+}

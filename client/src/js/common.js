@@ -90,7 +90,7 @@ function DFU() {
 			return this.appendField(e, id, responseJSON.newUuid);
 		}
 	};
-	this.onStatusChange = function(e, id, oldStatus, newStatus) {
+	this.onStatusChange = function(e, qq, id, oldStatus, newStatus) {
 		var f = this.getFile(e, id);
 		f.status = newStatus;
 		switch(newStatus) {

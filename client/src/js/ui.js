@@ -20,7 +20,7 @@ if(dfu_uploaders_ui) {
           dfu.onComplete(e, id, name, responseJSON, xhr);
         },
         onStatusChange: function(id, oldStatus, newStatus) {
-          dfu.onStatusChange(e, id, oldStatus, newStatus);
+          dfu.onStatusChange(e, qq, id, oldStatus, newStatus);
         }
       };
       var uploader = new qq.FineUploader(config);
