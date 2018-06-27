@@ -9,8 +9,10 @@ use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
+use SilverStripe\Assets\Upload;
 use SilverStripe\Control\HTTP;
 use Exception;
+use finfo;
 
 /**
  * @note Provides a field to handle FineUploader uploads. FineUploade
@@ -30,8 +32,21 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	protected $lib_config;//fineuploader configuration
 	protected $option_delete, $option_request = [];//custom request/delete settings
 	protected $default_accepted_types = ['image/jpg','image/gif','image/webp','image/jpeg'];// default to images for now
-
+	protected $use_date_folder = true;
 	protected $implementation = self::IMPLEMENTATION_TRADITIONAL_CORE;
+
+	// TODO implement - files that match will fail
+	private static $blacklist = [
+																'php', 'php4', 'php5', 'php3', 'phtml',
+																'js', 'css',
+																'html', 'htm'
+															];
+	private static $blacklist_mimetypes = [
+																						'text/x-php', 'text/php', 'application/php', 'application/x-php',
+																						'application/x-httpd-php', 'application/x-httpd-php-source',
+																						'application/javascript', 'text/javascript',
+																						'application/css', 'text/css'
+																				];
 
 	/**
 	 * @config
@@ -49,6 +64,14 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		parent::__construct($name, $title, $value);
 	}
 
+	/**
+	 * setUseDateFolder - triggers the upload folder to be date based
+	 */
+	public function setUseDateFolder($use = true) {
+		$this->use_date_folder = $use;
+		return $this;
+	}
+
 	protected function setRequirements() {
 		Requirements::set_force_js_to_bottom(true);
 		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/core.js');
@@ -59,18 +82,22 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * Based on the implementation, set library requirements and the template to use
 	 */
 	protected function libraryRequirements() {
-
 		$this->setRequirements();
+		$this->initFieldConfig();
+	}
 
+	/**
+	 * initialise the field configuration and set a default,sane config specification
+	 * acceptFiles is a list of mimetypes, not file extensions: https://docs.fineuploader.com/branch/master/api/options.html#validation.acceptFiles
+	 */
+	public function initFieldConfig() {
 		if(!$this->lib_config) {
 			$this->setUploaderDefaultConfig();
 		}
-
-		if(!isset($this->lib_config['validation']['acceptFiles'])) {
+		if(empty($this->lib_config['validation']['acceptFiles'])) {
 			// if these haven't been set, set default types
 			$this->setAcceptedTypes( $this->default_accepted_types );
 		}
-
 	}
 
 	/**
@@ -192,13 +219,35 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		if(!isset($this->lib_config['validation'])) {
 			$this->lib_config['validation'] = [];
 		}
+
 		$this->lib_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
 		$this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);//TODO
 		return $this;
 	}
 
+	public function setAllowedMaxFileSize($bytes) {
+		if(!isset($this->lib_config['validation'])) {
+			$this->lib_config['validation'] = [];
+		}
+		$this->lib_config['validation']['sizeLimit'] = $bytes;
+		return $this;
+	}
+
+	public function setAllowedMaxItemLimit($limit) {
+		if(!isset($this->lib_config['validation'])) {
+			$this->lib_config['validation'] = [];
+		}
+		$this->lib_config['validation']['itemLimit'] = $limit;
+		return $this;
+	}
+
 	public function getAcceptedTypes() {
-		return $this->getUploaderConfigValue('validation','acceptFiles');
+		$mimetypes = $this->getUploaderConfigValue('validation','acceptFiles');
+		if(strpos($mimetypes, ",") !== false) {
+			return explode(",", $mimetypes);
+		} else {
+			return [];
+		}
 	}
 
 	/**
@@ -238,7 +287,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @note provided an extension, get a mime type from SS mimetypes map
 	 * @param string $ext e.g jpg html - without the .
 	 */
-	protected function getMimeTypeFromExt($ext) {
+	protected function getMimeTypeFromExtension($ext) {
 		$mimeTypes = Config::inst()->get('HTTP', 'MimeTypes');
 		// The mime type doesn't exist
 		if(!isset($mimeTypes[$ext])) {
@@ -253,7 +302,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 */
 	final protected function parseMimeType($mimetype) {
 		$parsed = false;
-		if(strpos($type, "/") !== false) {
+		if(strpos($mimetype, "/") !== false) {
 			$parts = explode('/', $mimetype);
 			$parsed = array(
 				'type' => $parts[0],
@@ -269,8 +318,8 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	protected function isAccepted($mimetype) {
 		$valid = false;
 		$types = $this->getAcceptedTypes();//returns a mix of accept options configured for the input element
-		if(!$types) {
-			throw new \Exception("No accepted types have been configured");
+		if(empty($types)) {
+			throw new \Exception("No accepted mime types have been configured");
 		}
 		$mimetype_parts = $this->parseMimeType($mimetype);
 
@@ -289,10 +338,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			} else if( $result = preg_match("/^\.([a-zA-Z0-9]+)/", $type, $matches ) ) {
 				// A file extension starting with the STOP character (U+002E). (e.g. .jpg, .png, .doc)
 				if(!empty($matches[1])) {
-					$type = $this->getMimeTypeFromExt($matches[1]);
+					$type = $this->getMimeTypeFromExtension($matches[1]);
 					if(strpos($type, "/") !== false) {
 						// ensure we don't recurse
-						$valid = $this->isAcceptedType($type);
+						$valid = $this->isAccepted($type);
 					}
 				}
 			} else {
@@ -318,18 +367,30 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	/**
 	 * @note provided a path to an uploaded file, check that it matches configuration prior to saving
 	 */
-	protected function checkUploadedFile($file_path) {
+	protected function checkUploadedFile($tmp_file) {
+		$file_path = isset($tmp_file['tmp_name']) ? $tmp_file['tmp_name'] : '';
+		if(!$file_path) {
+			throw new InvalidFileException("The file could not be read");
+		}
 		$finfo = new finfo(FILEINFO_MIME_TYPE);
-		$result = $finfo->file($file_path);
-		$valid = $this->isAcceptedType($result);
+		$mimetype = $finfo->file($file_path);
+		$valid = $this->isAccepted($mimetype);
+		return [
+			'valid' => $valid,
+			'mimetype' => $mimetype
+		];
 	}
 
+	/**
+	 * Validation occurs at {@link self::upload()}
+	 */
 	public function validate($validator) {
-
+			return true;
 	}
 
 	/**
 	 * Sign the UUID provided by FineUploader, using a key,
+	 * @todo create a per upload random salt to deal with collisions on retry
 	 * @param string $uuid provided by Fine Uploader
 	 * @returns string
 	 */
@@ -366,42 +427,67 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		try {
 			$post = $request->postVars();
 			if(empty($post)) {
-				throw new InvalidFileException("No file data provided");
-			}
-
-			if(empty($post[ self::UUID_NAME ])) {
-				throw new InvalidFileException("Required data not received");
-			}
-
-			// qqfile is populated from $_FILES['qqfile']
-			if(empty($post['qqfile']['tmp_name'])) {
-				throw new InvalidFileException("Required data not received");
-			}
-
-			if(!$this->isUploadedFile($post['qqfile']['tmp_name'])) {
-				throw new InvalidFileException("The upload could not be saved");
+				throw new InvalidRequestException("No file data provided");
 			}
 
 			$form = $this->getForm();
 			$token = $form->getSecurityToken();
-			if(empty($post[ $token->getName() ])) {
+			// CSRF check
+			if (!$token->checkRequest($request)) {
+					return $this->httpError(400);
+			}
+			$form_security_token_name = $token->getName();
+			if(empty($post[ $form_security_token_name ])) {
 				throw new MissingDataException("The upload request is missing required information");
 			}
 
-			$form_security_token = $post[ $token->getName() ];
+			if(empty($post[ self::UUID_NAME ])) {
+				throw new InvalidRequestException("Required data not received");
+			}
 
-				// do this in a containing method
-				// check for the uploaded file
-				// check for permissions
-				// check for file errors e.g bad type, bad extension
-				// check for php errors
-				// load into a File object or the type of file configured
+			// qqfile is populated from $_FILES['qqfile']
+			if(empty($post['qqfile']['tmp_name'])) {
+				throw new InvalidRequestException("Required data not received");
+			}
+
+			if(!$this->isUploadedFile($post['qqfile']['tmp_name'])) {
+				throw new InvalidRequestException("The upload could not be saved");
+			}
+
+			// get field config
+			$this->initFieldConfig();
+
+			// check the tmp file against allowed mimetypes  - e.g file/bad being uploaded as file.good
+			$result = $this->checkUploadedFile($post['qqfile']);
+			if(!$result['valid']) {
+				$mimetype = !empty($result['mimetype']) ? $result['mimetype'] : 'unknown';
+				throw new InvalidRequestException("The file uploaded could not be accepted as it is a {$mimetype} file, please try again with a different file.");
+			}
+
+			// create the file UUID token for FineUploader
+			$form_security_token = $post[ $form_security_token_name ];
+			$uuid = $this->getUuid($post[ self::UUID_NAME ], $form_security_token);
+
+			// Config options for this upload
+
+			// set allowed extensions for the upload validator
+			$this->setAllowedExtensions( $this->lib_config['validation']['allowedExtensions'] );
+
+			// set folder name
+			if($this->use_date_folder) {
+				$folder_name = date('Y/m/d');
+				$this->setFolderName( Upload::config()->uploads_folder . "/{$folder_name}/" );
+			}
+
+			// Set allowed max file size
+			$this->getValidator()->setAllowedMaxFileSize($this->lib_config['validation']['sizeLimit']);
+
+			// TODO set max allowed file number (need this particular file uplooad to know how many siblings exist)
+
 			$file = $this->saveTemporaryFile($post['qqfile'], $error);
 			if($error) {
 				throw new InvalidFileException($error);
 			}
-
-			$uuid = $this->getUuid($post[ self::UUID_NAME ], $form_security_token);
 
 			// save the token, together with the Form Security ID for the form used to upload the file
 			// TODO create a folder and assign that as the parent
@@ -412,13 +498,16 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 				'success' => true,
 				'newUuid' => $uuid
 			];
-			return (new HTTPResponse(json_encode($result)))->addHeader('Content-Type', 'application/json');
+			return (new HTTPResponse(json_encode($result), 200))->addHeader('Content-Type', 'application/json');
 
 		} catch (MissingDataException $e) {
+			$error = $e->getMessage();
+		} catch (InvalidRequestException $e) {
 			$error = $e->getMessage();
 		} catch (InvalidFileException $e) {
 			$error = $e->getMessage();
 		} catch (Exception $e) {
+			print $e->getMessage() . "\n";
 			$error = "General error";
 		}
 
@@ -432,8 +521,13 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			]
 		];
 		$this->getUpload()->clearErrors();
-		return (new HTTPResponse(json_encode($result), 400))->addHeader('Content-Type', 'application/json');
+		return $this->errorResponse($result, 400);
+	}
 
+	protected function errorResponse($result, $code = 400) {
+		//header('Content-Type', 'application/json');print json_encode($result);exit;
+		// Note that custom web server error pages may interfere with this
+		return (new HTTPResponse(json_encode($result), 400))->addHeader('Content-Type', 'application/json');
 	}
 
 }
