@@ -14,7 +14,8 @@
 		"name": "James Ellis"
 	}],
 	"require": {
-		"silverstripe/framework": "~4.0"
+		"silverstripe/framework": "~4.0",
+		"silverstripe/userforms": "~5.2"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^3 || ^4 || ^5"

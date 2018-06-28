@@ -1,5 +1,10 @@
 en:
   DamnFineUploader:
+    DOWNLOAD_FILE: 'Download file'
+    SELECT_UPLOAD_FOLDER: 'Select an upload folder'
+    MAXIMUM_UPLOAD_SIZE: 'Note: Maximum php allowed size is %s MB'
+    ACCEPTED_MIMETYPES: 'Accepted mime types allowed for uploads made via this field'
+    FOLDER_DATE_FORMAT: 'Use a year/month/day upload folder format'
     UPLOAD_A_FILE: 'Upload a file'
     PROCESSING_FILES: 'Processing files'
     CANCEL: 'Cancel'
@@ -16,3 +21,9 @@ en:
     IMAGE_WIDE: 'The image width is greater than the maximum allowed width'
     IMAGE_NARROW: 'The image width is smaller than the minimum allowed width'
     GENERAL_ERROR: 'The upload failed due to an unknown reason'
+    TMP_FILE_NOT_FOUND: 'The file could not be read'
+    UPLOAD_MISSING_SECURITY_TOKEN: 'The upload request is missing required information'
+    UPLOAD_MISSING_UUID: 'Required data not received'
+    UPLOAD_MISSING_FILES: 'Required data not received'
+    UPLOAD_NOT_AN_UPLOAD: 'The upload could not be saved'
+    UPLOAD_NOT_ACCEPTED_FILE: 'The file uploaded could not be accepted as it is a %s file, please try again with a different file'

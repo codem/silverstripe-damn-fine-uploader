@@ -11,6 +11,8 @@ use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
 use SilverStripe\Assets\Upload;
 use SilverStripe\Control\HTTP;
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\Control\Controller;
 use Exception;
 use finfo;
 
@@ -65,6 +67,17 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
+	 * Return a Relative upload link for this field
+	 *
+	 * @param string $action
+	 *
+	 * @return string
+	 */
+	public function UploadLink() {
+			return Controller::join_links('field/' . $this->name, 'upload');
+	}
+
+	/**
 	 * setUseDateFolder - triggers the upload folder to be date based
 	 */
 	public function setUseDateFolder($use = true) {
@@ -89,9 +102,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	/**
 	 * initialise the field configuration and set a default,sane config specification
 	 * acceptFiles is a list of mimetypes, not file extensions: https://docs.fineuploader.com/branch/master/api/options.html#validation.acceptFiles
+	 * @param boolean $force set to true to override any current config and re-init
 	 */
-	public function initFieldConfig() {
-		if(!$this->lib_config) {
+	public function initFieldConfig($force = false) {
+		if(!$this->lib_config || $force) {
 			$this->setUploaderDefaultConfig();
 		}
 		if(empty($this->lib_config['validation']['acceptFiles'])) {
@@ -150,17 +164,47 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		];
 
 		// request endpoint
-		$token = $form->getSecurityToken();
 		$this->lib_config['request'] = [
 			'method' => 'POST',
 			'uuidName' => self::UUID_NAME,
 			'requireSuccessJson' => true,
-			'endpoint' => $this->Link('upload'),
-			'params' => [
-				$token->getName() => $token->getValue()
-			]
+			'endpoint' => '',
+			'params' => []
 		];
 
+		if($form) {
+			$this->lib_config['request']['endpoint'] = $this->Link('upload');
+			// if a Form is found, set the security token from that
+			// Use this->setSecurityToken to set the current form's SecurityToken
+			$token = $form->getSecurityToken();
+			$this->lib_config['request']['params'][ $token->getName() ] = $token->getValue();
+		}
+
+	}
+
+	/**
+	 * Set a Form Security Token on config
+	 * @param SecurityToken $token
+	 */
+	public function setSecurityToken(SecurityToken $token) {
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
+		$this->lib_config['request']['params'][ $token->getName() ] = $token->getValue();
+	}
+
+	/**
+	 * Set a request endpoint or reset based on the field's form (if available)
+	 */
+	public function setRequestEndpoint($endpoint = "") {
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
+		if($endpoint) {
+			$this->lib_config['request']['endpoint'] = $endpoint;
+		} else if ($form = $this->getForm()) {
+			$this->lib_config['request']['endpoint'] = $this->Link('upload');
+		}
 	}
 
 	/**
@@ -370,7 +414,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	protected function checkUploadedFile($tmp_file) {
 		$file_path = isset($tmp_file['tmp_name']) ? $tmp_file['tmp_name'] : '';
 		if(!$file_path) {
-			throw new InvalidFileException("The file could not be read");
+			throw new InvalidFileException( _t('DamnFineUploader.TMP_FILE_NOT_FOUND', 'Sorry, the file could not be read' ));
 		}
 		$finfo = new finfo(FILEINFO_MIME_TYPE);
 		$mimetype = $finfo->file($file_path);
@@ -438,20 +482,20 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			}
 			$form_security_token_name = $token->getName();
 			if(empty($post[ $form_security_token_name ])) {
-				throw new MissingDataException("The upload request is missing required information");
+				throw new MissingDataException( _t('DamnFineUploader.UPLOAD_MISSING_SECURITY_TOKEN', "The upload request is missing required information") );
 			}
 
 			if(empty($post[ self::UUID_NAME ])) {
-				throw new InvalidRequestException("Required data not received");
+				throw new InvalidRequestException( _t('DamnFineUploader.UPLOAD_MISSING_UUID', 'Required data not received') );
 			}
 
 			// qqfile is populated from $_FILES['qqfile']
 			if(empty($post['qqfile']['tmp_name'])) {
-				throw new InvalidRequestException("Required data not received");
+				throw new InvalidRequestException( _t('DamnFineUploader.UPLOAD_MISSING_FILES', 'Required data not received') );
 			}
 
 			if(!$this->isUploadedFile($post['qqfile']['tmp_name'])) {
-				throw new InvalidRequestException("The upload could not be saved");
+				throw new InvalidRequestException( _t('DamnFineUploader.UPLOAD_NOT_AN_UPLOAD', 'The upload could not be saved') );
 			}
 
 			// get field config
@@ -461,7 +505,11 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			$result = $this->checkUploadedFile($post['qqfile']);
 			if(!$result['valid']) {
 				$mimetype = !empty($result['mimetype']) ? $result['mimetype'] : 'unknown';
-				throw new InvalidRequestException("The file uploaded could not be accepted as it is a {$mimetype} file, please try again with a different file.");
+				throw new InvalidRequestException( sprintf(
+																							_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE',
+																							'The file uploaded could not be accepted as it is a %s file, please try again with a different file'),
+																							$mimetype
+																					));
 			}
 
 			// create the file UUID token for FineUploader
@@ -473,8 +521,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			// set allowed extensions for the upload validator
 			$this->setAllowedExtensions( $this->lib_config['validation']['allowedExtensions'] );
 
-			// set folder name
-			if($this->use_date_folder) {
+			// Handle data based folder name, if no specific folder name already set
+			// If there is a folderName set, we respect that. RESTECP.
+			if(!$this->folderName && $this->use_date_folder) {
 				$folder_name = date('Y/m/d');
 				$this->setFolderName( Upload::config()->uploads_folder . "/{$folder_name}/" );
 			}
@@ -490,7 +539,6 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			}
 
 			// save the token, together with the Form Security ID for the form used to upload the file
-			// TODO create a folder and assign that as the parent
 			$file->DFU = $uuid . "|" . $form_security_token;
 			$file->write();
 

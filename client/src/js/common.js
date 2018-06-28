@@ -6,7 +6,7 @@ function DFU() {
 	this.files = {};// register of uploaded files per uploader element
 	this.prefix = "dfufile";
 	this.getFieldName = function(e, id) {
-		return e.id + "[" + id + "]";
+		return e.getAttribute('data-name') + "[" + id + "]";
 	};
 
 	this.getClosest = function(el, s) {

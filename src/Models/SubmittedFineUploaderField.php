@@ -4,6 +4,7 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\UserForms\Model\Submission\SubmittedFormField;
 use SilverStripe\Assets\File;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Control\Controller;
 
 class SubmittedFineUploaderField extends SubmittedFormField {
 
@@ -11,28 +12,39 @@ class SubmittedFineUploaderField extends SubmittedFormField {
         'Files' => File::class
     );
 
+    private static $security_token_name = "SecurityID";
+
     /**
      * Defines the database table name
      * @var string
      */
     private static $table_name = 'SubmittedFineUploaderField';
 
+    protected function getSecurityTokenValue() {
+      $controller = Controller::curr();
+      $request = $controller->getRequest();
+      $token_name = $this->config()->get('security_token_name');
+      $token_value = $request->postVar($token_name);
+      return $token_value;
+    }
+
     /**
-     * Abuse magic setter to get the $data and stores multiple files.
-     * ie. $submittedField->Value = $field->getValueFromData($data);
+     * Handle incoming uuids from the form, use the uuid and the form security token to retrieve the file
+     * Note that this does not publish the file
      *
      * @return SubmittedFineUploaderField
      */
-    public function setValue($ids) {
-        if ($ids) {
-            $files = File::get()->filter(array(
-                'ID' => $ids,
-            ));
-            foreach ($files as $file) {
-                $this->Files()->add($file);
-            }
+    public function setValue($uuids) {
+      if(!empty($uuids) && is_array($uuids) && ($token_value = $this->getSecurityTokenValue())) {
+        foreach($uuids as $uuid) {
+          $file = File::create()->getByDfuToken($uuid, $token_value);
+          if(!empty($file->ID)) {
+            $this->Files()->add($file);
+            $file->protectFile();
+          }
         }
-        return $this;
+      }
+      return $this;
     }
 
     /**
@@ -41,10 +53,8 @@ class SubmittedFineUploaderField extends SubmittedFormField {
      *
      * @return string
      */
-    public function getFormattedValue()
-    {
-        $title = _t('SubmittedFileField.DOWNLOADFILE', 'Download File');
-
+    public function getFormattedValue() {
+        $title = _t('DamnFineUploader.DOWNLOAD_FILE', 'Download file');
         $files = array();
         foreach ($this->Files() as $i => $file) {
             $files[] = sprintf(
@@ -60,11 +70,10 @@ class SubmittedFineUploaderField extends SubmittedFormField {
      *
      * @return string
      */
-    public function getExportValue()
-    {
+    public function getExportValue() {
         $links = array();
         foreach ($this->Files() as $file) {
-            $links[] = $file->URL;
+            $links[] = $file->getAbsoluteURL();
         }
         return implode('|', $links);
     }
