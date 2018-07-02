@@ -482,17 +482,19 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * Sign the UUID provided by FineUploader, using a key,
-	 * @todo create a per upload random salt to deal with collisions on retry
+	 * Sign the UUID provided by FineUploader for return to it.
 	 * @param string $uuid provided by Fine Uploader
+	 * @param string $form_security_token security token value in this form
+	 * For PHP5 this uses the random_compat lib polyfill
 	 * @returns string
 	 */
-	public static function sign_uuid($uuid, $form_security_token) {
+	protected static function sign_uuid($uuid) {
 		$key = Config::inst()->get('Codem\DamnFineUploader\FineUploaderCoreField','signing_key');
 		if(empty($key)) {
 			throw new \Exception("Cannot get file by token if no signing key is set");
 		}
-		$token = hash_hmac ( "sha256" , $uuid . $form_security_token, $key, false );
+		$salt = bin2hex(random_bytes(16));
+		$token = hash_hmac ( "sha256" , $uuid . $salt, $key, false );
 		return $token;
 	}
 
