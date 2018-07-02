@@ -37,10 +37,11 @@ class SubmittedFineUploaderField extends SubmittedFormField {
     public function setValue($uuids) {
       if(!empty($uuids) && is_array($uuids) && ($token_value = $this->getSecurityTokenValue())) {
         foreach($uuids as $uuid) {
-          $file = File::create()->getByDfuToken($uuid, $token_value);
-          if(!empty($file->ID)) {
-            $this->Files()->add($file);
-            $file->protectFile();
+          $file = singleton(File::class);
+          $record = $file->getByDfuToken($uuid, $token_value);
+          if(!empty($record->ID)) {
+            $this->Files()->add($record);
+            $record->protectFile();
           }
         }
       }

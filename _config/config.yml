@@ -2,8 +2,10 @@
 Name: damnfineuploader
 ---
 Codem\DamnFineUploader\FineUploaderCoreField:
-  # config for fineuploader
   signing_key : 'SAMPLEONLY'
+  allow_delete : true
+  unpublish_after_upload : true
+  # config for fineuploader
   fineuploader:
     autoUpload: true
     maxConnections: 3
@@ -21,6 +23,7 @@ Codem\DamnFineUploader\FineUploaderCoreField:
     retry:
       enableAuto: false
     deleteFile:
-      enabled: false
+      forceConfirm: true
+      method: 'POST'
     scaling:
       defaultQuality: 90

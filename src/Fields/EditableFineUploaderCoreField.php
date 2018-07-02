@@ -97,8 +97,11 @@ class EditableFineUploaderCoreField extends EditableFormField {
     public function getFormField() {
 
         $field = $this->getUploaderField();
+
+        // Apply initial configuration
         $field->initFieldConfig();// default configuration
 
+        // Apply configurable settings
         // set accepted types on the field e.g image/jpeg
         $types = $this->AllowedMimeTypes;
         $pattern = '/\s{1,}/';
@@ -110,7 +113,7 @@ class EditableFineUploaderCoreField extends EditableFormField {
         if ($bytes > 0) {
             $field->setAllowedMaxFileSize($bytes);
         } else {
-            $field->setAllowedMaxFileSize(parent::get_php_max_file_size());
+            $field->setAllowedMaxFileSize(self::get_php_max_file_size());
         }
 
         if((int)$this->FileUploadLimit <= 0) {

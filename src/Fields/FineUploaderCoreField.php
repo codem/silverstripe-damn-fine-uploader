@@ -1,8 +1,11 @@
 <?php
 namespace Codem\DamnFineUploader;
+use SilverStripe\Assets\File;
 use Silverstripe\Forms\FileField;
+use Silverstripe\Forms\Form;
 use Silverstripe\Forms\FormField;
 use SilverStripe\View\Requirements;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
@@ -12,6 +15,7 @@ use SilverStripe\Forms\FileHandleField;
 use SilverStripe\Assets\Upload;
 use SilverStripe\Control\HTTP;
 use SilverStripe\Security\SecurityToken;
+use SilverStripe\Security\NullSecurityToken;
 use SilverStripe\Control\Controller;
 use Exception;
 use finfo;
@@ -55,7 +59,8 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @var array
 	 */
 	private static $allowed_actions = [
-			'upload'
+			'upload',
+			'remove'
 	];
 
 	public function __construct($name, $title = null, $value = null) {
@@ -168,16 +173,41 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			'method' => 'POST',
 			'uuidName' => self::UUID_NAME,
 			'requireSuccessJson' => true,
-			'endpoint' => '',
-			'params' => []
+			'endpoint' => '',// see below
+			'params' => [],
+			'paramsInBody' => true // sends request parameters in the body of the upload request
 		];
 
-		if($form) {
-			$this->lib_config['request']['endpoint'] = $this->Link('upload');
-			// if a Form is found, set the security token from that
-			// Use this->setSecurityToken to set the current form's SecurityToken
+		// default deleteFile configuration
+		// some options are set in config.yml
+		$this->lib_config['deleteFile']['enabled'] = false;//off by default, see below
+		$this->lib_config['deleteFile']['endpoint'] = '';//see below
+		$this->lib_config['deleteFile']['method'] = 'POST';//enforce POST
+		$this->lib_config['deleteFile']['params'] = [];// see below
+
+		/**
+		 * This configuration requires the field to have a form attached,
+		 * which is not always the case e.g userform module where the
+		 * form is only attached after the field {@link SilverStripe\UserForms\Form\UserForm::__construct()}
+		 */
+		if($form instanceof Form) {
+			// The configuration options require a form with a Security Token
 			$token = $form->getSecurityToken();
+			if(!$token || $token instanceof NullSecurityToken) {
+				$form->enableSecurityToken();
+			}
+
+			// request options
+			$this->lib_config['request']['endpoint'] = $this->Link('upload');
 			$this->lib_config['request']['params'][ $token->getName() ] = $token->getValue();
+
+			// deleteFile options if allowed
+			$allow_delete = $this->config()->allow_delete;
+			if($allow_delete) {
+				$this->lib_config['deleteFile']['enabled'] = true;//enable when we can handle a delete
+				$this->lib_config['deleteFile']['endpoint'] = $this->Link('remove');
+				$this->lib_config['deleteFile']['params'][ $token->getName() ] = $token->getValue();
+			}
 		}
 
 	}
@@ -194,7 +224,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * Set a request endpoint or reset based on the field's form (if available)
+	 * Set a request endpoint (absolute or relative URL only) or reset based on the field's form (if available)
+	 * When using this method other request options are sourced from {@link self::setUploaderDefaultConfig()}
+	 * To set custom request options see {@link self::setOptionRequest()}
 	 */
 	public function setRequestEndpoint($endpoint = "") {
 		if(!$this->lib_config) {
@@ -208,11 +240,28 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * @note allows uploads via a custom path, by default this field's path to the Upload method is used
-	 * @param array $request see https://docs.fineuploader.com/branch/master/api/options.html#request
+	 * Set a delete endpoint (absolute or relative URL only) or reset based on the field's form (if available)
+	 * When using this method other deleteFile options are sourced from {@link self::setUploaderDefaultConfig()}
+	 * To set custom deleteFile options see {@link self::setOptionDelete()}
+	 */
+	public function setDeleteEndpoint($endpoint = "") {
+		if(!$this->lib_config) {
+			$this->setUploaderDefaultConfig();
+		}
+		$this->lib_config['deleteFile']['enabled'] = true;//setting an endpoint enables file uploads
+		if($endpoint) {
+			$this->lib_config['deleteFile']['endpoint'] = $endpoint;
+		} else if ($form = $this->getForm()) {
+			$this->lib_config['deleteFile']['endpoint'] = $this->Link('remove');
+		}
+	}
+
+	/**
+	 * Provide custom request endpoint configuration
+	 * @param array $request
+	 * @see https://docs.fineuploader.com/branch/master/api/options.html#request
 	 */
 	public function setOptionRequest(array $request) {
-		$this->option_request = $request;
 		if(!$this->lib_config) {
 			$this->setUploaderDefaultConfig();
 		}
@@ -221,11 +270,11 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * @note allows deletes of uploads via a custom path
+	 * Provide custom deleteFile options
+	 * @see https://docs.fineuploader.com/branch/master/api/options.html#deleteFile
 	 * This requires your own delete implementation with checks and balances
 	 */
 	public function setOptionDelete(array $delete) {
-		$this->option_delete = $delete;
 		if(!$this->lib_config) {
 			$this->setUploaderDefaultConfig();
 		}
@@ -470,15 +519,15 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	public function upload(HTTPRequest $request) {
 		try {
 			$post = $request->postVars();
-			if(empty($post)) {
+			if(empty($post) || !$request->isPOST()) {
 				throw new InvalidRequestException("No file data provided");
 			}
 
 			$form = $this->getForm();
 			$token = $form->getSecurityToken();
 			// CSRF check
-			if (!$token->checkRequest($request)) {
-					return $this->httpError(400);
+			if (!$token || !$token->checkRequest($request)) {
+					throw new Exception("SecurityToken is not valid");
 			}
 			$form_security_token_name = $token->getName();
 			if(empty($post[ $form_security_token_name ])) {
@@ -521,18 +570,24 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			// set allowed extensions for the upload validator
 			$this->setAllowedExtensions( $this->lib_config['validation']['allowedExtensions'] );
 
-			// Handle data based folder name, if no specific folder name already set
-			// If there is a folderName set, we respect that. RESTECP.
-			if(!$this->folderName && $this->use_date_folder) {
-				$folder_name = date('Y/m/d');
-				$this->setFolderName( Upload::config()->uploads_folder . "/{$folder_name}/" );
+
+			if(!$this->folderName) {
+				$this->setFolderName( Upload::config()->uploads_folder );
+			}
+
+			if($this->use_date_folder) {
+				// Handle data based folder name, if no specific folder name already set
+				$date_part = date('Y/m/d');
+				$this->setFolderName( $this->folderName . "/{$date_part}/" );
+			} else {
+				$this->setFolderName( $this->folderName );
 			}
 
 			// Set allowed max file size
 			$this->getValidator()->setAllowedMaxFileSize($this->lib_config['validation']['sizeLimit']);
 
 			// TODO set max allowed file number (need this particular file uplooad to know how many siblings exist)
-
+			// This will call loadIntoFile which triggers onAfterUpload()
 			$file = $this->saveTemporaryFile($post['qqfile'], $error);
 			if($error) {
 				throw new InvalidFileException($error);
@@ -541,6 +596,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			// save the token, together with the Form Security ID for the form used to upload the file
 			$file->DFU = $uuid . "|" . $form_security_token;
 			$file->write();
+
+			if($this->config()->unpublish_after_upload) {
+				$file->doUnpublish();
+			}
 
 			$result = [
 				'success' => true,
@@ -555,7 +614,6 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		} catch (InvalidFileException $e) {
 			$error = $e->getMessage();
 		} catch (Exception $e) {
-			print $e->getMessage() . "\n";
 			$error = "General error";
 		}
 
@@ -576,6 +634,90 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		//header('Content-Type', 'application/json');print json_encode($result);exit;
 		// Note that custom web server error pages may interfere with this
 		return (new HTTPResponse(json_encode($result), 400))->addHeader('Content-Type', 'application/json');
+	}
+
+	/**
+	 * Action to handle removal of a single file via its uuid.
+	 * Fineuploader submits a POST with the file uuid and the current form security token in the body
+	 * It also automatically adds a _method param with a value of DELETE, triggering {@link HTTPRequest::detect_method()} handling
+	 * Converting the httpMethod to DELETE, so we need to check for either a POST OR DELETE request here
+	 */
+	public function remove(HTTPRequest $request) {
+		try {
+			$post = $request->postVars();
+			if(empty($post) || (!$request->isPOST() && !$request->isDELETE() )) {
+				throw new InvalidRequestException("No file data provided");
+			}
+
+			$form = $this->getForm();
+			$token = $form->getSecurityToken();
+			// CSRF check
+			if (!$token || !$token->checkRequest($request)) {
+					throw new Exception("SecurityToken is not valid");
+			}
+			$form_security_token_name = $token->getName();
+			if(empty($post[ $form_security_token_name ])) {
+				throw new MissingDataException( _t('DamnFineUploader.UPLOAD_MISSING_SECURITY_TOKEN', "The upload request is missing required information") );
+			}
+
+			if(empty($post[ self::UUID_NAME ])) {
+				throw new InvalidRequestException( _t('DamnFineUploader.UPLOAD_MISSING_UUID', 'Required data not received') );
+			}
+
+			$form_security_token = $post[ $form_security_token_name ];
+			return $this->removeFile($post[ self::UUID_NAME ], $form_security_token);
+
+		} catch (MissingDataException $e) {
+			$error = $e->getMessage();
+		} catch (InvalidRequestException $e) {
+			$error = $e->getMessage();
+		} catch (FileRemovalException $e) {
+			$error = $e->getMessage();
+		} catch (Exception $e) {
+			$error = "General error";
+		}
+
+		$result = [
+			'success' => false,
+			'error' => $error,
+
+			'message' => [
+					'type' => 'error',
+					'value' => $error,
+			]
+		];
+
+		return $this->errorResponse($result, 400);
+
+	}
+
+	/**
+	 * Remove a file based on its uuid and the form's security token
+	 * You can override this handling if you wish to modify the response (e.g a 202 response)
+	 */
+	protected function removeFile($uuid, $form_security_token) {
+		$file = singleton(File::class);
+		$record = $file->getByDfuToken($uuid, $form_security_token);
+		$record_id = null;
+		if(($record instanceof File) && !empty($record->ID)) {
+			$record_id = $record->ID;
+			$record->doArchive();
+		} else {
+			// the file isn't here
+			throw new FileRemovalException("The file {$uuid}|{$form_security_token} could not be deleted 1");
+		}
+
+		$check = DataObject::get_by_id(File::class, $record_id);
+		if(!empty($check->ID)) {
+			// check on the file returned a record with this id
+			throw new FileRemovalException("The file could not be deleted 2");
+		}
+
+		$result = [
+			'success' => true,
+		];
+
+		return (new HTTPResponse(json_encode($result), 200))->addHeader('Content-Type', 'application/json');
 	}
 
 }
