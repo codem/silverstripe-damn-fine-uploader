@@ -746,6 +746,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 			// save the token, together with the Form Security ID for the form used to upload the file
 			$file->DFU = $uuid . "|" . $form_security_token;
+			$file->IsDfuUpload = 1;
 			$file->write();
 
 			if($this->config()->unpublish_after_upload) {
@@ -865,20 +866,21 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 */
 	protected function removeFile($uuid, $form_security_token) {
 		$file = singleton(File::class);
-		$record = $file->getByDfuToken($uuid, $form_security_token);
+		// Do not untrust to allow multiple delete attempts
+		$record = $file->getByDfuToken($uuid, $form_security_token, false);
 		$record_id = null;
 		if(($record instanceof File) && !empty($record->ID)) {
 			$record_id = $record->ID;
 			$record->doArchive();
 		} else {
 			// the file isn't here
-			throw new FileRemovalException("The file {$uuid}|{$form_security_token} could not be deleted 1");
+			throw new FileRemovalException("The file could not be deleted");
 		}
 
 		$check = DataObject::get_by_id(File::class, $record_id);
 		if(!empty($check->ID)) {
 			// check on the file returned a record with this id
-			throw new FileRemovalException("The file could not be deleted 2");
+			throw new FileRemovalException("The file could not be deleted");
 		}
 
 		$result = [
