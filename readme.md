@@ -1,6 +1,6 @@
 # FineUploader module for SilverStripe 4
 
-This module provides two upload fields that can be used to upload files to a  Silverstripe website.
+This module provides two upload fields that can be used to upload files to a Silverstripe 4 website.
 
 > It's not intended for use in the Silverstripe admin area or CMS, use UploadField for that.
 
@@ -57,7 +57,8 @@ $upload_field->setOptionDelete(
 ```
 
 ## TODO
-+ Basic demo with working callbacks
-+ Progress bar
-+ Locking submit button until all uploads have succeeded
-+ Alerts when > max file uploads have been uploaded
++ Feedback on limits prior to upload
+
+
+## Thanks
+Many thanks to the FineUploader team for developing and supporting an excellent file uploader.
