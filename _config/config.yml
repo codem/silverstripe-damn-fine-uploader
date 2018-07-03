@@ -17,8 +17,8 @@ Codem\DamnFineUploader\FineUploaderCoreField:
       itemLimit: 3
       sizeLimit: 5242880
       image:
-        maxHeight : 1440
         maxWidth : 2560
+        maxHeight : 1440
     debug: true
     retry:
       enableAuto: false

@@ -163,6 +163,11 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			'typeError' => _t('DamnFineUploader.TYPE_ERROR', '{file} has an invalid extension. Valid extension(s): {extensions}'),
 		];
 
+		// sanity check on the file size limit vs system restrictions
+		if(isset($this->lib_config['validation']['sizeLimit'])) {
+			$this->setAllowedMaxFileSize($this->lib_config['validation']['sizeLimit']);
+		}
+
 		// text
 		$this->lib_config['text'] = [
 			'defaultResponseError' => _t('DamnFineUploader.GENERAL_ERROR', 'The upload failed due to an unknown reason')
@@ -282,6 +287,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return $this;
 	}
 
+	/**
+	 * Get a single value from config
+	 */
 	public function getUploaderConfigValue($category, $key) {
 		if(isset($this->lib_config[$category][$key])) {
 			return $this->lib_config[$category][$key];
@@ -289,10 +297,41 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return null;
 	}
 
-	public function getUploaderConfig() {
+	/**
+	 * Template helper method
+	 * @see https://github.com/FineUploader/fine-uploader/issues/1396
+	 * @see https://github.com/FineUploader/fine-uploader/issues/1910
+	 */
+	public function getUploaderConfig($transform_size_limit = true) {
 		if(!$this->lib_config) {
 			$this->setUploaderDefaultConfig();
 		}
+
+		/**
+		 * Prior to field output, ensure the values for file sizes are correct
+		 * Fineuploader uses 1e3 for reporting,
+		 * which can lead to weird errors like upload a 1.43MB file and FU stating
+		 * that the file should be < 1.5MB
+		 */
+		if(isset($this->lib_config['validation']['sizeLimit'])) {
+			$size = $this->AcceptedFileSize();
+			if(isset($this->lib_config['messages']['sizeError'])) {
+				$this->lib_config['messages']['sizeError'] = str_replace("{sizeLimit}", $size . "MB", $this->lib_config['messages']['sizeError']);
+			} else {
+				$this->lib_config['messages']['sizeError'] = _t('DamnFineUploader.FILE_LARGE', "The file is too large, please upload a file smaller than {$size}MB");
+			}
+		}
+
+		// only makes sense if a min size limit was set
+		if(isset($this->lib_config['validation']['minSizeLimit'])) {
+			$size = $this->AcceptedMinFileSize();
+			if(isset($this->lib_config['messages']['minSizeError'])) {
+				$this->lib_config['messages']['minSizeError'] = str_replace("{minSizeLimit}", $size . "MB", $this->lib_config['messages']['minSizeError']);
+			} else {
+				$this->lib_config['messages']['minSizeError'] = _t('DamnFineUploader.FILE_SMALL', "The file is too small, please upload a file larger than {$size}MB");
+			}
+		}
+
 		return json_encode($this->lib_config);
 	}
 
@@ -322,7 +361,11 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		if(!isset($this->lib_config['validation'])) {
 			$this->lib_config['validation'] = [];
 		}
-		$this->lib_config['validation']['sizeLimit'] = $bytes;
+		$bytes = (int)$bytes;
+		$system = (int)$this->getValidator()->getAllowedMaxFileSize();
+		$limit = min($bytes, $system);
+		$this->lib_config['validation']['sizeLimit'] = $limit;
+
 		return $this;
 	}
 
@@ -344,8 +387,8 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * @todo get a list of extensions for the types used
-	 * @note this is used as a guide for frontend validation only
+	 * Return a list of extensions matching the file types provided
+	 * @param array $types e.g  ['image/jpg', 'image/gif']
 	 */
 	final protected function getExtensionsForTypes($types) {
 		$mime_types = HTTP::config()->uninherited('MimeTypes');
@@ -357,6 +400,112 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			}
 		}
 		return $keys;
+	}
+
+	/**
+	 * AcceptedExtensions - a template helper method
+	 */
+	public function AcceptedExtensions() {
+		$types = $this->getAcceptedTypes();
+		$extensions = $this->getExtensionsForTypes($types);
+		return implode(", ", $extensions);
+	}
+
+	/**
+	 * AcceptedFileSize - a template helper method to return allowed file size in MB
+	 * @see getUploaderConfig
+	 */
+	public function AcceptedFileSize($round = 1) {
+		$size = (int)$this->lib_config['validation']['sizeLimit'];// bytes
+		$mb = round($size / 1048576, $round);// allow for displaying< 1 MB uploads
+		return $mb;
+	}
+
+	/**
+	 * AcceptedFileSize - a template helper method to return allowed file size in MB
+	 * @see getUploaderConfig
+	 */
+	public function AcceptedMinFileSize($round = 1) {
+		$size = (int)$this->lib_config['validation']['minSizeLimit'];// bytes
+		$mb = round($size / 1048576, $round);// allow for displaying < 1 MB uploads
+		return $mb;
+	}
+
+	/**
+	 * AcceptedItemLimit - a template helper method
+	 */
+	public function AcceptedItemLimit() {
+		$limit = $this->lib_config['validation']['itemLimit'];
+		return $limit;
+	}
+
+	/**
+	 * AcceptedMaxWidth - a template helper method
+	 */
+	public function AcceptedMaxWidth() {
+		if(isset($this->lib_config['validation']['image']['maxWidth'])) {
+			return (int)$this->lib_config['validation']['image']['maxWidth'];
+		}
+		return false;
+	}
+
+	/**
+	 * AcceptedMaxHeight - a template helper method
+	 */
+	public function AcceptedMaxHeight() {
+		if(isset($this->lib_config['validation']['image']['maxHeight'])) {
+			return (int)$this->lib_config['validation']['image']['maxHeight'];
+		}
+		return false;
+	}
+
+	public function AcceptsMaxDimensions() {
+		if(($width = $this->AcceptedMaxWidth()) && ($height = $this->AcceptedMaxHeight())) {
+			return $width . "×" . $height;
+		}
+		return "";
+	}
+
+	/**
+	 * AcceptedMinWidth - a template helper method
+	 */
+	public function AcceptedMinWidth() {
+		if(isset($this->lib_config['validation']['image']['minWidth'])) {
+			return (int)$this->lib_config['validation']['image']['minWidth'];
+		}
+		return false;
+	}
+
+	/**
+	 * AcceptedMinHeight - a template helper method
+	 */
+	public function AcceptedMinHeight() {
+		if(isset($this->lib_config['validation']['image']['minHeight'])) {
+			return (int)$this->lib_config['validation']['image']['minHeight'];
+		}
+		return false;
+	}
+
+	public function AcceptsMinDimensions() {
+		if(($width = $this->AcceptedMinWidth()) && ($height = $this->AcceptedMinHeight())) {
+			return $width . "×" . $height;
+		}
+		return "";
+	}
+
+	/**
+	 * Test accepted mimetypes for an image/* value
+	 */
+	public function AcceptsImages() {
+		$types = $this->getAcceptedTypes();
+		$accepts = false;
+		foreach($types as $type) {
+			if(strpos($type, "image/") === 0) {
+				$accepts = true;
+				break;
+			}
+		}
+		return $accepts;
 	}
 
 	public function Field($properties = array()) {
@@ -605,6 +754,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 			$result = [
 				'success' => true,
+				'size' => $post['qqfile']['size'],
+				'allowed' => $this->lib_config['validation']['sizeLimit'],
+				'overSize' => $this->overSize($post['qqfile']['size']),
 				'newUuid' => $uuid
 			];
 			return (new HTTPResponse(json_encode($result), 200))->addHeader('Content-Type', 'application/json');
@@ -626,10 +778,24 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			'message' => [
 					'type' => 'error',
 					'value' => $error,
+			],
+
+			'meta' => [
+				'size' => [
+					'size' => isset($post['qqfile']['size']) ? $post['qqfile']['size'] : 0,
+					'allowed' => $this->lib_config['validation']['sizeLimit'],
+					'overSize' => isset($post['qqfile']['size']) ? $this->overSize($post['qqfile']['size']) : 0,
+				]
 			]
+
 		];
 		$this->getUpload()->clearErrors();
 		return $this->errorResponse($result, 400);
+	}
+
+	public function overSize($in) {
+		$check = $this->lib_config['validation']['sizeLimit'];
+		return $in / $check;
 	}
 
 	protected function errorResponse($result, $code = 400) {

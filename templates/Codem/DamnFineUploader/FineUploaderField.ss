@@ -74,4 +74,8 @@
       </dialog>
   </div>
 </div>
-<div class="dfu-uploader-ui" id="$ID" data-name="$Name" data-config="$UploaderConfig"></div>
+
+<div class="dfu-uploader-ui-container">
+  <% include FineUploaderMeta %>
+  <div class="dfu-uploader-ui" id="$ID" data-name="$Name" data-config="$UploaderConfig"></div>
+</div>
