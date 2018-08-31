@@ -10,9 +10,13 @@ This module provides two upload fields that can be used to upload files to a Sil
 
 ## Configuration
 
-Have a look in ```_config/config.yml``` for various configuration options. The 'fineuploader' entry can be used to add any configuration [supported by FineUploader](https://docs.fineuploader.com/branch/master/api/options.html).
+Have a look in ```_config/config.yml``` for various configuration options and seel also [Default Configuration](./docs/en/003_configuration.md)
 
-The Upload fields sets some configuration options:
+> Modify the ```signing_key``` value in your project configuration, along with anything else you like (e.g upload size limits)
+
+The 'fineuploader' entry can be used to add any configuration [supported by FineUploader](https://docs.fineuploader.com/branch/master/api/options.html).
+
+The Upload field itself sets some request-time configuration options, passed to the field.
 + 'messages'
 + 'form'
 + 'request' - specifically the method and the request endpoint
@@ -63,6 +67,8 @@ $upload_field->setOptionDelete(
 ## TODO
 + Feedback on limits prior to upload
 
+Please add feature requests and bug reports to the Github issue tracker
+
 
 ## Thanks
-Many thanks to the FineUploader team for developing and supporting an excellent file uploader.
+Many thanks to the [FineUploader team](https://fineuploader.com) for developing and supporting an excellent file uploader.
