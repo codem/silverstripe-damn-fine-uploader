@@ -23,12 +23,16 @@ The Upload fields sets some configuration options:
 ### FineUploaderCoreField
 Provides a core upload field, with no UI.
 ```
+use Codem\DamnFineUploader\FineUploaderCoreField;
+//...
 $upload_field_core = FineUploaderCoreField::create('MyFieldName', 'Core Upload Field');
 ```
 
 ### FineUploaderField
 Provides an upload field, with the standard FineUploader Gallery UI.
 ```
+use Codem\DamnFineUploader\FineUploaderField;
+//...
 $upload_field = FineUploaderField::create('MyUploadField', 'Upload Field');
 ```
 
