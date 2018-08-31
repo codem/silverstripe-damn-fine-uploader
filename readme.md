@@ -64,8 +64,19 @@ $upload_field->setOptionDelete(
 );
 ```
 
+### Field templates/layout/colours
+
+Field templates look like this at the moment
+
+![UI Field](./docs/screenshots/ui-field.png "The basic UI field")
+
+The core field is an upload field that does not use the UI variant of FineUploader
+
+![Core Field](./docs/screenshots/core-field.png "The basic Core field")
+
+
 ## TODO
-+ Feedback on limits prior to upload
++ Make the upload fields a bit nicer on the eye by default. You can use standard CSS to target the upload field elements and modify to your requirements.
 
 Please add feature requests and bug reports to the Github issue tracker
 
