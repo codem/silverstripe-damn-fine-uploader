@@ -66,7 +66,7 @@ function DFU() {
 				field.value = uuid;
 			} else {
 				var field = document.createElement('input');
-				field.type = 'text';
+				field.type = 'hidden';
 				field.value = uuid;
 				field.name = name;
 				f.appendChild(field);
