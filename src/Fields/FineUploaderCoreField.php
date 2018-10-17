@@ -683,9 +683,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @returns string
 	 */
 	protected static function sign_uuid($uuid) {
-		$key = Config::inst()->get('Codem\DamnFineUploader\FineUploaderCoreField','signing_key');
+		$key = Config::inst()->get(FineUploaderCoreField::class, 'signing_key');
 		if(empty($key)) {
-			throw new \Exception("Cannot get file by token if no signing key is set");
+			throw new \Exception("No signing key is set in configuration");
 		}
 		$salt = bin2hex(random_bytes(16));
 		$token = hash_hmac ( "sha256" , $uuid . $salt, $key, false );
