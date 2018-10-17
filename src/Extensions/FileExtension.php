@@ -27,6 +27,7 @@ class FileExtension extends DataExtension {
   ];
 
   /**
+   * @deprecated see FileRetriever::getUploadedFilesByKey()
    * Given a uuid of a file and the form's security id, retrieve an uploaded file
    * Note that this retrieves a file from the DRAFT stage as it may not be public
    * @param string $uuid the file uuid sent by back on upload as newUuid and submitted with the form
