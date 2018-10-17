@@ -17,6 +17,7 @@ use SilverStripe\Control\HTTP;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Security\NullSecurityToken;
 use SilverStripe\Control\Controller;
+use SilverStripe\Versioned\Versioned;
 use Exception;
 use finfo;
 
@@ -35,9 +36,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	const IMPLEMENTATION_TRADITIONAL_UI = 'traditionalui';
 	const UUID_NAME = 'dfu_uuid';
 
-	protected $lib_config;//fineuploader configuration
+	protected $lib_config = [];//fineuploader configuration
+	protected $runtime_config = [];//runtime config, merged into lib_config
 	protected $option_delete, $option_request = [];//custom request/delete settings
-	protected $default_accepted_types = ['image/jpg','image/gif','image/webp','image/jpeg'];// default to images for now
+	protected $default_accepted_types = ['image/jpg','image/gif','image/png','image/webp','image/jpeg'];// default to images for now
 	protected $use_date_folder = true;
 	protected $implementation = self::IMPLEMENTATION_TRADITIONAL_CORE;
 
@@ -53,6 +55,8 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 																						'application/javascript', 'text/javascript',
 																						'application/css', 'text/css'
 																				];
+
+	private $default_configuration_complete = false;
 
 	/**
 	 * @config
@@ -90,6 +94,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return $this;
 	}
 
+	/**
+	 * JS/CSS requirements for this field, children may implement
+	 */
 	protected function setRequirements() {
 		Requirements::set_force_js_to_bottom(true);
 		Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/core.js');
@@ -98,8 +105,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 	/**
 	 * Based on the implementation, set library requirements and the template to use
+	 * @note called by self::Field()
 	 */
-	protected function libraryRequirements() {
+	final protected function libraryRequirements() {
 		$this->setRequirements();
 		$this->initFieldConfig();
 	}
@@ -109,22 +117,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * acceptFiles is a list of mimetypes, not file extensions: https://docs.fineuploader.com/branch/master/api/options.html#validation.acceptFiles
 	 * @param boolean $force set to true to override any current config and re-init
 	 */
-	public function initFieldConfig($force = false) {
-		if(!$this->lib_config || $force) {
+	final public function initFieldConfig($force = false) {
+		if(!$this->hasDefaultConfiguration() || $force) {
 			$this->setUploaderDefaultConfig();
 		}
-		if(empty($this->lib_config['validation']['acceptFiles'])) {
-			// if these haven't been set, set default types
-			$this->setAcceptedTypes( $this->default_accepted_types );
-		}
-	}
-
-	/**
-	 * Sets the current implementation
-	 */
-	public function setImplementation($implementation) {
-		$this->implementation = $implementation;
-		return $this;
 	}
 
 	/**
@@ -138,19 +134,22 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * Sets the default config from YAML configuration and applies some configuration based on this form
 	 */
 	protected function setUploaderDefaultConfig() {
+
+		$this->default_configuration_complete = false;
+
 		// set default lib_config from yml
-		$this->lib_config = $this->config()->fineuploader;
+		$lib_config = $this->config()->fineuploader;
 		// element options
 		$form = $this->getForm();
-		//$this->lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
-		//$this->lib_config['autoUpload'] = false;// do not auto upload by default
+		//$lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
+		//$lib_config['autoUpload'] = false;// do not auto upload by default
 
 		// form options
-		$this->lib_config['form'] = [];
-		//$this->lib_config['form']['autoUpload'] = false;// do not auto upload by default
+		$lib_config['form'] = [];
+		//$lib_config['form']['autoUpload'] = false;// do not auto upload by default
 
 		// messages
-		$this->lib_config['messages'] = [
+		$lib_config['messages'] = [
 			'emptyError' => _t('DamnFineUploader.ZERO_BYTES', 'The file {file} seems to be empty'),
 			'noFilesError' => _t('DamnFineUploader.NO_FILES', 'No files were submitted'),
 			'minSizeError' => _t('DamnFineUploader.FILE_SMALL', 'The file is too small, please upload a file larger than {minSizeLimit}'),
@@ -164,17 +163,23 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		];
 
 		// sanity check on the file size limit vs system restrictions
-		if(isset($this->lib_config['validation']['sizeLimit'])) {
-			$this->setAllowedMaxFileSize($this->lib_config['validation']['sizeLimit']);
+		if(isset($lib_config['validation']['sizeLimit'])) {
+			//set runtime value
+			$this->setAllowedMaxFileSize($lib_config['validation']['sizeLimit']);
+		}
+
+		// start off with a zero minsize limit
+		if(!isset($lib_config['validation']['minSizeLimit'])) {
+			$lib_config['validation']['minSizeLimit'] = 0;
 		}
 
 		// text
-		$this->lib_config['text'] = [
+		$lib_config['text'] = [
 			'defaultResponseError' => _t('DamnFineUploader.GENERAL_ERROR', 'The upload failed due to an unknown reason')
 		];
 
 		// request endpoint
-		$this->lib_config['request'] = [
+		$lib_config['request'] = [
 			'method' => 'POST',
 			'uuidName' => self::UUID_NAME,
 			'requireSuccessJson' => true,
@@ -185,10 +190,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 
 		// default deleteFile configuration
 		// some options are set in config.yml
-		$this->lib_config['deleteFile']['enabled'] = false;//off by default, see below
-		$this->lib_config['deleteFile']['endpoint'] = '';//see below
-		$this->lib_config['deleteFile']['method'] = 'POST';//enforce POST
-		$this->lib_config['deleteFile']['params'] = [];// see below
+		$lib_config['deleteFile']['enabled'] = false;//off by default, see below
+		$lib_config['deleteFile']['endpoint'] = '';//see below
+		$lib_config['deleteFile']['method'] = 'POST';//enforce POST
+		$lib_config['deleteFile']['params'] = [];// see below
 
 		/**
 		 * This configuration requires the field to have a form attached,
@@ -203,18 +208,36 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			}
 
 			// request options
-			$this->lib_config['request']['endpoint'] = $this->Link('upload');
-			$this->lib_config['request']['params'][ $token->getName() ] = $token->getValue();
+			$lib_config['request']['endpoint'] = $this->Link('upload');
+			$lib_config['request']['params'][ $token->getName() ] = $token->getValue();
 
 			// deleteFile options if allowed
 			$allow_delete = $this->config()->allow_delete;
 			if($allow_delete) {
-				$this->lib_config['deleteFile']['enabled'] = true;//enable when we can handle a delete
-				$this->lib_config['deleteFile']['endpoint'] = $this->Link('remove');
-				$this->lib_config['deleteFile']['params'][ $token->getName() ] = $token->getValue();
+				$lib_config['deleteFile']['enabled'] = true;//enable when we can handle a delete
+				$lib_config['deleteFile']['endpoint'] = $this->Link('remove');
+				$lib_config['deleteFile']['params'][ $token->getName() ] = $token->getValue();
 			}
 		}
 
+		// fallback to default accepted file types if none set
+		if(empty($lib_config['validation']['acceptFiles'])) {
+			$lib_config['validation']['acceptFiles'] = implode(",", $this->default_accepted_types);// this could inckude
+			$lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($this->default_accepted_types);//TODO
+		}
+
+		// merge runtime config into default config, create lib_config
+		$this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
+
+		$this->default_configuration_complete = true;
+
+	}
+
+	/**
+	 * Checks whether lib_config is present and complete
+	 */
+	public function hasDefaultConfiguration() {
+		return !empty($this->lib_config) && $this->default_configuration_complete;
 	}
 
 	/**
@@ -222,10 +245,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @param SecurityToken $token
 	 */
 	public function setSecurityToken(SecurityToken $token) {
-		if(!$this->lib_config) {
-			$this->setUploaderDefaultConfig();
-		}
-		$this->lib_config['request']['params'][ $token->getName() ] = $token->getValue();
+		$this->runtime_config['request']['params'][ $token->getName() ] = $token->getValue();
 	}
 
 	/**
@@ -234,14 +254,12 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * To set custom request options see {@link self::setOptionRequest()}
 	 */
 	public function setRequestEndpoint($endpoint = "") {
-		if(!$this->lib_config) {
-			$this->setUploaderDefaultConfig();
-		}
 		if($endpoint) {
-			$this->lib_config['request']['endpoint'] = $endpoint;
+			$this->runtime_config['request']['endpoint'] = $endpoint;
 		} else if ($form = $this->getForm()) {
-			$this->lib_config['request']['endpoint'] = $this->Link('upload');
+			$this->runtime_config['request']['endpoint'] = $this->Link('upload');
 		}
+		return $this;
 	}
 
 	/**
@@ -250,15 +268,13 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * To set custom deleteFile options see {@link self::setOptionDelete()}
 	 */
 	public function setDeleteEndpoint($endpoint = "") {
-		if(!$this->lib_config) {
-			$this->setUploaderDefaultConfig();
-		}
-		$this->lib_config['deleteFile']['enabled'] = true;//setting an endpoint enables file uploads
+		$this->runtime_config['deleteFile']['enabled'] = true;//setting an endpoint enables file uploads
 		if($endpoint) {
-			$this->lib_config['deleteFile']['endpoint'] = $endpoint;
+			$this->runtime_config['deleteFile']['endpoint'] = $endpoint;
 		} else if ($form = $this->getForm()) {
-			$this->lib_config['deleteFile']['endpoint'] = $this->Link('remove');
+			$this->runtime_config['deleteFile']['endpoint'] = $this->Link('remove');
 		}
+		return $this;
 	}
 
 	/**
@@ -267,10 +283,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @see https://docs.fineuploader.com/branch/master/api/options.html#request
 	 */
 	public function setOptionRequest(array $request) {
-		if(!$this->lib_config) {
-			$this->setUploaderDefaultConfig();
-		}
-		$this->lib_config['request'] = $request;
+		$this->runtime_config['request'] = $request;
 		return $this;
 	}
 
@@ -280,17 +293,17 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * This requires your own delete implementation with checks and balances
 	 */
 	public function setOptionDelete(array $delete) {
-		if(!$this->lib_config) {
-			$this->setUploaderDefaultConfig();
-		}
-		$this->lib_config['deleteFile'] = $delete;
+		$this->runtime_config['deleteFile'] = $delete;
 		return $this;
 	}
 
 	/**
-	 * Get a single value from config
+	 * Get a single value from config, this populates lib_config if it is not already created
 	 */
 	public function getUploaderConfigValue($category, $key) {
+		if(!$this->hasDefaultConfiguration()) {
+			$this->setUploaderDefaultConfig();
+		}
 		if(isset($this->lib_config[$category][$key])) {
 			return $this->lib_config[$category][$key];
 		}
@@ -301,9 +314,10 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * Template helper method
 	 * @see https://github.com/FineUploader/fine-uploader/issues/1396
 	 * @see https://github.com/FineUploader/fine-uploader/issues/1910
+	 * @param boolean $transform_size_limit (deprecated)
 	 */
-	public function getUploaderConfig($transform_size_limit = true) {
-		if(!$this->lib_config) {
+	public function UploaderConfig($transform_size_limit = true) {
+		if(!$this->hasDefaultConfiguration()) {
 			$this->setUploaderDefaultConfig();
 		}
 
@@ -336,11 +350,12 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * @note override general config provided in YML, if you wish to override the endpoint, use setRequestEndpoint()
+	 * Provide runtime config to be merged into lib_config
+	 * If you wish to override the endpoint, use setRequestEndpoint()
 	 * @note you can set any options provided here: https://docs.fineuploader.com/branch/master/api/options.html
 	 */
 	public function setConfig(array $config) {
-		$this->lib_config = $config;
+		$this->runtime_config = $config;
 		return $this;
 	}
 
@@ -348,32 +363,62 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * @note set the accepted types for this form
 	 */
 	public function setAcceptedTypes(array $types) {
-		if(!isset($this->lib_config['validation'])) {
-			$this->lib_config['validation'] = [];
-		}
-
-		$this->lib_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
-		$this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);//TODO
+		$this->runtime_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
+		$this->runtime_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);//TODO
 		return $this;
 	}
 
+	/**
+	 * Returns the system provided max file size, in bytes
+	 * @returns int
+	 */
+	protected function getSystemAllowedMaxFileSize() {
+		$bytes = (int)$this->getValidator()->getAllowedMaxFileSize();
+		return $bytes;
+	}
+
+	/**
+	 * Set the maximum allowed filesize, in bytes
+	 * Note that if the system setting is lower, that will be used
+	 */
 	public function setAllowedMaxFileSize($bytes) {
-		if(!isset($this->lib_config['validation'])) {
-			$this->lib_config['validation'] = [];
-		}
 		$bytes = (int)$bytes;
-		$system = (int)$this->getValidator()->getAllowedMaxFileSize();
+		$system = $this->getSystemAllowedMaxFileSize();
 		$limit = min($bytes, $system);
-		$this->lib_config['validation']['sizeLimit'] = $limit;
+		$this->runtime_config['validation']['sizeLimit'] = $limit;
 
 		return $this;
 	}
 
 	public function setAllowedMaxItemLimit($limit) {
-		if(!isset($this->lib_config['validation'])) {
-			$this->lib_config['validation'] = [];
-		}
-		$this->lib_config['validation']['itemLimit'] = $limit;
+		$this->runtime_config['validation']['itemLimit'] = $limit;
+		return $this;
+	}
+
+	/**
+	 * Set max dimensions for image uploads
+	 */
+	public function setAcceptedMaxDimensions($width,  $height) {
+		$this->runtime_config['validation']['image']['maxHeight'] = $height;
+		$this->runtime_config['validation']['image']['maxWidth'] = $width;
+		return $this;
+	}
+
+	/**
+	 * Set min dimensions for image uploads
+	 */
+	public function setAcceptedMinDimensions($width,  $height) {
+		$this->runtime_config['validation']['image']['minHeight'] = $height;
+		$this->runtime_config['validation']['image']['minWidth'] = $width;
+		return $this;
+	}
+
+	/**
+	 * setAcceptedMinFileSize - set the minimum upload file size
+	 * @param int $size bytes
+	 */
+	public function setAcceptedMinFileSize($size) {
+		$this->runtime_config['validation']['minSizeLimit'] = $size;// bytes
 		return $this;
 	}
 
@@ -422,7 +467,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	}
 
 	/**
-	 * AcceptedFileSize - a template helper method to return allowed file size in MB
+	 * AcceptedMinFileSize - a template helper method to return minimkum file size in MB
 	 * @see getUploaderConfig
 	 */
 	public function AcceptedMinFileSize($round = 1) {
@@ -459,7 +504,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return false;
 	}
 
-	public function AcceptsMaxDimensions() {
+	public function AcceptedMaxDimensions() {
 		if(($width = $this->AcceptedMaxWidth()) && ($height = $this->AcceptedMaxHeight())) {
 			return $width . "×" . $height;
 		}
@@ -486,7 +531,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return false;
 	}
 
-	public function AcceptsMinDimensions() {
+	public function AcceptedMinDimensions() {
 		if(($width = $this->AcceptedMinWidth()) && ($height = $this->AcceptedMinHeight())) {
 			return $width . "×" . $height;
 		}
@@ -747,8 +792,9 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 			// save the token, together with the Form Security ID for the form used to upload the file
 			$file->DFU = $uuid . "|" . $form_security_token;
 			$file->IsDfuUpload = 1;
-			$file->write();
+			$file->writeToStage( Versioned::DRAFT );
 
+			// if the file is ever published on upload, this unpublishes it
 			if($this->config()->unpublish_after_upload) {
 				$file->doUnpublish();
 			}
