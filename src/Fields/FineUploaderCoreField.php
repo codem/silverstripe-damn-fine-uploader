@@ -606,7 +606,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		$valid = false;
 		$types = $this->getAcceptedTypes();//returns a mix of accept options configured for the input element
 		if(empty($types)) {
-			throw new \Exception("No accepted mime types have been configured");
+			throw new Exception("No accepted mime types have been configured");
 		}
 		$mimetype_parts = $this->parseMimeType($mimetype);
 
@@ -685,7 +685,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	protected static function sign_uuid($uuid) {
 		$key = Config::inst()->get(FineUploaderCoreField::class, 'signing_key');
 		if(empty($key)) {
-			throw new \Exception("No signing key is set in configuration");
+			throw new Exception("No signing key is set in configuration");
 		}
 		$salt = bin2hex(random_bytes(16));
 		$token = hash_hmac ( "sha256" , $uuid . $salt, $key, false );
