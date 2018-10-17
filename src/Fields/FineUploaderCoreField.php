@@ -246,6 +246,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 */
 	public function setSecurityToken(SecurityToken $token) {
 		$this->runtime_config['request']['params'][ $token->getName() ] = $token->getValue();
+		return $this;
 	}
 
 	/**
