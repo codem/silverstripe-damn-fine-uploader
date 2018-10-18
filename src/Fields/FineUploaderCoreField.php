@@ -398,6 +398,23 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 		return $this;
 	}
 
+	/**
+	 * This method is provided for consistency
+	 */
+	public function setAcceptedMaxFileSize($bytes) {
+		return $this->setAllowedMaxFileSize($bytes);
+	}
+
+	/**
+	 * setAcceptedMinFileSize - set the minimum upload file size
+	 * Worth noting that you can provide a minSizeLimit > the sizeLimit here, in which case the minSizeLimit will be reset to 0
+	 * @param int $size bytes
+	 */
+	public function setAcceptedMinFileSize($size) {
+		$this->runtime_config['validation']['minSizeLimit'] = $size;// bytes
+		return $this;
+	}
+
 	public function setAllowedMaxItemLimit($limit) {
 		$this->runtime_config['validation']['itemLimit'] = $limit;
 		return $this;
@@ -418,16 +435,6 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	public function setAcceptedMinDimensions($width,  $height) {
 		$this->runtime_config['validation']['image']['minHeight'] = $height;
 		$this->runtime_config['validation']['image']['minWidth'] = $width;
-		return $this;
-	}
-
-	/**
-	 * setAcceptedMinFileSize - set the minimum upload file size
-	 * Worth noting that you can provide a minSizeLimit > the sizeLimit here, in which case the minSizeLimit will be reset to 0
-	 * @param int $size bytes
-	 */
-	public function setAcceptedMinFileSize($size) {
-		$this->runtime_config['validation']['minSizeLimit'] = $size;// bytes
 		return $this;
 	}
 
