@@ -380,7 +380,7 @@ class FineUploaderCoreField extends FormField implements FileHandleField {
 	 * Returns the system provided max file size, in bytes
 	 * @returns int
 	 */
-	protected function getSystemAllowedMaxFileSize() {
+	public function getSystemAllowedMaxFileSize() {
 		$bytes = (int)$this->getValidator()->getAllowedMaxFileSize();
 		return $bytes;
 	}
