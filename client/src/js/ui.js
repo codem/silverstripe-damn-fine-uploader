@@ -35,6 +35,12 @@ if(dfu_uploaders_ui) {
       onDeleteComplete : function(id) {
         dfu.handleDeleteComplete(upload_element, id);
       },
+      onCancel : function(id, name) {
+        return dfu.handleCancel(upload_element, qq, id, name, this);
+      },
+      onError: function(id, name, errorReason, xhr) {
+        dfu.handleError(upload_element, qq, id, name, errorReason, xhr);
+      }
     };
 
     uploader = new qq.FineUploader(config);

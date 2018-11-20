@@ -129,8 +129,8 @@ function DFU() {
 	this.handleAllComplete = function(upload_element, succeeded, failed) {
 		var f = this.getForm(upload_element);
 		if(f) {
-			if(failed.length == 0) {
-				// unblock form
+			if(failed.length == 0 || succeeded.length == 0) {
+				// unblock form if none failed or none succeeded
 				this.toggleSubmitButtons(f, false);
 				f.onsubmit = function() { return true; };
 			} else {
@@ -140,6 +140,33 @@ function DFU() {
 			}
 		}
 	};
+
+  /**
+   * When an upload is cancelled..
+   */
+  this.handleCancel = function(upload_element, qq, id, name, uploader) {
+    var uploading = uploader.getUploads({status: qq.status.UPLOADING});
+    if(uploading && uploading.length == 0) {
+      var f = this.getForm(upload_element);
+      if(f) {
+        // unblock the form if none uploading
+        this.toggleSubmitButtons(f, false);
+        f.onsubmit = function() { return true; };
+      }
+    }
+  };
+
+  /**
+   * Whenever an error occurs
+   */
+  this.handleError = function(upload_element, qq, id, name, errorReason, xhr) {
+    var f = this.getForm(upload_element);
+    if(f) {
+      // unblock the form on any error
+      this.toggleSubmitButtons(f, false);
+      f.onsubmit = function() { return true; };
+    }
+  }
 
 	this.handleSubmit = function( upload_element ) {
 		var f = this.getForm(upload_element);

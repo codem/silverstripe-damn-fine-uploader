@@ -171,6 +171,12 @@ if(dfu_uploaders_core) {
         //ref: https://docs.fineuploader.com/branch/master/api/events.html#allComplete
         onAllComplete: function(succeeded, failed) {
           return dfu.handleAllComplete(upload_element, succeeded, failed);
+        },
+        onCancel : function(id, name) {
+          return dfu.handleCancel(upload_element, qq, id, name, this);
+        },
+        onError: function(id, name, errorReason, xhr) {
+          return dfu.handleError(upload_element, qq, id, name, errorReason, xhr);
         }
       };
       uploader = new qq.FineUploaderBasic(config);
