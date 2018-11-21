@@ -1,7 +1,7 @@
 /**
  * DFU: common methods
  */
-function DFU() {
+export default function DFU() {
 	this.init = function() {};
 	this.files = {};// register of uploaded files per uploader element
 	this.prefix = "dfufile";
@@ -293,4 +293,3 @@ function DFU() {
 	};
 
 }
-module.exports = DFU;
