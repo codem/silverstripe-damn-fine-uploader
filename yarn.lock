@@ -1789,6 +1789,41 @@ file-loader@^1.1.11:
     loader-utils "^1.0.2"
     schema-utils "^0.4.5"
 
+filepond-plugin-file-metadata@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-metadata/-/filepond-plugin-file-metadata-1.0.2.tgz#89f8de302f8aeabc88eedae447384e6fbbc311cf"
+  integrity sha512-+WqLPd/X1+LVNu60pMdRIn9Jpi5Se1aTTDIhCHIEgmpVRNx7UFjU6KXREKkcZYy7kRYuSgwRrd0/cDKpxoZfcw==
+
+filepond-plugin-file-validate-size@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-size/-/filepond-plugin-file-validate-size-2.0.0.tgz#bf515e425441da85ac71c8e3f004137718504e34"
+  integrity sha512-1CjMWN64mnLznP8z3Zc/2GRkF9w3mtAamfv6THVVOicUuUvWfbAPzKQAwTn8Be+voYzXtQ++dhCuU7pRDeY6nw==
+
+filepond-plugin-file-validate-type@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-type/-/filepond-plugin-file-validate-type-1.2.0.tgz#5ab8d25cb21c8d632a10b4c1a008fb5c0b1ff73a"
+  integrity sha512-oXck6wr37TwN1qcb64ktXIsi15Mfqqfd65T9gp5RP2nkXkwXtvgb5q5PANRqNEAYyJv3Od5DfL8m4BzfBXiBtg==
+
+filepond-plugin-image-exif-orientation@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-exif-orientation/-/filepond-plugin-image-exif-orientation-1.0.3.tgz#b2914b5fd8ec1bc5fc2eb1b0c969275fdbcf9198"
+  integrity sha512-eg0OTny+fsF21x3FnWRrZjDG50iMFFnl8uVKW9MpG+tggBqpp/G7LreO7/gHyPLaiMNO+TX+ANMF51lw6OlNrQ==
+
+filepond-plugin-image-preview@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-3.1.4.tgz#5b40b0059844350490459f633feabbc51f3a54d8"
+  integrity sha512-IGH8ZFY28ulpEVbukZMFbzfxS9fTw/YlmIJ33tHNKjzXFBMzJmioSVr6EGy6sz4X7HQF2vlAoiE+wiFIQarPXQ==
+
+filepond-plugin-image-validate-size@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-validate-size/-/filepond-plugin-image-validate-size-1.1.0.tgz#115c7a2a3abab96e7b937d2acf51830083e0855a"
+  integrity sha512-V6vFI4L8YQZJGOq9NBrkVfjOaqAc5q2XIwS5SBXZCCd5BWl81oe28V+T9IG3aMk46zbIjN8MaJ/6vbRIZPKQLQ==
+
+filepond@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/filepond/-/filepond-3.3.2.tgz#590c96e263a9760ab8b9d2ea6a42bffa3ed749ce"
+  integrity sha512-sbortG+oM5Nc1DI4QPPm4ngZfk2NmWtUzWsRltVlVlm9rM8OIkMdaKU09EUe1GXhf7kO7ls8O1KhR9d6oi9k+g==
+
 fill-range@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-4.0.0.tgz#d544811d428f98eb06a63dc402d2403c328c38f7"

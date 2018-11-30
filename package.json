@@ -32,6 +32,13 @@
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
+    "filepond": "^3.3.2",
+    "filepond-plugin-file-metadata": "^1.0.2",
+    "filepond-plugin-file-validate-size": "^2.0.0",
+    "filepond-plugin-file-validate-type": "^1.2.0",
+    "filepond-plugin-image-exif-orientation": "^1.0.3",
+    "filepond-plugin-image-preview": "^3.1.4",
+    "filepond-plugin-image-validate-size": "^1.1.0",
     "fine-uploader": "^5.16.2"
   }
 }

@@ -1,12 +1,12 @@
 ---
 Name: damnfineuploader
 ---
-Codem\DamnFineUploader\FineUploaderCoreField:
+Codem\DamnFineUploader\DamnFineUploaderField:
   signing_key : ''
   allow_delete : true
   unpublish_after_upload : true
-  # config for fineuploader
-  fineuploader:
+  # config for the frontend lib
+  implementation:
     autoUpload: true
     maxConnections: 3
     multiple: true

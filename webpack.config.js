@@ -23,7 +23,8 @@ module.exports = {
   mode : build_for,
   entry : {
     core: PATHS.SRC + '/js/core.js',
-    ui: PATHS.SRC + '/js/ui.js'
+    ui: PATHS.SRC + '/js/ui.js',
+    filepond: PATHS.SRC + '/js/filepond.js'
   },
   output: {
     path: PATHS.DIST,

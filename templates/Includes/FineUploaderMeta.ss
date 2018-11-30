@@ -9,4 +9,4 @@
     <% if AcceptedMinDimensions %><li><strong>Minimum image dimensions</strong>: $AcceptedMinDimensions pixels</li><% end_if %>
   <% end_if %>
   </ul>
-</div>
+</div><!-- end meta -->

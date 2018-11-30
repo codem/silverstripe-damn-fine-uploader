@@ -6,6 +6,12 @@ export default function DFU() {
 	this.files = {};// register of uploaded files per uploader element
 	this.prefix = "dfufile";
 
+  // a pseudo-random file indentifier
+  this.getFileIndentifier = function(prefix) {
+    var d = new Date();
+    return prefix + '_' + Math.random() + '_' + d.getTime();
+  };
+
 	this.getFieldName = function(upload_element, id) {
 		return upload_element.getAttribute('data-name') + "[" + id + "]";
 	};
