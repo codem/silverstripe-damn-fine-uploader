@@ -26,7 +26,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     const IMPLEMENTATION_TRADITIONAL_CORE = 'traditionalcore';// FineUploader
     const IMPLEMENTATION_TRADITIONAL_UI = 'traditionalui';// FineUploader
-    const IMPLEMENTATION_FILEPOND = 'filepond';// FilePond
     const IMPLEMENTATION_UPPY = 'uppy';// Uppy
     const UUID_NAME = 'dfu_uuid';
 

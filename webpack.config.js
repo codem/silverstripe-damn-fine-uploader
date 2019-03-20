@@ -24,7 +24,6 @@ module.exports = {
   entry : {
     core: PATHS.SRC + '/js/core.js',
     ui: PATHS.SRC + '/js/ui.js',
-    filepond: PATHS.SRC + '/js/filepond.js',
     uppy: PATHS.SRC + '/js/uppy.js'
   },
   output: {
