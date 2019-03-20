@@ -32,6 +32,10 @@
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
+    "@uppy/core": "^0.30.3",
+    "@uppy/dashboard": "^0.30.3",
+    "@uppy/drag-drop": "^0.30.3",
+    "@uppy/xhr-upload": "^0.30.3",
     "filepond": "^3.3.2",
     "filepond-plugin-file-metadata": "^1.0.2",
     "filepond-plugin-file-validate-size": "^2.0.0",

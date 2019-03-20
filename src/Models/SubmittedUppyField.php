@@ -7,7 +7,7 @@ use SilverStripe\Assets\File;
 /**
  * Submitted Field for FineUploader
  */
-class SubmittedFineUploaderField extends SubmittedFormField
+class SubmittedUppyField extends SubmittedFormField
 {
     use SubmittedDamnFineUploader;
 
@@ -15,7 +15,7 @@ class SubmittedFineUploaderField extends SubmittedFormField
      * Defines the database table name
      * @var string
      */
-    private static $table_name = 'SubmittedFineUploaderField';
+    private static $table_name = 'SubmittedUppyField';
 
     private static $many_many = [
         'Files' => File::class

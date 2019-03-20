@@ -1,9 +1,6 @@
 <?php
 namespace Codem\DamnFineUploader;
 
-use Silverstripe\Forms\FileField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\TextareaField;
 use SilverStripe\UserForms\Model\EditableFormField;
 
 /**
