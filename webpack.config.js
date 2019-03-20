@@ -19,76 +19,84 @@ const PATHS = {
 
 const build_for = (process.env.NODE_ENV !== 'production' ? 'development' : 'production');
 
-module.exports = {
-  mode : build_for,
-  entry : {
-    core: PATHS.SRC + '/js/core.js',
-    ui: PATHS.SRC + '/js/ui.js',
-    uppy: PATHS.SRC + '/js/uppy.js'
-  },
-  output: {
-    path: PATHS.DIST,
-    filename: 'js/[name].js'
-  },
-  module: {
-    rules: [
-      {
-        test:    /\.js$/,
-        exclude: [/node_modules/],
-        use: [{
-          loader: 'babel-loader'
-        }]
-      },
-      {
-         test: /\.css$/,
-         use: [
-           {
-               loader: MiniCssExtractPlugin.loader,
-               options: {
-                 publicPath: '../'
-               }
-            },
-           'css-loader'
-         ]
-      },
-      {
-          test: /\.(png|jpg|gif)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options : {
-                emitFile: true,
-                name: 'assets/[name].[ext]'
+module.exports = (env, argv) => {
+
+  const config = {
+
+    mode : build_for,
+    devtool : build_for == 'production' ? 'source-map' : 'eval',
+    entry : {
+      core: PATHS.SRC + '/js/core.js',
+      ui: PATHS.SRC + '/js/ui.js',
+      uppy: PATHS.SRC + '/js/uppy.js'
+    },
+    output: {
+      path: PATHS.DIST,
+      filename: 'js/[name].js'
+    },
+    module: {
+      rules: [
+        {
+          test:    /\.js$/,
+          exclude: [/node_modules/],
+          use: [{
+            loader: 'babel-loader'
+          }]
+        },
+        {
+           test: /\.css$/,
+           use: [
+             {
+                 loader: MiniCssExtractPlugin.loader,
+                 options: {
+                   publicPath: '../'
+                 }
+              },
+             'css-loader'
+           ]
+        },
+        {
+            test: /\.(png|jpg|gif)$/,
+            use: [
+              {
+                loader: 'file-loader',
+                options : {
+                  emitFile: true,
+                  name: 'assets/[name].[ext]'
+                }
               }
-            }
-          ]
-      }
+            ]
+        }
+      ]
+    },
+
+    optimization: {
+      minimize: true,
+      minimizer: [
+        new UglifyjsWebpackPlugin({
+
+        })
+      ]
+    },
+
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: "styles/[name].css",
+        chunkFilename: "styles/[name].css"
+      }),
+      new CopyWebpackPlugin([
+        {
+          'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
+          'to' : PATHS.DIST + '/assets/[name].[ext]',
+        },
+        {
+          'from' : PATHS.MODULES + '/fine-uploader/all.fine-uploader/placeholders/*.png',
+          'to' : PATHS.DIST + '/assets/placeholders/[name].[ext]',
+        }
+      ])
     ]
-  },
 
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new UglifyjsWebpackPlugin({
+  };
 
-      })
-    ]
-  },
-
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: "styles/[name].css",
-      chunkFilename: "styles/[name].css"
-    }),
-    new CopyWebpackPlugin([
-      {
-        'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
-        'to' : PATHS.DIST + '/assets/[name].[ext]',
-      },
-      {
-        'from' : PATHS.MODULES + '/fine-uploader/all.fine-uploader/placeholders/*.png',
-        'to' : PATHS.DIST + '/assets/placeholders/[name].[ext]',
-      }
-    ])
-  ]
+  return config;
 };

@@ -1,5 +1,5 @@
 /node_modules
 /package-lock.json
-client/dist/js/main
-/client/dist/js/main.js
 /yarn-error.log
+/client/dist/styles/*.map
+/client/dist/js/*.map
