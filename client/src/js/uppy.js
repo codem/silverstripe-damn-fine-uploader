@@ -85,13 +85,23 @@ if(dfu_uploaders_uppy) {
 
     uppy.on('error', (result) => {
       // all error
+      dfu.handleUnblock(upload_element);
     });
 
     uppy.on('complete', (result) => {
       // all complete
+      dfu.handleUnblock(upload_element);
+    });
+
+    uppy.on('cancel-all', (result) => {
+      // all error
+      dfu.handleUnblock(upload_element);
     });
 
     uppy.on('file-added', (file) => {
+
+      // block submit
+      dfu.handleSubmit(upload_element);
 
       // set required file meta
       var meta = {};

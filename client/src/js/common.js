@@ -133,17 +133,12 @@ export default function DFU() {
    * @param array failed array of file ids not uploaded successfully
    */
   this.handleAllComplete = function(upload_element, succeeded, failed) {
-    var f = this.getForm(upload_element);
-    if(f) {
-      if(failed.length == 0 || succeeded.length == 0) {
-        // unblock form if none failed or none succeeded
-        this.toggleSubmitButtons(f, false);
-        f.onsubmit = function() { return true; };
-      } else {
-        // retain disabled form
-        this.toggleSubmitButtons(f, true);
-        f.onsubmit = function() { return false; };
-      }
+    if(failed.length == 0 || succeeded.length == 0) {
+      // unblock form if none failed or none succeeded
+      this.handleUnblock(upload_element);
+    } else {
+      // retain disabled form
+      this.handleSubmit(upload_element);
     }
   };
 
@@ -153,12 +148,16 @@ export default function DFU() {
   this.handleCancel = function(upload_element, qq, id, name, uploader) {
     var uploading = uploader.getUploads({status: qq.status.UPLOADING});
     if(uploading && uploading.length == 0) {
-      var f = this.getForm(upload_element);
-      if(f) {
-        // unblock the form if none uploading
-        this.toggleSubmitButtons(f, false);
-        f.onsubmit = function() { return true; };
-      }
+      this.handleUnblock(upload_element);
+    }
+  };
+
+  this.handleUnblock = function(upload_element) {
+    var f = this.getForm(upload_element);
+    if(f) {
+      // unblock the form if none uploading
+      this.toggleSubmitButtons(f, false);
+      f.onsubmit = function() { return true; };
     }
   };
 
@@ -169,8 +168,7 @@ export default function DFU() {
     var f = this.getForm(upload_element);
     if(f) {
       // unblock the form on any error
-      this.toggleSubmitButtons(f, false);
-      f.onsubmit = function() { return true; };
+      this.handleUnblock(upload_element);
     }
   }
 
