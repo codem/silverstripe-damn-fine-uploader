@@ -50,7 +50,6 @@ class UppyField extends DamnFineUploaderField
      */
     public function UploaderConfig()
     {
-
         if (!$this->hasDefaultConfiguration()) {
             $this->setUploaderDefaultConfig();
         }

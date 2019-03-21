@@ -39,8 +39,8 @@ class EditableUppyField extends EditableFormField
     protected function getUploaderField()
     {
         $field = UppyField::create($this->Name, $this->Title ?: false, null, null)
-          ->setFieldHolderTemplate(EditableFormField::class . '_holder')
-          ->setTemplate(__CLASS__);
+                    ->setFieldHolderTemplate(EditableFormField::class . '_holder')
+                    ->setTemplate(__CLASS__);
         return $field;
     }
 

@@ -1,5 +1,6 @@
 <?php
 namespace Codem\DamnFineUploader;
+
 use SilverStripe\View\Requirements;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
@@ -12,8 +13,8 @@ use Exception;
  *            You can enable a standalone drag-drop style interface by setting autoUpload to true, file submissions will then be directed through this field's upload method
  *            Read More: https://docs.fineuploader.com/branch/master/features/forms.html
  */
-class FineUploaderCoreField extends DamnFineUploaderField {
-
+class FineUploaderCoreField extends DamnFineUploaderField
+{
     protected $file_input_param = 'qqfile';
 
     /**
@@ -21,14 +22,15 @@ class FineUploaderCoreField extends DamnFineUploaderField {
      * @var array
      */
     private static $allowed_actions = [
-            'upload',
-            'remove'
+        'upload',
+        'remove'
     ];
 
     /**
      * JS/CSS requirements for this field, children may implement
      */
-    protected function setRequirements() {
+    protected function setRequirements()
+    {
         Requirements::set_force_js_to_bottom(true);
         Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/core.js');
         Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/core.css');
@@ -37,7 +39,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Returns the current implementation or self::IMPLEMENTATION_TRADITIONAL_CORE if not set/handled
      */
-    public function getImplementation() {
+    public function getImplementation()
+    {
         return self::IMPLEMENTATION_TRADITIONAL_CORE;
     }
 
@@ -46,7 +49,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
      * @param array $request
      * @see https://docs.fineuploader.com/branch/master/api/options.html#request
      */
-    public function setOptionRequest(array $request) {
+    public function setOptionRequest(array $request)
+    {
         return parent::setOptionRequest($request);
     }
 
@@ -55,7 +59,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
      * @see https://docs.fineuploader.com/branch/master/api/options.html#deleteFile
      * This requires your own delete implementation with checks and balances
      */
-    public function setOptionDelete(array $delete) {
+    public function setOptionDelete(array $delete)
+    {
         return parent::setOptionDelete($delete);
     }
 
@@ -64,7 +69,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
      * If you wish to override the endpoint, use setRequestEndpoint()
      * @note you can set any options provided here: https://docs.fineuploader.com/branch/master/api/options.html
      */
-    public function setConfig(array $config) {
+    public function setConfig(array $config)
+    {
         return parent::setConfig($config);
     }
 
@@ -72,7 +78,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * acceptFiles is a list of mimetypes, not file extensions: https://docs.fineuploader.com/branch/master/api/options.html#validation.acceptFiles
      */
-    protected function setUploaderDefaultConfig() {
+    protected function setUploaderDefaultConfig()
+    {
         return parent::setUploaderDefaultConfig();
     }
 
@@ -82,8 +89,9 @@ class FineUploaderCoreField extends DamnFineUploaderField {
      * @see https://github.com/FineUploader/fine-uploader/issues/1910
      * @param boolean $transform_size_limit (deprecated)
      */
-    public function UploaderConfig($transform_size_limit = true) {
-        if(!$this->hasDefaultConfiguration()) {
+    public function UploaderConfig($transform_size_limit = true)
+    {
+        if (!$this->hasDefaultConfiguration()) {
             $this->setUploaderDefaultConfig();
         }
 
@@ -93,9 +101,9 @@ class FineUploaderCoreField extends DamnFineUploaderField {
          * which can lead to weird errors like upload a 1.43MB file and FU stating
          * that the file should be < 1.5MB
          */
-        if(isset($this->lib_config['validation']['sizeLimit'])) {
+        if (isset($this->lib_config['validation']['sizeLimit'])) {
             $size = $this->AcceptedFileSize();
-            if(isset($this->lib_config['messages']['sizeError'])) {
+            if (isset($this->lib_config['messages']['sizeError'])) {
                 $this->lib_config['messages']['sizeError'] = str_replace("{sizeLimit}", $size . "MB", $this->lib_config['messages']['sizeError']);
             } else {
                 $this->lib_config['messages']['sizeError'] = _t('DamnFineUploader.FILE_LARGE', "The file is too large, please upload a file smaller than {$size}MB");
@@ -103,9 +111,9 @@ class FineUploaderCoreField extends DamnFineUploaderField {
         }
 
         // only makes sense if a min size limit was set
-        if(isset($this->lib_config['validation']['minSizeLimit'])) {
+        if (isset($this->lib_config['validation']['minSizeLimit'])) {
             $size = $this->AcceptedMinFileSize();
-            if(isset($this->lib_config['messages']['minSizeError'])) {
+            if (isset($this->lib_config['messages']['minSizeError'])) {
                 $this->lib_config['messages']['minSizeError'] = str_replace("{minSizeLimit}", $size . "MB", $this->lib_config['messages']['minSizeError']);
             } else {
                 $this->lib_config['messages']['minSizeError'] = _t('DamnFineUploader.FILE_SMALL', "The file is too small, please upload a file larger than {$size}MB");
@@ -118,7 +126,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Return the response that FineUploader expects
      */
-    protected function uploadSuccessfulResponse(array $file_upload, $uuid) {
+    protected function uploadSuccessfulResponse(array $file_upload, $uuid)
+    {
         $result = [
             'success' => true,
             'size' => $file_upload['size'],
@@ -132,14 +141,15 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Return the response that FineUploader expects on error
      */
-    protected function uploadErrorResponse(array $file_upload, $error) {
+    protected function uploadErrorResponse(array $file_upload, $error)
+    {
         $result = [
             'success' => false,
             'error' => $error,
 
             'message' => [
-                    'type' => 'error',
-                    'value' => $error,
+                'type' => 'error',
+                'value' => $error,
             ],
 
             'meta' => [
@@ -157,7 +167,8 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Return the response that FineUploader expects on successful file removal
      */
-    protected function removeSuccessResponse() {
+    protected function removeSuccessResponse()
+    {
         $result = [
             'success' => true,
         ];
@@ -168,14 +179,15 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Return the response that FineUploader expects on file removal error
      */
-    protected function removeErrorResponse(array $file_upload, $error) {
+    protected function removeErrorResponse(array $file_upload, $error)
+    {
         $result = [
             'success' => false,
             'error' => $error,
 
             'message' => [
-                    'type' => 'error',
-                    'value' => $error,
+                'type' => 'error',
+                'value' => $error,
             ]
         ];
         return $this->errorResponse($result, 400);
@@ -184,10 +196,10 @@ class FineUploaderCoreField extends DamnFineUploaderField {
     /**
      * Serialise error response for FineUploader
      */
-    protected function errorResponse($result, $code = 400) {
+    protected function errorResponse($result, $code = 400)
+    {
         //header('Content-Type', 'application/json');print json_encode($result);exit;
         // Note that custom web server error pages may interfere with this
         return (new HTTPResponse(json_encode($result), 400))->addHeader('Content-Type', 'application/json');
     }
-
 }

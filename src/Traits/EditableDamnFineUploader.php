@@ -11,7 +11,8 @@ use SilverStripe\Assets\Folder;
 /**
  * Trait for editable DFU field implementations
  */
-trait EditableDamnFineUploader {
+trait EditableDamnFineUploader
+{
 
     /**
      * @return float
@@ -31,7 +32,8 @@ trait EditableDamnFineUploader {
     /**
      * @return FieldList
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
 
         $fields->removeByName('Default');
@@ -49,9 +51,9 @@ trait EditableDamnFineUploader {
             'Root.Main',
             NumericField::create('MaxFileSizeMB')
                 ->setTitle('Max File Size MB')
-                ->setDescription( sprintf(
-                                    _t('DamnFineUploader.MAXIMUM_UPLOAD_SIZE', "Note: Maximum php allowed size is %s MB"),
-                                    $this->getPHPMaxFileSizeMB()
+                ->setDescription(sprintf(
+                    _t('DamnFineUploader.MAXIMUM_UPLOAD_SIZE', "Note: Maximum php allowed size is %s MB"),
+                    $this->getPHPMaxFileSizeMB()
                                 ))
         );
 
@@ -59,7 +61,7 @@ trait EditableDamnFineUploader {
             'Root.Main',
             TextareaField::create('AllowedMimeTypes')
                 ->setTitle(_t('DamnFineUploader.ACCEPTED_MIMETYPES', 'Accepted mime types allowed for uploads made via this field'))
-                ->setDescription(_t('DamnFineUploader.ACCEPTED_MIMETYPES_HELPER', 'Example image/jpg image/gif image/png') )
+                ->setDescription(_t('DamnFineUploader.ACCEPTED_MIMETYPES_HELPER', 'Example image/jpg image/gif image/png'))
         );
         $fields->addFieldToTab(
             'Root.Main',
@@ -75,8 +77,8 @@ trait EditableDamnFineUploader {
      * @note that at this point, the Form instance has not been associated
      * @see UserFormExtension::updateForm()
      */
-    public function getFormField() {
-
+    public function getFormField()
+    {
         $field = $this->getUploaderField();
 
         // Apply initial configuration
@@ -85,7 +87,7 @@ trait EditableDamnFineUploader {
         // Apply configurable settings
         // set accepted types on the field e.g image/jpeg
         $types = trim($this->AllowedMimeTypes);
-        if($types) {
+        if ($types) {
             $pattern = '/\s{1,}/';
             $types = preg_split($pattern, $types);
         } else {
@@ -101,23 +103,22 @@ trait EditableDamnFineUploader {
             $field->setAllowedMaxFileSize(self::get_php_max_file_size());
         }
 
-        if((int)$this->FileUploadLimit <= 0) {
-          $this->FileUploadLimit = 3;
+        if ((int)$this->FileUploadLimit <= 0) {
+            $this->FileUploadLimit = 3;
         }
-        $field->setAllowedMaxItemLimit( $this->FileUploadLimit );
+        $field->setAllowedMaxItemLimit($this->FileUploadLimit);
 
         // Set a folder name
         $folder = $this->Folder();
         if ($folder && $folder->exists()) {
-          // Set a folder name
-          $field->setFolderName($folder->getFilename());
+            // Set a folder name
+            $field->setFolderName($folder->getFilename());
         } else {
-          // the fallback is the general "Uploads" location
-          $field->setUseDateFolder($this->UseDateFolder == 1);
+            // the fallback is the general "Uploads" location
+            $field->setUseDateFolder($this->UseDateFolder == 1);
         }
 
         $this->doUpdateFormField($field);
         return $field;
     }
-
 }

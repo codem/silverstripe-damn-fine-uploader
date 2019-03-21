@@ -7,8 +7,8 @@ use SilverStripe\UserForms\Model\EditableFormField;
 /**
  * @note provides an EditableUploadField for the userforms module
  */
-class EditableFineUploaderCoreField extends EditableFormField {
-
+class EditableFineUploaderCoreField extends EditableFormField
+{
     use EditableDamnFineUploader;
 
     private static $singular_name = 'File Upload Field (Fine Uploader Basic)';
@@ -30,21 +30,22 @@ class EditableFineUploaderCoreField extends EditableFormField {
      * @var array
      */
     private static $defaults = [
-      'UseDateFolder' => 1,
-      'FileUploadLimit' => 3,
+        'UseDateFolder' => 1,
+        'FileUploadLimit' => 3,
     ];
 
     private static $table_name = 'EditableFineUploaderCoreField';
 
-    protected function getUploaderField() {
-      $field = FineUploaderCoreField::create($this->Name, $this->Title ?: false, null, null)
+    protected function getUploaderField()
+    {
+        $field = FineUploaderCoreField::create($this->Name, $this->Title ?: false, null, null)
           ->setFieldHolderTemplate(EditableFormField::class . '_holder')
           ->setTemplate(__CLASS__);
-      return $field;
+        return $field;
     }
 
-    public function getSubmittedFormField() {
+    public function getSubmittedFormField()
+    {
         return SubmittedFineUploaderField::create();
     }
-
 }
