@@ -11,7 +11,7 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Control\Controller;
 use PageController;
 
-class UploadFieldTest extends SapphireTest
+class FineUploaderFieldTest extends SapphireTest
 {
     public function testFieldConfiguration()
     {
@@ -19,7 +19,6 @@ class UploadFieldTest extends SapphireTest
         $actions = FieldList::create();
         $controller = new PageController();
         $form = new Form($controller, "TestForm", $fields, $actions);
-        ;
 
         $bytes = 1048576;
         $max_filesize = 2 * $bytes;
