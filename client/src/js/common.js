@@ -298,4 +298,13 @@ export default function DFU() {
     return file;
   };
 
+  /**
+   * Simple match on mimetype to test if a file might be an image based on its mimetype
+   */
+  this.isImage = function(mimetype) {
+    var pattern = /^image\//;
+    var result = mimetype.match(pattern);
+    return result != null;
+  };
+
 }
