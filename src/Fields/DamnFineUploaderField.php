@@ -427,12 +427,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             'typeError' => _t('DamnFineUploader.TYPE_ERROR', '{file} has an invalid extension. Valid extension(s): {extensions}'),
         ];
 
-        // sanity check on the file size limit vs system restrictions
-        if (isset($lib_config['validation']['sizeLimit'])) {
-            //set runtime value
-            $this->setAllowedMaxFileSize($lib_config['validation']['sizeLimit']);
-        }
-
         // start off with a zero minsize limit
         if (!isset($lib_config['validation']['minSizeLimit'])) {
             $lib_config['validation']['minSizeLimit'] = 0;
@@ -494,7 +488,17 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
 
-        // sanity checks on the size limits provided
+        // Sanity check on the file size limit vs system restrictions
+        $system_max_file_size = $this->getSystemAllowedMaxFileSize();
+        if (empty($this->lib_config['validation']['sizeLimit'])) {
+            // if not yet set, use the system size
+            $this->lib_config['validation']['sizeLimit'] = $system_max_file_size;
+        } else {
+            // ensure that the size is under the system size
+            $this->lib_config['validation']['sizeLimit'] = min($this->lib_config['validation']['sizeLimit'], $system_max_file_size);
+        }
+
+        // sanity checks on the minimum size limits provided
         if (isset($this->lib_config['validation']['minSizeLimit']) && isset($this->lib_config['validation']['sizeLimit'])) {
             if ($this->lib_config['validation']['minSizeLimit'] > $this->lib_config['validation']['sizeLimit']) {
                 $this->lib_config['validation']['minSizeLimit'] = 0;
