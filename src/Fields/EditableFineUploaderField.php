@@ -4,7 +4,8 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\UserForms\Model\EditableFormField;
 
 /**
- * @note provides an EditableUploadField for the userforms module
+ * @note provides the FineUploader UI editable field implementation for the userforms module
+ * @deprecated see readme.md
  */
 class EditableFineUploaderField extends EditableFineUploaderCoreField
 {

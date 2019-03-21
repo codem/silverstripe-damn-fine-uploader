@@ -1,20 +1,29 @@
-# FineUploader module for SilverStripe 4
+# File upload module for SilverStripe 4
 
-This module provides two upload fields that can be used to upload files to a Silverstripe 4 website.
+An upload field that can be used to upload files to a Silverstripe 4 website. Uses [Uppy](https://uppy.io/) to handle & submit client uploads.
 
-> It's not intended for use in the Silverstripe admin area or CMS, use UploadField for that.
+> This module is not intended for use in the Silverstripe admin area or CMS, use UploadField for that.
+
+
+## Browser support
+
+The Uppy website provides [a list of supported browsers](https://uppy.io/docs/#Browser-Support)
 
 ## Installing
 
-```composer require codem/silverstripe-damn-fine-uploader```
+```
+composer require codem/silverstripe-damn-fine-uploader
+```
+
+You will have to add  a ```repositories``` entry to your composer.json until the module makes its way into Packagist.
 
 ## Configuration
 
-Have a look in ```_config/config.yml``` for various configuration options and seel also [Default Configuration](./docs/en/003_configuration.md)
+Have a look in ```_config/config.yml``` for various configuration options and see also [Default Configuration](./docs/en/003_configuration.md)
 
 > Modify the ```signing_key``` value in your project configuration, along with anything else you like (e.g upload size limits)
 
-The 'fineuploader' entry can be used to add any configuration [supported by FineUploader](https://docs.fineuploader.com/branch/master/api/options.html).
+The ```implementation``` entry can be used to add any configuration value supported by the field.
 
 The Upload field itself sets some request-time configuration options, passed to the field.
 + 'messages'
@@ -24,62 +33,60 @@ The Upload field itself sets some request-time configuration options, passed to 
 
 ## Fields
 
-### FineUploaderCoreField
-Provides a core upload field, with no UI.
-```
-use Codem\DamnFineUploader\FineUploaderCoreField;
-//...
-$upload_field_core = FineUploaderCoreField::create('MyFieldName', 'Core Upload Field');
-```
+### UppyField
 
-### FineUploaderField
-Provides an upload field, with the standard FineUploader Gallery UI.
-```
-use Codem\DamnFineUploader\FineUploaderField;
-//...
-$upload_field = FineUploaderField::create('MyUploadField', 'Upload Field');
-```
+A file upload field can be created in the usual way within a Controller:
 
-## Handling file submissions from forms
-See [Handling Uploaded Files](./docs/en/001_handling_uploaded_files.md)
+```
+use Codem\DamnFineUploader\UppyField;
+use Silverstripe\Forms\FieldList;
+use Silverstripe\Forms\FormAction;
+use Silverstripe\Forms\Form;
+// ...
 
-## Advanced
-### Custom Request endpoint
-You can override the request endpoint and options, e.g to direct uploads to another path or via another method
-```
-// pass an array $config matching request options
-// https://docs.fineuploader.com/branch/master/api/options.html#request
-$upload_field->setOptionRequest(
-  $config
-);
-```
+/**
+ * In your template use $UploadForm to display this Form
+ */
+public function UploadForm()
+{
+    // create the field
+    $upload_field = UppyField::create('MyUploadField', 'My Upload Field');
+    $fields = FieldList::create(
+        $upload_field
+    );
+    $actions = FieldList::create(
+        FormAction::create('doAnUpload', 'Upload') // handle the form submission in doAnUpload()
+    );
+    $form = Form::create($this, 'UploadForm', $fields, $actions);
+    return $form;
+]
 
-### Custom Delete endpoint
-By default the field comes with no file delete handling. You can set a custom delete endpoint and it's up to you to handle the checks and balances around this (i.e roll your own).
-```
-// pass an array $config matching deleteFile options
-// https://docs.fineuploader.com/branch/master/api/options.html#deleteFile
-$upload_field->setOptionDelete(
-  $config
-);
 ```
 
-### Field templates/layout/colours
+See [FineUploader Fields](./docs/en/004_fineuploader_fields.md) for documentation in regards to deprecated FineUploader fields.
 
-Field templates look like this at the moment
+### Editable fields for the silverstripe/userforms module
 
-![UI Field](./docs/screenshots/ui-field.png "The basic UI field")
+An ```EditableUppyField``` field is available for use in user generated forms. The field can be added in the usual userforms way and the following options are available:
 
-The core field is an upload field that does not use the UI variant of FineUploader
++ Maximum file size (MB)
++ Upload folder target within the assets directory (default: Uploads)
++ Limit number of uploaded files
++ Option to use a year/month/day folder storage schema, under the selected folder
 
-![Core Field](./docs/screenshots/core-field.png "The basic Core field")
-
+Submitted files are stored on submission and linked to a ```SubmittedUploadField``` record.
 
 ## TODO
 + Make the upload fields a bit nicer on the eye by default. You can use standard CSS to target the upload field elements and modify to your requirements.
 
+## About FineUploader
+
+This module was initially developed to use FineUploader as an upload solution. Unfortunately, during development the author of FineUploader abandoned that project.
+
+Due to this, and rather than continue with a fork of FineUploader, the module switched to using [Uppy](https://uppy.io/) as an upload solution.
+
+The originally developed FineUploader fields remain in this module but are considered deprecated and will be removed in an upcoming version.
+
+
+
 Please add feature requests and bug reports to the Github issue tracker
-
-
-## Thanks
-Many thanks to the [FineUploader team](https://fineuploader.com) for developing and supporting an excellent file uploader.

@@ -1,7 +1,8 @@
 <%-- core fineuploader template using default.html example --%>
+<%-- @deprecated see readme.md --%>
 
 <div class="dfu-uploader-core" id="$ID" data-name="$Name" data-config="$UploaderConfig">
-    <% include FineUploaderMeta %>
+    <% include UploaderMeta %>
   <div class="dfu-uploader-core-button" id="{$ID}-button">Upload</div>
   <div class="dfu-uploader-core-template" style="display:none!important;">
 

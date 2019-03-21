@@ -25,7 +25,7 @@ trait SubmittedDamnFineUploader
      * Handle incoming uuids from the form, use the uuid and the form security token to retrieve the file
      * Note that this does not publish the file
      *
-     * @return SubmittedFineUploaderField
+     * @returns $this
      */
     public function setValue($uuids)
     {

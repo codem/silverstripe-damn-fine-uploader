@@ -1,3 +1,4 @@
+<%-- @deprecated see readme.md --%>
 <div id="qq-template-{$ID}" style="display:none;">
   <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
       <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
@@ -76,6 +77,6 @@
 </div>
 
 <div class="dfu-uploader-ui-container">
-  <% include FineUploaderMeta %>
+  <% include UploaderMeta %>
   <div class="dfu-uploader-ui" id="$ID" data-name="$Name" data-config="$UploaderConfig"></div>
 </div>

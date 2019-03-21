@@ -7,7 +7,7 @@ use SilverStripe\Control\HTTPResponse;
 use Exception;
 
 /**
- * @note Provides a field to handle Uppy File Uploader uploads
+ * @note provides a field to handle Uppy File Uploader uploads
  */
 class UppyField extends DamnFineUploaderField
 {

@@ -5,7 +5,8 @@ use SilverStripe\Assets\Folder;
 use SilverStripe\UserForms\Model\EditableFormField;
 
 /**
- * @note provides an EditableUploadField for the userforms module
+ * @note provides the FineUploader Core editable field implementation for the userforms module
+ * @deprecated see readme.md
  */
 class EditableFineUploaderCoreField extends EditableFormField
 {

@@ -5,36 +5,13 @@ use SilverStripe\Assets\Folder;
 use SilverStripe\UserForms\Model\EditableFormField;
 
 /**
- * @note provides an EditableUploadField for the userforms module
+ * @note provides the Uppy editable field implementation for the User Defined Forms module
  */
-class EditableUppyField extends EditableFormField
+class EditableUppyField extends EditableUploadField
 {
-    use EditableDamnFineUploader;
 
     private static $singular_name = 'File Upload Field (Uppy)';
     private static $plural_names = 'File Upload Fields (Uppy)';
-
-    private static $db = [
-        'MaxFileSizeMB' => 'Float',
-        'AllowedMimeTypes' => 'Text',
-        'FileUploadLimit' => 'Int',
-        'UseDateFolder' => 'Boolean'
-    ];
-
-    private static $has_one = [
-        'Folder' => Folder::class // From CustomFields
-    ];
-
-    /**
-     * Add default values to database
-     * @var array
-     */
-    private static $defaults = [
-        'UseDateFolder' => 1,
-        'FileUploadLimit' => 3,
-    ];
-
-    private static $table_name = 'EditableUppyField';
 
     protected function getUploaderField()
     {
@@ -46,6 +23,6 @@ class EditableUppyField extends EditableFormField
 
     public function getSubmittedFormField()
     {
-        return SubmittedFineUploaderField::create();
+        return SubmittedUppyField::create();
     }
 }

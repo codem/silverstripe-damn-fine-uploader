@@ -5,10 +5,10 @@ use SilverStripe\UserForms\Model\Submission\SubmittedFormField;
 use SilverStripe\Assets\File;
 
 /**
- * Submitted Field for FineUploader
- * @deprecated see readme.md
+ * Base Submitted Upload Field record
+ * You should not instantiate this class
  */
-class SubmittedFineUploaderField extends SubmittedFormField
+class SubmittedUploadField extends SubmittedFormField
 {
     use SubmittedDamnFineUploader;
 
@@ -16,7 +16,7 @@ class SubmittedFineUploaderField extends SubmittedFormField
      * Defines the database table name
      * @var string
      */
-    private static $table_name = 'SubmittedFineUploaderField';
+    private static $table_name = 'SubmittedUploadField';
 
     private static $many_many = [
         'Files' => File::class

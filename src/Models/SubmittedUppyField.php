@@ -1,23 +1,11 @@
 <?php
 namespace Codem\DamnFineUploader;
 
-use SilverStripe\UserForms\Model\Submission\SubmittedFormField;
-use SilverStripe\Assets\File;
-
 /**
- * Submitted Field for FineUploader
+ * User Defined Forms submitted field implementation for Uppy
  */
-class SubmittedUppyField extends SubmittedFormField
+class SubmittedUppyField extends SubmittedUploadField
 {
-    use SubmittedDamnFineUploader;
-
-    /**
-     * Defines the database table name
-     * @var string
-     */
-    private static $table_name = 'SubmittedUppyField';
-
-    private static $many_many = [
-        'Files' => File::class
-    ];
+    private static $singular_name = 'Submitted File Upload Field (Uppy)';
+    private static $plural_names = 'Submitted File Upload Fields (Uppy)';
 }

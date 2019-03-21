@@ -7,7 +7,8 @@ use SilverStripe\Control\HTTPResponse;
 use Exception;
 
 /**
- * @note Provides a field to handle FineUploader uploads. FineUploade
+ * @deprecated see readme.md
+ * @note Provides a field to handle FineUploader uploads.
  *            FineUploader can either attach to this field's form, or not
  *            By default the module ships with FineUpload attaching to this field's containing form, this is done to get file data submitting with the form submission
  *            You can enable a standalone drag-drop style interface by setting autoUpload to true, file submissions will then be directed through this field's upload method
@@ -15,6 +16,9 @@ use Exception;
  */
 class FineUploaderCoreField extends DamnFineUploaderField
 {
+
+    protected $implementation = parent::IMPLEMENTATION_TRADITIONAL_CORE;
+
     protected $file_input_param = 'qqfile';
 
     /**

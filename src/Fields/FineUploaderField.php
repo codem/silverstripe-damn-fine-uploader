@@ -4,6 +4,7 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\View\Requirements;
 
 /**
+ * @deprecated see readme.md
  * @note Traditional/UI implementation of FineUploader
  */
 class FineUploaderField extends FineUploaderCoreField

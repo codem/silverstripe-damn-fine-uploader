@@ -1,4 +1,9 @@
-# Using templates with the Core uploader field
+# Using templates with the FineUploader core field
+
+> Note: This page documents templating of the deprecated FineUploaderCoreField. Use the UppyField instead.
+
+
+## Templating
 
 > This doesn't apply to the UI field, which uses the standard FineUploader Gallery template
 

@@ -1,32 +1,33 @@
 {
-	"name": "codem/silverstripe-damn-fine-uploader",
-	"description": "An HTML5 upload field for Silverstripe 4.x using FineUploader",
-	"type": "silverstripe-vendormodule",
-	"keywords": [
-		"silverstripe",
-		"uploader",
-		"uploads",
-		"fineuploader"
-	],
-	"homepage": "",
-	"license": "BSD-3-Clause",
-	"authors": [{
-		"name": "James Ellis"
-	}],
-	"require": {
-		"silverstripe/framework": "~4.0",
-		"paragonie/random_compat": "~2.0",
-		"silverstripe/userforms": "~5.2"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "^3 || ^4 || ^5"
-	},
-	"extra": {
-		"installer-name": "dfu",
-		"expose": [
-				"client/dist/js",
-				"client/dist/styles",
-				"client/dist/assets"
-		]
-	}
+    "name": "codem/silverstripe-damn-fine-uploader",
+    "description": "An HTML5 upload field for Silverstripe 4, including editable form fields for silverstripe/userforms",
+    "type": "silverstripe-vendormodule",
+    "keywords": [
+        "silverstripe",
+        "uploader",
+        "uploads",
+        "uppy",
+        "fineuploader"
+    ],
+    "homepage": "",
+    "license": "BSD-3-Clause",
+    "authors": [{
+        "name": "James Ellis"
+    }],
+    "require": {
+        "silverstripe/framework": "~4.0",
+        "paragonie/random_compat": "~2.0",
+        "silverstripe/userforms": "~5.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^3 || ^4 || ^5"
+    },
+    "extra": {
+        "installer-name": "dfu",
+        "expose": [
+                "client/dist/js",
+                "client/dist/styles",
+                "client/dist/assets"
+        ]
+    }
 }

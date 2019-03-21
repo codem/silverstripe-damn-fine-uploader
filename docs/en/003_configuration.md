@@ -8,7 +8,7 @@ You should override this configuration in your project's yml configuration.
 ---
 Name: damnfineuploader
 ---
-Codem\DamnFineUploader\FineUploaderCoreField:
+Codem\DamnFineUploader\DamnFineUploaderField:
   # Used to create a uuid for uploads
   # Do not use this value, override this in your project configuration
   signing_key : 'SAMPLEONLY'
@@ -19,9 +19,8 @@ Codem\DamnFineUploader\FineUploaderCoreField:
   # When true, unpublish uploaded files post-upload
   unpublish_after_upload : true
 
-  # config for fineuploader
-  # the key/values here match FineUploader documentation
-  fineuploader:
+  # config for the frontend lib
+  implementation:
     autoUpload: true
     maxConnections: 3
     multiple: true
