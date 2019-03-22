@@ -1,0 +1,47 @@
+# Configuration for upload testing
+suites:
+    acceptance:
+        actor: AcceptanceTester
+        path: .
+        modules:
+            enabled:
+                - Db:
+                    # Taken from .env
+                    dsn: 'mysql:host=%SS_DATABASE_SERVER%;dbname=%SS_DATABASE_NAME%'
+                    user: '%SS_DATABASE_USERNAME%'
+                    password: '%SS_DATABASE_PASSWORD%'
+                    populate: false
+                    cleanup: false
+                - WebDriver:
+                    # This value is taken from .env
+                    url: '%WEBSITE_URL%'
+                    browser: chrome
+                    port: 9515
+                    window_size: false
+                    capabilities:
+                      chromeOptions:
+                        args: ["--headless", "--disable-gpu", "window-size=1920x1080"]
+                        binary: "/usr/bin/chromium-browser"
+                - \Helper\Acceptance
+                - Asserts
+
+extensions:
+    enabled: [Codeception\Extension\RunFailed]
+
+params:
+    - .env
+
+gherkin: []
+
+# additional paths
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+
+settings:
+    bootstrap: ../_bootstrap.php
+    shuffle: false
+    lint: true
