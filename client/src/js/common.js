@@ -75,6 +75,7 @@ export default function DFU() {
         field.type = 'hidden';
         field.value = uuid;
         field.name = name;
+        field.classList.add('dfu_uploaded_file');
         f.appendChild(field);
       }
       return field;
