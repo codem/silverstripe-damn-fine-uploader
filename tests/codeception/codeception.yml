@@ -10,7 +10,9 @@ suites:
                     dsn: 'mysql:host=%SS_DATABASE_SERVER%;dbname=%SS_DATABASE_NAME%'
                     user: '%SS_DATABASE_USERNAME%'
                     password: '%SS_DATABASE_PASSWORD%'
+                    # do not populate from dump prior to test
                     populate: false
+                    # do not reload a dump before each test
                     cleanup: false
                 - WebDriver:
                     # This value is taken from .env
