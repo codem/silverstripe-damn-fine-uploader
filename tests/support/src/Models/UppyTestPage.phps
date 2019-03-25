@@ -1,6 +1,6 @@
 <?php
 /**
- * This is the test page for UppField acceptance tests
+ * This is the test page for UppyField acceptance tests
  * @author James
  */
 use Codem\DamnFineUploader\UppyField;
