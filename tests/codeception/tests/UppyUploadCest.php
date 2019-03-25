@@ -99,9 +99,6 @@ class UppyUploadCest
 
         $I->click("form#{$form_id} input[type=submit]");
 
-        $submission_result_page = $path . $form_id_path . "/";
-        $I->amOnPage( $submission_result_page );
-
         foreach($dfu_token_values as $dfu_token_value) {
             $I->see($dfu_token_value);
         }
