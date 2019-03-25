@@ -17,7 +17,7 @@ class UppyUploadCest
 
         $path = rtrim($path, "/") . "/";//ensure a correct trailiing slash
 
-        $wait  = (int)getenv('DFU_UPPY_UPLOAD_WAIT');
+        $wait  = (int)getenv('DFU_UPLOAD_WAIT');
         if(!$wait || $wait <= 0) {
             $wait = 5;
         }
@@ -55,7 +55,7 @@ class UppyUploadCest
             $I->seeElementInDOM("form#{$form_id} .uppy input.uppy-Dashboard-input[type=\"file\"]");
             $I->attachFile("form#{$form_id} .uppy input.uppy-Dashboard-input[type=\"file\"]", "jpg/{$i}.jpg");
             $I->seeElementInDOM("form#{$form_id} .uppy .uppy-DashboardItem[title=\"{$i}.jpg\"]");
-            $I->wait(1);
+            $I->wait(0.5);//wait for animation to complete
             $uploads++;
             if($i == $item_limit) {
                 //reached the limit of files
@@ -101,6 +101,8 @@ class UppyUploadCest
 
         foreach($dfu_token_values as $dfu_token_value) {
             $I->see($dfu_token_value);
+            // The DFU token should no longer be present
+            $I->dontSeeInDatabase('File', ['DFU' => $dfu_token_value ]);
         }
         $I->see("Count:{$values}");
 
