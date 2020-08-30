@@ -84,16 +84,18 @@ module.exports = (env, argv) => {
         filename: "styles/[name].css",
         chunkFilename: "styles/[name].css"
       }),
-      new CopyWebpackPlugin([
-        {
-          'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
-          'to' : PATHS.DIST + '/assets/[name].[ext]',
-        },
-        {
-          'from' : PATHS.MODULES + '/fine-uploader/all.fine-uploader/placeholders/*.png',
-          'to' : PATHS.DIST + '/assets/placeholders/[name].[ext]',
-        }
-      ])
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
+            'to' : PATHS.DIST + '/assets/[name].[ext]',
+          },
+          {
+            'from' : PATHS.MODULES + '/fine-uploader/all.fine-uploader/placeholders/*.png',
+            'to' : PATHS.DIST + '/assets/placeholders/[name].[ext]',
+          }
+        ]
+      })
     ]
 
   };
