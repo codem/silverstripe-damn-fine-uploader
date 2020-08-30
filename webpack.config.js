@@ -26,8 +26,6 @@ module.exports = (env, argv) => {
     mode : build_for,
     devtool : build_for == 'production' ? 'source-map' : 'eval',
     entry : {
-      core: PATHS.SRC + '/js/core.js',
-      ui: PATHS.SRC + '/js/ui.js',
       uppy: PATHS.SRC + '/js/uppy.js'
     },
     output: {
@@ -83,18 +81,6 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: "styles/[name].css",
         chunkFilename: "styles/[name].css"
-      }),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            'from' : PATHS.MODULES + '/fine-uploader/fine-uploader/*.gif',
-            'to' : PATHS.DIST + '/assets/[name].[ext]',
-          },
-          {
-            'from' : PATHS.MODULES + '/fine-uploader/all.fine-uploader/placeholders/*.png',
-            'to' : PATHS.DIST + '/assets/placeholders/[name].[ext]',
-          }
-        ]
       })
     ]
 
