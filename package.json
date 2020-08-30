@@ -36,7 +36,6 @@
     "@uppy/dashboard": "^1.12",
     "@uppy/drag-drop": "^1.4",
     "@uppy/xhr-upload": "^1.6",
-    "core-js": "^3.6",
-    "fine-uploader": "^5.16.2"
+    "core-js": "^3.6"
   }
 }
