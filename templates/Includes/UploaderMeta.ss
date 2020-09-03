@@ -1,6 +1,6 @@
 <div class="dfu-uploader-meta">
   <ul>
-  <li><strong>Allowed Extensions</strong>: $AcceptedExtensions</li>
+  <li><strong>Allowed files</strong>: $AcceptedExtensions</li>
   <li><strong>Maximum file size</strong>: {$AcceptedFileSize}MB</li>
   <% if $AcceptedMinFileSize %><li><strong>Minimum file size</strong>: {$AcceptedMinFileSize}MB</li><% end_if %>
   <li><strong>Maximum number of uploads</strong>: $AcceptedItemLimit</li>

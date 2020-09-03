@@ -404,6 +404,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // set default lib_config from yml
         $lib_config = $this->config()->get('implementation');
+
         // element options
         $form = $this->getForm();
         //$lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
@@ -683,7 +684,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function getAcceptedTypes()
     {
         $mimetypes = $this->getUploaderConfigValue('validation', 'acceptFiles');
-        if (strpos($mimetypes, ",") !== false) {
+        if (is_string($mimetypes) !== false) {
             return explode(",", $mimetypes);
         } else {
             return [];

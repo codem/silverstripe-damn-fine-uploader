@@ -7,6 +7,7 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
+use SilverStripe\Core\Config\Config;
 
 /**
  * Trait for editable DFU field implementations
@@ -57,11 +58,16 @@ trait EditableDamnFineUploader
                                 ))
         );
 
+        $config = Config::inst()->get(DamnFineUploaderField::class, 'implementation');
+        $defaults = "";
+        if(!empty($config['validation']['acceptFiles'])) {
+            $defaults = strip_tags($config['validation']['acceptFiles']);
+        }
         $fields->addFieldToTab(
             'Root.Main',
             TextareaField::create('AllowedMimeTypes')
-                ->setTitle(_t('DamnFineUploader.ACCEPTED_MIMETYPES', 'Accepted mime types allowed for uploads made via this field'))
-                ->setDescription(_t('DamnFineUploader.ACCEPTED_MIMETYPES_HELPER', 'Example image/jpg image/gif image/png'))
+                ->setTitle(_t('DamnFineUploader.ACCEPTED_MIMETYPES', 'Accepted mime types allowed for uploads made via this field (one per line)'))
+                ->setDescription( sprintf( _t('DamnFineUploader.DEFAULT_MIMETYPES', 'Default if none set: %s'), $defaults) )
         );
         $fields->addFieldToTab(
             'Root.Main',
@@ -90,10 +96,8 @@ trait EditableDamnFineUploader
         if ($types) {
             $pattern = '/\s{1,}/';
             $types = preg_split($pattern, $types);
-        } else {
-            $types = [];
+            $field->setAcceptedTypes($types);
         }
-        $field->setAcceptedTypes($types);
 
         // max file size, handle in bytes, provided in MB
         $bytes = $this->MaxFileSizeMB * 1048576;
