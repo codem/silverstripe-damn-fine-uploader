@@ -1,4 +1,7 @@
 <?php
+
+namespace Codem\DamnFineUploader;
+
 /**
  * This is the test page for UppyField acceptance tests
  * @author James
@@ -12,7 +15,7 @@ use SilverStripe\Assets\File;
 /**
  * Test Page for inclusion in the CMS
  */
-class UppyTestPage extends Page
+class UppyTestPage extends \Page
 {
     /**
      * Singular name for CMS
@@ -30,7 +33,7 @@ class UppyTestPage extends Page
 /**
  * Test Controller for handling acceptance test requests
  */
-class UppyTestPageController extends PageController
+class UppyTestPageController extends \PageController
 {
     private static $allowed_actions = [
         'UploadForm',

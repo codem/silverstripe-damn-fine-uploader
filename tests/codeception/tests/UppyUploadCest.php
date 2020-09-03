@@ -40,21 +40,18 @@ class UppyUploadCest
             $I->assertTrue(false, "itemLimit not in field config or is invalid (For this test, file limit must be between 1 and 3)");
         }
 
-        if(empty($config->validation->allowedExtensions)) {
-            $I->assertTrue(false, "allowedExtensions not in field config");
-        }
-
-        if(!in_array('jpg', $config->validation->allowedExtensions)) {
-            $I->assertTrue(false, "jpg is not an allowed extension - to complete this test, ensure there JPG files are allowed in field configuration.");
+        if(empty($config->validation->acceptFiles)) {
+            $I->assertTrue(false, "required setting acceptFiles is not in field config");
         }
 
         $item_limit = $config->validation->itemLimit;
-
         $uploads = 0;
+        $selector = "form#{$form_id} .uppy input.uppy-Dashboard-input[type=\"file\"]";
         for($i=1;$i<=$item_limit;$i++) {
-            $I->seeElementInDOM("form#{$form_id} .uppy input.uppy-Dashboard-input[type=\"file\"]");
-            $I->attachFile("form#{$form_id} .uppy input.uppy-Dashboard-input[type=\"file\"]", "jpg/{$i}.jpg");
-            $I->seeElementInDOM("form#{$form_id} .uppy .uppy-DashboardItem[title=\"{$i}.jpg\"]");
+            $I->seeElementInDOM($selector);
+            $I->attachFile($selector, "jpg/{$i}.jpg");
+            $attached_file_selector = "form#{$form_id} .uppy .uppy-Dashboard-Item .uppy-Dashboard-Item-name[title=\"{$i}.jpg\"]";
+            $I->seeElementInDOM($attached_file_selector);
             $I->wait(0.5);//wait for animation to complete
             $uploads++;
             if($i == $item_limit) {
