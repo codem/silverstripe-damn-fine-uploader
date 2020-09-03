@@ -1,12 +1,14 @@
-# Default configuration
+# Configuration
 
 See below for a sample configuration.
 
-You should override this configuration in your project's yml configuration.
+You should override the default configuration in your project's yml configuration
 
 ```
 ---
-Name: damnfineuploader
+Name: my-damnfineuploader
+After:
+    - '#damnfineuploader'
 ---
 Codem\DamnFineUploader\DamnFineUploaderField:
   # Used to create a uuid for uploads
@@ -28,6 +30,7 @@ Codem\DamnFineUploader\DamnFineUploaderField:
     form:
       interceptSubmit: false
     validation:
+      acceptFiles: 'image/jpg,image/jpeg,image/png,image/webp'
       itemLimit: 3
       sizeLimit: 5242880
       image:

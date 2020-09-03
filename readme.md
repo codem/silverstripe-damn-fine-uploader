@@ -1,21 +1,22 @@
-# File upload module for SilverStripe 4
+# A damn fine file upload module for Silverstripe
 
-An upload field that can be used to upload files to a Silverstripe 4 website. Uses [Uppy](https://uppy.io/) to handle & submit client uploads.
+An upload field that can be used to upload files to a Silverstripe website.
 
-> This module is not intended for use in the Silverstripe admin area or CMS, use UploadField for that.
+Uses [Uppy](https://uppy.io/) to handle & submit client uploads.
 
+> This module is not intended for use in the Silverstripe administration area or CMS, use the standard UploadField for that.
 
 ## Browser support
 
 The Uppy website provides [a list of supported browsers](https://uppy.io/docs/#Browser-Support)
+
+I do not support Internet Explorer, any bugs raised related to IE will be closed.
 
 ## Installing
 
 ```
 composer require codem/silverstripe-damn-fine-uploader
 ```
-
-You will have to add  a ```repositories``` entry to your composer.json until the module makes its way into Packagist.
 
 ## Configuration
 
@@ -63,8 +64,6 @@ public function UploadForm()
 
 ```
 
-See [FineUploader Fields](./docs/en/004_fineuploader_fields.md) for documentation in regards to deprecated FineUploader fields.
-
 ### Editable fields for the silverstripe/userforms module
 
 An ```EditableUppyField``` field is available for use in user generated forms. The field can be added in the usual userforms way and the following options are available:
@@ -76,17 +75,16 @@ An ```EditableUppyField``` field is available for use in user generated forms. T
 
 Submitted files are stored on submission and linked to a ```SubmittedUploadField``` record.
 
-## TODO
-+ Make the upload fields a bit nicer on the eye by default. You can use standard CSS to target the upload field elements and modify to your requirements.
-
-## About FineUploader
-
-This module was initially developed to use FineUploader as an upload solution. Unfortunately, during development the author of FineUploader abandoned that project.
-
-Due to this, and rather than continue with a fork of FineUploader, the module switched to using [Uppy](https://uppy.io/) as an upload solution.
-
-The originally developed FineUploader fields remain in this module but are considered deprecated and will be removed in an upcoming version.
-
-
+## Issues
 
 Please add feature requests and bug reports to the Github issue tracker
+
+## License
+
+BSD-3-Clause
+
+## Thanks
+
+Thanks for reading, here's a silly meme:
+
+<img src="./docs/screenshots/haha_fileuploads.jpg" height="200">
