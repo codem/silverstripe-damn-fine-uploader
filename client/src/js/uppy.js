@@ -46,7 +46,7 @@ if(dfu_uploaders_uppy) {
                       id: 'uppy-' + id,
                       autoProceed: false,
                       allowMultipleUploads: true,
-                      debug: true,
+                      debug: false,
                       meta: meta,
                       restrictions: restrictions
                   })
@@ -55,8 +55,12 @@ if(dfu_uploaders_uppy) {
                       id: 'dashboard-' + id,
                       target: upload_element.querySelector('.dashboard'),
                       inline: true,
+                      width: '100%',
+                      waitForThumbnailsBeforeUpload: true,
                       showLinkToFileUploadResult: false,
                       proudlyDisplayPoweredByUppy: false,
+                      showProgressDetails: true,
+                      replaceTargetContent: true,
                       note: '' // TODO
                     }
                   )
