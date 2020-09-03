@@ -37,7 +37,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     protected $runtime_config = [];//runtime config, merged into lib_config
     protected $option_delete;
     protected $option_request = [];//custom request/delete settings
-    protected $default_accepted_types = ['image/jpg','image/gif','image/png','image/webp','image/jpeg'];// default to images for now
+    protected $default_accepted_types = 'image/jpg,image/gif,image/png,image/webp,image/jpeg';// default to images if no accepted types set
     protected $use_date_folder = true;
 
     protected $implementation = '';
@@ -482,9 +482,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // fallback to default accepted file types if none set
         if (empty($lib_config['validation']['acceptFiles'])) {
-            $lib_config['validation']['acceptFiles'] = implode(",", $this->default_accepted_types);// this could inckude
-            $lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($this->default_accepted_types);//TODO
+            $lib_config['validation']['acceptFiles'] = $this->default_accepted_types;
         }
+
+        // set allowed extensions based on types
+        $lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes( explode(",", $lib_config['validation']['acceptFiles']) );
 
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
