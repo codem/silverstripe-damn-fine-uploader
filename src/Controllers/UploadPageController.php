@@ -12,16 +12,12 @@ use Silverstripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPResponse;
-use SilverStripe\Core\Extensible;
-use SilverStripe\Core\Config\Configurable;
 
 /**
  * Controller for handling file uploads
  */
 class UploadPageController extends \PageController
 {
-    use Extensible;
-    use Configurable;
 
     private static $allowed_actions = [
         'UploadForm',
