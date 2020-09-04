@@ -16,8 +16,8 @@ class EditableUploadField extends EditableFileField
 
     private static $table_name = 'EditableUploadField';
 
-    private static $singular_name = 'Drag & drop file upload field';
-    private static $plural_name = 'Drag & drop file upload fields';
+    private static $singular_name = 'File Upload Field - Drag and Drop';
+    private static $plural_name = 'File Upload Fields - Drag and Drop';
 
     private static $db = [
         'AllowedMimeTypes' => 'Text',
