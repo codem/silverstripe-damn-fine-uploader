@@ -37,6 +37,7 @@
     "@uppy/drag-drop": "^1.4",
     "@uppy/xhr-upload": "^1.6",
     "core-js": "^3.6",
+    "kind-of": "^6.0.3",
     "set-value": "^2.0.1"
   }
 }
