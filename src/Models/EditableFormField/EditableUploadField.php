@@ -5,6 +5,7 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Assets\Folder;
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 use SilverStripe\ORM\DB;
+use SilverStripe\Forms\HeaderField;
 
 /**
  * @note provides an EditableUploadField for the userforms module
@@ -13,6 +14,7 @@ use SilverStripe\ORM\DB;
 class EditableUploadField extends EditableFileField
 {
     use EditableDamnFineUploader;
+    use CMSFieldConfigurator;
 
     private static $table_name = 'EditableUploadField';
 
@@ -67,6 +69,23 @@ class EditableUploadField extends EditableFileField
                 }
             }
         }
+    }
+
+    public function getCMSFields()
+    {
+        $fields = parent::getCMSFields();
+        $this->addGenericFields($fields);
+        $fields->insertBefore('FolderID', $fields->dataFieldByName('UseDateFolder'));
+        $fields->addFieldToTab(
+            'Root.Main',
+            HeaderField::create(
+                'UploadFieldSavingHeader',
+                _t('DamnFineUploader.SAVING', 'Saving')
+            ),
+            'UseDateFolder'
+        );
+
+        return $fields;
     }
 
 }
