@@ -76,8 +76,14 @@ trait EditableDamnFineUploader
         $fields->addFieldToTab(
             'Root.Main',
             CheckboxField::create('UseDateFolder')
-                ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder format'))
-                ->setValue(1)
+                ->setTitle( _t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder format suffix') )
+                ->setDescription(
+                    _t(
+                        'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
+                        'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/01/01'
+                    )
+                ),
+            'FolderID'
         );
         return $fields;
     }
@@ -121,6 +127,7 @@ trait EditableDamnFineUploader
         if ($folder && $folder->exists()) {
             // Set a folder name
             $field->setFolderName($folder->getFilename());
+            $field->setUseDateFolder($this->UseDateFolder == 1);
         } else {
             // the fallback is the general "Uploads" location
             $field->setUseDateFolder($this->UseDateFolder == 1);
