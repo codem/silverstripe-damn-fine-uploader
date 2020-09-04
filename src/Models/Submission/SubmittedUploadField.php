@@ -12,6 +12,9 @@ class SubmittedUploadField extends SubmittedFormField
 {
     use SubmittedDamnFineUploader;
 
+    private static $singular_name = 'Submitted drag & drop file upload field';
+    private static $plural_names = 'Submitted drag & drop file upload fields';
+
     /**
      * Defines the database table name
      * @var string

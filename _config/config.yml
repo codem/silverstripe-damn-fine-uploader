@@ -28,3 +28,6 @@ Codem\DamnFineUploader\DamnFineUploaderField:
       method: 'POST'
     scaling:
       defaultQuality: 90
+Codem\DamnFineUploader\EditableUploadField:
+  # turn this off once migration has run
+  run_migration_1: true

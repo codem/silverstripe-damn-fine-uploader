@@ -16,6 +16,27 @@ trait EditableDamnFineUploader
 {
 
     /**
+     * Get the uploader field, in the future this will return a field based on the implementation value
+     * @return UppyField
+     */
+    protected function getUploaderField()
+    {
+        $field = UppyField::create($this->Name, $this->Title ?: false, null, null)
+                    ->setFieldHolderTemplate(EditableFormField::class . '_holder')
+                    ->setTemplate(__CLASS__);
+        return $field;
+    }
+
+    /**
+     * Get the submitted for field
+     * @return SubmittedUppyField
+     */
+    public function getSubmittedFormField()
+    {
+        return SubmittedUppyField::create();
+    }
+
+    /**
      * @return float
      */
     public static function get_php_max_file_size()
@@ -38,26 +59,9 @@ trait EditableDamnFineUploader
         $fields = parent::getCMSFields();
 
         $fields->removeByName('Default');
+        $fields->removeByName('Implementation');
 
-        $fields->addFieldToTab(
-            'Root.Main',
-            TreeDropdownField::create(
-                'FolderID',
-                _t('DamnFineUploader.SELECT_UPLOAD_FOLDER', 'Select upload folder'),
-                Folder::class
-            )
-        );
-
-        $fields->addFieldToTab(
-            'Root.Main',
-            NumericField::create('MaxFileSizeMB')
-                ->setTitle('Max File Size MB')
-                ->setDescription(sprintf(
-                    _t('DamnFineUploader.MAXIMUM_UPLOAD_SIZE', "Note: Maximum php allowed size is %s MB"),
-                    $this->getPHPMaxFileSizeMB()
-                                ))
-        );
-
+        // Get the configured values for the field
         $config = Config::inst()->get(DamnFineUploaderField::class, 'implementation');
         $defaults = "";
         if(!empty($config['validation']['acceptFiles'])) {

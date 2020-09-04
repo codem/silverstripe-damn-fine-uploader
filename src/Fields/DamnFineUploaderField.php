@@ -26,8 +26,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 {
     use FileUploadReceiver;
 
-    const IMPLEMENTATION_TRADITIONAL_CORE = 'traditionalcore';// @deprecated FineUploader Core implementation
-    const IMPLEMENTATION_TRADITIONAL_UI = 'traditionalui';// @deprecated FineUploader UI implementation
+    const IMPLEMENTATION_TRADITIONAL_CORE = 'uppy';// @deprecated
+    const IMPLEMENTATION_TRADITIONAL_UI = 'uppy';// @deprecated
     const IMPLEMENTATION_UPPY = 'uppy';// Uppy
     const UUID_NAME = 'dfu_uuid';
 
