@@ -7,12 +7,14 @@
         "uploader",
         "uploads",
         "uppy",
-        "fineuploader"
+        "html5",
+        "file upload"
     ],
-    "homepage": "",
+    "homepage": "https://github.com/codem/silverstripe-damn-fine-uploader",
     "license": "BSD-3-Clause",
     "authors": [{
         "name": "James Ellis"
+        "homepage": "https://github.com/codem/"
     }],
     "require": {
         "silverstripe/framework": "~4.0",
@@ -25,7 +27,6 @@
         "vlucas/phpdotenv" : "^3.3"
     },
     "extra": {
-        "installer-name": "dfu",
         "expose": [
                 "client/dist/js",
                 "client/dist/styles",
