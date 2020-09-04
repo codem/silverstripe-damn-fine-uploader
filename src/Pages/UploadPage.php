@@ -28,7 +28,6 @@ use SilverStripe\Security\Member;
  */
 class UploadPage extends \Page implements PermissionProvider
 {
-
     use CMSFieldConfigurator;
 
     private static $db = [
@@ -152,7 +151,8 @@ class UploadPage extends \Page implements PermissionProvider
         );
 
         $fields->addFieldsToTab(
-            'Root.Uploads', [
+            'Root.Uploads',
+            [
                 TextField::create(
                     'FormFieldTitle',
                     _t('DamnFineUploader.FORM_FIELD_TITLE', 'Form field title')
@@ -213,5 +213,4 @@ class UploadPage extends \Page implements PermissionProvider
 
         return $fields;
     }
-
 }

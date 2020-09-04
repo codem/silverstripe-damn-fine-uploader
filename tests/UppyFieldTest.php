@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\UppyField;
@@ -76,8 +77,8 @@ class UppyFieldTest extends SapphireTest
         $this->assertTrue($field->AcceptsImages() == $expected_accepts_images, "Accepts images should be true");
     }
 
-    public function testRenderedField() {
-
+    public function testRenderedField()
+    {
         $fields = FieldList::create();
         $actions = FieldList::create();
         $controller = new PageController();
@@ -110,7 +111,7 @@ class UppyFieldTest extends SapphireTest
         $template = $field->Field();
 
         $dom = new DOMDocument('1.0', 'utf-8');
-        $dom->loadHTML( $template, LIBXML_HTML_NODEFDTD);
+        $dom->loadHTML($template, LIBXML_HTML_NODEFDTD);
 
         $element = $dom->getElementById($field->ID());
 
@@ -130,7 +131,7 @@ class UppyFieldTest extends SapphireTest
 
         // file types
         $this->assertNotEmpty($config->validation->acceptFiles, "Accept Files is empty");
-        $config_accept_files = explode("," , $config->validation->acceptFiles);
+        $config_accept_files = explode(",", $config->validation->acceptFiles);
         sort($config_accept_files);
         sort($accepted_types);
 
@@ -142,13 +143,12 @@ class UppyFieldTest extends SapphireTest
         $this->assertEquals($config->request->endpoint, $upload_link, "Upload endpoint {$config->request->endpoint} does not match {$upload_link}");
 
         $security_token = $form->getSecurityToken();
-        $this->assertTrue( $security_token instanceof SecurityToken, "Security Token in form is not valid" );
+        $this->assertTrue($security_token instanceof SecurityToken, "Security Token in form is not valid");
         $token_name = $security_token->getName();
         $security_token_value = $security_token->getValue();
 
-        $this->assertTrue( !empty($config->request->params->{$token_name}), "No {$token_name} member in config/request/params");
+        $this->assertTrue(!empty($config->request->params->{$token_name}), "No {$token_name} member in config/request/params");
 
-        $this->assertEquals( $security_token_value, $config->request->params->{$token_name}, "Security Token value does not match {$security_token_value}" );
-
+        $this->assertEquals($security_token_value, $config->request->params->{$token_name}, "Security Token value does not match {$security_token_value}");
     }
 }

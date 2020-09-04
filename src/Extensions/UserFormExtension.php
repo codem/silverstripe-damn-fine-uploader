@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Core\Extension;

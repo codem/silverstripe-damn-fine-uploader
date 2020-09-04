@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Core\Convert;
@@ -50,8 +51,9 @@ class EditableUploadField extends EditableFileField
     /**
      * Perform migration handling on dev/build
      */
-    public function requireDefaultRecords() {
-        if($this->config()->get('run_migration_1')) {
+    public function requireDefaultRecords()
+    {
+        if ($this->config()->get('run_migration_1')) {
             $tables = [
                 'EditableFineUploaderCoreField',
                 'EditableFineUploaderCoreField_Live',
@@ -59,12 +61,12 @@ class EditableUploadField extends EditableFileField
                 'SubmittedFineUploaderField_Files'
             ];
             DB::alteration_message("Executing run_migration_1 (turn this off in config if you no longer need it)", "changed");
-            foreach($tables as $table) {
+            foreach ($tables as $table) {
                 try {
                     // obsolete deprecated/removed/unused FineUploader support
                     DB::alteration_message("dont_require_table {$table}", "changed");
                     DB::dont_require_table($table);
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     DB::alteration_message($e->getMessage(), "error");
                 }
             }
@@ -87,5 +89,4 @@ class EditableUploadField extends EditableFileField
 
         return $fields;
     }
-
 }

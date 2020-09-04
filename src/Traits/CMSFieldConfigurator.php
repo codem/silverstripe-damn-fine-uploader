@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Forms\CheckboxField;
@@ -36,7 +37,6 @@ trait CMSFieldConfigurator
      */
     public function addGenericFields(FieldList $fields, $tab = "Main")
     {
-
         $fields->removeByName('Default');
         $fields->removeByName('Implementation');
 
@@ -64,20 +64,20 @@ trait CMSFieldConfigurator
         // Get the configured values for the field
         $config = Config::inst()->get(DamnFineUploaderField::class, 'implementation');
         $defaults = "";
-        if(!empty($config['validation']['acceptFiles'])) {
+        if (!empty($config['validation']['acceptFiles'])) {
             $defaults = strip_tags($config['validation']['acceptFiles']);
         }
         $fields->addFieldToTab(
             'Root.' . $tab,
             TextareaField::create('AllowedMimeTypes')
                 ->setTitle(_t('DamnFineUploader.ACCEPTED_MIMETYPES', 'Accepted mime types allowed for uploads made via this field (one per line)'))
-                ->setDescription( sprintf( _t('DamnFineUploader.DEFAULT_MIMETYPES', 'Default if none set: %s'), $defaults) )
+                ->setDescription(sprintf(_t('DamnFineUploader.DEFAULT_MIMETYPES', 'Default if none set: %s'), $defaults))
         );
 
         $fields->addFieldToTab(
             'Root.' . $tab,
             CheckboxField::create('UseDateFolder')
-                ->setTitle( _t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder format suffix') )
+                ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder format suffix'))
                 ->setDescription(
                     _t(
                         'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
@@ -89,5 +89,4 @@ trait CMSFieldConfigurator
 
         return $fields;
     }
-
 }

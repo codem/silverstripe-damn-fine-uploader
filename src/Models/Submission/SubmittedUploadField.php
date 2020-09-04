@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\UserForms\Model\Submission\SubmittedFormField;

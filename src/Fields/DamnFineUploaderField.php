@@ -1,4 +1,5 @@
 <?php
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
@@ -486,7 +487,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         }
 
         // set allowed extensions based on types
-        $lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes( explode(",", $lib_config['validation']['acceptFiles']) );
+        $lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes(explode(",", $lib_config['validation']['acceptFiles']));
 
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
@@ -827,14 +828,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         return $accepts;
     }
 
-    public function Field($properties = array())
+    public function Field($properties = [])
     {
         $this->libraryRequirements();
         return parent::Field($properties);
     }
 
 
-    public function FieldHolder($properties = array())
+    public function FieldHolder($properties = [])
     {
         return parent::FieldHolder($properties);
     }
@@ -842,7 +843,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * The Small Field Holder is the large holder
      */
-    public function SmallFieldHolder($properties = array())
+    public function SmallFieldHolder($properties = [])
     {
         return parent::FieldHolder($properties);
     }
@@ -870,10 +871,10 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $parsed = false;
         if (strpos($mimetype, "/") !== false) {
             $parts = explode('/', $mimetype);
-            $parsed = array(
+            $parsed = [
                 'type' => $parts[0],
                 'subtype' => $parts[1],
-            );
+            ];
         }
         return $parsed;
     }

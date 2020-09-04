@@ -20,7 +20,6 @@ use SilverStripe\Core\Config\Configurable;
  */
 class UploadPageController extends \PageController
 {
-
     use Extensible;
     use Configurable;
 
@@ -34,23 +33,24 @@ class UploadPageController extends \PageController
     /**
      * @return UppyField;
      */
-    protected function getUploadField() {
+    protected function getUploadField()
+    {
         $field = UppyField::create(
-                    $this->config()->get('upload_field_name'),
-                    _t('DamnFineUploader.UPLOAD', 'Upload')
+            $this->config()->get('upload_field_name'),
+            _t('DamnFineUploader.UPLOAD', 'Upload')
         );
         $data = $this->data();
-        if($data->FormFieldTitle) {
-            $field->setTitle( $data->FormFieldTitle );
+        if ($data->FormFieldTitle) {
+            $field->setTitle($data->FormFieldTitle);
         }
-        if($data->FormFieldDescription) {
-            $field->setDescription( strip_tags($data->FormFieldDescription) );
+        if ($data->FormFieldDescription) {
+            $field->setDescription(strip_tags($data->FormFieldDescription));
         }
-        if($data->FormFieldRightTitle) {
-            $field->setRightTitle( strip_tags($data->FormFieldRightTitle) );
+        if ($data->FormFieldRightTitle) {
+            $field->setRightTitle(strip_tags($data->FormFieldRightTitle));
         }
-        if($data->FormFieldTitle) {
-            $field->setTitle( $data->FormFieldTitle );
+        if ($data->FormFieldTitle) {
+            $field->setTitle($data->FormFieldTitle);
         }
 
         // max file size, handle in bytes, provided in MB
@@ -86,7 +86,6 @@ class UploadPageController extends \PageController
         }
 
         return $field;
-
     }
 
 
@@ -94,15 +93,16 @@ class UploadPageController extends \PageController
     /**
      * @return FormAction;
      */
-    protected function getUploadAction() {
+    protected function getUploadAction()
+    {
         $data = $this->data();
         $action = FormAction::create(
             'handleUpload',
             _t('DamnFineUploader.UPLOAD', 'Upload')
         );
 
-        if($data->FormUploadButtonTitle) {
-            $action->setTitle( $data->FormUploadButtonTitle );
+        if ($data->FormUploadButtonTitle) {
+            $action->setTitle($data->FormUploadButtonTitle);
         }
 
         return $action;
@@ -130,7 +130,8 @@ class UploadPageController extends \PageController
     /**
      * For templates that have $Form
      */
-    public function Form() {
+    public function Form()
+    {
         return $this->UploadForm();
     }
 
@@ -149,8 +150,8 @@ class UploadPageController extends \PageController
             ];
 
             $fields = $form->Fields();
-            $upload_field = $fields->dataFieldByName( $this->config()->get('upload_field_name') );
-            if(!$upload_field) {
+            $upload_field = $fields->dataFieldByName($this->config()->get('upload_field_name'));
+            if (!$upload_field) {
                 throw new \Exception("Field not found");
             }
             $name = $upload_field->getName();
@@ -173,7 +174,7 @@ class UploadPageController extends \PageController
             $response = $this->extend('handleFailedUpload', $response_data, $upload_field, $form);
         }
 
-        if($response instanceof HTTPResponse) {
+        if ($response instanceof HTTPResponse) {
             return $response;
         } else {
             $response = new HTTPResponse(null, 500);
