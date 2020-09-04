@@ -4,6 +4,7 @@
 /yarn-error.log
 /client/dist/styles/*.map
 /client/dist/js/*.map
-/tests/codeception/.env
-/tests/codeception/tests/_output/*
-/tests/codeception/tests/_support/_generated/*
+/codeception/codeception.yml
+/codeception/.env
+/codeception/tests/_output/*
+/codeception/tests/_support/_generated/*

@@ -1,16 +1,15 @@
 # Notes on these acceptance tests
 
-If you want to run these codeception tests, you will need codeception and vlucas/phpdotenv installed globally.
+If you want to run these codeception tests, you will need codeception and vlucas/phpdotenv installed.
 
 The test will upload files to pages on a website using Chromium.
 
 > Files uploaded in this test will be created in the test website and your database.
 
 
-1. Install codeception/codeception and required dependencies globally: ```composer global require codeception/codeception codeception/module-db codeception/module-webdriver codeception/module-asserts```
-1. Install vlucas/phpdotenv globally ```composer global require vlucas/phpdotenv ^4``` (^5 is not supported yet)
+1. Ensure ```symbiote/silverstripe-test-assist": "^4.0``` is installed as a --dev dependency (which requires codeception/codeception:^2.5 and vlucas/phpdotenv:^3)
+1. Install codeception/codeception and required dependencies: ```composer require --dev codeception/codeception:^2.5 codeception/module-db codeception/module-webdriver codeception/module-asserts vlucas/phpdotenv:^3```
 1. Make sure the PHP mysql package is installed and that the mysql host is accessible
-1. Codeception will be installed to ```~/.composer/vendor/bin/codecept```
 1. For Ubuntu, install the package ```chromium-chromedriver``` or get ChromeDriver for your OS from https://sites.google.com/a/chromium.org/chromedriver/downloads (you can use other browser drivers if you like)
 1. ```$ which chromedriver``` should return something like ```/usr/bin/chromedriver```
 1. If you install the ```chromium-chromedriver``` package, it will install ```chromium-browser```. Chromium browser should be found at ```/usr/bin/chromium-browser```
@@ -19,10 +18,11 @@ The test will upload files to pages on a website using Chromium.
 
 Run a few checks to see things are installed
 
-```
-$ chromium-browser --version
+```bash
+chromium-browser --version
 Chromium 85.0.4183.83 snap
-$ chromedriver --version
+
+chromedriver --version
 ChromeDriver 85.0.4183.83 (94abc2237ae0c9a4cb5f035431c8adfb94324633-refs/branch-heads/4183@{#1658})
 ```
 
@@ -39,7 +39,8 @@ You need to set up some pages and configuration for your own environment. This a
 ### Test Environment
 
 Copy the ```.env.dist``` file to ```.env``` and modify the values to suit your environment setup:
-```
+
+```bash
 # the website URL you are testing
 WEBSITE_URL = https://test.local
 
@@ -68,22 +69,31 @@ When the test runs, it will use values from the .env file in the test
 
 Ensure ChromeDriver is started:
 
-```
-$ chromedriver --url-base=/wd/hub
+```bash
+chromedriver --url-base=/wd/hub
 Starting ChromeDriver 85.0.4183.83 (94abc2237ae0c9a4cb5f035431c8adfb94324633-refs/branch-heads/4183@{#1658}) on port 9515
 Only local connections are allowed.
 Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
 ChromeDriver was started successfully.
 ```
 
-Run the test from this directory:
+Your project level codeception.yml file should have an include like:
 
+```yml
+include:
+  - ./vendor/codem/silverstripe-damn-fine-uploader/codeception
 ```
-$ pwd
-/path/to/vendor/codem/silverstripe-damn-fine-uploader/tests/codeception
-~/.composer/vendor/bin/codecept run --steps tests/UppyUploadCest.php
-Codeception PHP Testing Framework v2.5.4
-// etc
+
+Run the test from the project directory:
+
+```bash
+pwd
+/path/to/project
+```
+
+Run codeception (use the -d flag for debug)
+```
+./vendor/bin/codecept run
 ```
 
 ## Output

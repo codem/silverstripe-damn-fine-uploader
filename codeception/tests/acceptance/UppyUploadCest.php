@@ -1,4 +1,6 @@
 <?php
+namespace DamnFineUploader;
+
 /**
  * Test for UppyField loaded in a page
  * @author James
@@ -11,6 +13,7 @@ class UppyUploadCest
 
     public function uploadTestWorks(AcceptanceTester $I)
     {
+
         $path = getenv('DFU_UPPY_PATH');
         $I->assertNotEmpty($path, "DFU_UPPY_PATH not configured in your .env file!");
 
