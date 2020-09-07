@@ -12,6 +12,7 @@ use Silverstripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
@@ -171,10 +172,21 @@ class UploadPageController extends \PageController
         }
 
         if ($response instanceof HTTPResponse) {
+            // return the response returned from extensions
             return $response;
+        } else if($response_data['expected'] > 0
+            && $response_data['expected'] == $response_data['found']) {
+            $form->sessionMessage( _t("DamnFineUploader.FILES_UPLOADED", "Files were saved"), ValidationResult::TYPE_GOOD);
+            return $this->redirectBack();
         } else {
-            $response = new HTTPResponse(null, 500);
-            return $response;
+            $form->sessionMessage(
+                sprintf(
+                    _t("DamnFineUploader.FILES_UPLOADED", "Only %d out of %d files could be uploaded"),
+                    $response_data['found'], $response_data['expected']
+                ),
+                ValidationResult::TYPE_ERROR
+            );
+            return $this->redirectBack();
         }
     }
 }
