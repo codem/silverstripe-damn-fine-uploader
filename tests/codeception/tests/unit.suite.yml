@@ -3,7 +3,9 @@
 # Suite for unit or integration tests.
 
 actor: UnitTester
+namespace: Codem\DamnFineUploader
+bootstrap: _bootstrap.php
 modules:
     enabled:
         - Asserts
-        - \DamnFineUploader\Helper\Unit
+        - \Codem\DamnFineUploader\Helper\Unit
