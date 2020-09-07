@@ -33,5 +33,19 @@
                 "client/dist/styles",
                 "client/dist/assets"
         ]
-    }
+    },
+    "autoload": {
+		"psr-4": {
+			"Codem\\DamnFineUploader\\": [
+				"src/Controllers/",
+				"src/Exceptions/",
+				"src/Extensions/",
+				"src/Fields/",
+				"src/Models/",
+				"src/Pages/",
+				"src/Tasks/",
+				"src/Traits/"
+			]
+		}
+	}
 }
