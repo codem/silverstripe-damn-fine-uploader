@@ -1,28 +1,32 @@
 <?php
-/**
- * Test for UppyField loaded in a page
- * @author James
- */
-class UppyUploadCest
+
+namespace Codem\DamnFineUploader;
+use Codem\DamnFineUploader\AcceptanceTester;
+
+class UploadCest
 {
     public function _before(AcceptanceTester $I)
     {
     }
 
-    public function uploadTestWorks(AcceptanceTester $I)
+    /**
+     * Uploads some files via the  Codem\DamnFineUploader\UploadPage
+     */
+    public function uploadTest(AcceptanceTester $I)
     {
-        $path = getenv('DFU_UPPY_PATH');
-        $I->assertNotEmpty($path, "DFU_UPPY_PATH not configured in your .env file!");
+
+        $path = getenv('CODECEPTION_DFU_UPPY_PATH');
+        $I->assertNotEmpty($path, "CODECEPTION_DFU_UPPY_PATH not configured in your .env file!");
 
         $path = rtrim($path, "/") . "/";//ensure a correct trailiing slash
 
-        $wait  = (int)getenv('DFU_UPLOAD_WAIT');
+        $wait  = (int)getenv('CODECEPTION_DFU_UPLOAD_WAIT');
         if (!$wait || $wait <= 0) {
             $wait = 5;
         }
 
-        $form_id = getenv('DFU_FORM_ID');
-        $I->assertNotEmpty($form_id, "DFU_FORM_ID not configured in your .env file!");
+        $form_id = getenv('CODECEPTION_DFU_FORM_ID');
+        $I->assertNotEmpty($form_id, "CODECEPTION_DFU_FORM_ID not configured in your .env file!");
 
         $form_id_path = $form_id;
         $form_id = "Form_{$form_id}";
@@ -95,11 +99,13 @@ class UppyUploadCest
 
         $I->click("form#{$form_id} input[type=submit]");
 
+        // response after files were saved
+        $I->see("Files were saved");
+
         foreach ($dfu_token_values as $dfu_token_value) {
-            $I->see($dfu_token_value);
             // The DFU token should no longer be present
             $I->dontSeeInDatabase('File', ['DFU' => $dfu_token_value ]);
         }
-        $I->see("Count:{$values}");
+
     }
 }

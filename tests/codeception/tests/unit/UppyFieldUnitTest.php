@@ -2,6 +2,7 @@
 
 namespace Codem\DamnFineUploader\Tests;
 
+use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\Form;
@@ -15,7 +16,11 @@ use DOMDocument;
 use DOMElement;
 use stdClass;
 
-class UppyFieldTest extends SapphireTest
+/**
+ * Unit test to verify field handling
+ * @author Codem
+ */
+class UppyFieldUnitTest extends SapphireTest
 {
     public function testFieldConfiguration()
     {

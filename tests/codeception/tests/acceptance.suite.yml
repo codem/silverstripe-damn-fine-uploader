@@ -1,0 +1,38 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+namespace: Codem\DamnFineUploader
+bootstrap: _bootstrap.php
+modules:
+    enabled:
+        - Db:
+            # Taken from .env
+            dsn: 'mysql:host=%SS_DATABASE_SERVER%;dbname=%SS_DATABASE_NAME%'
+            user: '%SS_DATABASE_USERNAME%'
+            password: '%SS_DATABASE_PASSWORD%'
+            # do not populate from dump prior to test
+            populate: false
+            # do not reload a dump before each test
+            cleanup: false
+        - WebDriver:
+            # This value is taken from .env
+            url: '%CODECEPTION_DFU_WEBSITE_URL%'
+            browser: chrome
+            port: 9515
+            window_size: false
+            capabilities:
+              chromeOptions:
+                args: ["--headless", "--allow-insecure-localhost", "--disable-gpu", "window-size=1920x1080"]
+                binary: "/usr/bin/chromium-browser"
+        - Asserts
+        - \Codem\DamnFineUploader\Helper\Acceptance

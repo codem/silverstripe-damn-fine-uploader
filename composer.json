@@ -22,9 +22,10 @@
         "silverstripe/userforms": "~5.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^3 || ^4 || ^5",
+        "phpunit/phpunit": "^5",
         "codeception/codeception": "^2.5",
-        "vlucas/phpdotenv" : "^3.3"
+        "vlucas/phpdotenv" : "^3",
+        "symbiote/silverstripe-test-assist": "^4.0"
     },
     "extra": {
         "expose": [
@@ -32,5 +33,19 @@
                 "client/dist/styles",
                 "client/dist/assets"
         ]
-    }
+    },
+    "autoload": {
+		"psr-4": {
+			"Codem\\DamnFineUploader\\": [
+				"src/Controllers/",
+				"src/Exceptions/",
+				"src/Extensions/",
+				"src/Fields/",
+				"src/Models/",
+				"src/Pages/",
+				"src/Tasks/",
+				"src/Traits/"
+			]
+		}
+	}
 }
