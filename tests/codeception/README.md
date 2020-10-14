@@ -34,7 +34,7 @@ Ensure the following values are in your project .env (the test suite will load t
 
 ```bash
 # the website URL you are testing
-CODECEPTION_DFU_WEBSITE_URL = https://test.local
+CODECEPTION_WEBSITE_URL = https://test.local
 
 # The id for the form containing the upload field (Form_ will be prefixed)
 CODECEPTION_DFU_FORM_ID = UploadForm

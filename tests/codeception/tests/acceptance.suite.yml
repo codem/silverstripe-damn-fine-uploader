@@ -26,7 +26,7 @@ modules:
             cleanup: false
         - WebDriver:
             # This value is taken from .env
-            url: '%CODECEPTION_DFU_WEBSITE_URL%'
+            url: '%CODECEPTION_WEBSITE_URL%'
             browser: chrome
             port: 9515
             window_size: false
