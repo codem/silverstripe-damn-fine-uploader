@@ -189,7 +189,8 @@ export default function DFU() {
     if(submit_elements) {
       var submits = Array.from(submit_elements);
       for(var d of submits) {
-        if(disable) {
+        if(disable && !d.disabled) {
+          // if disable and button is enabled
           d.setAttribute('disabled','disabled');
           if(d.dataset.uploadsPending) {
             if(d.nodeName == 'BUTTON') {
@@ -200,7 +201,8 @@ export default function DFU() {
               d.value = d.dataset.uploadsPending;
             }
           }
-        } else {
+        } else if(!disable && d.disabled) {
+          // if enable and button is disabled
           d.removeAttribute('disabled');
           if(d.dataset.uploadsNotPending) {
             if(d.nodeName == 'BUTTON') {
