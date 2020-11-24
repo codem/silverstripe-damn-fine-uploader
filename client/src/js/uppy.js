@@ -98,8 +98,17 @@ if(dfu_uploaders_uppy) {
     });
 
     uppy.on('cancel-all', (result) => {
-      // all error
+      // all cancelled
       dfu.handleUnblock(upload_element);
+    });
+
+    uppy.on('file-removed', (file, reason) => {
+      // a file was removed
+      const items = uppy.getFiles();
+      if(items.length == 0) {
+        // all files removed
+        dfu.handleUnblock(upload_element);
+      }
     });
 
     uppy.on('file-added', (file) => {
