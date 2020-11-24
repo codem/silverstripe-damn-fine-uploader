@@ -38,31 +38,53 @@ The Upload field itself sets some request-time configuration options, passed to 
 
 A file upload field can be created in the usual way within a Controller:
 
-```
+```php
+namespace My\Fun\App;
+
 use Codem\DamnFineUploader\UppyField;
 use Silverstripe\Forms\FieldList;
 use Silverstripe\Forms\FormAction;
 use Silverstripe\Forms\Form;
-// ...
 
-/**
- * In your template use $UploadForm to display this Form
- */
-public function UploadForm()
-{
-    // create the field
-    $upload_field = UppyField::create('MyUploadField', 'My Upload Field');
-    $fields = FieldList::create(
-        $upload_field
-    );
-    $actions = FieldList::create(
-        FormAction::create('doAnUpload', 'Upload') // handle the form submission in doAnUpload()
-    );
-    $form = Form::create($this, 'UploadForm', $fields, $actions);
-    return $form;
-]
 
+class MyController extends \PageController {
+
+    // ...
+
+    /**
+     * In your template use {$UploadForm} to display this Form
+     * @return Form
+     */
+    public function UploadForm()
+    {
+        // create the field
+        $upload_field = UppyField::create('MyUploadField', 'My Upload Field');
+        $fields = FieldList::create(
+            $upload_field
+        );
+        $actions = FieldList::create(
+            FormAction::create(
+                'doAnUpload',
+                'Upload'
+            )->setAttribute('data-uploads-pending','File uploads are pending')
+        );
+        $form = Form::create($this, 'UploadForm', $fields, $actions);
+        return $form;
+    }
+
+    // ...
+}
 ```
+
+Submit buttons on the form are given the "disabled" attribute when uploads have not yet completed.
+
+You can use the optional "data-uploads-pending" data attribute on the form action to specify text that will be displayed when file(s) were added to the field but not yet uploaded.
+
+If this is not set, the value of the disabled button in this example will remain as "Uploads"
+
+### Example field
+
+<img src="./docs/screenshots/uploader.png" width="100%">
 
 ### Editable fields for the silverstripe/userforms module
 

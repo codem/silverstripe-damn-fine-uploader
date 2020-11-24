@@ -191,8 +191,24 @@ export default function DFU() {
       for(var d of submits) {
         if(disable) {
           d.setAttribute('disabled','disabled');
+          if(d.dataset.uploadsPending) {
+            if(d.nodeName == 'BUTTON') {
+              d.dataset.uploadsNotPending = d.textContent;
+              d.textContent = d.dataset.uploadsPending;
+            } else {
+              d.dataset.uploadsNotPending = d.value;
+              d.value = d.dataset.uploadsPending;
+            }
+          }
         } else {
           d.removeAttribute('disabled');
+          if(d.dataset.uploadsNotPending) {
+            if(d.nodeName == 'BUTTON') {
+              d.textContent = d.dataset.uploadsNotPending;
+            } else {
+              d.value = d.dataset.uploadsNotPending;
+            }
+          }
         }
       }
     }
