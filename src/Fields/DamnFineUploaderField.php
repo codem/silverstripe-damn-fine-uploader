@@ -295,6 +295,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function remove(HTTPRequest $request)
     {
         try {
+
+            $allow_delete = $this->config()->get('allow_delete');
+            if(!$allow_delete) {
+                throw new InvalidRequestException("Cannot remove this file");
+            }
             $post = $request->postVars();
             if ($request->isPOST() && empty($post)) {
                 //invalid POST
@@ -364,6 +369,18 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function UploadLink()
     {
         return Controller::join_links('field/' . $this->name, 'upload');
+    }
+
+    /**
+     * Return a Relative remove link for this field (for remove file actions)
+     *
+     * @param string $action
+     *
+     * @return string
+     */
+    public function RemoveLink()
+    {
+        return Controller::join_links('field/' . $this->name, 'remove');
     }
 
     /**
@@ -469,14 +486,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             }
 
             // request options
-            $lib_config['request']['endpoint'] = $this->Link('upload');
+            $lib_config['request']['endpoint'] = $this->getRequestEndpoint();
             $lib_config['request']['params'][ $token->getName() ] = $token->getValue();
 
             // deleteFile options if allowed
-            $allow_delete = $this->config()->allow_delete;
+            $allow_delete = $this->config()->get('allow_delete');
             if ($allow_delete) {
                 $lib_config['deleteFile']['enabled'] = true;//enable when we can handle a delete
-                $lib_config['deleteFile']['endpoint'] = $this->Link('remove');
+                $lib_config['deleteFile']['endpoint'] = $this->getDeleteEndpoint();
                 $lib_config['deleteFile']['params'][ $token->getName() ] = $token->getValue();
             }
         }
@@ -532,17 +549,28 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Set a request endpoint (absolute or relative URL only) or reset based on the field's form (if available)
+     * If you set a custom endpoint for uploads, you will need to handle the upload appropriately and return the expected result
      * When using this method other request options are sourced from {@link self::setUploaderDefaultConfig()}
      * To set custom request options see {@link self::setOptionRequest()}
      */
-    public function setRequestEndpoint($endpoint = "")
+    public function setRequestEndpoint(string $endpoint)
     {
-        if ($endpoint) {
-            $this->runtime_config['request']['endpoint'] = $endpoint;
-        } elseif ($form = $this->getForm()) {
-            $this->runtime_config['request']['endpoint'] = $this->Link('upload');
-        }
+        $this->runtime_config['request']['endpoint'] = $endpoint;
         return $this;
+    }
+
+    /**
+     * Get the request endpoint for uploads
+     * @return string the path to the upload endpoint
+     */
+    public function getRequestEndpoint() {
+        if(!empty($this->runtime_config['request']['endpoint'])) {
+            return $this->runtime_config['request']['endpoint'];
+        } else {
+            $action = $this->getForm()->FormAction();
+            $link = Controller::join_links($action, $this->UploadLink());
+            return $link;
+        }
     }
 
     /**
@@ -550,15 +578,24 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * When using this method other deleteFile options are sourced from {@link self::setUploaderDefaultConfig()}
      * To set custom deleteFile options see {@link self::setOptionDelete()}
      */
-    public function setDeleteEndpoint($endpoint = "")
+    public function setDeleteEndpoint(string $endpoint)
     {
-        $this->runtime_config['deleteFile']['enabled'] = true;//setting an endpoint enables file uploads
-        if ($endpoint) {
-            $this->runtime_config['deleteFile']['endpoint'] = $endpoint;
-        } elseif ($form = $this->getForm()) {
-            $this->runtime_config['deleteFile']['endpoint'] = $this->Link('remove');
-        }
+        $this->runtime_config['deleteFile']['endpoint'] = $endpoint;
         return $this;
+    }
+
+    /**
+     * Get the DELETE endpoint for uploads
+     * @return string the path to the upload endpoint
+     */
+    public function getDeleteEndpoint() {
+        if(!empty($this->runtime_config['deleteFile']['endpoint'])) {
+            return $this->runtime_config['deleteFile']['endpoint'];
+        } else {
+            $action = $this->getForm()->FormAction();
+            $link = Controller::join_links($action, $this->RemoveLink());
+            return $link;
+        }
     }
 
     /**
@@ -597,7 +634,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Provide runtime config to be merged into lib_config
-     * If you wish to override the endpoint, use setRequestEndpoint()
      */
     public function setConfig(array $config)
     {

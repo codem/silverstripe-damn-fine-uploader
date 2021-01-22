@@ -4,6 +4,3 @@ Name: dfu_extensions
 SilverStripe\Assets\File:
   extensions:
     - 'Codem\DamnFineUploader\FileExtension'
-SilverStripe\UserForms\Form\UserForm:
-  extensions:
-    - 'Codem\DamnFineUploader\UserFormExtension'
