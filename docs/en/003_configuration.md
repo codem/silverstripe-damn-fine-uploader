@@ -4,7 +4,7 @@ See below for a sample configuration.
 
 You should override the default configuration in your project's yml configuration
 
-```
+```yaml
 ---
 Name: my-damnfineuploader
 After:
@@ -23,12 +23,6 @@ Codem\DamnFineUploader\DamnFineUploaderField:
 
   # config for the frontend lib
   implementation:
-    autoUpload: true
-    maxConnections: 3
-    multiple: true
-    warnBeforeUnload: true
-    form:
-      interceptSubmit: false
     validation:
       acceptFiles: 'image/jpg,image/jpeg,image/png,image/webp'
       itemLimit: 3
@@ -36,12 +30,8 @@ Codem\DamnFineUploader\DamnFineUploaderField:
       image:
         maxWidth : 2560
         maxHeight : 1440
-    debug: true
-    retry:
-      enableAuto: false
+    debug: false
     deleteFile:
       forceConfirm: true
       method: 'POST'
-    scaling:
-      defaultQuality: 90
 ```
