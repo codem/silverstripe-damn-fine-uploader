@@ -32,8 +32,8 @@
     "webpack-cli": "^3.3"
   },
   "dependencies": {
-    "@uppy/core": "^1.13",
-    "@uppy/dashboard": "^1.12",
+    "@uppy/core": "^1.15",
+    "@uppy/dashboard": "^1.14",
     "@uppy/drag-drop": "^1.4",
     "@uppy/xhr-upload": "^1.6",
     "core-js": "^3.6",
