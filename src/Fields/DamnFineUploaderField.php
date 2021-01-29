@@ -337,9 +337,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     final protected function removeFile($uuid, $form_security_token)
     {
-        $file = singleton(File::class);
-        // Do not untrust to allow multiple delete attempts
-        $record = $file->getByDfuToken($uuid, $form_security_token, false);
+        $record = FileRetriever::getFile($uuid, $form_security_token);
         $record_id = null;
         if (($record instanceof File) && !empty($record->ID)) {
             $record_id = $record->ID;
@@ -349,9 +347,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             throw new FileRemovalException("The file could not be deleted");
         }
 
-        $check = DataObject::get_by_id(File::class, $record_id);
+        $check = File::get()->byId($record_id);
         if (!empty($check->ID)) {
-            // check on the file returned a record with this id
+            // file was still found.. archive failed
             throw new FileRemovalException("The file could not be deleted");
         }
 
