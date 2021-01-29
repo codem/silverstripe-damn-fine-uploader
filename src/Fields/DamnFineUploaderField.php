@@ -278,11 +278,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $file->DFU = $uuid . "|" . $form_security_token;
         $file->IsDfuUpload = 1;
         $file->writeToStage(Versioned::DRAFT);
-
-        // if the file is ever published on upload, this unpublishes it
-        if ($this->config()->get('unpublish_after_upload')) {
-            $file->doUnpublish();
-        }
+        $file->protectFile();
 
         return $file;
     }
