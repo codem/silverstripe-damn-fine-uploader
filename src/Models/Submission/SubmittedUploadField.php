@@ -22,7 +22,7 @@ class SubmittedUploadField extends SubmittedFormField
      */
     private static $table_name = 'SubmittedUploadField';
 
-    private static $many_many = [
+    private static $has_many = [
         'Files' => File::class
     ];
 }

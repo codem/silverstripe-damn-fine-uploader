@@ -2,10 +2,7 @@
 
 namespace Codem\DamnFineUploader;
 
-use SilverStripe\Core\Convert;
-use SilverStripe\Assets\Folder;
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
-use SilverStripe\ORM\DB;
 use SilverStripe\Forms\HeaderField;
 
 /**
@@ -15,12 +12,16 @@ use SilverStripe\Forms\HeaderField;
 class EditableUploadField extends EditableFileField
 {
     use EditableDamnFineUploader;
+    use Migrations;
     use CMSFieldConfigurator;
 
     private static $table_name = 'EditableUploadField';
 
     private static $singular_name = 'File Upload Field - Drag and Drop';
     private static $plural_name = 'File Upload Fields - Drag and Drop';
+
+    private static $run_migration_1 = true;
+    private static $run_migration_manymanyhasmany = false;
 
     private static $db = [
         'AllowedMimeTypes' => 'Text',
@@ -49,26 +50,17 @@ class EditableUploadField extends EditableFileField
     }
 
     /**
-     * Perform migration handling on dev/build
+     * Require default records / perform migration handling on dev/build
      */
     public function requireDefaultRecords()
     {
-        if ($this->config()->get('run_migration_1')) {
-            $tables = [
-                'EditableFineUploaderCoreField',
-                'EditableFineUploaderCoreField_Live',
-                'EditableFineUploaderCoreField_Versions',
-                'SubmittedFineUploaderField_Files'
-            ];
-            DB::alteration_message("Executing run_migration_1 (turn this off in config if you no longer need it)", "changed");
-            foreach ($tables as $table) {
-                try {
-                    // obsolete deprecated/removed/unused FineUploader support
-                    DB::alteration_message("dont_require_table {$table}", "changed");
-                    DB::dont_require_table($table);
-                } catch (\Exception $e) {
-                    DB::alteration_message($e->getMessage(), "error");
-                }
+        if(get_class($this) == EditableUploadField::class) {
+            // avoid child classes running this method
+            if ($this->config()->get('run_migration_1')) {
+                $this->migrationDeprecateFineUploader();
+            }
+            if ($this->config()->get('run_migration_manymanyhasmany')) {
+                $this->migrationManyManyHasMany();
             }
         }
     }
@@ -89,4 +81,5 @@ class EditableUploadField extends EditableFileField
 
         return $fields;
     }
+
 }

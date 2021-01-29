@@ -4,7 +4,7 @@ An upload field that can be used to upload files to a Silverstripe website.
 
 Uses [Uppy](https://uppy.io/) to handle & submit client uploads.
 
-> This module is not intended for use in the Silverstripe administration area or CMS, use the standard UploadField for that.
+> This module is not intended for use in the Silverstripe administration area, use the standard UploadField for that.
 
 ## Browser support
 
@@ -88,7 +88,9 @@ If this is not set, the value of the disabled button in this example will remain
 
 ### Editable fields for the silverstripe/userforms module
 
-An ```EditableUppyField``` field is available for use in user generated forms. The field can be added in the usual userforms way and the following options are available:
+An ```EditableUploadField``` field is available for use in user generated forms.
+
+The field can be added in the usual userforms way and the following options are available:
 
 + Maximum file size (MB)
 + Upload folder target within the assets directory (default: Uploads)
