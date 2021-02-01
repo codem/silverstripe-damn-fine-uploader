@@ -61,7 +61,7 @@ class FileExtension extends DataExtension
               ->first();
         if (!empty($file->ID) && $untrust) {
             $file->DFU = null;
-            $file->write();
+            $file->writeToStage(Versioned::DRAFT);
         }
         return $file;
     }

@@ -8,9 +8,9 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\Fieldlist;
-use SilverStripe\Versioned\Versioned;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Versioned\Versioned;
 
 class FileRetriever
 {
@@ -24,12 +24,11 @@ class FileRetriever
       */
     public static function getUploadedFilesByKey(string $key, Form $form, $untrust = true)
     {
-        $controller = Controller::curr();
-        if (!$controller) {
-            throw new \Exception("No controller found");
-        }
-        $request = $controller->getRequest();
-        $posted_uuids = $request->postVar($key);
+
+        $data = Controller::curr()->getRequest()->postVars();
+
+        $posted_uuids = isset($data[ $key ]) ? $data[ $key ] : null;
+
         if (!is_array($posted_uuids)) {
             throw new \Exception("No file tokens were found in the request");
         }
@@ -76,7 +75,7 @@ class FileRetriever
         foreach($files as $file) {
             if ($untrust) {
                 $file->DFU = null;
-                $file->write();
+                $file->writeToStage(Versioned::DRAFT);
             }
             // uploaded files should remain protected
             $file->protectFile();

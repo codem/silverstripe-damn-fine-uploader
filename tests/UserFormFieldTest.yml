@@ -1,0 +1,42 @@
+SilverStripe\Security\Group:
+  admin:
+    Title: Administrators
+SilverStripe\Assets\Folder:
+  folder1:
+    Name: formuploads
+SilverStripe\Assets\File:
+  image1:
+    Title: image1
+    FileFilename: formuploads/1.jpg
+    FileHash: 85f34096d7f077458b75b34e1006474e7a11b12d
+    Parent: =>SilverStripe\Assets\Folder.folder1
+    Name: 1.jpg
+  image2:
+    Title: image2
+    FileFilename: formuploads/2.jpg
+    FileHash: 888c48f97849388fd86277b7d3bab4af11556cc3
+    Parent: =>SilverStripe\Assets\Folder.folder1
+    Name: 2.jpg
+  image3:
+    Title: image3
+    FileFilename: formuploads/3.jpg
+    FileHash: ecd94fefec2eeab9c2710b1895e7dd8f56268169
+    Parent: =>SilverStripe\Assets\Folder.folder1
+    Name: 3.jpg
+
+Codem\DamnFineUploader\EditableUploadField:
+  upload-field-1:
+    Name: 'upload_field_name'
+    Title: 'Upload field title'
+    AllowedMimeTypes: "image/jpg\nimage/jpeg\nimage/png\nimage/webp"
+    MaxFileSizeMB: 10
+    UseDateFolder: 1
+    FileUploadLimit: 3
+
+
+SilverStripe\UserForms\Model\UserDefinedForm:
+  upload-form:
+    Title: 'Form with the drag and drop uploader field'
+    Content: '$UserDefinedForm'
+    Fields:
+      - =>Codem\DamnFineUploader\EditableUploadField.upload-field-1
