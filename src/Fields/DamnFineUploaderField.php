@@ -231,7 +231,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             if ($this->use_date_folder) {
                 // Handle data based folder name, if no specific folder name already set
                 $date_part = date('Y/m/d');
-                $this->setFolderName($this->folderName . "/{$date_part}/");
+                $this->setFolderName(rtrim($this->folderName, "/") . "/{$date_part}/");
             } else {
                 $this->setFolderName($this->folderName);
             }
