@@ -1,7 +1,6 @@
 const Uppy = require('@uppy/core');
 const XHRUpload = require('@uppy/xhr-upload');
 const Dashboard = require('@uppy/dashboard');
-const StatusBar = require('@uppy/status-bar');
 
 require('@uppy/core/dist/style.css');
 require('@uppy/dashboard/dist/style.css');
@@ -73,11 +72,6 @@ if(dfu_uploaders_uppy) {
                       bundle: false,// max allowed files here ?
                       fieldName: upload_element.dataset.name,
                       endpoint: config.request.endpoint
-                    }
-                  )
-                  .use(
-                    StatusBar, {
-                      doneButtonHandler: null
                     }
                   );
 
