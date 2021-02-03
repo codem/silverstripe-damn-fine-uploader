@@ -26,8 +26,8 @@ class UppyField extends DamnFineUploaderField
     {
         Requirements::set_force_js_to_bottom(true);
         // todo uppy requirements
-        Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/uppy.js');
-        Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/uppy.css');
+        Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/uppy.min.js');
+        Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/uppy.min.css');
     }
 
     public function getImplementation()
