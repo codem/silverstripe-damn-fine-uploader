@@ -28,11 +28,7 @@ class FileRetriever
         $data = Controller::curr()->getRequest()->postVars();
 
         $posted_uuids = isset($data[ $key ]) ? $data[ $key ] : null;
-
-        if (!is_array($posted_uuids)) {
-            throw new \Exception("No file tokens were found in the request");
-        }
-        if(empty($posted_uuids)) {
+        if(is_null($posted_uuids) || empty($posted_uuids)) {
             // not posted, possibly no file uploads made
             return [];
         }
