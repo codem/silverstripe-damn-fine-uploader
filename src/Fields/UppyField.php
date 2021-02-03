@@ -29,6 +29,8 @@ class UppyField extends DamnFineUploaderField
         Requirements::javascript(
             'codem/silverstripe-damn-fine-uploader:client/dist/js/uppy.min.js',
             [
+                "defer" => true,
+                "async" => true,
                 "crossorigin" => "anonymous",
                 "integrity" => "sha256-vBiv9sg5PJ9vDawlB1uSKhBdUPEihmeAPt1lAFjUkWc= sha384-Cupsv3zO6Ai7RgybaY6EDOZ5LA5Jvrsljfmw/WHaboPqTELK7xrZxq1OzBXpN4eN sha512-xlZjsnwE/pTKVgwG7nxYjUpFw/+t5GhDsSPh70/eyR0YsEecMUqOZy9hbzlbtEFI8WwjzkO1VHQ8rlf32wb8Lg=="
             ]
