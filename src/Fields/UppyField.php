@@ -26,8 +26,21 @@ class UppyField extends DamnFineUploaderField
     {
         Requirements::set_force_js_to_bottom(true);
         // todo uppy requirements
-        Requirements::javascript('codem/silverstripe-damn-fine-uploader: client/dist/js/uppy.min.js');
-        Requirements::css('codem/silverstripe-damn-fine-uploader: client/dist/styles/uppy.min.css');
+        Requirements::javascript(
+            'codem/silverstripe-damn-fine-uploader:client/dist/js/uppy.min.js',
+            [
+                "crossorigin" => "anonymous",
+                "integrity" => "sha256-vBiv9sg5PJ9vDawlB1uSKhBdUPEihmeAPt1lAFjUkWc= sha384-Cupsv3zO6Ai7RgybaY6EDOZ5LA5Jvrsljfmw/WHaboPqTELK7xrZxq1OzBXpN4eN sha512-xlZjsnwE/pTKVgwG7nxYjUpFw/+t5GhDsSPh70/eyR0YsEecMUqOZy9hbzlbtEFI8WwjzkO1VHQ8rlf32wb8Lg=="
+            ]
+        );
+        Requirements::css(
+            'codem/silverstripe-damn-fine-uploader:client/dist/styles/uppy.min.css',
+            'screen',
+            [
+                "crossorigin" => "anonymous",
+                "integrity" => "sha256-Dz06Z4Xmtbel1JvmuTYXHjT+Ia+te/j7Xa6C+Bxthe4= sha384-Cdu1U3ii04Ta++DIQ/FS/gLkpyU6uOW2Rjk8eXwUKXLSJgXlTdYVCipcu9vpYuMS sha512-hBAvjO/2OMgAb8YHcKAXf/OlNylMvKDjRspulX9eTHJ+DCYry9Ea55yQCKy+JWLYkpb5Avvd5soRpWdWX1aWWg=="
+            ]
+        );
     }
 
     public function getImplementation()

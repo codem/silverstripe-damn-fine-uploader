@@ -4,6 +4,9 @@ const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const SriPlugin = require('webpack-subresource-integrity');
+const WebpackAssetsManifest = require('webpack-assets-manifest');
+
 const PATHS = {
   // the root path, where your webpack.config.js is located.
   ROOT: Path.resolve(),
@@ -33,7 +36,8 @@ module.exports = (env, argv) => {
     },
     output: {
       path: PATHS.DIST,
-      filename: 'js/[name].js'
+      filename: 'js/[name].js',
+      crossOriginLoading: 'anonymous'
     },
     module: {
       rules: [
@@ -82,10 +86,21 @@ module.exports = (env, argv) => {
         openAnalyzer: false,
         reportFilename: "bundle-report.html",
         analyzerMode: "static"
+      }),
+      new SriPlugin({
+        hashFuncNames: ['sha256', 'sha384', 'sha512'],
+        enabled: true
+      }),
+      new WebpackAssetsManifest({
+        enabled: true,
+        integrity: true,
+        integrityHashes: ['sha256', 'sha384', 'sha512']
       })
     ]
 
   };
+
+  console.log('Environment=production', build_for == 'production');
 
   return config;
 };
