@@ -21,3 +21,4 @@ Codem\DamnFineUploader\EditableUploadField:
   # turn this off once migration has run
   run_migration_1: true
   run_migration_manymanyhasmany: false
+  run_migration_allowedmimetypedeprecation: true

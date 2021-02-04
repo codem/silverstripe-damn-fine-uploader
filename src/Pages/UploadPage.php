@@ -20,6 +20,7 @@ use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Member;
+use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * A page that handles file uploads
@@ -32,7 +33,7 @@ class UploadPage extends \Page implements PermissionProvider
 
     private static $db = [
         'MaxFileSizeMB' => 'Float',
-        'AllowedMimeTypes' => 'Text',
+        'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'FormFieldTitle' => 'Varchar(255)',

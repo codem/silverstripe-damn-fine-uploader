@@ -78,10 +78,8 @@ class UploadPageController extends \PageController
             $field->setUseDateFolder($data->UseDateFolder == 1);
         }
 
-        $types = trim($data->AllowedMimeTypes);
-        if ($types) {
-            $pattern = '/\s{1,}/';
-            $types = preg_split($pattern, $types);
+        $types = $data->getAllowedMimeTypes();
+        if (!empty($types)) {
             $field->setAcceptedTypes($types);
         }
 

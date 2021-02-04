@@ -3,6 +3,7 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DB;
 use SilverStripe\Versioned\Versioned;
 
@@ -74,6 +75,49 @@ trait Migrations
         } catch (\Exception $e) {
             DB::alteration_message("Error running run_migration_manymany_to_hasmany: " . $e->getMessage(), "error");
         }
+    }
+
+    /*
+     * Migrate mimetype selection to file type selection field
+     * these are processed into mimetypes when the field is created
+     * AllowedMimeType expected format:
+        image/jpg
+        image/jpeg
+        image/gif
+        image/png
+        image/webp
+    */
+    protected function migrateAllowedMimeTypes() {
+
+        $process_list = function($list, $table) {
+            if(!$list) {
+                DB::alteration_message("List is not a valid result set", "error");
+            }
+            $field = UppyField::create('migrateAllowedMimeTypes');
+            foreach($list as $record) {
+                if(!empty($record['AllowedMimeTypes']) && empty($record['SelectedFileTypes'])) {
+                    // get extensions from these types
+                    $pattern = '/\s{1,}/';
+                    $types = preg_split($pattern, $record['AllowedMimeTypes']);
+                    $exts = $field->getExtensionsForTypes($types);
+                    DB::alteration_message("Migrating #{$record['ID']} AllowedMimeTypes to  SelectedFileTypes", "changed");
+                    $new = json_encode($exts);
+                    $sql = "UPDATE `" . Convert::raw2sql($table) . "` SET AllowedMimeTypes = NULL, SelectedFileTypes = '" . Convert::raw2sql($new) . "' WHERE ID = {$record['ID']}";
+                    DB::alteration_message("Runnign sql {$sql}", "changed");
+                    DB::query($sql);
+                } else {
+                    DB::alteration_message("Ignoring #{$record['ID']} AllowedMimeTypes to SelectedFileTypes, possibly already migrated", "info");
+                }
+            }
+        };
+
+        $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM EditableUploadField");
+        DB::alteration_message("Attempting to migrate EditableUploadField records", "changed");
+        $process_list($list, "EditableUploadField");
+        $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM DamnFineUploaderPage");
+        DB::alteration_message("Attempting to migrate UploadPage records", "changed");
+        $process_list($list, "UploadPage");
+
     }
 
 }
