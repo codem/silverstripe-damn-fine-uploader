@@ -2,6 +2,7 @@
 
 namespace Codem\DamnFineUploader;
 
+use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Upload;
 use SilverStripe\Control\Controller;
@@ -296,18 +297,36 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         // This will call loadIntoFile which triggers onAfterUpload()
         $file = $this->saveTemporaryFile($file_upload, $error);
         if ($error) {
-            throw new InvalidFileException($error);
+            // log this error
+            Logger::log("File upload failed with error:" . $error, "INFO");
+            throw new InvalidFileException(_t(
+                'DamnFineUploader.FILE_COULD_NOT_BE_SAVED_INVALID_FILE',
+                'Sorry, the file could not be saved'
+            ));
         }
-        if (!$file) {
-            throw new InvalidFileException('File could not be saved');
+        if (!$file || !($file instanceof File)) {
+            // log this error
+            Logger::log("Invalid file instance returned on upload attempt", "INFO");
+            throw new InvalidFileException(_t(
+                'DamnFineUploader.FILE_COULD_NOT_BE_SAVED_INVALID_FILE',
+                'Sorry, the file could not be saved'
+            ));
         }
 
-        // save the token, together with the Form Security ID for the form used to upload the file
+        // Ensure the file is not in a published state
+        $file->doUnPublish();
+        // Save the token, together with the Form Security ID for the form used to upload the file
         $file->DFU = $uuid . "|" . $form_security_token_value;
         $file->IsDfuUpload = 1;
         $file->writeToStage(Versioned::DRAFT);
+        // Protect the file
         $file->protectFile();
-
+        try {
+            // generate thumbnails for the admin
+            AssetAdmin::singleton()->generateThumbnails($file);
+        } catch (\Exception $e) {
+            // No-op as this is just  nice-to-have
+        }
         return $file;
     }
 
