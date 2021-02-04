@@ -111,12 +111,21 @@ trait Migrations
             }
         };
 
-        $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM EditableUploadField");
-        DB::alteration_message("Attempting to migrate EditableUploadField records", "changed");
-        $process_list($list, "EditableUploadField");
-        $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM DamnFineUploaderPage");
-        DB::alteration_message("Attempting to migrate UploadPage records", "changed");
-        $process_list($list, "UploadPage");
+        try {
+            $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM EditableUploadField");
+            DB::alteration_message("Attempting to migrate EditableUploadField records", "changed");
+            $process_list($list, "EditableUploadField");
+        } catch (\Exception $e) {
+            DB::alteration_message("EditableUploadField migration failed ({$e->getMessage()}) - if this has completed, set run_migration_allowedmimetypedeprecation:false in config", "error");
+        }
+
+        try {
+            $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM DamnFineUploaderPage");
+            DB::alteration_message("Attempting to migrate DamnFineUploaderPage records", "changed");
+            $process_list($list, "DamnFineUploaderPage");
+        } catch (\Exception $e) {
+            DB::alteration_message("DamnFineUploaderPage Migration failed ({$e->getMessage()}) - if this has completed, set run_migration_allowedmimetypedeprecation:false in config", "error");
+        }
 
     }
 

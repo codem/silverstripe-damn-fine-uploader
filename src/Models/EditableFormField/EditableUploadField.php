@@ -23,6 +23,7 @@ class EditableUploadField extends EditableFileField
 
     private static $run_migration_1 = true;
     private static $run_migration_manymanyhasmany = false;
+    private static $run_migration_allowedmimetypedeprecation = false;
 
     private static $db = [
         'SelectedFileTypes' => 'Text',
