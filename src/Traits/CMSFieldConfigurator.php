@@ -123,7 +123,7 @@ trait CMSFieldConfigurator
                 ->setTitle(
                     _t(
                         'DamnFineUploader.SELECT_FILE_TYPES',
-                        'Select allowed file types for this form'
+                        'Select allowed file types for this upload field'
                     )
                 )
                 ->setDescription(
