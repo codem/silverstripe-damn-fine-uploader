@@ -3,26 +3,32 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Assets\Upload;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTP;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Config\Config;
 use Silverstripe\Forms\FileField;
 use Silverstripe\Forms\Form;
 use Silverstripe\Forms\FormField;
-use SilverStripe\View\Requirements;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DataObjectInterface;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\HTTPResponse;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
-use SilverStripe\Assets\Upload;
-use SilverStripe\Control\HTTP;
+use SilverStripe\MimeValidator\MimeUploadValidator;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Security\NullSecurityToken;
-use SilverStripe\Control\Controller;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\Requirements;
 use Exception;
 use finfo;
 
+/**
+ * Abstract class for all possible upload fields in the module
+ * See UppyField for the field used by the Uppy uploader frontend
+ */
 abstract class DamnFineUploaderField extends FormField implements FileHandleField
 {
     use FileUploadReceiver;
@@ -43,18 +49,18 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     protected $implementation = '';
 
-    // TODO implement - files that match will fail
-    private static $blacklist = [
-        'php', 'php4', 'php5', 'php3', 'phtml',
-        'js', 'css',
-        'html', 'htm'
-    ];
-
-    private static $blacklist_mimetypes = [
+    /**
+     * @var array
+     * Array of mimetypes that are never allowed in uploads
+     */
+    private static $denied_mimetypes = [
         'text/x-php', 'text/php', 'application/php', 'application/x-php',
         'application/x-httpd-php', 'application/x-httpd-php-source',
         'application/javascript', 'text/javascript',
-        'application/css', 'text/css'
+        'application/css', 'text/css',
+        'image/svg+xml',
+        'text/html',
+        'application/xml', 'application/xhtml+xml'
     ];
 
     protected $default_configuration_complete = false;
@@ -68,8 +74,17 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         'remove'
     ];
 
+    /**
+     * Construct the field, set the upload receiver up, with validator
+     * Sets the file_input_param value to the field name, if none is set
+     * @param string $name,
+     * @param string $title = null
+     * @param mixed $value
+     * @return void
+     */
     public function __construct($name, $title = null, $value = null)
     {
+        // create the Upload instance
         $this->constructFileUploadReceiver();
         // When creating new files, rename on conflict
         $this->getUpload()->setReplaceFile(false);
@@ -77,6 +92,47 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!$this->file_input_param) {
             $this->file_input_param = $name;
         }
+    }
+
+    /**
+     * The value is an array of file upload ids, with keys determined by the frontend library
+     * The file upload ids are passed back to the uploader after a successful call to self::upload()
+     */
+    public function dataValue() {
+        $request = $this->form->getController()->getRequest();
+        $post = [];
+        if($request) {
+            $post = $request->postVars();
+        }
+        return isset($post[$this->getName()]) ? $post[$this->getName()] : null;
+    }
+
+    public function Value()
+    {
+        return $this->dataValue();
+    }
+
+    /**
+     * Get custom validator for this field
+     *
+     * @return SilverStripe\MimeValidator\MimeUploadValidator
+     */
+    public function getValidator()
+    {
+        $validator = Injector::inst()->get(MimeUploadValidator::class);
+        return $validator;
+    }
+
+    /**
+     * Set custom validator for this field
+     *
+     * @param Upload_Validator $validator
+     * @return $this
+     */
+    public function setValidator(MimeUploadValidator $validator)
+    {
+        $this->getUpload()->setValidator($validator);
+        return $this;
     }
 
     /**
@@ -95,16 +151,46 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     abstract public function UploaderConfig();
 
     /**
-     * Response string for a successful upload
+     * Response for a successful upload
+     * @param array $file_upload the uploaded file
+     * @param string $uuid our unique ref of the file
+     * @return SilverStripe\Control\HTTPResponse
      */
     abstract protected function uploadSuccessfulResponse(array $file_upload, $uuid);
+
+    /**
+     * Response for a failed upload
+     * @param array $file_upload the uploaded file (or empty array, if it could not be found)
+     * @param string $error_message
+     * @return SilverStripe\Control\HTTPResponse
+     */
     abstract protected function uploadErrorResponse(array $file_upload, $error);
+
+    /**
+     * Error response
+     * @param string $result error string
+     * @param int $code HTTP error code
+     * @return SilverStripe\Control\HTTPResponse
+     */
     abstract protected function errorResponse($result, $code = 400);
+
+    /**
+     * Return the response on successful removal
+     * @return SilverStripe\Control\HTTPResponse
+     */
     abstract protected function removeSuccessResponse();
+
+    /**
+     * Return the response on failed removal
+     * @param array $file_upload file (or empty array, if it could not be found)
+     * @param string $error_message
+     * @return SilverStripe\Control\HTTPResponse
+     */
     abstract protected function removeErrorResponse(array $file_upload, $error);
 
     /**
-     * Retrieve the file input from the request
+     * Retrieve the file input data from the request
+     * @return array|false
      */
     private function getFileFromRequest(HTTPRequest $request)
     {
@@ -174,73 +260,12 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function upload(HTTPRequest $request)
     {
         try {
-
-            // set default file uploaded (empty)
-            $file_upload = [];
-
-            // get field config
-            $this->initFieldConfig();
-
-            $post = $request->postVars();
-
-            // initial check on request
-            if (empty($post) || !$request->isPOST()) {
-                throw new InvalidRequestException("No file data provided");
+            $this->setRequest($request);
+            $result = $this->validateUpload( $this->getValidator() );
+            if(!$result) {
+                throw new \Exception("The file could not be saved");
             }
-
-            // Get form security token
-            $form_security_token = $this->getSecurityTokenFromRequest($request);
-
-            // Get file uniq ID sent in request
-            $file_uuid = $this->getFileUuidFromRequest($request);
-
-            // Get the uploaded file
-            $file_upload = $this->getFileFromRequest($request);
-
-            // Do we have a file tmp_name ?
-            if (empty($file_upload['tmp_name'])) {
-                throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_MISSING_FILES', 'Required data not received'));
-            }
-
-            // Check if tmp_name is an uploaded file
-            if (!$this->isUploadedFile($file_upload['tmp_name'])) {
-                throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_NOT_AN_UPLOAD', 'The upload could not be saved'));
-            }
-
-            // Check the tmp file against allowed mimetypes  - e.g file/bad being uploaded as file.good
-            $result = $this->checkUploadedFile($file_upload);
-            if (!$result['valid']) {
-                $mimetype = !empty($result['mimetype']) ? $result['mimetype'] : 'unknown';
-                throw new InvalidRequestException(sprintf(_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE', 'The file uploaded could not be accepted as it is a %s file, please try again with a different file'), $mimetype));
-            }
-
-            // create the file UUID for this file, sent back in the request
-            $uuid = $this->getUuid($file_uuid);
-
-            // Config options for this upload
-
-            // set allowed extensions for the upload validator
-            $this->setAllowedExtensions($this->lib_config['validation']['allowedExtensions']);
-
-            // set default folder name, if not set
-            if (!$this->folderName) {
-                $this->setFolderName(Upload::config()->uploads_folder);
-            }
-
-            // Using date based sub directories
-            if ($this->use_date_folder) {
-                // Handle data based folder name, if no specific folder name already set
-                $date_part = date('Y/m/d');
-                $this->setFolderName(rtrim($this->folderName, "/") . "/{$date_part}/");
-            } else {
-                $this->setFolderName($this->folderName);
-            }
-
-            // save it
-            $file = $this->saveFile($file_upload, $uuid, $form_security_token);
-
-            // return OK
-            return $this->uploadSuccessfulResponse($file_upload, $uuid);
+            return $result;
         } catch (MissingDataException $e) {
             $error = $e->getMessage();
         } catch (InvalidRequestException $e) {
@@ -252,19 +277,22 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         }
 
         $this->getUpload()->clearErrors();
-        return $this->uploadErrorResponse($file_upload, $error);
+        return $this->uploadErrorResponse([], $error);
     }
 
     /**
-     * Save the file somewhere
+     * Save the file somewhere, based on configuraton
+     * @return SilverStripe\Assets\File
+     * @throws InvalidFileException|Exception
      */
-    final private function saveFile($file_upload, $uuid, $form_security_token)
+    final private function saveFile($file_upload, string $uuid, string $form_security_token_value)
     {
 
         // Set allowed max file size
         $this->getValidator()->setAllowedMaxFileSize($this->lib_config['validation']['sizeLimit']);
 
         // TODO set max allowed file number (need this particular file upload to know how many siblings exist)
+
         // This will call loadIntoFile which triggers onAfterUpload()
         $file = $this->saveTemporaryFile($file_upload, $error);
         if ($error) {
@@ -275,7 +303,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         }
 
         // save the token, together with the Form Security ID for the form used to upload the file
-        $file->DFU = $uuid . "|" . $form_security_token;
+        $file->DFU = $uuid . "|" . $form_security_token_value;
         $file->IsDfuUpload = 1;
         $file->writeToStage(Versioned::DRAFT);
         $file->protectFile();
@@ -492,11 +520,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $lib_config['validation']['acceptFiles'] = $this->default_accepted_types;
         }
 
-        // set allowed extensions based on types
-        $lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes(explode(",", $lib_config['validation']['acceptFiles']));
-
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
+
+        // Sanity check on allowed types and extensions
+        $this->getAcceptedTypes();
 
         // Sanity check on the file size limit vs system restrictions
         $system_max_file_size = $this->getSystemAllowedMaxFileSize();
@@ -639,13 +667,54 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * @note set the accepted types for this form
+     * Set accepted types for this file, extensions are determined based on the types provided
+     * @param array $types
+     * @return array
+     */
+    public function filterTypes(array $types) {
+        $denied = $this->config()->get('denied_mimetypes');
+        if(!empty($denied) && is_array($denied)) {
+            // returns values in $types that are not in the list of denied types
+            $types = array_diff($types, $denied);
+        }
+        return $types;
+    }
+
+    /**
+     * Set accepted types for this file, extensions are determined based on the types provided
+     * If called, this is merged into the lib_config during setUploaderDefaultConfig()
+     * @param array $types
+     * @return self
      */
     public function setAcceptedTypes(array $types)
     {
-        $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);// this could inckude
-        $this->runtime_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);//TODO
+        $types = $this->filterTypes($types);
+        // set as a comma delimited string
+        $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);
+        // based on filtered types, set allowed extensions
+        $this->runtime_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);
         return $this;
+    }
+
+    /**
+     * Return the accepted types in configuration, set by setAcceptedTypes
+     * This should be called after setUploaderDefaultConfig() is processed
+     * @return array
+     */
+    public function getAcceptedTypes()
+    {
+        $mimetypes = $this->lib_config['validation']['acceptFiles'];
+        if (is_string($mimetypes) && strpos($mimetypes, ",") !== false) {
+            // configuration is provided as a string
+            $mimetypes = explode(",", $mimetypes);
+            // @var array
+            $mimetypes = $this->filterTypes($mimetypes);
+            $this->lib_config['validation']['acceptFiles'] = implode(",", $mimetypes);
+            $this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes( $mimetypes );
+            return $mimetypes;
+        } else {
+            return [];
+        }
     }
 
     /**
@@ -717,21 +786,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         return $this;
     }
 
-    public function getAcceptedTypes()
-    {
-        $mimetypes = $this->getUploaderConfigValue('validation', 'acceptFiles');
-        if (is_string($mimetypes) !== false) {
-            return explode(",", $mimetypes);
-        } else {
-            return [];
-        }
-    }
-
     /**
      * Return a list of extensions matching the file types provided
      * @param array $types e.g  ['image/jpg', 'image/gif']
      */
-    final public function getExtensionsForTypes($types)
+    final public function getExtensionsForTypes(array $types)
     {
         $mime_types = HTTP::config()->uninherited('MimeTypes');
         $keys = [];
@@ -749,8 +808,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function AcceptedExtensions()
     {
-        $types = $this->getAcceptedTypes();
-        $extensions = $this->getExtensionsForTypes($types);
+        $extensions = $this->getExtensionsForTypes($this->getAcceptedTypes());
         return implode(", ", $extensions);
     }
 
@@ -913,53 +971,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * @note refer to https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#attr-accept
-     */
-    protected function isAccepted($mimetype)
-    {
-        $valid = false;
-        $types = $this->getAcceptedTypes();//returns a mix of accept options configured for the input element
-        if (empty($types)) {
-            throw new Exception("No accepted mime types have been configured");
-        }
-        $mimetype_parts = $this->parseMimeType($mimetype);
-
-        foreach ($types as $type) {
-            $type_parts = $this->parseMimeType($type);
-            if ($type_parts) {
-                if ($type_parts['subtype'] == "*") {
-                    // e.g image/* (HTML5)  image == image
-                    $valid = ($type_parts['type'] == $mimetype_parts['type']);
-                } else {
-                    // match on both
-                    // A valid MIME type with no extensions.
-                    // e.g image/jpg == image/jpg
-                    $valid = ($type_parts['type'] == $mimetype_parts['type'] && $type_parts['subtype'] == $mimetype_parts['subtype']);
-                }
-            } elseif ($result = preg_match("/^\.([a-zA-Z0-9]+)/", $type, $matches)) {
-                // A file extension starting with the STOP character (U+002E). (e.g. .jpg, .png, .doc)
-                if (!empty($matches[1])) {
-                    $type = $this->getMimeTypeFromExtension($matches[1]);
-                    if (strpos($type, "/") !== false) {
-                        // ensure we don't recurse
-                        $valid = $this->isAccepted($type);
-                    }
-                }
-            } else {
-                // unhandled
-                continue;
-            }
-
-            if ($valid) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $tmp_path the path from $_FILES
+     * @param string $tmp_path the path from the particular upload in $_FILES
      */
     final protected function isUploadedFile($tmp_path)
     {
@@ -968,16 +980,31 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * @note provided a path to an uploaded file, check that it matches configuration prior to saving
+     * The return value is an array with keys 'valid' being a boolean and 'mimetype' being the detected file mimetype
+     * @param array $tmp_file
+     * @return array
+     * @throws \Exception
      */
     protected function checkUploadedFile($tmp_file)
     {
+        // Check if tmp_name is an uploaded file
+        if (!$this->isUploadedFile($tmp_file['tmp_name'])) {
+            throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_NOT_AN_UPLOAD', 'The upload could not be saved'));
+        }
+
+        // use the Upload class to validate using the MimeUploadValidator
+        $valid = $this->getUpload()->validate($tmp_file);
         $file_path = isset($tmp_file['tmp_name']) ? $tmp_file['tmp_name'] : '';
         if (!$file_path) {
             throw new InvalidFileException(_t('DamnFineUploader.TMP_FILE_NOT_FOUND', 'Sorry, the file could not be read'));
         }
+        // get file info using finfo
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mimetype = $finfo->file($file_path);
-        $valid = $this->isAccepted($mimetype);
+
+        // check for a denied mimetype in this uploader's configuration
+        $is_denied = $this->isDeniedMimeType($mimetype);
+
         return [
             'valid' => $valid,
             'mimetype' => $mimetype
@@ -985,17 +1012,105 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Validation occurs at {@link self::upload()}
+     * Given a mimetpye, check if configuration denies it
+     * @param string $mimetype
+     * @return boolean
      */
-    public function validate($validator)
-    {
-        return true;
+    public function isDeniedMimeType(string $mimetype) {
+        // fallback - check denied mimetypes
+        $is_denied = false;
+        $denied = $this->config()->get('denied_mimetypes');
+        if(!empty($denied) && is_array($denied)) {
+            $is_denied = array_search($mimetype, $denied) !== false;
+        }
+        return $is_denied;
     }
 
     /**
-     * Sign the UUID provided by FineUploader for return to it.
-     * @param string $uuid provided by Fine Uploader
-     * @param string $form_security_token security token value in this form
+     * Validate the upload request
+     * On success, returns an HTTPResponse matching the libraries expected 'Upload OK' result
+     * On failure, returns boolean false or throws an \Exception
+     * @return SilverStripe\Control\HTTPResponse|false
+     * @throws InvalidRequestException
+     * @throws \Exception
+     */
+    public function validateUpload(MimeUploadValidator $validator)
+    {
+
+        $request = $this->getRequest();
+
+        // set default file uploaded (empty)
+        $file_upload = [];
+
+        // get field config
+        $this->initFieldConfig();
+
+        // grab post vars from request
+        $post = $request->postVars();
+
+        // initial check on request
+        if(!$request->isPOST()) {
+            throw new InvalidRequestException("No file data provided");
+        }
+
+        if (empty($post)) {
+            throw new InvalidRequestException("No file data provided");
+        }
+
+        // Get form security token
+        $form_security_token_value = $this->getSecurityTokenFromRequest($request);
+
+        // Get file uniq ID sent in request
+        $file_uuid = $this->getFileUuidFromRequest($request);
+
+        // Get the uploaded file
+        $file_upload = $this->getFileFromRequest($request);
+
+        // Do we have a file tmp_name ?
+        if (empty($file_upload['tmp_name'])) {
+            throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_MISSING_FILES', 'Required data not received'));
+        }
+
+        // set allowed extensions for the MimeUploadValidator
+        $this->setAllowedExtensions( $this->getExtensionsForTypes( $this->getAcceptedTypes() ));
+
+        // set default folder name, if not set
+        if (!$this->folderName) {
+            $this->setFolderName(Upload::config()->uploads_folder);
+        }
+
+        // Using date based sub directories
+        if ($this->use_date_folder) {
+            // Handle data based folder name, if no specific folder name already set
+            $date_part = date('Y/m/d');
+            $this->setFolderName(rtrim($this->folderName, "/") . "/{$date_part}/");
+        } else {
+            $this->setFolderName($this->folderName);
+        }
+
+        // Check the tmp file against allowed mimetypes  - e.g file/bad being uploaded as file.good
+        $result = $this->checkUploadedFile($file_upload);
+        if (!$result['valid']) {
+            $mimetype = !empty($result['mimetype']) ? $result['mimetype'] : 'unknown';
+            throw new InvalidRequestException(sprintf(_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE', 'The file uploaded could not be accepted as it is a %s file, please try again with a different file'), $mimetype));
+        }
+
+        // create the file UUID for this file, sent back in the request
+        $uuid = $this->getUuid($file_uuid);
+
+        // save it
+        $file = $this->saveFile($file_upload, $uuid, $form_security_token_value);
+
+        if($file instanceof File) {
+            return $this->uploadSuccessfulResponse($file_upload, $uuid);
+        }
+
+        return false;
+    }
+
+    /**
+     * Sign the file token sent by the frontend library in the request
+     * @param string $uuid provided by the uploader library
      * For PHP5 this uses the random_compat lib polyfill
      * @returns string
      */
