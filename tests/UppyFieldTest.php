@@ -37,10 +37,12 @@ class UppyFieldTest extends SapphireTest
         $max_filesize = 2 * $bytes;
         $min_filesize = 8 * $bytes;
 
+        $input_types = ['image/jpg','image/jpeg', 'image/gif', 'text/x-php'];
         $field = UppyField::create('JustTesting', 'Just Testing');
         $field->setForm($form);
         $field->setAllowedMaxItemLimit(5)
-                ->setAcceptedTypes(['image/jpg','image/jpeg', 'image/gif'])
+                // php should be filtered out...
+                ->setAcceptedTypes($input_types)
                 ->setAcceptedMaxDimensions(2560, 1440)
                 ->setAcceptedMinDimensions(800, 600)
                 ->setAcceptedMaxFileSize($max_filesize)
@@ -54,6 +56,7 @@ class UppyFieldTest extends SapphireTest
         $resolved_max_filesize = min($system_max_filesize, $max_filesize);
 
         $expected_extensions = "jpe, jpeg, jpg, gif";
+        $expected_types = ['image/jpg','image/jpeg', 'image/gif'];
         $expected_max_filesize = $resolved_max_filesize;
         $expected_min_filesize = 0;// as > max
         $expected_max_width = 2560;
@@ -63,6 +66,7 @@ class UppyFieldTest extends SapphireTest
         $expected_item_limit = 5;
         $expected_accepts_images = true;
 
+        $returned_types = $field->getAcceptedTypes();
         $returned_extensions = $field->AcceptedExtensions();
         $returned_max_filesize = $field->AcceptedFileSize() * $bytes;
         $returned_min_filesize = $field->AcceptedMinFileSize() * $bytes;
@@ -70,6 +74,7 @@ class UppyFieldTest extends SapphireTest
         $returned_max_dimensions = $field->AcceptedMaxDimensions();
         $returned_min_dimensions = $field->AcceptedMinDimensions();
 
+        $this->assertEquals( array_intersect($returned_types, $input_types), $expected_types, "Returned types does not match expected allowed file types" );
         $this->assertTrue($returned_extensions == $expected_extensions, "Extensions does not match {$expected_extensions} got {$returned_extensions}");
         $this->assertTrue($returned_max_filesize == $expected_max_filesize, "FileSize does not match {$expected_max_filesize} got {$returned_max_filesize}");
         $this->assertTrue($returned_min_filesize == $expected_min_filesize, "Extensions does not match {$expected_min_filesize} got {$returned_min_filesize}");
