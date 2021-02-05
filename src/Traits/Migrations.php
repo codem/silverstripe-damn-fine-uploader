@@ -3,7 +3,9 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DB;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -74,6 +76,68 @@ trait Migrations
         } catch (\Exception $e) {
             DB::alteration_message("Error running run_migration_manymany_to_hasmany: " . $e->getMessage(), "error");
         }
+    }
+
+    /*
+     * Migrate mimetype selection to file type selection field
+     * these are processed into mimetypes when the field is created
+     * AllowedMimeType expected format:
+        image/jpg
+        image/jpeg
+        image/gif
+        image/png
+        image/webp
+    */
+    protected function migrateAllowedMimeTypes() {
+
+        $process_list = function($list, $table, $class) {
+            if(!$list) {
+                DB::alteration_message("List is not a valid result set", "error");
+            }
+            $field = UppyField::create('migrateAllowedMimeTypes');
+            foreach($list as $record) {
+                if(!empty($record['AllowedMimeTypes']) && empty($record['SelectedFileTypes'])) {
+                    // get extensions from these types
+                    $pattern = '/\s{1,}/';
+                    $types = preg_split($pattern, $record['AllowedMimeTypes']);
+                    $exts = $field->getExtensionsForTypes($types);
+                    DB::alteration_message("Migrating #{$record['ID']} AllowedMimeTypes to  SelectedFileTypes", "changed");
+                    $serialised = json_encode($exts);
+                    $sql = "UPDATE `" . Convert::raw2sql($table) . "`"
+                            . " SET AllowedMimeTypes = NULL, "// deprecated field
+                            . " SelectedFileTypes = '" . Convert::raw2sql($serialised) . "'"
+                            . " WHERE ID = {$record['ID']}";
+                    DB::alteration_message("Updating {$class} record #{$record['ID']}", "changed");
+                    DB::query($sql);
+                    $instance = DataObject::get($class)->byId($record['ID']);
+                    if($instance) {
+                        // update the record via ORM and write to stage (do not publish)
+                        $instance->SelectedFileTypes = $serialised;
+                        $instance->writeToStage(Versioned::DRAFT);
+                    }
+                    DB::alteration_message("Updated {$class} record #{$record['ID']}", "changed");
+                } else {
+                    DB::alteration_message("Ignoring {$class} record #{$record['ID']} AllowedMimeTypes to SelectedFileTypes, possibly already migrated", "info");
+                }
+            }
+        };
+
+        try {
+            $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM EditableUploadField");
+            DB::alteration_message("Attempting to migrate EditableUploadField records", "changed");
+            $process_list($list, "EditableUploadField", EditableUploadField::class);
+        } catch (\Exception $e) {
+            DB::alteration_message("EditableUploadField migration failed ({$e->getMessage()}) - if this has completed, set run_migration_allowedmimetypedeprecation:false in config", "error");
+        }
+
+        try {
+            $list = DB::query("SELECT ID, AllowedMimeTypes, SelectedFileTypes FROM DamnFineUploaderPage");
+            DB::alteration_message("Attempting to migrate DamnFineUploaderPage records", "changed");
+            $process_list($list, "DamnFineUploaderPage", UploadPage::class);
+        } catch (\Exception $e) {
+            DB::alteration_message("DamnFineUploaderPage Migration failed ({$e->getMessage()}) - if this has completed, set run_migration_allowedmimetypedeprecation:false in config", "error");
+        }
+
     }
 
 }

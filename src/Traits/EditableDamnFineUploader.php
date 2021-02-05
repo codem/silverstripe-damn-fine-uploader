@@ -168,10 +168,8 @@ trait EditableDamnFineUploader
 
         // Apply configurable settings
         // set accepted types on the field e.g image/jpeg
-        $types = trim($this->AllowedMimeTypes);
-        if ($types) {
-            $pattern = '/\s{1,}/';
-            $types = preg_split($pattern, $types);
+        $types = $this->getAllowedMimeTypes();
+        if (!empty($types)) {
             $field->setAcceptedTypes($types);
         }
 

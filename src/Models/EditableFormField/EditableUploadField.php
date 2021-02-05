@@ -4,6 +4,7 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 use SilverStripe\Forms\HeaderField;
+use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * @note provides an EditableUploadField for the userforms module
@@ -22,9 +23,10 @@ class EditableUploadField extends EditableFileField
 
     private static $run_migration_1 = true;
     private static $run_migration_manymanyhasmany = false;
+    private static $run_migration_allowedmimetypedeprecation = false;
 
     private static $db = [
-        'AllowedMimeTypes' => 'Text',
+        'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'Implementation' => 'Varchar(16)'
@@ -61,6 +63,9 @@ class EditableUploadField extends EditableFileField
             }
             if ($this->config()->get('run_migration_manymanyhasmany')) {
                 $this->migrationManyManyHasMany();
+            }
+            if ($this->config()->get('run_migration_allowedmimetypedeprecation')) {
+                $this->migrateAllowedMimeTypes();
             }
         }
     }
