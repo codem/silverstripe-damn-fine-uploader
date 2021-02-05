@@ -53,7 +53,7 @@ class UppyField extends DamnFineUploaderField
     /**
      * Uppy does not support removal of files post-upload
      * @param HTTPRequest
-     * @returns boolean
+     * @return boolean
      */
     public function remove(HTTPRequest $request)
     {
@@ -61,8 +61,8 @@ class UppyField extends DamnFineUploaderField
     }
 
     /**
-     * Template helper method for UppyField
-     * @returns string
+     * Template helper method for UppyField, returns the serialised configuration string for the library
+     * @return string
      */
     public function UploaderConfig()
     {
@@ -70,12 +70,6 @@ class UppyField extends DamnFineUploaderField
             $this->setUploaderDefaultConfig();
         }
 
-        /**
-         * Prior to field output, ensure the values for file sizes are correct
-         * Fineuploader uses 1e3 for reporting,
-         * which can lead to weird errors like upload a 1.43MB file and FU stating
-         * that the file should be < 1.5MB
-         */
         if (isset($this->lib_config['validation']['sizeLimit'])) {
             $size = $this->AcceptedFileSize();
             if (isset($this->lib_config['messages']['sizeError'])) {
@@ -102,6 +96,7 @@ class UppyField extends DamnFineUploaderField
      * Return the response that Uppy expects
      * @param array $file_upload the uploaded file
      * @param string $uuid our unique ref of the file
+     * @return SilverStripe\Control\HTTPResponse
      */
     protected function uploadSuccessfulResponse(array $file_upload, $uuid)
     {
@@ -113,14 +108,20 @@ class UppyField extends DamnFineUploaderField
 
     /**
      * Return the response that Uppy expects on error
+     * @param array $file_upload the uploaded file (or empty array, if it could not be found)
+     * @param string $error_message
+     * @return SilverStripe\Control\HTTPResponse
      */
-    protected function uploadErrorResponse(array $file_upload, $error)
+    protected function uploadErrorResponse(array $file_upload, $error_message)
     {
-        return $this->errorResponse($error, 400);
+        return $this->errorResponse($error_message, 400);
     }
 
     /**
-     * Serialise error response for Uppy
+     * Error response for Uppy
+     * @param string $result error string
+     * @param int $code HTTP error code
+     * @return SilverStripe\Control\HTTPResponse
      */
     protected function errorResponse($result, $code = 400)
     {
@@ -129,6 +130,7 @@ class UppyField extends DamnFineUploaderField
 
     /**
      * Return the response that Uppy expects on successful file removal
+     * @return SilverStripe\Control\HTTPResponse
      */
     protected function removeSuccessResponse()
     {
@@ -137,6 +139,9 @@ class UppyField extends DamnFineUploaderField
 
     /**
      * Return the response that Uppy expects on file removal error
+     * @param array $file_upload the uploaded file or empty if the file could not be found
+     * @param string $error_message
+     * @return SilverStripe\Control\HTTPResponse
      */
     protected function removeErrorResponse(array $file_upload, $error)
     {
