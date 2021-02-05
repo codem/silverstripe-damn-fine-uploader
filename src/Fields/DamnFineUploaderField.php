@@ -425,12 +425,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // element options
         $form = $this->getForm();
-        //$lib_config['element'] = (string)($form ? $form->getHTMLID() : "");// the containing form id attribute
-        //$lib_config['autoUpload'] = false;// do not auto upload by default
 
         // form options
         $lib_config['form'] = [];
-        //$lib_config['form']['autoUpload'] = false;// do not auto upload by default
 
         // messages
         $lib_config['messages'] = [
@@ -460,10 +457,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $lib_config['request'] = [
             'method' => 'POST',
             'uuidName' => self::UUID_NAME,
-            'requireSuccessJson' => true,
             'endpoint' => '',// see below
-            'params' => [],
-            'paramsInBody' => true // sends request parameters in the body of the upload request
+            'params' => []
         ];
 
         // default deleteFile configuration
@@ -633,6 +628,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
+     * Return all library configuration
+     * @return array
+     */
+    public function getUploaderConfig() {
+        return $this->lib_config;
+    }
+
+    /**
      * Provide runtime config to be merged into lib_config
      */
     public function setConfig(array $config)
@@ -734,7 +737,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Return a list of extensions matching the file types provided
      * @param array $types e.g  ['image/jpg', 'image/gif']
      */
-    final protected function getExtensionsForTypes($types)
+    final public function getExtensionsForTypes($types)
     {
         $mime_types = HTTP::config()->uninherited('MimeTypes');
         $keys = [];
