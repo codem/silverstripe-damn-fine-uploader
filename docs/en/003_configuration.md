@@ -15,7 +15,7 @@ Codem\DamnFineUploader\DamnFineUploaderField:
   # Do not use this value, override this in your project configuration
   signing_key : 'SAMPLEONLY'
 
-  # Can turn off file delete
+  # Note: the Uppy implementation does not yet support file removals
   allow_delete : false
 
   # config for the frontend lib

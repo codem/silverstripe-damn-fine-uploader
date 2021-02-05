@@ -68,6 +68,12 @@ If you have found a security issue in this module, please email git {at} codem d
 
 BSD-3-Clause
 
+## Roadmap
+
++ File removal support in Uppy
++ Grouped uploads
++ Possible usage of the `filepond` library as an alternative frontend implementation
+
 ## Thanks
 
 Thanks for reading, here's a silly meme:
