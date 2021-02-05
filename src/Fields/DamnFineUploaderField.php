@@ -696,7 +696,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             // returns values in $types that are not in the list of denied types
             $types = array_diff($types, $denied);
         }
-        return $types;
+        return array_filter($types);
     }
 
     /**
@@ -723,7 +723,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function getAcceptedTypes()
     {
         $mimetypes = $this->lib_config['validation']['acceptFiles'];
-        if (is_string($mimetypes) && strpos($mimetypes, ",") !== false) {
+        if (is_string($mimetypes)) {
             // configuration is provided as a string
             $mimetypes = explode(",", $mimetypes);
             // @var array
