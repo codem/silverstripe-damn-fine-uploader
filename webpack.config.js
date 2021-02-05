@@ -1,8 +1,12 @@
 'use strict';
 const Path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const SriPlugin = require('webpack-subresource-integrity');
+const WebpackAssetsManifest = require('webpack-assets-manifest');
+
 const PATHS = {
   // the root path, where your webpack.config.js is located.
   ROOT: Path.resolve(),
@@ -12,8 +16,9 @@ const PATHS = {
   FILES_PATH: '../',
   // thirdparty folder containing copies of packages which wouldn't be available on NPM
   THIRDPARTY: 'thirdparty',
-  // the root path to your javascript source files
+  // SRC files
   SRC: Path.resolve('client/src'),
+  // DIST file location
   DIST: Path.resolve('client/dist')
 };
 
@@ -26,20 +31,24 @@ module.exports = (env, argv) => {
     mode : build_for,
     devtool : build_for == 'production' ? 'source-map' : 'eval',
     entry : {
-      uppy: PATHS.SRC + '/js/uppy.js'
+      'uppy': [ PATHS.SRC + '/js/uppy.js', PATHS.SRC + '/styles/uppy.css' ],
+      'uppy.min': [ PATHS.SRC + '/js/uppy.js', PATHS.SRC + '/styles/uppy.css' ]
     },
     output: {
       path: PATHS.DIST,
-      filename: 'js/[name].js'
+      filename: 'js/[name].js',
+      crossOriginLoading: 'anonymous'
     },
     module: {
       rules: [
         {
           test:    /\.js$/,
           exclude: [/node_modules/],
-          use: [{
-            loader: 'babel-loader'
-          }]
+          use: [
+            {
+              loader: 'babel-loader'
+            }
+          ]
         },
         {
            test: /\.css$/,
@@ -52,18 +61,6 @@ module.exports = (env, argv) => {
               },
              'css-loader'
            ]
-        },
-        {
-            test: /\.(png|jpg|gif)$/,
-            use: [
-              {
-                loader: 'file-loader',
-                options : {
-                  emitFile: true,
-                  name: 'assets/[name].[ext]'
-                }
-              }
-            ]
         }
       ]
     },
@@ -72,7 +69,10 @@ module.exports = (env, argv) => {
       minimize: true,
       minimizer: [
         new UglifyjsWebpackPlugin({
-
+          include: /\.min\.js$/
+        }),
+        new CssMinimizerPlugin({
+          include: /\.min\.css$/
         })
       ]
     },
@@ -81,10 +81,26 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: "styles/[name].css",
         chunkFilename: "styles/[name].css"
+      }),
+      new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        reportFilename: "bundle-report.html",
+        analyzerMode: "static"
+      }),
+      new SriPlugin({
+        hashFuncNames: ['sha256', 'sha384', 'sha512'],
+        enabled: true
+      }),
+      new WebpackAssetsManifest({
+        enabled: true,
+        integrity: true,
+        integrityHashes: ['sha256', 'sha384', 'sha512']
       })
     ]
 
   };
+
+  console.log('Environment=production', build_for == 'production');
 
   return config;
 };

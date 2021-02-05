@@ -1,0 +1,30 @@
+{
+  "uppy.css": {
+    "src": "styles/uppy.css",
+    "integrity": "sha256-um5FL/sZicublyrNL2Mdg53xVNI1D/sa0vI7DAr40fQ= sha384-uuUBjib2n52sSNlyencA/EwIyAyKkVD3BmCub/NuLCibRqpl54vzfe8y6siybrWi sha512-Nf7Bt5iHmVBrw3cZFVtqlej1LtFIdpk5GhFpTD5KFudXuSLXczRK7dQ/q0EU7GhJpVCPkES3JwYJpjNuFKEhtw=="
+  },
+  "uppy.css.map": {
+    "src": "styles/uppy.css.map",
+    "integrity": "sha256-s/HbkNQY0gs/KKYVTJ37l8WK+hp3tYkVdxTAK66c7cg= sha384-91LuGUVHanlS/ccUD1yFhnCdJzP/nq/cWKHn6Ex4TS8m2We3SC+1HFw0EYuP1vOk sha512-ymh7d+/TYPAZIMcWDDmdeJkd0Oa8M1ml5yV3PtERfJBQrLjEZ/QFSOJC9+hO83nsPSZBP7iC2gNZOvyl3efCrA=="
+  },
+  "uppy.js": {
+    "src": "js/uppy.js",
+    "integrity": "sha256-TDDcxmcaeTJNv/rqGkNofDEKqLShZB5hW4c8aAI+xJI= sha384-z34q7s+vbwFwbRsrQg4TpfgnrefX0bLmNKl9JZeHuERLhL463xCFfyTJfVeQbS9W sha512-N+oms7kj3OYbNMpZHfAf6O9MFHar2jSGHEEqomB/3whoibtE0n8DQxr8OAtYk5oF6vWXQMHvtK38BnP0aTm6Ng=="
+  },
+  "uppy.js.map": {
+    "src": "js/uppy.js.map",
+    "integrity": "sha256-oj3poK3mj4YbNAvfZ81VHdsb+DAOMg5SoGuDAAjfDu0= sha384-YkNECxuz+CBpNii9cwviYpzMMVrvNTmLbKQtsIKV86J7ShR05+FH7dbRKNjeQbfe sha512-Edl5bqJv+kSwhXUPDAqONSmg7d2zGNLjCleg278z+o/pjVGNyoM/7sO9oZphalilybvspJGx3Ndk/eqOJ6JDxQ=="
+  },
+  "uppy.min.css": {
+    "src": "styles/uppy.min.css",
+    "integrity": "sha256-Dz06Z4Xmtbel1JvmuTYXHjT+Ia+te/j7Xa6C+Bxthe4= sha384-Cdu1U3ii04Ta++DIQ/FS/gLkpyU6uOW2Rjk8eXwUKXLSJgXlTdYVCipcu9vpYuMS sha512-hBAvjO/2OMgAb8YHcKAXf/OlNylMvKDjRspulX9eTHJ+DCYry9Ea55yQCKy+JWLYkpb5Avvd5soRpWdWX1aWWg=="
+  },
+  "uppy.min.css.map": {
+    "src": "styles/uppy.min.css.map",
+    "integrity": "sha256-M6zIPDBpm4EcGqeH9ze5H6zTpm/yZciCO5u0ruAC4oU= sha384-8PnPzwo1uFnjbdkbaJBBSu1occrBB4zVzQXJ4tD8vIxIS4RbG+ofPQvwPHhwu1ag sha512-0LZNG/exXkyPfnBldQBLRxLIFam3lvps8+v6niQqIWm3I7a/LV1rKLkvO1cOxdPRH+070plwDk1PXnoqtm+SYw=="
+  },
+  "uppy.min.js": {
+    "src": "js/uppy.min.js",
+    "integrity": "sha256-vBiv9sg5PJ9vDawlB1uSKhBdUPEihmeAPt1lAFjUkWc= sha384-Cupsv3zO6Ai7RgybaY6EDOZ5LA5Jvrsljfmw/WHaboPqTELK7xrZxq1OzBXpN4eN sha512-xlZjsnwE/pTKVgwG7nxYjUpFw/+t5GhDsSPh70/eyR0YsEecMUqOZy9hbzlbtEFI8WwjzkO1VHQ8rlf32wb8Lg=="
+  }
+}

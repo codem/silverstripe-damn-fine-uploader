@@ -231,7 +231,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             if ($this->use_date_folder) {
                 // Handle data based folder name, if no specific folder name already set
                 $date_part = date('Y/m/d');
-                $this->setFolderName($this->folderName . "/{$date_part}/");
+                $this->setFolderName(rtrim($this->folderName, "/") . "/{$date_part}/");
             } else {
                 $this->setFolderName($this->folderName);
             }
@@ -278,11 +278,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $file->DFU = $uuid . "|" . $form_security_token;
         $file->IsDfuUpload = 1;
         $file->writeToStage(Versioned::DRAFT);
-
-        // if the file is ever published on upload, this unpublishes it
-        if ($this->config()->get('unpublish_after_upload')) {
-            $file->doUnpublish();
-        }
+        $file->protectFile();
 
         return $file;
     }
@@ -337,9 +333,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     final protected function removeFile($uuid, $form_security_token)
     {
-        $file = singleton(File::class);
-        // Do not untrust to allow multiple delete attempts
-        $record = $file->getByDfuToken($uuid, $form_security_token, false);
+        $record = FileRetriever::getFile($uuid, $form_security_token);
         $record_id = null;
         if (($record instanceof File) && !empty($record->ID)) {
             $record_id = $record->ID;
@@ -349,9 +343,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             throw new FileRemovalException("The file could not be deleted");
         }
 
-        $check = DataObject::get_by_id(File::class, $record_id);
+        $check = File::get()->byId($record_id);
         if (!empty($check->ID)) {
-            // check on the file returned a record with this id
+            // file was still found.. archive failed
             throw new FileRemovalException("The file could not be deleted");
         }
 

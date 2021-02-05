@@ -18,9 +18,6 @@ Codem\DamnFineUploader\DamnFineUploaderField:
   # Deletion of uploads is allowed by default
   allow_delete : true
 
-  # When true, unpublish uploaded files post-upload
-  unpublish_after_upload : true
-
   # config for the frontend lib
   implementation:
     validation:

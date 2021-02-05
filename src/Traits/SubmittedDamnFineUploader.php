@@ -5,43 +5,13 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Assets\File;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Injector\Injector;
 
 /**
  * Trait for submitted DFU field implementations
  */
 trait SubmittedDamnFineUploader
 {
-    private static $security_token_name = "SecurityID";
-
-    protected function getSecurityTokenValue()
-    {
-        $controller = Controller::curr();
-        $request = $controller->getRequest();
-        $token_name = $this->config()->get('security_token_name');
-        $token_value = $request->postVar($token_name);
-        return $token_value;
-    }
-
-    /**
-     * Handle incoming uuids from the form, use the uuid and the form security token to retrieve the file
-     * Note that this does not publish the file
-     *
-     * @returns $this
-     */
-    public function setValue($uuids)
-    {
-        if (!empty($uuids) && is_array($uuids) && ($token_value = $this->getSecurityTokenValue())) {
-            foreach ($uuids as $uuid) {
-                $file = singleton(File::class);
-                $record = $file->getByDfuToken($uuid, $token_value);
-                if (!empty($record->ID)) {
-                    $this->Files()->add($record);
-                    $record->protectFile();
-                }
-            }
-        }
-        return $this;
-    }
 
     /**
      * Return the value of this field for inclusion into things such as

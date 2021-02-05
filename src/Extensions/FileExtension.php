@@ -2,10 +2,10 @@
 
 namespace Codem\DamnFineUploader;
 
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\File;
-use SilverStripe\Forms\Fieldlist;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
@@ -24,12 +24,29 @@ class FileExtension extends DataExtension
         'IsDfuUpload' => 0
     ];
 
+    /**
+     * If the file was submitted via a UserDefinedFormController
+     * this field will contain the field ID
+     */
+    private static $has_one = [
+        'SubmittedUploadField' => SubmittedUploadField::class
+    ];
+
     private static $indexes = [
         'DFU' => ['type' => 'unique', 'columns' => ['DFU'] ]
     ];
 
     /**
-     * @deprecated see FileRetriever::getUploadedFilesByKey()
+     * Modify CMS fields for this file record
+     */
+    public function updateCMSFields(FieldList $fields)
+    {
+        $fields->removeByName('SubmittedUploadFieldID');
+    }
+
+    /**
+     * @deprecated see FileRetriever::getUploadedFilesByKey() and FileRetriever::getFile()
+     * This method will be removed in a future release
      * Given a uuid of a file and the form's security id, retrieve an uploaded file
      * Note that this retrieves a file from the DRAFT stage as it may not be public
      * @param string $uuid the file uuid sent by back on upload as newUuid and submitted with the form
@@ -44,7 +61,7 @@ class FileExtension extends DataExtension
               ->first();
         if (!empty($file->ID) && $untrust) {
             $file->DFU = null;
-            $file->write();
+            $file->writeToStage(Versioned::DRAFT);
         }
         return $file;
     }

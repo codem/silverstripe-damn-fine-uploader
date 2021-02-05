@@ -1,22 +1,26 @@
 # Handling uploaded files
 
-Upon successful upload, a hidden input is added to the upload form via JavaScript with a value that identifies each uploaded file.
+Upon successful file upload, a hidden input is added to the upload form via JavaScript with a value that identifies each uploaded file.
 
 The hidden inputs have a name attribute matching the id attribute of the field, to allow for easy file retrieval upon submission:
 ```
-<input type="text" name="Form_UploadForm_TestUploadField[$Ref]" value="$Identifier">
+<input type="text" name="UploadFieldName[key]" value="value">
 ```
-Where $Ref is a file reference set by the uploader (a number, a string) and the value is the token representing the file upload.
 
-Upon submission to a controller, the submitted file identifies can be used to retrieve the uploaded files.
-This is useful when a form submission accompanies a file upload.
+In the above 'key' is a generated index for each file uploaded and 'value' is the unique reference for the file uploaded.
+
+When the form is submitted, the field value sent can be used to retrieve and manage the uploaded files on the backend.
+
+For an example of this see UploadPageController::handleUpload()
 
 ## Upload page
 
-`src/Pages/UploadPage.php` and `src/Pages/UploadPageController.php` provide a CMS page that can be added by users with specific permissions.
+`src/Pages/UploadPage.php` and `src/Controllers/UploadPageController.php` provide a CMS page that can be added by users with specific permissions.
 
-There are three methods that Extensionss can use: `updateUploadForm` to modify the form, `handleUploadedFiles` to handle successfully uploaded files and `handleFailedUpload` to handle failed submissions.
+There are three methods that Extensions can use:
 
-As can be seen, uploads are tied to the form CSRF token.
+1. `updateUploadForm` to modify the form
+1. `handleUploadedFiles` to handle successfully uploaded files and
+1. `handleFailedUpload` to handle failed submissions.
 
-**Important**: the third parameter to ```getByDfuToken``` will cause the saved token to be removed from the file upon retrieval when 'true' (the default). This means that you will no longer be able to retrieve that file by the provided token again.
+As can be seen, uploads are tied to the form CSRF token

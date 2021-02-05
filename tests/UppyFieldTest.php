@@ -20,8 +20,12 @@ use stdClass;
  * Unit test to verify field handling
  * @author Codem
  */
-class UppyFieldUnitTest extends SapphireTest
+class UppyFieldTest extends SapphireTest
 {
+
+    /**
+     * Test field configuration and settings
+     */
     public function testFieldConfiguration()
     {
         $fields = FieldList::create();

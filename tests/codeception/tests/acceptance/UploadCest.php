@@ -99,8 +99,8 @@ class UploadCest
 
         $I->click("form#{$form_id} input[type=submit]");
 
-        // response after files were saved
-        $I->see("Files were saved");
+        // partial EN response after files were saved (todo: add something to response that is constant)
+        $I->see("were saved");
 
         foreach ($dfu_token_values as $dfu_token_value) {
             // The DFU token should no longer be present

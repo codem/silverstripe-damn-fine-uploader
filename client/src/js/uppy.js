@@ -61,7 +61,8 @@ if(dfu_uploaders_uppy) {
                       proudlyDisplayPoweredByUppy: false,
                       showProgressDetails: true,
                       replaceTargetContent: true,
-                      note: '' // TODO
+                      note: '',
+                      doneButtonHandler: null
                     }
                   )
                   .use(

@@ -4,7 +4,6 @@ Name: damnfineuploader
 Codem\DamnFineUploader\DamnFineUploaderField:
   signing_key : ''
   allow_delete : true
-  unpublish_after_upload : true
   # config for the frontend lib
   implementation:
     validation:
@@ -21,3 +20,4 @@ Codem\DamnFineUploader\DamnFineUploaderField:
 Codem\DamnFineUploader\EditableUploadField:
   # turn this off once migration has run
   run_migration_1: true
+  run_migration_manymanyhasmany: false
