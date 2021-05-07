@@ -36,8 +36,7 @@
     "extra": {
         "expose": [
             "client/dist/js",
-            "client/dist/styles",
-            "client/dist/assets"
+            "client/dist/styles"
         ]
     },
     "autoload": {
