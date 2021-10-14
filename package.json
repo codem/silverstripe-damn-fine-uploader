@@ -22,9 +22,12 @@
     "@babel/polyfill": "^7.10",
     "@babel/preset-env": "^7.11",
     "babel-loader": "^8.1",
+    "core-js": "^3.18.3",
     "css-loader": "^4.2",
     "css-minimizer-webpack-plugin": "^1.2.0",
+    "kind-of": "^6.0.3",
     "mini-css-extract-plugin": "^0.11",
+    "set-value": "^4.1.0",
     "uglifyjs-webpack-plugin": "^2.2",
     "webpack": "^4.44",
     "webpack-assets-manifest": "^4",
@@ -36,9 +39,6 @@
     "@uppy/core": "^1.15",
     "@uppy/dashboard": "^1.14",
     "@uppy/drag-drop": "^1.4",
-    "@uppy/xhr-upload": "^1.6",
-    "core-js": "^3.6",
-    "kind-of": "^6.0.3",
-    "set-value": "^2.0.1"
+    "@uppy/xhr-upload": "^1.6"
   }
 }
