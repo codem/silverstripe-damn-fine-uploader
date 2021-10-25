@@ -1,10 +1,10 @@
 'use strict';
 const Path = require('path');
-const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const SriPlugin = require('webpack-subresource-integrity');
+const { SubresourceIntegrityPlugin } = require('webpack-subresource-integrity');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const PATHS = {
@@ -68,8 +68,9 @@ module.exports = (env, argv) => {
     optimization: {
       minimize: true,
       minimizer: [
-        new UglifyjsWebpackPlugin({
-          include: /\.min\.js$/
+        new TerserPlugin({
+          include: /\.min\.js$/,
+          extractComments: false
         }),
         new CssMinimizerPlugin({
           include: /\.min\.css$/
@@ -87,14 +88,11 @@ module.exports = (env, argv) => {
         reportFilename: "bundle-report.html",
         analyzerMode: "static"
       }),
-      new SriPlugin({
-        hashFuncNames: ['sha256', 'sha384', 'sha512'],
-        enabled: true
-      }),
+      new SubresourceIntegrityPlugin(),
       new WebpackAssetsManifest({
         enabled: true,
         integrity: true,
-        integrityHashes: ['sha256', 'sha384', 'sha512']
+        integrityHashes: ['sha384']
       })
     ]
 
