@@ -78,28 +78,39 @@ class UploadPage extends \Page implements PermissionProvider
 
     /**
      * Check if this page can be published
+     * Member needs the UPLOAD_PAGE_PUBLISH to create this page
      *
      * @param Member $member
      * @return bool
      */
     public function canPublish($member = null)
     {
+        $can = parent::canPublish($member);
+        if(!$can) {
+            return $can;
+        }
         return Permission::checkMember($member, "UPLOAD_PAGE_PUBLISH");
     }
 
     /**
      * Check if this page can be edited
+     * Member needs the UPLOAD_PAGE_EDIT to create this page
      *
      * @param Member $member
      * @return bool
      */
     public function canEdit($member = null)
     {
+        $can = parent::canEdit($member);
+        if(!$can) {
+            return $can;
+        }
         return Permission::checkMember($member, "UPLOAD_PAGE_EDIT");
     }
 
     /**
      * Check if this page can be created
+     * Member needs the UPLOAD_PAGE_CREATE to create this page
      *
      * @param Member $member
      * @param array $context
@@ -107,6 +118,10 @@ class UploadPage extends \Page implements PermissionProvider
      */
     public function canCreate($member = null, $context = [])
     {
+        $can = parent::canCreate($member, $context);
+        if(!$can) {
+            return $can;
+        }
         return Permission::checkMember($member, "UPLOAD_PAGE_CREATE");
     }
 
