@@ -27,6 +27,7 @@
     "kind-of": "^6.0.3",
     "mini-css-extract-plugin": "^2",
     "set-value": "^4.1.0",
+    "terser-webpack-plugin": "^5",
     "webpack": "^5",
     "webpack-assets-manifest": "^5",
     "webpack-bundle-analyzer": "^4.5",
@@ -37,7 +38,6 @@
     "@uppy/core": "^1.15",
     "@uppy/dashboard": "^1.14",
     "@uppy/drag-drop": "^1.4",
-    "@uppy/xhr-upload": "^1.6",
-    "terser-webpack-plugin": "^5"
+    "@uppy/xhr-upload": "^1.6"
   }
 }
