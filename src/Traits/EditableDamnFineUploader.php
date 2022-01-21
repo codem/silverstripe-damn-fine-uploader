@@ -128,6 +128,7 @@ trait EditableDamnFineUploader
                     }
                     $file->UserFormUpload = UserFormFileExtension::USER_FORM_UPLOAD_TRUE;// mark as a userform upload ('t','f', null)
                     $file->SubmittedUploadFieldID = $field->ID;// associate with the field
+                    $this->moveFileToSubmissionFolder($field, $file);
                     $file->writeToStage(Versioned::DRAFT);
                 }
             } else if($this->Required == 1) {
@@ -155,6 +156,19 @@ trait EditableDamnFineUploader
             )
         );
 
+    }
+
+    /**
+     * Moves file into a submission folder related to the submitted field
+     * @return Folder the new folder location for the file
+     */
+    protected function moveFileToSubmissionFolder(SubmittedUploadField $field, File $file) : Folder {
+        $submittedForm = $field->Parent();
+        $folder = $file->Parent();
+        $prefix = _t(__CLASS__ . '.SUBMISSION_SUBFOLDER_NAME', 'form');
+        $subFolder = Folder::find_or_make( $folder->getFilename() . "/{$prefix}-{$submittedForm->ID}");
+        $file->ParentID = $subFolder->ID;
+        return $subFolder;
     }
 
     /**
