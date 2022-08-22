@@ -15,10 +15,10 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\UserForms\Extension\UserFormFileExtension;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\Parsers\URLSegmentFilter;
 
 /**
  * Trait for editable DFU field implementations
@@ -83,7 +83,7 @@ trait EditableDamnFineUploader
             if (!$controller) {
                 throw new ValidationException(
                     _t(
-                        __CLASS__ . ".NO_CONTROLLER",
+                        "DamnFineUploader.NO_CONTROLLER",
                         "Sorry, the file upload could not be completed due to a system error."
                     )
                 );
@@ -99,7 +99,7 @@ trait EditableDamnFineUploader
             if(!($form instanceof Form)) {
                 throw new \Exception(
                     _t(
-                        __CLASS__ . '.UPLOAD_CONTROLLER_ERROR',
+                        "DamnFineUploader.UPLOAD_CONTROLLER_ERROR",
                         "No 'Form' or 'getUploadForm' method is available on the controller or the returned value is not a Form instance"
                     )
                 );
@@ -128,14 +128,13 @@ trait EditableDamnFineUploader
                     }
                     $file->UserFormUpload = UserFormFileExtension::USER_FORM_UPLOAD_TRUE;// mark as a userform upload ('t','f', null)
                     $file->SubmittedUploadFieldID = $field->ID;// associate with the field
-                    $this->moveFileToSubmissionFolder($field, $file);
                     $file->writeToStage(Versioned::DRAFT);
                 }
             } else if($this->Required == 1) {
                 // required field but not files found
                 throw new ValidationException(
                     _t(
-                        __CLASS__ . ".REQUIRED_FIELD_NO_FILES",
+                        "DamnFineUploader.REQUIRED_FIELD_NO_FILES",
                         "Please upload some files. The uploader requires Javascript, please ensure that it is enabled in your web browser."
                     )
                 );
@@ -151,24 +150,11 @@ trait EditableDamnFineUploader
 
         throw new ValidationException(
             _t(
-                __CLASS__ . ".UPLOADED_FILES_NOT_FOUND",
+                "DamnFineUploader.UPLOADED_FILES_NOT_FOUND",
                 "Sorry, the file upload could not be completed due to a system error."
             )
         );
 
-    }
-
-    /**
-     * Moves file into a submission folder related to the submitted field
-     * @return Folder the new folder location for the file
-     */
-    protected function moveFileToSubmissionFolder(SubmittedUploadField $field, File $file) : Folder {
-        $submittedForm = $field->Parent();
-        $folder = $file->Parent();
-        $prefix = _t(__CLASS__ . '.SUBMISSION_SUBFOLDER_NAME', 'form');
-        $subFolder = Folder::find_or_make( $folder->getFilename() . "/{$prefix}-{$submittedForm->ID}");
-        $file->ParentID = $subFolder->ID;
-        return $subFolder;
     }
 
     /**

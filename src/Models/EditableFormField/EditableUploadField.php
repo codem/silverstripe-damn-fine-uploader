@@ -3,7 +3,6 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
-use SilverStripe\Forms\HeaderField;
 use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
@@ -15,6 +14,7 @@ class EditableUploadField extends EditableFileField
     use EditableDamnFineUploader;
     use Migrations;
     use CMSFieldConfigurator;
+    use RestrictedUploadFolder;
 
     private static $table_name = 'EditableUploadField';
 
@@ -47,7 +47,11 @@ class EditableUploadField extends EditableFileField
      */
     public function onBeforeWrite()
     {
+        // Ensure a folder is created
+        $this->createProtectedFolder();
+        // call parent write handling
         parent::onBeforeWrite();
+        // set implementation on this field
         $this->Implementation = DamnFineUploaderField::IMPLEMENTATION_UPPY;
     }
 
@@ -73,17 +77,7 @@ class EditableUploadField extends EditableFileField
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $this->addGenericFields($fields);
-        $fields->insertBefore('FolderID', $fields->dataFieldByName('UseDateFolder'));
-        $fields->addFieldToTab(
-            'Root.Main',
-            HeaderField::create(
-                'UploadFieldSavingHeader',
-                _t('DamnFineUploader.SAVING', 'Saving')
-            ),
-            'UseDateFolder'
-        );
-
+        $this->addGenericFields($fields, _t('DamnFineUploader.TAB_MAIN', 'Main'));
         return $fields;
     }
 

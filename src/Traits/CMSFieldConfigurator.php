@@ -4,13 +4,16 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
+use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Control\HTTP;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\HeaderField;
-use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\MimeValidator\MimeUploadValidator;
 
@@ -79,77 +82,114 @@ trait CMSFieldConfigurator
     }
 
     /**
+     * Add generic CMS fields to the record
      * @return FieldList
      */
-    public function addGenericFields(FieldList $fields, $tab = "Main")
+    public function addGenericFields(FieldList $fields, $tab = "Main") : FieldList
     {
-        $fields->removeByName('Default');
-        $fields->removeByName('Implementation');
 
-        $fields->addFieldToTab(
-            'Root.' . $tab,
-            HeaderField::create(
-                'UploadRestrictionsHeader',
-                _t('DamnFineUploader.RESTRICTIONS', 'Restrictions')
-            )
-        );
-
-        $fields->addFieldToTab(
-            'Root.' . $tab,
-            NumericField::create('MaxFileSizeMB')
-                ->setTitle('Max File Size MB')
-                ->setDescription("Note: Maximum php allowed size is {$this->getPHPMaxFileSizeMB()} MB")
-        );
-
-        $fields->addFieldToTab(
-            'Root.' . $tab,
-            NumericField::create('FileUploadLimit')
-                ->setTitle('Maximum number of files allowed in the upload')
-        );
+        $fields->removeByName([
+            'Implementation',
+            'Folder','FolderID', 'UseDateFolder',
+            'MaxFileSizeMB','FileUploadLimit','SelectedFileTypes'
+        ]);
 
         // get allowed types field
-
         $mimetypes = $this->getAllowedMimeTypes();
-        $type_description = trim(implode(", ", $mimetypes));
-        if(!$type_description) {
-            $type_description = _t(
+        $typeDescription = trim(implode(", ", $mimetypes));
+        if(!$typeDescription) {
+            $typeDescription = _t(
                 'DamnFineUploader.NONE',
                 '(none)'
             );
         }
+        $typeSelectionField = TypeSelectionField::create('SelectedFileTypes')
+            ->setTitle(
+                _t(
+                    'DamnFineUploader.SELECT_FILE_TYPES',
+                    'Select allowed file types for this upload field'
+                )
+            )
+            ->setDescription(
+                _t(
+                    'DamnFineUploader.ALLOWED_MIME_TYPES',
+                    "The following mimetypes are allowed, based on this selection: <strong>{types}</strong>",
+                    [
+                        'types' => $typeDescription
+                    ]
+                )
+        );
+
+        // Restrictions
         $fields->addFieldToTab(
             'Root.' . $tab,
-            TypeSelectionField::create('SelectedFileTypes')
-                ->setTitle(
-                    _t(
-                        'DamnFineUploader.SELECT_FILE_TYPES',
-                        'Select allowed file types for this upload field'
-                    )
+            CompositeField::create(
+                NumericField::create('MaxFileSizeMB')
+                    ->setTitle('Max File Size MB')
+                    ->setDescription("Note: Maximum php allowed size is {$this->getPHPMaxFileSizeMB()} MB"),
+                NumericField::create('FileUploadLimit')
+                    ->setTitle('Maximum number of files allowed in the upload'),
+                $typeSelectionField
+            )->setTitle( _t('DamnFineUploader.RESTRICTIONS', 'Restrictions') )
+        );
+
+        // Saving
+        $useDateFieldField = CheckboxField::create('UseDateFolder')
+            ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder suffix'))
+            ->setDescription(
+                _t(
+                    'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
+                    'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/12/31'
                 )
-                ->setDescription(
-                    _t(
-                        'DamnFineUploader.ALLOWED_MIME_TYPES',
-                        "The following mimetypes are allowed, based on this selection: <strong>{types}</strong>",
+        );
+
+        // SAVING
+        // determine folder name for field
+        $folder = $this->Folder();
+        if($folder && $folder->exists()) {
+            $uploadFolderLocation = $folder->getFilename();
+            $uploadFolderLink = AssetAdmin::create()->getFileEditLink($folder);
+            $uploadFolderDescription = "<a target=\"_blank\" href=\"{$uploadFolderLink}\">"
+                . _t('DamnFineUploader.VIEW_FOLDER_ADMIN', 'View folder')
+                . "</a>";
+            $uploadFolderRestrictionNote = '';
+        } else {
+            $uploadFolderLocation = _t('DamnFineUploader.FOLDER_DOES_NOT_EXIST_YET', 'The upload folder will be created when this field is first saved');
+            $uploadFolderDescription = '';
+            $uploadFolderRestrictionNote = '';
+        }
+
+        // Composite field for showing save details
+        $fields->addFieldToTab(
+            'Root.' . $tab,
+            CompositeField::create(
+                $useDateFieldField,
+                ReadonlyField::create(
+                    'UploadFolderLocation',
+                    _t('DamnFineUploader.UPLOAD_FOLDER_LOCATION', 'Upload folder location'),
+                    $uploadFolderLocation
+                )->setDescription( $uploadFolderDescription )
+            )->setTitle(_t('DamnFineUploader.SAVING', 'Saving'))
+        );
+
+        // Apply restricted access warning (taken from userforms module)
+        if($folder && !$folder->hasRestrictedAccess()) {
+            $fields->insertBefore(
+                'UploadFolderLocation',
+                LiteralField::create(
+                    'FileUploadWarning',
+                    '<p class="alert alert-warning">'
+                    . _t(
+                        'SilverStripe\\UserForms\\Model\\UserDefinedForm.UnrestrictedFileUploadWarning',
+                        'Access to the current upload folder "{path}" is not restricted. Uploaded files will be publicly accessible if the exact URL is known.',
                         [
-                            'types' => $type_description
+                            'path' => Convert::raw2att($folder->Filename)
                         ]
                     )
+                    . '</p>'
                 )
-        );
-
-        $fields->addFieldToTab(
-            'Root.' . $tab,
-            CheckboxField::create('UseDateFolder')
-                ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder format suffix'))
-                ->setDescription(
-                    _t(
-                        'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
-                        'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/01/01'
-                    )
-                ),
-            'FolderID'
-        );
-
+            );
+        }
         return $fields;
     }
 }
