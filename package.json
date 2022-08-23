@@ -29,7 +29,7 @@
     "minimist": "^1.2.6",
     "nanoid": "^3.3.4",
     "set-value": "^4.1.0",
-    "terser": "5.14.2",
+    "terser": "^5.14.2",
     "terser-webpack-plugin": "^5.3.5",
     "url-parse": "^1.5.10",
     "webpack": "^5",
