@@ -26,8 +26,12 @@
     "css-minimizer-webpack-plugin": "^3",
     "kind-of": "^6.0.3",
     "mini-css-extract-plugin": "^2",
+    "minimist": "^1.2.6",
+    "nanoid": "^3.3.4",
     "set-value": "^4.1.0",
-    "terser-webpack-plugin": "^5",
+    "terser": "^5.14.2",
+    "terser-webpack-plugin": "^5.3.5",
+    "url-parse": "^1.5.10",
     "webpack": "^5",
     "webpack-assets-manifest": "^5",
     "webpack-bundle-analyzer": "^4.5",
@@ -35,9 +39,9 @@
     "webpack-subresource-integrity": "^5"
   },
   "dependencies": {
-    "@uppy/core": "^1.15",
-    "@uppy/dashboard": "^1.14",
-    "@uppy/drag-drop": "^1.4",
-    "@uppy/xhr-upload": "^1.6"
+    "@uppy/core": "^1.20.1",
+    "@uppy/dashboard": "^1.21.1",
+    "@uppy/drag-drop": "^1.4.31",
+    "@uppy/xhr-upload": "^1.7.5"
   }
 }

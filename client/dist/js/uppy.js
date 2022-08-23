@@ -92,7 +92,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var qsStringify = __webpack_require__(713);
 
-var URL = __webpack_require__(4564);
+var URL = __webpack_require__(1715);
 
 var RequestClient = __webpack_require__(2368);
 
@@ -675,6 +675,540 @@ module.exports.removeItem = function (key) {
     resolve();
   });
 };
+
+/***/ }),
+
+/***/ 1715:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var required = __webpack_require__(7418)
+  , qs = __webpack_require__(7129)
+  , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//
+  , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\\/]+)?([\S\s]*)/i
+  , windowsDriveLetter = /^[a-zA-Z]:/
+  , whitespace = '[\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\xA0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\\u2028\\u2029\\uFEFF]'
+  , left = new RegExp('^'+ whitespace +'+');
+
+/**
+ * Trim a given string.
+ *
+ * @param {String} str String to trim.
+ * @public
+ */
+function trimLeft(str) {
+  return (str ? str : '').toString().replace(left, '');
+}
+
+/**
+ * These are the parse rules for the URL parser, it informs the parser
+ * about:
+ *
+ * 0. The char it Needs to parse, if it's a string it should be done using
+ *    indexOf, RegExp using exec and NaN means set as current value.
+ * 1. The property we should set when parsing this value.
+ * 2. Indication if it's backwards or forward parsing, when set as number it's
+ *    the value of extra chars that should be split off.
+ * 3. Inherit from location if non existing in the parser.
+ * 4. `toLowerCase` the resulting value.
+ */
+var rules = [
+  ['#', 'hash'],                        // Extract from the back.
+  ['?', 'query'],                       // Extract from the back.
+  function sanitize(address, url) {     // Sanitize what is left of the address
+    return isSpecial(url.protocol) ? address.replace(/\\/g, '/') : address;
+  },
+  ['/', 'pathname'],                    // Extract from the back.
+  ['@', 'auth', 1],                     // Extract from the front.
+  [NaN, 'host', undefined, 1, 1],       // Set left over value.
+  [/:(\d+)$/, 'port', undefined, 1],    // RegExp the back.
+  [NaN, 'hostname', undefined, 1, 1]    // Set left over.
+];
+
+/**
+ * These properties should not be copied or inherited from. This is only needed
+ * for all non blob URL's as a blob URL does not include a hash, only the
+ * origin.
+ *
+ * @type {Object}
+ * @private
+ */
+var ignore = { hash: 1, query: 1 };
+
+/**
+ * The location object differs when your code is loaded through a normal page,
+ * Worker or through a worker using a blob. And with the blobble begins the
+ * trouble as the location object will contain the URL of the blob, not the
+ * location of the page where our code is loaded in. The actual origin is
+ * encoded in the `pathname` so we can thankfully generate a good "default"
+ * location from it so we can generate proper relative URL's again.
+ *
+ * @param {Object|String} loc Optional default location object.
+ * @returns {Object} lolcation object.
+ * @public
+ */
+function lolcation(loc) {
+  var globalVar;
+
+  if (typeof window !== 'undefined') globalVar = window;
+  else if (typeof __webpack_require__.g !== 'undefined') globalVar = __webpack_require__.g;
+  else if (typeof self !== 'undefined') globalVar = self;
+  else globalVar = {};
+
+  var location = globalVar.location || {};
+  loc = loc || location;
+
+  var finaldestination = {}
+    , type = typeof loc
+    , key;
+
+  if ('blob:' === loc.protocol) {
+    finaldestination = new Url(unescape(loc.pathname), {});
+  } else if ('string' === type) {
+    finaldestination = new Url(loc, {});
+    for (key in ignore) delete finaldestination[key];
+  } else if ('object' === type) {
+    for (key in loc) {
+      if (key in ignore) continue;
+      finaldestination[key] = loc[key];
+    }
+
+    if (finaldestination.slashes === undefined) {
+      finaldestination.slashes = slashes.test(loc.href);
+    }
+  }
+
+  return finaldestination;
+}
+
+/**
+ * Check whether a protocol scheme is special.
+ *
+ * @param {String} The protocol scheme of the URL
+ * @return {Boolean} `true` if the protocol scheme is special, else `false`
+ * @private
+ */
+function isSpecial(scheme) {
+  return (
+    scheme === 'file:' ||
+    scheme === 'ftp:' ||
+    scheme === 'http:' ||
+    scheme === 'https:' ||
+    scheme === 'ws:' ||
+    scheme === 'wss:'
+  );
+}
+
+/**
+ * @typedef ProtocolExtract
+ * @type Object
+ * @property {String} protocol Protocol matched in the URL, in lowercase.
+ * @property {Boolean} slashes `true` if protocol is followed by "//", else `false`.
+ * @property {String} rest Rest of the URL that is not part of the protocol.
+ */
+
+/**
+ * Extract protocol information from a URL with/without double slash ("//").
+ *
+ * @param {String} address URL we want to extract from.
+ * @param {Object} location
+ * @return {ProtocolExtract} Extracted information.
+ * @private
+ */
+function extractProtocol(address, location) {
+  address = trimLeft(address);
+  location = location || {};
+
+  var match = protocolre.exec(address);
+  var protocol = match[1] ? match[1].toLowerCase() : '';
+  var forwardSlashes = !!match[2];
+  var otherSlashes = !!match[3];
+  var slashesCount = 0;
+  var rest;
+
+  if (forwardSlashes) {
+    if (otherSlashes) {
+      rest = match[2] + match[3] + match[4];
+      slashesCount = match[2].length + match[3].length;
+    } else {
+      rest = match[2] + match[4];
+      slashesCount = match[2].length;
+    }
+  } else {
+    if (otherSlashes) {
+      rest = match[3] + match[4];
+      slashesCount = match[3].length;
+    } else {
+      rest = match[4]
+    }
+  }
+
+  if (protocol === 'file:') {
+    if (slashesCount >= 2) {
+      rest = rest.slice(2);
+    }
+  } else if (isSpecial(protocol)) {
+    rest = match[4];
+  } else if (protocol) {
+    if (forwardSlashes) {
+      rest = rest.slice(2);
+    }
+  } else if (slashesCount >= 2 && isSpecial(location.protocol)) {
+    rest = match[4];
+  }
+
+  return {
+    protocol: protocol,
+    slashes: forwardSlashes || isSpecial(protocol),
+    slashesCount: slashesCount,
+    rest: rest
+  };
+}
+
+/**
+ * Resolve a relative URL pathname against a base URL pathname.
+ *
+ * @param {String} relative Pathname of the relative URL.
+ * @param {String} base Pathname of the base URL.
+ * @return {String} Resolved pathname.
+ * @private
+ */
+function resolve(relative, base) {
+  if (relative === '') return base;
+
+  var path = (base || '/').split('/').slice(0, -1).concat(relative.split('/'))
+    , i = path.length
+    , last = path[i - 1]
+    , unshift = false
+    , up = 0;
+
+  while (i--) {
+    if (path[i] === '.') {
+      path.splice(i, 1);
+    } else if (path[i] === '..') {
+      path.splice(i, 1);
+      up++;
+    } else if (up) {
+      if (i === 0) unshift = true;
+      path.splice(i, 1);
+      up--;
+    }
+  }
+
+  if (unshift) path.unshift('');
+  if (last === '.' || last === '..') path.push('');
+
+  return path.join('/');
+}
+
+/**
+ * The actual URL instance. Instead of returning an object we've opted-in to
+ * create an actual constructor as it's much more memory efficient and
+ * faster and it pleases my OCD.
+ *
+ * It is worth noting that we should not use `URL` as class name to prevent
+ * clashes with the global URL instance that got introduced in browsers.
+ *
+ * @constructor
+ * @param {String} address URL we want to parse.
+ * @param {Object|String} [location] Location defaults for relative paths.
+ * @param {Boolean|Function} [parser] Parser for the query string.
+ * @private
+ */
+function Url(address, location, parser) {
+  address = trimLeft(address);
+
+  if (!(this instanceof Url)) {
+    return new Url(address, location, parser);
+  }
+
+  var relative, extracted, parse, instruction, index, key
+    , instructions = rules.slice()
+    , type = typeof location
+    , url = this
+    , i = 0;
+
+  //
+  // The following if statements allows this module two have compatibility with
+  // 2 different API:
+  //
+  // 1. Node.js's `url.parse` api which accepts a URL, boolean as arguments
+  //    where the boolean indicates that the query string should also be parsed.
+  //
+  // 2. The `URL` interface of the browser which accepts a URL, object as
+  //    arguments. The supplied object will be used as default values / fall-back
+  //    for relative paths.
+  //
+  if ('object' !== type && 'string' !== type) {
+    parser = location;
+    location = null;
+  }
+
+  if (parser && 'function' !== typeof parser) parser = qs.parse;
+
+  location = lolcation(location);
+
+  //
+  // Extract protocol information before running the instructions.
+  //
+  extracted = extractProtocol(address || '', location);
+  relative = !extracted.protocol && !extracted.slashes;
+  url.slashes = extracted.slashes || relative && location.slashes;
+  url.protocol = extracted.protocol || location.protocol || '';
+  address = extracted.rest;
+
+  //
+  // When the authority component is absent the URL starts with a path
+  // component.
+  //
+  if (
+    extracted.protocol === 'file:' && (
+      extracted.slashesCount !== 2 || windowsDriveLetter.test(address)) ||
+    (!extracted.slashes &&
+      (extracted.protocol ||
+        extracted.slashesCount < 2 ||
+        !isSpecial(url.protocol)))
+  ) {
+    instructions[3] = [/(.*)/, 'pathname'];
+  }
+
+  for (; i < instructions.length; i++) {
+    instruction = instructions[i];
+
+    if (typeof instruction === 'function') {
+      address = instruction(address, url);
+      continue;
+    }
+
+    parse = instruction[0];
+    key = instruction[1];
+
+    if (parse !== parse) {
+      url[key] = address;
+    } else if ('string' === typeof parse) {
+      if (~(index = address.indexOf(parse))) {
+        if ('number' === typeof instruction[2]) {
+          url[key] = address.slice(0, index);
+          address = address.slice(index + instruction[2]);
+        } else {
+          url[key] = address.slice(index);
+          address = address.slice(0, index);
+        }
+      }
+    } else if ((index = parse.exec(address))) {
+      url[key] = index[1];
+      address = address.slice(0, index.index);
+    }
+
+    url[key] = url[key] || (
+      relative && instruction[3] ? location[key] || '' : ''
+    );
+
+    //
+    // Hostname, host and protocol should be lowercased so they can be used to
+    // create a proper `origin`.
+    //
+    if (instruction[4]) url[key] = url[key].toLowerCase();
+  }
+
+  //
+  // Also parse the supplied query string in to an object. If we're supplied
+  // with a custom parser as function use that instead of the default build-in
+  // parser.
+  //
+  if (parser) url.query = parser(url.query);
+
+  //
+  // If the URL is relative, resolve the pathname against the base URL.
+  //
+  if (
+      relative
+    && location.slashes
+    && url.pathname.charAt(0) !== '/'
+    && (url.pathname !== '' || location.pathname !== '')
+  ) {
+    url.pathname = resolve(url.pathname, location.pathname);
+  }
+
+  //
+  // Default to a / for pathname if none exists. This normalizes the URL
+  // to always have a /
+  //
+  if (url.pathname.charAt(0) !== '/' && isSpecial(url.protocol)) {
+    url.pathname = '/' + url.pathname;
+  }
+
+  //
+  // We should not add port numbers if they are already the default port number
+  // for a given protocol. As the host also contains the port number we're going
+  // override it with the hostname which contains no port number.
+  //
+  if (!required(url.port, url.protocol)) {
+    url.host = url.hostname;
+    url.port = '';
+  }
+
+  //
+  // Parse down the `auth` for the username and password.
+  //
+  url.username = url.password = '';
+  if (url.auth) {
+    instruction = url.auth.split(':');
+    url.username = instruction[0] || '';
+    url.password = instruction[1] || '';
+  }
+
+  url.origin = url.protocol !== 'file:' && isSpecial(url.protocol) && url.host
+    ? url.protocol +'//'+ url.host
+    : 'null';
+
+  //
+  // The href is just the compiled result.
+  //
+  url.href = url.toString();
+}
+
+/**
+ * This is convenience method for changing properties in the URL instance to
+ * insure that they all propagate correctly.
+ *
+ * @param {String} part          Property we need to adjust.
+ * @param {Mixed} value          The newly assigned value.
+ * @param {Boolean|Function} fn  When setting the query, it will be the function
+ *                               used to parse the query.
+ *                               When setting the protocol, double slash will be
+ *                               removed from the final url if it is true.
+ * @returns {URL} URL instance for chaining.
+ * @public
+ */
+function set(part, value, fn) {
+  var url = this;
+
+  switch (part) {
+    case 'query':
+      if ('string' === typeof value && value.length) {
+        value = (fn || qs.parse)(value);
+      }
+
+      url[part] = value;
+      break;
+
+    case 'port':
+      url[part] = value;
+
+      if (!required(value, url.protocol)) {
+        url.host = url.hostname;
+        url[part] = '';
+      } else if (value) {
+        url.host = url.hostname +':'+ value;
+      }
+
+      break;
+
+    case 'hostname':
+      url[part] = value;
+
+      if (url.port) value += ':'+ url.port;
+      url.host = value;
+      break;
+
+    case 'host':
+      url[part] = value;
+
+      if (/:\d+$/.test(value)) {
+        value = value.split(':');
+        url.port = value.pop();
+        url.hostname = value.join(':');
+      } else {
+        url.hostname = value;
+        url.port = '';
+      }
+
+      break;
+
+    case 'protocol':
+      url.protocol = value.toLowerCase();
+      url.slashes = !fn;
+      break;
+
+    case 'pathname':
+    case 'hash':
+      if (value) {
+        var char = part === 'pathname' ? '/' : '#';
+        url[part] = value.charAt(0) !== char ? char + value : value;
+      } else {
+        url[part] = value;
+      }
+      break;
+
+    default:
+      url[part] = value;
+  }
+
+  for (var i = 0; i < rules.length; i++) {
+    var ins = rules[i];
+
+    if (ins[4]) url[ins[1]] = url[ins[1]].toLowerCase();
+  }
+
+  url.origin = url.protocol !== 'file:' && isSpecial(url.protocol) && url.host
+    ? url.protocol +'//'+ url.host
+    : 'null';
+
+  url.href = url.toString();
+
+  return url;
+}
+
+/**
+ * Transform the properties back in to a valid and full URL string.
+ *
+ * @param {Function} stringify Optional query stringify function.
+ * @returns {String} Compiled version of the URL.
+ * @public
+ */
+function toString(stringify) {
+  if (!stringify || 'function' !== typeof stringify) stringify = qs.stringify;
+
+  var query
+    , url = this
+    , protocol = url.protocol;
+
+  if (protocol && protocol.charAt(protocol.length - 1) !== ':') protocol += ':';
+
+  var result = protocol + (url.slashes || isSpecial(url.protocol) ? '//' : '');
+
+  if (url.username) {
+    result += url.username;
+    if (url.password) result += ':'+ url.password;
+    result += '@';
+  }
+
+  result += url.host + url.pathname;
+
+  query = 'object' === typeof url.query ? stringify(url.query) : url.query;
+  if (query) result += '?' !== query.charAt(0) ? '?'+ query : query;
+
+  if (url.hash) result += url.hash;
+
+  return result;
+}
+
+Url.prototype = { set: set, toString: toString };
+
+//
+// Expose the URL parser and some additional properties that might be useful for
+// others or testing.
+//
+Url.extractProtocol = extractProtocol;
+Url.location = lolcation;
+Url.trimLeft = trimLeft;
+Url.qs = qs;
+
+module.exports = Url;
+
 
 /***/ }),
 
@@ -3002,7 +3536,9 @@ module.exports = function supportsUploadProgress(userAgent) {
 /***/ 6052:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9674),
     h = _require.h,
@@ -3042,15 +3578,15 @@ var AddFiles = /*#__PURE__*/function (_Component) {
 
     _this.renderHiddenInput = function (isFolder, refCallback) {
       return h("input", {
-        class: "uppy-Dashboard-input",
+        className: "uppy-Dashboard-input",
         hidden: true,
         "aria-hidden": "true",
-        tabindex: -1,
+        tabIndex: -1,
         webkitdirectory: isFolder,
         type: "file",
         name: "files[]",
         multiple: _this.props.maxNumberOfFiles !== 1,
-        onchange: _this.onFileInputChange,
+        onChange: _this.onFileInputChange,
         accept: _this.props.allowedFileTypes,
         ref: refCallback
       });
@@ -3058,16 +3594,16 @@ var AddFiles = /*#__PURE__*/function (_Component) {
 
     _this.renderMyDeviceAcquirer = function () {
       return h("div", {
-        class: "uppy-DashboardTab",
+        className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": "MyDevice"
       }, h("button", {
         type: "button",
-        class: "uppy-DashboardTab-btn",
+        className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
-        tabindex: 0,
+        tabIndex: 0,
         "data-uppy-super-focusable": true,
-        onclick: _this.triggerFileInputClick
+        onClick: _this.triggerFileInputClick
       }, h("svg", {
         "aria-hidden": "true",
         focusable: "false",
@@ -3076,8 +3612,9 @@ var AddFiles = /*#__PURE__*/function (_Component) {
         viewBox: "0 0 32 32"
       }, h("g", {
         fill: "none",
-        "fill-rule": "evenodd"
+        fillRule: "evenodd"
       }, h("rect", {
+        className: "uppy-ProviderIconBg",
         width: "32",
         height: "32",
         rx: "16",
@@ -3086,7 +3623,7 @@ var AddFiles = /*#__PURE__*/function (_Component) {
         d: "M21.973 21.152H9.863l-1.108-5.087h14.464l-1.246 5.087zM9.935 11.37h3.958l.886 1.444a.673.673 0 0 0 .585.316h6.506v1.37H9.935v-3.13zm14.898 3.44a.793.793 0 0 0-.616-.31h-.978v-2.126c0-.379-.275-.613-.653-.613H15.75l-.886-1.445a.673.673 0 0 0-.585-.316H9.232c-.378 0-.667.209-.667.587V14.5h-.782a.793.793 0 0 0-.61.303.795.795 0 0 0-.155.663l1.45 6.633c.078.36.396.618.764.618h13.354c.36 0 .674-.246.76-.595l1.631-6.636a.795.795 0 0 0-.144-.675z",
         fill: "#FFF"
       }))), h("div", {
-        class: "uppy-DashboardTab-name"
+        className: "uppy-DashboardTab-name"
       }, _this.props.i18n('myDevice'))));
     };
 
@@ -3094,8 +3631,8 @@ var AddFiles = /*#__PURE__*/function (_Component) {
       var numberOfAcquirers = _this.props.acquirers.length;
       return h("button", {
         type: "button",
-        class: "uppy-u-reset uppy-Dashboard-browse",
-        onclick: onClickFn,
+        className: "uppy-u-reset uppy-Dashboard-browse",
+        onClick: onClickFn,
         "data-uppy-super-focusable": numberOfAcquirers === 0
       }, text);
     };
@@ -3168,41 +3705,45 @@ var AddFiles = /*#__PURE__*/function (_Component) {
         }
       }
 
+      if (_this.props.disableLocalFiles) {
+        titleText = _this.props.i18n('importFiles');
+      }
+
       return h("div", {
-        class: "uppy-Dashboard-AddFiles-title"
+        className: "uppy-Dashboard-AddFiles-title"
       }, titleText);
     };
 
     _this.renderAcquirer = function (acquirer) {
       return h("div", {
-        class: "uppy-DashboardTab",
+        className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": acquirer.id
       }, h("button", {
         type: "button",
-        class: "uppy-DashboardTab-btn",
+        className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
-        tabindex: 0,
+        tabIndex: 0,
         "aria-controls": "uppy-DashboardContent-panel--" + acquirer.id,
         "aria-selected": _this.props.activePickerPanel.id === acquirer.id,
         "data-uppy-super-focusable": true,
-        onclick: function onclick() {
+        onClick: function onClick() {
           return _this.props.showPanel(acquirer.id);
         }
       }, acquirer.icon(), h("div", {
-        class: "uppy-DashboardTab-name"
+        className: "uppy-DashboardTab-name"
       }, acquirer.name)));
     };
 
-    _this.renderAcquirers = function (acquirers) {
+    _this.renderAcquirers = function (acquirers, disableLocalFiles) {
       // Group last two buttons, so we don’t end up with
       // just one button on a new line
       var acquirersWithoutLastTwo = [].concat(acquirers);
       var lastTwoAcquirers = acquirersWithoutLastTwo.splice(acquirers.length - 2, acquirers.length);
       return h("div", {
-        class: "uppy-Dashboard-AddFiles-list",
+        className: "uppy-Dashboard-AddFiles-list",
         role: "tablist"
-      }, _this.renderMyDeviceAcquirer(), acquirersWithoutLastTwo.map(function (acquirer) {
+      }, !disableLocalFiles && _this.renderMyDeviceAcquirer(), acquirersWithoutLastTwo.map(function (acquirer) {
         return _this.renderAcquirer(acquirer);
       }), h("span", {
         role: "presentation",
@@ -3221,15 +3762,15 @@ var AddFiles = /*#__PURE__*/function (_Component) {
     var uppyBranding = h("span", null, h("svg", {
       "aria-hidden": "true",
       focusable: "false",
-      class: "uppy-c-icon uppy-Dashboard-poweredByIcon",
+      className: "uppy-c-icon uppy-Dashboard-poweredByIcon",
       width: "11",
       height: "11",
       viewBox: "0 0 11 11"
     }, h("path", {
       d: "M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z",
-      "fill-rule": "evenodd"
+      fillRule: "evenodd"
     })), h("span", {
-      class: "uppy-Dashboard-poweredByUppy"
+      className: "uppy-Dashboard-poweredByUppy"
     }, "Uppy")); // Support both the old word-order-insensitive string `poweredBy` and the new word-order-sensitive string `poweredBy2`
 
     var linkText = this.props.i18nArray('poweredBy2', {
@@ -3237,11 +3778,11 @@ var AddFiles = /*#__PURE__*/function (_Component) {
       uppy: uppyBranding
     });
     return h("a", {
-      tabindex: "-1",
+      tabIndex: "-1",
       href: "https://uppy.io",
       rel: "noreferrer noopener",
       target: "_blank",
-      class: "uppy-Dashboard-poweredBy"
+      className: "uppy-Dashboard-poweredBy"
     }, linkText);
   };
 
@@ -3249,15 +3790,15 @@ var AddFiles = /*#__PURE__*/function (_Component) {
     var _this2 = this;
 
     return h("div", {
-      class: "uppy-Dashboard-AddFiles"
+      className: "uppy-Dashboard-AddFiles"
     }, this.renderHiddenInput(false, function (ref) {
       _this2.fileInput = ref;
     }), this.renderHiddenInput(true, function (ref) {
       _this2.folderInput = ref;
-    }), this.renderDropPasteBrowseTagline(), this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers), h("div", {
-      class: "uppy-Dashboard-AddFiles-info"
+    }), this.renderDropPasteBrowseTagline(), this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers, this.props.disableLocalFiles), h("div", {
+      className: "uppy-Dashboard-AddFiles-info"
     }, this.props.note && h("div", {
-      class: "uppy-Dashboard-note"
+      className: "uppy-Dashboard-note"
     }, this.props.note), this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)));
   };
 
@@ -3280,19 +3821,19 @@ var AddFiles = __webpack_require__(6052);
 
 var AddFilesPanel = function AddFilesPanel(props) {
   return h("div", {
-    class: classNames('uppy-Dashboard-AddFilesPanel', props.className),
+    className: classNames('uppy-Dashboard-AddFilesPanel', props.className),
     "data-uppy-panelType": "AddFiles",
     "aria-hidden": props.showAddFilesPanel
   }, h("div", {
-    class: "uppy-DashboardContent-bar"
+    className: "uppy-DashboardContent-bar"
   }, h("div", {
-    class: "uppy-DashboardContent-title",
+    className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, props.i18n('addingMoreFiles')), h("button", {
-    class: "uppy-DashboardContent-back",
+    className: "uppy-DashboardContent-back",
     type: "button",
-    onclick: function onclick(ev) {
+    onClick: function onClick(ev) {
       return props.toggleAddFilesPanel(false);
     }
   }, props.i18n('back'))), h(AddFiles, props));
@@ -3306,6 +3847,11 @@ module.exports = AddFilesPanel;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var _require = __webpack_require__(9674),
+    h = _require.h;
+
+var classNames = __webpack_require__(4184);
 
 var FileList = __webpack_require__(8689);
 
@@ -3323,12 +3869,7 @@ var FileCard = __webpack_require__(5261);
 
 var Slide = __webpack_require__(9167);
 
-var classNames = __webpack_require__(4184);
-
-var isDragDropSupported = __webpack_require__(3754);
-
-var _require = __webpack_require__(9674),
-    h = _require.h; // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+var isDragDropSupported = __webpack_require__(3754); // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 
 
@@ -3340,9 +3881,12 @@ var HEIGHT_MD = 400;
 module.exports = function Dashboard(props) {
   var noFiles = props.totalFileCount === 0;
   var isSizeMD = props.containerWidth > WIDTH_MD;
+  var wrapperClassName = classNames({
+    'uppy-Root': props.isTargetDOMEl
+  });
   var dashboardClassName = classNames({
-    'uppy-Root': props.isTargetDOMEl,
     'uppy-Dashboard': true,
+    'uppy-Dashboard--isDisabled': props.disabled,
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
@@ -3366,23 +3910,39 @@ module.exports = function Dashboard(props) {
   }
 
   var showFileList = props.showSelectedFiles && !noFiles;
-  return h("div", {
-    class: dashboardClassName,
+  var numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null;
+  var numberOfGhosts = props.files ? Object.keys(props.files).filter(function (fileID) {
+    return props.files[fileID].isGhost;
+  }).length : null;
+
+  var renderRestoredText = function renderRestoredText() {
+    if (numberOfGhosts > 0) {
+      return props.i18n('recoveredXFiles', {
+        smart_count: numberOfGhosts
+      });
+    }
+
+    return props.i18n('recoveredAllFiles');
+  };
+
+  var dashboard = h("div", {
+    className: dashboardClassName,
     "data-uppy-theme": props.theme,
     "data-uppy-num-acquirers": props.acquirers.length,
-    "data-uppy-drag-drop-supported": isDragDropSupported(),
+    "data-uppy-drag-drop-supported": !props.disableLocalFiles && isDragDropSupported(),
     "aria-hidden": props.inline ? 'false' : props.isHidden,
+    "aria-disabled": props.disabled,
     "aria-label": !props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle'),
-    onpaste: props.handlePaste,
+    onPaste: props.handlePaste,
     onDragOver: props.handleDragOver,
     onDragLeave: props.handleDragLeave,
     onDrop: props.handleDrop
   }, h("div", {
-    class: "uppy-Dashboard-overlay",
-    tabindex: -1,
-    onclick: props.handleClickOutside
+    className: "uppy-Dashboard-overlay",
+    tabIndex: -1,
+    onClick: props.handleClickOutside
   }), h("div", {
-    class: "uppy-Dashboard-inner",
+    className: "uppy-Dashboard-inner",
     "aria-modal": !props.inline && 'true',
     role: !props.inline && 'dialog',
     style: {
@@ -3390,18 +3950,46 @@ module.exports = function Dashboard(props) {
       height: props.inline && props.height ? props.height : ''
     }
   }, !props.inline ? h("button", {
-    class: "uppy-u-reset uppy-Dashboard-close",
+    className: "uppy-u-reset uppy-Dashboard-close",
     type: "button",
     "aria-label": props.i18n('closeModal'),
     title: props.i18n('closeModal'),
-    onclick: props.closeModal
+    onClick: props.closeModal
   }, h("span", {
     "aria-hidden": "true"
   }, "\xD7")) : null, h("div", {
-    class: "uppy-Dashboard-innerWrap"
+    className: "uppy-Dashboard-innerWrap"
   }, h("div", {
-    class: "uppy-Dashboard-dropFilesHereHint"
-  }, props.i18n('dropHint')), showFileList && h(PanelTopBar, props), showFileList ? h(FileList, _extends({}, props, {
+    className: "uppy-Dashboard-dropFilesHereHint"
+  }, props.i18n('dropHint')), showFileList && h(PanelTopBar, props), numberOfFilesForRecovery && h("div", {
+    className: "uppy-Dashboard-serviceMsg"
+  }, h("svg", {
+    className: "uppy-Dashboard-serviceMsg-icon",
+    "aria-hidden": "true",
+    focusable: "false",
+    width: "21",
+    height: "16",
+    viewBox: "0 0 24 19"
+  }, h("g", {
+    transform: "translate(0 -1)",
+    fill: "none",
+    fillRule: "evenodd"
+  }, h("path", {
+    d: "M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z",
+    fill: "#FFD300"
+  }), h("path", {
+    fill: "#000",
+    d: "M11 6h2l-.3 8h-1.4z"
+  }), h("circle", {
+    fill: "#000",
+    cx: "12",
+    cy: "17",
+    r: "1"
+  }))), h("strong", {
+    className: "uppy-Dashboard-serviceMsg-title"
+  }, props.i18n('sessionRestored')), h("div", {
+    class: "uppy-Dashboard-serviceMsg-text"
+  }, renderRestoredText())), showFileList ? h(FileList, _extends({}, props, {
     itemsPerRow: itemsPerRow
   })) : h(AddFiles, _extends({}, props, {
     isSizeMD: isSizeMD
@@ -3416,10 +4004,16 @@ module.exports = function Dashboard(props) {
   }, props)) : null), h(Slide, null, props.showFileEditor ? h(EditorPanel, _extends({
     key: "Editor"
   }, props)) : null), h("div", {
-    class: "uppy-Dashboard-progressindicators"
+    className: "uppy-Dashboard-progressindicators"
   }, props.progressindicators.map(function (target) {
     return props.getPlugin(target.id).render(props.state);
   })))));
+  return (// Wrap it for RTL language support
+    h("div", {
+      className: wrapperClassName,
+      dir: props.direction
+    }, dashboard)
+  );
 };
 
 /***/ }),
@@ -3435,26 +4029,30 @@ var classNames = __webpack_require__(4184);
 function EditorPanel(props) {
   var file = this.props.files[this.props.fileCardFor];
   return h("div", {
-    class: classNames('uppy-DashboardContent-panel', props.className),
+    className: classNames('uppy-DashboardContent-panel', props.className),
     role: "tabpanel",
     "data-uppy-panelType": "FileEditor",
     id: "uppy-DashboardContent-panel--editor"
   }, h("div", {
-    class: "uppy-DashboardContent-bar"
+    className: "uppy-DashboardContent-bar"
   }, h("div", {
-    class: "uppy-DashboardContent-title",
+    className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, props.i18nArray('editing', {
     file: h("span", {
-      class: "uppy-DashboardContent-titleFile"
+      className: "uppy-DashboardContent-titleFile"
     }, file.meta ? file.meta.name : file.name)
   })), h("button", {
-    class: "uppy-DashboardContent-back",
+    className: "uppy-DashboardContent-back",
     type: "button",
-    onclick: props.hideAllPanels
-  }, props.i18n('done'))), h("div", {
-    class: "uppy-DashboardContent-panelBody"
+    onClick: props.hideAllPanels
+  }, props.i18n('cancel')), h("button", {
+    className: "uppy-DashboardContent-save",
+    type: "button",
+    onClick: props.saveFileEditor
+  }, props.i18n('save'))), h("div", {
+    className: "uppy-DashboardContent-panelBody"
   }, props.editors.map(function (target) {
     return props.getPlugin(target.id).render(props.state);
   })));
@@ -3469,7 +4067,9 @@ module.exports = EditorPanel;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9674),
     h = _require.h,
@@ -3491,6 +4091,25 @@ var FileCard = /*#__PURE__*/function (_Component) {
 
     _this = _Component.call(this, props) || this;
 
+    _this.updateMeta = function (newVal, name) {
+      var _extends2;
+
+      _this.setState({
+        formState: _extends({}, _this.state.formState, (_extends2 = {}, _extends2[name] = newVal, _extends2))
+      });
+    };
+
+    _this.handleSave = function (e) {
+      e.preventDefault();
+      var fileID = _this.props.fileCardFor;
+
+      _this.props.saveFileCard(_this.state.formState, fileID);
+    };
+
+    _this.handleCancel = function () {
+      _this.props.toggleFileCard(false);
+    };
+
     _this.saveOnEnter = function (ev) {
       if (ev.keyCode === 13) {
         ev.stopPropagation();
@@ -3501,53 +4120,40 @@ var FileCard = /*#__PURE__*/function (_Component) {
       }
     };
 
-    _this.updateMeta = function (newVal, name) {
-      var _extends2;
-
-      _this.setState({
-        formState: _extends({}, _this.state.formState, (_extends2 = {}, _extends2[name] = newVal, _extends2))
-      });
-    };
-
-    _this.handleSave = function () {
-      var fileID = _this.props.fileCardFor;
-
-      _this.props.saveFileCard(_this.state.formState, fileID);
-    };
-
-    _this.handleCancel = function () {
-      _this.props.toggleFileCard();
-    };
-
     _this.renderMetaFields = function () {
-      var metaFields = _this.props.metaFields || [];
+      var metaFields = _this.getMetaFields() || [];
       var fieldCSSClasses = {
         text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
       };
       return metaFields.map(function (field) {
         var id = "uppy-Dashboard-FileCard-input-" + field.id;
+
+        var required = _this.props.requiredMetaFields.includes(field.id);
+
         return h("fieldset", {
           key: field.id,
-          class: "uppy-Dashboard-FileCard-fieldset"
+          className: "uppy-Dashboard-FileCard-fieldset"
         }, h("label", {
-          class: "uppy-Dashboard-FileCard-label",
-          for: id
+          className: "uppy-Dashboard-FileCard-label",
+          htmlFor: id
         }, field.name), field.render !== undefined ? field.render({
           value: _this.state.formState[field.id],
           onChange: function onChange(newVal) {
             return _this.updateMeta(newVal, field.id);
           },
-          fieldCSSClasses: fieldCSSClasses
+          fieldCSSClasses: fieldCSSClasses,
+          required: required
         }, h) : h("input", {
-          class: fieldCSSClasses.text,
+          className: fieldCSSClasses.text,
           id: id,
           type: field.type || 'text',
+          required: required,
           value: _this.state.formState[field.id],
           placeholder: field.placeholder,
-          onkeyup: _this.saveOnEnter,
-          onkeydown: _this.saveOnEnter,
-          onkeypress: _this.saveOnEnter,
-          oninput: function oninput(ev) {
+          onKeyUp: _this.saveOnEnter,
+          onKeyDown: _this.saveOnEnter,
+          onKeyPress: _this.saveOnEnter,
+          onInput: function onInput(ev) {
             return _this.updateMeta(ev.target.value, field.id);
           },
           "data-uppy-super-focusable": true
@@ -3557,7 +4163,7 @@ var FileCard = /*#__PURE__*/function (_Component) {
 
     var _file = _this.props.files[_this.props.fileCardFor];
 
-    var _metaFields = _this.props.metaFields || [];
+    var _metaFields = _this.getMetaFields() || [];
 
     var storedMetaData = {};
 
@@ -3573,37 +4179,41 @@ var FileCard = /*#__PURE__*/function (_Component) {
 
   var _proto = FileCard.prototype;
 
+  _proto.getMetaFields = function getMetaFields() {
+    return typeof this.props.metaFields === 'function' ? this.props.metaFields(this.props.files[this.props.fileCardFor]) : this.props.metaFields;
+  };
+
   _proto.render = function render() {
     var _this2 = this;
 
     var file = this.props.files[this.props.fileCardFor];
     var showEditButton = this.props.canEditFile(file);
     return h("div", {
-      class: classNames('uppy-Dashboard-FileCard', this.props.className),
+      className: classNames('uppy-Dashboard-FileCard', this.props.className),
       "data-uppy-panelType": "FileCard",
       onDragOver: ignoreEvent,
       onDragLeave: ignoreEvent,
       onDrop: ignoreEvent,
       onPaste: ignoreEvent
     }, h("div", {
-      class: "uppy-DashboardContent-bar"
+      className: "uppy-DashboardContent-bar"
     }, h("div", {
-      class: "uppy-DashboardContent-title",
+      className: "uppy-DashboardContent-title",
       role: "heading",
       "aria-level": "1"
     }, this.props.i18nArray('editing', {
       file: h("span", {
-        class: "uppy-DashboardContent-titleFile"
+        className: "uppy-DashboardContent-titleFile"
       }, file.meta ? file.meta.name : file.name)
     })), h("button", {
-      class: "uppy-DashboardContent-back",
+      className: "uppy-DashboardContent-back",
       type: "button",
       title: this.props.i18n('finishEditingFile'),
-      onclick: this.handleSave
-    }, this.props.i18n('done'))), h("div", {
-      class: "uppy-Dashboard-FileCard-inner"
+      onClick: this.handleCancel
+    }, this.props.i18n('cancel'))), h("div", {
+      className: "uppy-Dashboard-FileCard-inner"
     }, h("div", {
-      class: "uppy-Dashboard-FileCard-preview",
+      className: "uppy-Dashboard-FileCard-preview",
       style: {
         backgroundColor: getFileTypeIcon(file.type).color
       }
@@ -3611,22 +4221,24 @@ var FileCard = /*#__PURE__*/function (_Component) {
       file: file
     }), showEditButton && h("button", {
       type: "button",
-      class: "uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",
+      className: "uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",
       onClick: function onClick() {
         return _this2.props.openFileEditor(file);
       }
     }, this.props.i18n('editFile'))), h("div", {
-      class: "uppy-Dashboard-FileCard-info"
+      className: "uppy-Dashboard-FileCard-info"
     }, this.renderMetaFields()), h("div", {
-      class: "uppy-Dashboard-FileCard-actions"
+      className: "uppy-Dashboard-FileCard-actions"
     }, h("button", {
-      class: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn",
+      className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn" // If `form` attribute is not in Preact 8, we can’t trigger the form validation.
+      // We use a classic button with a onClick event handler.
+      ,
       type: "button",
-      onclick: this.handleSave
+      onClick: this.handleSave
     }, this.props.i18n('saveChanges')), h("button", {
-      class: "uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",
+      className: "uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",
       type: "button",
-      onclick: this.handleCancel
+      onClick: this.handleCancel
     }, this.props.i18n('cancel')))));
   };
 
@@ -3651,29 +4263,29 @@ function EditButton(_ref) {
       metaFields = _ref.metaFields,
       canEditFile = _ref.canEditFile,
       i18n = _ref.i18n,
-      onClick = _ref.onClick;
+      _onClick = _ref.onClick;
 
   if (!uploadInProgressOrComplete && metaFields && metaFields.length > 0 || !uploadInProgressOrComplete && canEditFile(file)) {
     return h("button", {
-      class: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
+      className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
       type: "button",
-      "aria-label": i18n('editFile') + ' ' + file.meta.name,
+      "aria-label": i18n('editFile') + " " + file.meta.name,
       title: i18n('editFile'),
-      onclick: function onclick() {
-        return onClick();
+      onClick: function onClick() {
+        return _onClick();
       }
     }, h("svg", {
       "aria-hidden": "true",
       focusable: "false",
-      class: "uppy-c-icon",
+      className: "uppy-c-icon",
       width: "14",
       height: "14",
       viewBox: "0 0 14 14"
     }, h("g", {
-      "fill-rule": "evenodd"
+      fillRule: "evenodd"
     }, h("path", {
       d: "M1.5 10.793h2.793A1 1 0 0 0 5 10.5L11.5 4a1 1 0 0 0 0-1.414L9.707.793a1 1 0 0 0-1.414 0l-6.5 6.5A1 1 0 0 0 1.5 8v2.793zm1-1V8L9 1.5l1.793 1.793-6.5 6.5H2.5z",
-      "fill-rule": "nonzero"
+      fillRule: "nonzero"
     }), h("rect", {
       x: "1",
       y: "12.293",
@@ -3681,7 +4293,7 @@ function EditButton(_ref) {
       height: "1",
       rx: ".5"
     }), h("path", {
-      "fill-rule": "nonzero",
+      fillRule: "nonzero",
       d: "M6.793 2.5L9.5 5.207l.707-.707L7.5 1.793z"
     }))));
   }
@@ -3691,19 +4303,19 @@ function EditButton(_ref) {
 
 function RemoveButton(_ref2) {
   var i18n = _ref2.i18n,
-      onClick = _ref2.onClick;
+      _onClick2 = _ref2.onClick;
   return h("button", {
-    class: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove",
+    className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove",
     type: "button",
     "aria-label": i18n('removeFile'),
     title: i18n('removeFile'),
-    onclick: function onclick() {
-      return onClick();
+    onClick: function onClick() {
+      return _onClick2();
     }
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "18",
     height: "18",
     viewBox: "0 0 18 18"
@@ -3729,17 +4341,17 @@ var copyLinkToClipboard = function copyLinkToClipboard(event, props) {
 
 function CopyLinkButton(props) {
   return h("button", {
-    class: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink",
+    className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink",
     type: "button",
     "aria-label": props.i18n('copyLink'),
     title: props.i18n('copyLink'),
-    onclick: function onclick(event) {
+    onClick: function onClick(event) {
       return copyLinkToClipboard(event, props);
     }
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "14",
     height: "14",
     viewBox: "0 0 14 12"
@@ -3764,7 +4376,7 @@ module.exports = function Buttons(props) {
 
   var editAction = function editAction() {
     if (metaFields && metaFields.length > 0) {
-      toggleFileCard(file.id);
+      toggleFileCard(true, file.id);
     } else {
       openFileEditor(file);
     }
@@ -3814,16 +4426,6 @@ var renderAcquirerIcon = function renderAcquirerIcon(acquirer, props) {
   }, acquirer.icon());
 };
 
-var renderFileSource = function renderFileSource(props) {
-  return props.file.source && props.file.source !== props.id && h("div", {
-    class: "uppy-Dashboard-Item-sourceIcon"
-  }, props.acquirers.map(function (acquirer) {
-    if (acquirer.id === props.file.source) {
-      return renderAcquirerIcon(acquirer, props);
-    }
-  }));
-};
-
 var renderFileName = function renderFileName(props) {
   // Take up at most 2 lines on any screen
   var maxNameLength; // For very small mobile screens
@@ -3837,15 +4439,23 @@ var renderFileName = function renderFileName(props) {
   }
 
   return h("div", {
-    class: "uppy-Dashboard-Item-name",
+    className: "uppy-Dashboard-Item-name",
     title: props.file.meta.name
   }, truncateString(props.file.meta.name, maxNameLength));
 };
 
 var renderFileSize = function renderFileSize(props) {
-  return props.file.data.size && h("div", {
-    class: "uppy-Dashboard-Item-statusSize"
-  }, prettierBytes(props.file.data.size));
+  return props.file.size && h("div", {
+    className: "uppy-Dashboard-Item-statusSize"
+  }, prettierBytes(props.file.size));
+};
+
+var ReSelectButton = function ReSelectButton(props) {
+  return props.file.isGhost && h("span", null, " \u2022 ", h("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect",
+    type: "button",
+    onClick: props.toggleAddFilesPanel
+  }, props.i18n('reSelect')));
 };
 
 var ErrorButton = function ErrorButton(_ref) {
@@ -3854,12 +4464,12 @@ var ErrorButton = function ErrorButton(_ref) {
 
   if (file.error) {
     return h("span", {
-      class: "uppy-Dashboard-Item-errorDetails",
+      className: "uppy-Dashboard-Item-errorDetails",
       "aria-label": file.error,
       "data-microtip-position": "bottom",
       "data-microtip-size": "medium",
       role: "tooltip",
-      onclick: onClick
+      onClick: onClick
     }, "?");
   }
 
@@ -3868,11 +4478,11 @@ var ErrorButton = function ErrorButton(_ref) {
 
 module.exports = function FileInfo(props) {
   return h("div", {
-    class: "uppy-Dashboard-Item-fileInfo",
+    className: "uppy-Dashboard-Item-fileInfo",
     "data-uppy-file-source": props.file.source
   }, renderFileName(props), h("div", {
-    class: "uppy-Dashboard-Item-status"
-  }, renderFileSize(props), renderFileSource(props), h(ErrorButton, {
+    className: "uppy-Dashboard-Item-status"
+  }, renderFileSize(props), ReSelectButton(props), h(ErrorButton, {
     file: props.file,
     onClick: function onClick() {
       alert(props.file.error);
@@ -3894,12 +4504,12 @@ var getFileTypeIcon = __webpack_require__(1882);
 
 module.exports = function FilePreviewAndLink(props) {
   return h("div", {
-    class: "uppy-Dashboard-Item-previewInnerWrap",
+    className: "uppy-Dashboard-Item-previewInnerWrap",
     style: {
       backgroundColor: getFileTypeIcon(props.file.type).color
     }
   }, props.showLinkToFileUploadResult && props.file.uploadURL && h("a", {
-    class: "uppy-Dashboard-Item-previewLink",
+    className: "uppy-Dashboard-Item-previewLink",
     href: props.file.uploadURL,
     rel: "noreferrer noopener",
     target: "_blank",
@@ -3947,7 +4557,9 @@ function progressIndicatorTitle(props) {
     }
 
     return props.i18n('pauseUpload');
-  } else if (props.individualCancellation) {
+  }
+
+  if (props.individualCancellation) {
     return props.i18n('cancelUpload');
   }
 
@@ -3956,13 +4568,13 @@ function progressIndicatorTitle(props) {
 
 function ProgressIndicatorButton(props) {
   return h("div", {
-    class: "uppy-Dashboard-Item-progress"
+    className: "uppy-Dashboard-Item-progress"
   }, h("button", {
-    class: "uppy-u-reset uppy-Dashboard-Item-progressIndicator",
+    className: "uppy-u-reset uppy-Dashboard-Item-progressIndicator",
     type: "button",
     "aria-label": progressIndicatorTitle(props),
     title: progressIndicatorTitle(props),
-    onclick: function onclick() {
+    onClick: function onClick() {
       return onPauseResumeCancelRetry(props);
     }
   }, props.children));
@@ -3976,7 +4588,7 @@ function ProgressCircleContainer(_ref) {
     width: "70",
     height: "70",
     viewBox: "0 0 36 36",
-    class: "uppy-c-icon uppy-Dashboard-Item-progressIcon--circle"
+    className: "uppy-c-icon uppy-Dashboard-Item-progressIcon--circle"
   }, children);
 }
 
@@ -3985,20 +4597,20 @@ function ProgressCircle(_ref2) {
   // circle length equals 2 * PI * R
   var circleLength = 2 * Math.PI * 15;
   return h("g", null, h("circle", {
-    class: "uppy-Dashboard-Item-progressIcon--bg",
+    className: "uppy-Dashboard-Item-progressIcon--bg",
     r: "15",
     cx: "18",
     cy: "18",
     "stroke-width": "2",
     fill: "none"
   }), h("circle", {
-    class: "uppy-Dashboard-Item-progressIcon--progress",
+    className: "uppy-Dashboard-Item-progressIcon--progress",
     r: "15",
     cx: "18",
     cy: "18",
     transform: "rotate(-90, 18, 18)",
-    "stroke-width": "2",
     fill: "none",
+    "stroke-width": "2",
     "stroke-dasharray": circleLength,
     "stroke-dashoffset": circleLength - circleLength / 100 * progress
   }));
@@ -4013,19 +4625,23 @@ module.exports = function FileProgress(props) {
 
   if (props.isUploaded) {
     return h("div", {
-      class: "uppy-Dashboard-Item-progress"
+      className: "uppy-Dashboard-Item-progress"
     }, h("div", {
-      class: "uppy-Dashboard-Item-progressIndicator"
+      className: "uppy-Dashboard-Item-progressIndicator"
     }, h(ProgressCircleContainer, null, h("circle", {
       r: "15",
       cx: "18",
       cy: "18",
       fill: "#1bb240"
     }), h("polygon", {
-      class: "uppy-Dashboard-Item-progressIcon--check",
+      className: "uppy-Dashboard-Item-progressIcon--check",
       transform: "translate(2, 3)",
       points: "14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"
     }))));
+  }
+
+  if (props.recoveredState) {
+    return;
   } // Retry button for error
 
 
@@ -4033,7 +4649,7 @@ module.exports = function FileProgress(props) {
     return h(ProgressIndicatorButton, props, h("svg", {
       "aria-hidden": "true",
       focusable: "false",
-      class: "uppy-c-icon uppy-Dashboard-Item-progressIcon--retry",
+      className: "uppy-c-icon uppy-Dashboard-Item-progressIcon--retry",
       width: "28",
       height: "31",
       viewBox: "0 0 16 19"
@@ -4053,11 +4669,11 @@ module.exports = function FileProgress(props) {
     return h(ProgressIndicatorButton, props, h(ProgressCircleContainer, null, h(ProgressCircle, {
       progress: props.file.progress.percentage
     }), props.file.isPaused ? h("polygon", {
-      class: "uppy-Dashboard-Item-progressIcon--play",
+      className: "uppy-Dashboard-Item-progressIcon--play",
       transform: "translate(3, 3)",
       points: "12 20 12 10 20 15"
     }) : h("g", {
-      class: "uppy-Dashboard-Item-progressIcon--pause",
+      className: "uppy-Dashboard-Item-progressIcon--pause",
       transform: "translate(14.5, 13)"
     }, h("rect", {
       x: "0",
@@ -4079,7 +4695,7 @@ module.exports = function FileProgress(props) {
     return h(ProgressIndicatorButton, props, h(ProgressCircleContainer, null, h(ProgressCircle, {
       progress: props.file.progress.percentage
     }), h("polygon", {
-      class: "cancel",
+      className: "cancel",
       transform: "translate(2, 2)",
       points: "19.8856516 11.0625 16 14.9481516 12.1019737 11.0625 11.0625 12.1143484 14.9481516 16 11.0625 19.8980263 12.1019737 20.9375 16 17.0518484 19.8856516 20.9375 20.9375 19.8980263 17.0518484 16 20.9375 12"
     })));
@@ -4087,9 +4703,9 @@ module.exports = function FileProgress(props) {
 
 
   return h("div", {
-    class: "uppy-Dashboard-Item-progress"
+    className: "uppy-Dashboard-Item-progress"
   }, h("div", {
-    class: "uppy-Dashboard-Item-progressIndicator"
+    className: "uppy-Dashboard-Item-progressIndicator"
   }, h(ProgressCircleContainer, null, h(ProgressCircle, {
     progress: props.file.progress.percentage
   }))));
@@ -4100,7 +4716,9 @@ module.exports = function FileProgress(props) {
 /***/ 5845:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9674),
     h = _require.h,
@@ -4137,6 +4755,16 @@ module.exports = /*#__PURE__*/function (_Component) {
     if (!file.preview) {
       this.props.handleRequestThumbnail(file);
     }
+  } // VirtualList mounts FileItems again and they emit `thumbnail:request`
+  // Otherwise thumbnails are broken or missing after Golden Retriever restores files
+  ;
+
+  _proto.componentDidUpdate = function componentDidUpdate() {
+    var file = this.props.file;
+
+    if (!file.preview) {
+      this.props.handleRequestThumbnail(file);
+    }
   };
 
   _proto.componentWillUnmount = function componentWillUnmount() {
@@ -4153,7 +4781,10 @@ module.exports = /*#__PURE__*/function (_Component) {
     var isUploaded = file.progress.uploadComplete && !isProcessing && !file.error;
     var uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing;
     var uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete || isProcessing;
-    var error = file.error || false;
+    var error = file.error || false; // File that Golden Retriever was able to partly restore (only meta, not blob),
+    // users still need to re-add it, so it’s a ghost
+
+    var isGhost = file.isGhost;
     var showRemoveButton = this.props.individualCancellation ? !isUploaded : !uploadInProgress && !isUploaded;
 
     if (isUploaded && this.props.showRemoveButtonAfterComplete) {
@@ -4162,19 +4793,20 @@ module.exports = /*#__PURE__*/function (_Component) {
 
     var dashboardItemClass = classNames({
       'uppy-Dashboard-Item': true,
-      'is-inprogress': uploadInProgress,
+      'is-inprogress': uploadInProgress && !this.props.recoveredState,
       'is-processing': isProcessing,
       'is-complete': isUploaded,
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
-      'is-noIndividualCancellation': !this.props.individualCancellation
+      'is-noIndividualCancellation': !this.props.individualCancellation,
+      'is-ghost': isGhost
     });
     return h("div", {
-      class: dashboardItemClass,
+      className: dashboardItemClass,
       id: "uppy_" + file.id,
       role: this.props.role
     }, h("div", {
-      class: "uppy-Dashboard-Item-preview"
+      className: "uppy-Dashboard-Item-preview"
     }, h(FilePreviewAndLink, {
       file: file,
       showLinkToFileUploadResult: this.props.showLinkToFileUploadResult
@@ -4185,6 +4817,7 @@ module.exports = /*#__PURE__*/function (_Component) {
       hideRetryButton: this.props.hideRetryButton,
       hideCancelButton: this.props.hideCancelButton,
       hidePauseResumeButton: this.props.hidePauseResumeButton,
+      recoveredState: this.props.recoveredState,
       showRemoveButtonAfterComplete: this.props.showRemoveButtonAfterComplete,
       resumableUploads: this.props.resumableUploads,
       individualCancellation: this.props.individualCancellation,
@@ -4193,13 +4826,14 @@ module.exports = /*#__PURE__*/function (_Component) {
       retryUpload: this.props.retryUpload,
       i18n: this.props.i18n
     })), h("div", {
-      class: "uppy-Dashboard-Item-fileInfoAndButtons"
+      className: "uppy-Dashboard-Item-fileInfoAndButtons"
     }, h(FileInfo, {
       file: file,
       id: this.props.id,
       acquirers: this.props.acquirers,
       containerWidth: this.props.containerWidth,
-      i18n: this.props.i18n
+      i18n: this.props.i18n,
+      toggleAddFilesPanel: this.props.toggleAddFilesPanel
     }), h(Buttons, {
       file: file,
       metaFields: this.props.metaFields,
@@ -4280,6 +4914,7 @@ module.exports = function (props) {
     showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
     isWide: props.isWide,
     metaFields: props.metaFields,
+    recoveredState: props.recoveredState,
     // callbacks
     retryUpload: props.retryUpload,
     pauseUpload: props.pauseUpload,
@@ -4289,7 +4924,15 @@ module.exports = function (props) {
     handleRequestThumbnail: props.handleRequestThumbnail,
     handleCancelThumbnail: props.handleCancelThumbnail
   };
-  var rows = chunks(Object.keys(props.files), props.itemsPerRow);
+
+  var sortByGhostComesFirst = function sortByGhostComesFirst(file1, file2) {
+    return props.files[file2].isGhost - props.files[file1].isGhost;
+  }; // Sort files by file.isGhost, ghost files first, only if recoveredState is present
+
+
+  var files = Object.keys(props.files);
+  if (props.recoveredState) files.sort(sortByGhostComesFirst);
+  var rows = chunks(files, props.itemsPerRow);
 
   function renderRow(row) {
     return (// The `role="presentation` attribute ensures that the list items are properly associated with the `VirtualList` element
@@ -4304,6 +4947,7 @@ module.exports = function (props) {
           role: "listitem",
           openFileEditor: props.openFileEditor,
           canEditFile: props.canEditFile,
+          toggleAddFilesPanel: props.toggleAddFilesPanel,
           file: props.files[fileID]
         }));
       }))
@@ -4334,7 +4978,7 @@ module.exports = function FilePreview(props) {
 
   if (file.preview) {
     return h("img", {
-      class: "uppy-Dashboard-Item-previewImg",
+      className: "uppy-Dashboard-Item-previewImg",
       alt: file.name,
       src: file.preview
     });
@@ -4345,16 +4989,16 @@ module.exports = function FilePreview(props) {
       icon = _getFileTypeIcon.icon;
 
   return h("div", {
-    class: "uppy-Dashboard-Item-previewIconWrap"
+    className: "uppy-Dashboard-Item-previewIconWrap"
   }, h("span", {
-    class: "uppy-Dashboard-Item-previewIcon",
+    className: "uppy-Dashboard-Item-previewIcon",
     style: {
       color: color
     }
   }, icon), h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-Dashboard-Item-previewIconBg",
+    className: "uppy-Dashboard-Item-previewIconBg",
     width: "58",
     height: "76",
     viewBox: "0 0 58 76"
@@ -4363,7 +5007,7 @@ module.exports = function FilePreview(props) {
     width: "58",
     height: "76",
     rx: "3",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   })));
 };
 
@@ -4381,7 +5025,7 @@ var ignoreEvent = __webpack_require__(8805);
 
 function PickerPanelContent(props) {
   return h("div", {
-    class: classNames('uppy-DashboardContent-panel', props.className),
+    className: classNames('uppy-DashboardContent-panel', props.className),
     role: "tabpanel",
     "data-uppy-panelType": "PickerPanel",
     id: "uppy-DashboardContent-panel--" + props.activePickerPanel.id,
@@ -4390,19 +5034,19 @@ function PickerPanelContent(props) {
     onDrop: ignoreEvent,
     onPaste: ignoreEvent
   }, h("div", {
-    class: "uppy-DashboardContent-bar"
+    className: "uppy-DashboardContent-bar"
   }, h("div", {
-    class: "uppy-DashboardContent-title",
+    className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, props.i18n('importFrom', {
     name: props.activePickerPanel.name
   })), h("button", {
-    class: "uppy-DashboardContent-back",
+    className: "uppy-DashboardContent-back",
     type: "button",
-    onclick: props.hideAllPanels
-  }, props.i18n('done'))), h("div", {
-    class: "uppy-DashboardContent-panelBody"
+    onClick: props.hideAllPanels
+  }, props.i18n('cancel'))), h("div", {
+    className: "uppy-DashboardContent-panelBody"
   }, props.getPlugin(props.activePickerPanel.id).render(props.state)));
 }
 
@@ -4505,34 +5149,34 @@ function PanelTopBar(props) {
   }
 
   return h("div", {
-    class: "uppy-DashboardContent-bar"
+    className: "uppy-DashboardContent-bar"
   }, !props.isAllComplete && !props.hideCancelButton ? h("button", {
-    class: "uppy-DashboardContent-back",
+    className: "uppy-DashboardContent-back",
     type: "button",
-    onclick: props.cancelAll
+    onClick: props.cancelAll
   }, props.i18n('cancel')) : h("div", null), h("div", {
-    class: "uppy-DashboardContent-title",
+    className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, h(UploadStatus, props)), allowNewUpload ? h("button", {
-    class: "uppy-DashboardContent-addMore",
+    className: "uppy-DashboardContent-addMore",
     type: "button",
     "aria-label": props.i18n('addMoreFiles'),
     title: props.i18n('addMoreFiles'),
-    onclick: function onclick() {
+    onClick: function onClick() {
       return props.toggleAddFilesPanel(true);
     }
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "15",
     height: "15",
     viewBox: "0 0 15 15"
   }, h("path", {
     d: "M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z"
   })), h("span", {
-    class: "uppy-DashboardContent-addMoreCaption"
+    className: "uppy-DashboardContent-addMoreCaption"
   }, props.i18n('addMore'))) : h("div", null));
 }
 
@@ -4543,7 +5187,9 @@ module.exports = PanelTopBar;
 /***/ 9167:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9674),
     cloneElement = _require.cloneElement,
@@ -4658,11 +5304,15 @@ module.exports = Slide;
 /***/ 4825:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+var _excluded = ["data", "rowHeight", "renderRow", "overscanCount", "sync"];
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 /**
  * Adapted from preact-virtual-list: https://github.com/developit/preact-virtual-list
@@ -4790,7 +5440,7 @@ var VirtualList = /*#__PURE__*/function (_Component) {
         _ref$overscanCount = _ref.overscanCount,
         overscanCount = _ref$overscanCount === void 0 ? 10 : _ref$overscanCount,
         sync = _ref.sync,
-        props = _objectWithoutPropertiesLoose(_ref, ["data", "rowHeight", "renderRow", "overscanCount", "sync"]);
+        props = _objectWithoutPropertiesLoose(_ref, _excluded);
 
     var _this$state = this.state,
         offset = _this$state.offset,
@@ -4848,7 +5498,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9674),
     h = _require.h;
@@ -4872,6 +5524,8 @@ var toArray = __webpack_require__(6361);
 
 var getDroppedFiles = __webpack_require__(4031);
 
+var getTextDirection = __webpack_require__(8958);
+
 var trapFocus = __webpack_require__(3962);
 
 var cuid = __webpack_require__(2830);
@@ -4881,6 +5535,8 @@ var ResizeObserver = __webpack_require__(1033)["default"] || __webpack_require__
 var createSuperFocus = __webpack_require__(6673);
 
 var memoize = __webpack_require__(845)["default"] || __webpack_require__(845);
+
+var FOCUSABLE_ELEMENTS = __webpack_require__(9045);
 
 var TAB_KEY = 9;
 var ESC_KEY = 27;
@@ -5038,6 +5694,19 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       });
     };
 
+    _this.saveFileEditor = function () {
+      var _this$getPluginState4 = _this.getPluginState(),
+          targets = _this$getPluginState4.targets;
+
+      var editors = _this._getEditors(targets);
+
+      editors.forEach(function (editor) {
+        _this.uppy.getPlugin(editor.id).save();
+      });
+
+      _this.hideAllPanels();
+    };
+
     _this.openModal = function () {
       var _createPromise = createPromise(),
           promise = _createPromise.promise,
@@ -5093,9 +5762,9 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
           _opts2$manualClose = _opts2.manualClose,
           manualClose = _opts2$manualClose === void 0 ? true : _opts2$manualClose;
 
-      var _this$getPluginState4 = _this.getPluginState(),
-          isHidden = _this$getPluginState4.isHidden,
-          isClosing = _this$getPluginState4.isClosing;
+      var _this$getPluginState5 = _this.getPluginState(),
+          isHidden = _this$getPluginState5.isHidden,
+          isClosing = _this$getPluginState5.isClosing;
 
       if (isHidden || isClosing) {
         // short-circuit if animation is ongoing
@@ -5192,16 +5861,18 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       _this.setDarkModeCapability(isDarkModeOnNow);
     };
 
-    _this.toggleFileCard = function (fileId) {
-      if (fileId) {
-        _this.uppy.emit('dashboard:file-edit-start');
+    _this.toggleFileCard = function (show, fileID) {
+      var file = _this.uppy.getFile(fileID);
+
+      if (show) {
+        _this.uppy.emit('dashboard:file-edit-start', file);
       } else {
-        _this.uppy.emit('dashboard:file-edit-complete');
+        _this.uppy.emit('dashboard:file-edit-complete', file);
       }
 
       _this.setPluginState({
-        fileCardFor: fileId || null,
-        activeOverlayType: fileId ? 'FileCard' : null
+        fileCardFor: show ? fileID : null,
+        activeOverlayType: show ? 'FileCard' : null
       });
     };
 
@@ -5262,8 +5933,8 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         var isModalAndClosed = !_this.opts.inline && pluginState.isHidden;
 
         if ( // if ResizeObserver hasn't yet fired,
-        !pluginState.areInsidesReadyToBeVisible && // and it's not due to the modal being closed
-        !isModalAndClosed) {
+        !pluginState.areInsidesReadyToBeVisible // and it's not due to the modal being closed
+        && !isModalAndClosed) {
           _this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug');
 
           _this.setPluginState({
@@ -5289,6 +5960,33 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
 
         _this.superFocus.cancel();
       }
+    };
+
+    _this.disableAllFocusableElements = function (disable) {
+      var focusableNodes = toArray(_this.el.querySelectorAll(FOCUSABLE_ELEMENTS));
+
+      if (disable) {
+        focusableNodes.forEach(function (node) {
+          // save previous tabindex in a data-attribute, to restore when enabling
+          var currentTabIndex = node.getAttribute('tabindex');
+
+          if (currentTabIndex) {
+            node.dataset.inertTabindex = currentTabIndex;
+          }
+
+          node.setAttribute('tabindex', '-1');
+        });
+      } else {
+        focusableNodes.forEach(function (node) {
+          if ('inertTabindex' in node.dataset) {
+            node.setAttribute('tabindex', node.dataset.inertTabindex);
+          } else {
+            node.removeAttribute('tabindex');
+          }
+        });
+      }
+
+      _this.dashboardIsDisabled = disable;
     };
 
     _this.updateBrowserHistory = function () {
@@ -5355,8 +6053,13 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
 
     _this.handleDragOver = function (event) {
       event.preventDefault();
-      event.stopPropagation(); // 1. Add a small (+) icon on drop
+      event.stopPropagation();
+
+      if (_this.opts.disabled || _this.opts.disableLocalFiles) {
+        return;
+      } // 1. Add a small (+) icon on drop
       // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+
 
       event.dataTransfer.dropEffect = 'copy';
       clearTimeout(_this.removeDragOverClassTimeout);
@@ -5369,6 +6072,11 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     _this.handleDragLeave = function (event) {
       event.preventDefault();
       event.stopPropagation();
+
+      if (_this.opts.disabled || _this.opts.disableLocalFiles) {
+        return;
+      }
+
       clearTimeout(_this.removeDragOverClassTimeout); // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
 
       _this.removeDragOverClassTimeout = setTimeout(function () {
@@ -5381,6 +6089,11 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     _this.handleDrop = function (event, dropCategory) {
       event.preventDefault();
       event.stopPropagation();
+
+      if (_this.opts.disabled || _this.opts.disableLocalFiles) {
+        return;
+      }
+
       clearTimeout(_this.removeDragOverClassTimeout); // 2. Remove dragover class
 
       _this.setPluginState({
@@ -5454,6 +6167,10 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       }
     };
 
+    _this.handleCancelRestore = function () {
+      _this.uppy.emit('restore-canceled');
+    };
+
     _this._openFileEditorWhenFilesAdded = function (files) {
       var firstFile = files[0];
 
@@ -5524,6 +6241,8 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
 
       _this.uppy.off('dashboard:modal-closed', _this.hideAllPanels);
 
+      _this.uppy.off('file-editor:complete', _this.hideAllPanels);
+
       _this.uppy.off('complete', _this.handleComplete);
 
       document.removeEventListener('focus', _this.recordIfFocusedOnUppyRecently);
@@ -5550,12 +6269,12 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
 
       if ( // If update is connected to showing the Informer - let the screen reader calmly read it.
       isInformerHidden && ( // If we are in a modal - always superfocus without concern for other elements on the page (user is unlikely to want to interact with the rest of the page)
-      isModal || // If we are already inside of Uppy, or
-      isFocusInUppy || // If we are not focused on anything BUT we have already, at least once, focused on uppy
+      isModal // If we are already inside of Uppy, or
+      || isFocusInUppy // If we are not focused on anything BUT we have already, at least once, focused on uppy
       //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
       //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently, to avoid focus jumps if we do something else on the page.
       //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode, when file is uploading, - navigate via tab to the checkbox, try to press space multiple times. Focus will jump to Uppy.
-      isFocusNowhere && _this.ifFocusedOnUppyRecently)) {
+      || isFocusNowhere && _this.ifFocusedOnUppyRecently)) {
         _this.superFocus(_this.el, _this.getPluginState().activeOverlayType);
       } else {
         _this.superFocus.cancel();
@@ -5563,6 +6282,16 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     };
 
     _this.afterUpdate = function () {
+      if (_this.opts.disabled && !_this.dashboardIsDisabled) {
+        _this.disableAllFocusableElements(true);
+
+        return;
+      }
+
+      if (!_this.opts.disabled && _this.dashboardIsDisabled) {
+        _this.disableAllFocusableElements(false);
+      }
+
       _this.superFocusOnEachUpdate();
     };
 
@@ -5573,7 +6302,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     _this.saveFileCard = function (meta, fileID) {
       _this.uppy.setFileMeta(fileID, meta);
 
-      _this.toggleFileCard();
+      _this.toggleFileCard(false, fileID);
     };
 
     _this._attachRenderFunctionToTarget = function (target) {
@@ -5688,8 +6417,13 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         allowNewUpload: allowNewUpload,
         acquirers: acquirers,
         theme: theme,
+        disabled: _this.opts.disabled,
+        disableLocalFiles: _this.opts.disableLocalFiles,
+        direction: _this.opts.direction,
         activePickerPanel: pluginState.activePickerPanel,
         showFileEditor: pluginState.showFileEditor,
+        saveFileEditor: _this.saveFileEditor,
+        disableAllFocusableElements: _this.disableAllFocusableElements,
         animateOpenClose: _this.opts.animateOpenClose,
         isClosing: pluginState.isClosing,
         getPlugin: _this.uppy.getPlugin,
@@ -5711,6 +6445,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         uppy: _this.uppy,
         info: _this.uppy.info,
         note: _this.opts.note,
+        recoveredState: state.recoveredState,
         metaFields: pluginState.metaFields,
         resumableUploads: capabilities.resumableUploads || false,
         individualCancellation: capabilities.individualCancellation,
@@ -5742,7 +6477,9 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         parentElement: _this.el,
         allowedFileTypes: _this.uppy.opts.restrictions.allowedFileTypes,
         maxNumberOfFiles: _this.uppy.opts.restrictions.maxNumberOfFiles,
+        requiredMetaFields: _this.uppy.opts.restrictions.requiredMetaFields,
         showSelectedFiles: _this.opts.showSelectedFiles,
+        handleCancelRestore: _this.handleCancelRestore,
         handleRequestThumbnail: _this.handleRequestThumbnail,
         handleCancelThumbnail: _this.handleCancelThumbnail,
         // drag props
@@ -5909,22 +6646,23 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
         fileSource: 'File source: %{name}',
-        done: 'Done',
         back: 'Back',
         addMore: 'Add more',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
         finishEditingFile: 'Finish editing file',
+        save: 'Save',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropPasteFiles: 'Drop files here, paste or %{browseFiles}',
-        dropPasteFolders: 'Drop files here, paste or %{browseFolders}',
-        dropPasteBoth: 'Drop files here, paste, %{browseFiles} or %{browseFolders}',
-        dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
-        dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
-        dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
+        dropPasteFiles: 'Drop files here or %{browseFiles}',
+        dropPasteFolders: 'Drop files here or %{browseFolders}',
+        dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
+        dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
+        dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
+        dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
+        importFiles: 'Import files from:',
         dropHint: 'Drop your files here',
         browseFiles: 'browse files',
         browseFolders: 'browse folders',
@@ -5946,6 +6684,13 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
           0: 'Processing %{smart_count} file',
           1: 'Processing %{smart_count} files'
         },
+        recoveredXFiles: {
+          0: 'We could not fully recover 1 file. Please re-select it and resume the upload.',
+          1: 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.'
+        },
+        recoveredAllFiles: 'We restored all files. You can now resume the upload.',
+        sessionRestored: 'Session restored',
+        reSelect: 'Re-select',
         // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
         // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
         // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
@@ -5996,7 +6741,9 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
       theme: 'light',
-      autoOpenFileEditor: false
+      autoOpenFileEditor: false,
+      disabled: false,
+      disableLocalFiles: false
     }; // merge default options with the ones set by user
 
     _this.opts = _extends({}, defaultOptions, _opts);
@@ -6011,8 +6758,20 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     return _this;
   }
 
+  var _proto = Dashboard.prototype;
+
+  _proto.onMount = function onMount() {
+    // Set the text direction if the page has not defined one.
+    var element = this.el;
+    var direction = getTextDirection(element);
+
+    if (!direction) {
+      element.dir = 'ltr';
+    }
+  };
+
   return Dashboard;
-}(Plugin), _class.VERSION = "1.14.0", _temp);
+}(Plugin), _class.VERSION = "1.21.1", _temp);
 
 /***/ }),
 
@@ -6160,13 +6919,13 @@ function iconImage() {
     viewBox: "0 0 25 25"
   }, h("g", {
     fill: "#686DE0",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   }, h("path", {
     d: "M5 7v10h15V7H5zm0-1h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }), h("path", {
     d: "M6.35 17.172l4.994-5.026a.5.5 0 0 1 .707 0l2.16 2.16 3.505-3.505a.5.5 0 0 1 .707 0l2.336 2.31-.707.72-1.983-1.97-3.505 3.505a.5.5 0 0 1-.707 0l-2.16-2.159-3.938 3.939-1.409.026z",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }), h("circle", {
     cx: "7.5",
     cy: "9.5",
@@ -6178,14 +6937,14 @@ function iconAudio() {
   return h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
   }, h("path", {
     d: "M9.5 18.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V7.25a.5.5 0 0 1 .379-.485l9-2.25A.5.5 0 0 1 18.5 5v11.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V8.67l-8 2v7.97zm8-11v-2l-8 2v2l8-2zM7 19.64c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1zm9-2c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1z",
     fill: "#049BCF",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }));
 }
 
@@ -6193,14 +6952,14 @@ function iconVideo() {
   return h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
   }, h("path", {
     d: "M16 11.834l4.486-2.691A1 1 0 0 1 22 10v6a1 1 0 0 1-1.514.857L16 14.167V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.834zM15 9H5v8h10V9zm1 4l5 3v-6l-5 3z",
     fill: "#19AF67",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }));
 }
 
@@ -6208,14 +6967,14 @@ function iconPDF() {
   return h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
   }, h("path", {
     d: "M9.766 8.295c-.691-1.843-.539-3.401.747-3.726 1.643-.414 2.505.938 2.39 3.299-.039.79-.194 1.662-.537 3.148.324.49.66.967 1.055 1.51.17.231.382.488.629.757 1.866-.128 3.653.114 4.918.655 1.487.635 2.192 1.685 1.614 2.84-.566 1.133-1.839 1.084-3.416.249-1.141-.604-2.457-1.634-3.51-2.707a13.467 13.467 0 0 0-2.238.426c-1.392 4.051-4.534 6.453-5.707 4.572-.986-1.58 1.38-4.206 4.914-5.375.097-.322.185-.656.264-1.001.08-.353.306-1.31.407-1.737-.678-1.059-1.2-2.031-1.53-2.91zm2.098 4.87c-.033.144-.068.287-.104.427l.033-.01-.012.038a14.065 14.065 0 0 1 1.02-.197l-.032-.033.052-.004a7.902 7.902 0 0 1-.208-.271c-.197-.27-.38-.526-.555-.775l-.006.028-.002-.003c-.076.323-.148.632-.186.8zm5.77 2.978c1.143.605 1.832.632 2.054.187.26-.519-.087-1.034-1.113-1.473-.911-.39-2.175-.608-3.55-.608.845.766 1.787 1.459 2.609 1.894zM6.559 18.789c.14.223.693.16 1.425-.413.827-.648 1.61-1.747 2.208-3.206-2.563 1.064-4.102 2.867-3.633 3.62zm5.345-10.97c.088-1.793-.351-2.48-1.146-2.28-.473.119-.564 1.05-.056 2.405.213.566.52 1.188.908 1.859.18-.858.268-1.453.294-1.984z",
     fill: "#E2514A",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }));
 }
 
@@ -6229,7 +6988,7 @@ function iconArchive() {
   }, h("path", {
     d: "M10.45 2.05h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V2.55a.5.5 0 0 1 .5-.5zm2.05 1.024h1.05a.5.5 0 0 1 .5.5V3.6a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5v-.001zM10.45 0h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V.5a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 3.074h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 1.024h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm-2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-1.656 3.074l-.82 5.946c.52.302 1.174.458 1.976.458.803 0 1.455-.156 1.975-.458l-.82-5.946h-2.311zm0-1.025h2.312c.512 0 .946.378 1.015.885l.82 5.946c.056.412-.142.817-.501 1.026-.686.398-1.515.597-2.49.597-.974 0-1.804-.199-2.49-.597a1.025 1.025 0 0 1-.5-1.026l.819-5.946c.07-.507.503-.885 1.015-.885zm.545 6.6a.5.5 0 0 1-.397-.561l.143-.999a.5.5 0 0 1 .495-.429h.74a.5.5 0 0 1 .495.43l.143.998a.5.5 0 0 1-.397.561c-.404.08-.819.08-1.222 0z",
     fill: "#00C469",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }));
 }
 
@@ -6237,13 +6996,13 @@ function iconFile() {
   return h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
   }, h("g", {
     fill: "#A7AFB7",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }, h("path", {
     d: "M5.5 22a.5.5 0 0 1-.5-.5v-18a.5.5 0 0 1 .5-.5h10.719a.5.5 0 0 1 .367.16l3.281 3.556a.5.5 0 0 1 .133.339V21.5a.5.5 0 0 1-.5.5h-14zm.5-1h13V7.25L16 4H6v17z"
   }), h("path", {
@@ -6255,14 +7014,14 @@ function iconText() {
   return h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
   }, h("path", {
     d: "M4.5 7h13a.5.5 0 1 1 0 1h-13a.5.5 0 0 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z",
     fill: "#5A5E69",
-    "fill-rule": "nonzero"
+    fillRule: "nonzero"
   }));
 }
 
@@ -6428,7 +7187,9 @@ var _class, _temp;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9429),
     Plugin = _require.Plugin;
@@ -6472,7 +7233,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       };
 
       return h("div", {
-        class: "uppy uppy-Informer",
+        className: "uppy uppy-Informer",
         "aria-hidden": isHidden
       }, h("p", {
         role: "alert"
@@ -6481,7 +7242,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         "data-microtip-position": "top-left",
         "data-microtip-size": "medium",
         role: "tooltip",
-        onclick: displayErrorAlert,
+        onClick: displayErrorAlert,
         onMouseOver: handleMouseOver,
         onMouseLeave: handleMouseLeave
       }, "?")));
@@ -6508,7 +7269,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
   };
 
   return Informer;
-}(Plugin), _class.VERSION = "1.5.14", _temp);
+}(Plugin), _class.VERSION = "1.6.6", _temp);
 
 /***/ }),
 
@@ -6578,6 +7339,22 @@ function togglePauseResume(props) {
   return props.pauseAll();
 }
 
+function RenderReSelectGhosts(_ref) {
+  var i18n = _ref.i18n;
+  return h("div", {
+    className: "uppy-StatusBar-serviceMsg"
+  }, i18n('reSelectGhosts'), h("svg", {
+    className: "uppy-c-icon uppy-StatusBar-serviceMsg-ghostsIcon",
+    "aria-hidden": "true",
+    width: "15",
+    height: "19",
+    viewBox: "0 0 35 39"
+  }, h("path", {
+    d: "M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z",
+    fillRule: "nonzero"
+  })));
+}
+
 module.exports = function (props) {
   props = props || {};
   var _props = props,
@@ -6590,7 +7367,8 @@ module.exports = function (props) {
       hideUploadButton = _props.hideUploadButton,
       hidePauseResumeButton = _props.hidePauseResumeButton,
       hideCancelButton = _props.hideCancelButton,
-      hideRetryButton = _props.hideRetryButton;
+      hideRetryButton = _props.hideRetryButton,
+      recoveredState = _props.recoveredState;
   var uploadState = props.uploadState;
   var progressValue = props.totalProgress;
   var progressMode;
@@ -6622,28 +7400,36 @@ module.exports = function (props) {
   var width = typeof progressValue === 'number' ? progressValue : 100;
   var isHidden = uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton || uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0 || uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish;
   var showUploadBtn = !error && newFiles && !isUploadInProgress && !isAllPaused && allowNewUpload && !hideUploadButton;
+
+  if (recoveredState) {
+    isHidden = false;
+    showUploadBtn = true;
+  }
+
   var showCancelBtn = !hideCancelButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE;
   var showPauseResumeBtn = resumableUploads && !hidePauseResumeButton && uploadState === statusBarStates.STATE_UPLOADING;
   var showRetryBtn = error && !hideRetryButton;
   var showDoneBtn = props.doneButtonHandler && uploadState === statusBarStates.STATE_COMPLETE;
-  var progressClassNames = "uppy-StatusBar-progress\n                           " + (progressMode ? 'is-' + progressMode : '');
+  var progressClassNames = "uppy-StatusBar-progress\n                           " + (progressMode ? "is-" + progressMode : '');
   var statusBarClassNames = classNames({
     'uppy-Root': props.isTargetDOMEl
-  }, 'uppy-StatusBar', "is-" + uploadState);
+  }, 'uppy-StatusBar', "is-" + uploadState, {
+    'has-ghosts': props.isSomeGhost
+  });
   return h("div", {
-    class: statusBarClassNames,
+    className: statusBarClassNames,
     "aria-hidden": isHidden
   }, h("div", {
-    class: progressClassNames,
+    className: progressClassNames,
     style: {
-      width: width + '%'
+      width: width + "%"
     },
     role: "progressbar",
     "aria-valuemin": "0",
     "aria-valuemax": "100",
     "aria-valuenow": progressValue
   }), progressBarContent, h("div", {
-    class: "uppy-StatusBar-actions"
+    className: "uppy-StatusBar-actions"
   }, showUploadBtn ? h(UploadBtn, _extends({}, props, {
     uploadState: uploadState
   })) : null, showRetryBtn ? h(RetryBtn, props) : null, showPauseResumeBtn ? h(PauseResumeButton, props) : null, showCancelBtn ? h(CancelBtn, props) : null, showDoneBtn ? h(DoneBtn, props) : null));
@@ -6652,33 +7438,37 @@ module.exports = function (props) {
 var UploadBtn = function UploadBtn(props) {
   var uploadBtnClassNames = classNames('uppy-u-reset', 'uppy-c-btn', 'uppy-StatusBar-actionBtn', 'uppy-StatusBar-actionBtn--upload', {
     'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING
+  }, {
+    'uppy-StatusBar-actionBtn--disabled': props.isSomeGhost
   });
-  return h("button", {
-    type: "button",
-    class: uploadBtnClassNames,
-    "aria-label": props.i18n('uploadXFiles', {
-      smart_count: props.newFiles
-    }),
-    onclick: props.startUpload,
-    "data-uppy-super-focusable": true
-  }, props.newFiles && props.isUploadStarted ? props.i18n('uploadXNewFiles', {
+  var uploadBtnText = props.newFiles && props.isUploadStarted && !props.recoveredState ? props.i18n('uploadXNewFiles', {
     smart_count: props.newFiles
   }) : props.i18n('uploadXFiles', {
     smart_count: props.newFiles
-  }));
+  });
+  return h("button", {
+    type: "button",
+    className: uploadBtnClassNames,
+    "aria-label": props.i18n('uploadXFiles', {
+      smart_count: props.newFiles
+    }),
+    onClick: props.startUpload,
+    disabled: props.isSomeGhost,
+    "data-uppy-super-focusable": true
+  }, uploadBtnText);
 };
 
 var RetryBtn = function RetryBtn(props) {
   return h("button", {
     type: "button",
-    class: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry",
+    className: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry",
     "aria-label": props.i18n('retryUpload'),
-    onclick: props.retryAll,
+    onClick: props.retryAll,
     "data-uppy-super-focusable": true
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "8",
     height: "10",
     viewBox: "0 0 8 10"
@@ -6690,21 +7480,21 @@ var RetryBtn = function RetryBtn(props) {
 var CancelBtn = function CancelBtn(props) {
   return h("button", {
     type: "button",
-    class: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
+    className: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
     title: props.i18n('cancel'),
     "aria-label": props.i18n('cancel'),
-    onclick: props.cancelAll,
+    onClick: props.cancelAll,
     "data-uppy-super-focusable": true
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "16",
     height: "16",
     viewBox: "0 0 16 16"
   }, h("g", {
     fill: "none",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   }, h("circle", {
     fill: "#888",
     cx: "8",
@@ -6723,22 +7513,22 @@ var PauseResumeButton = function PauseResumeButton(props) {
   return h("button", {
     title: title,
     "aria-label": title,
-    class: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
+    className: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
     type: "button",
-    onclick: function onclick() {
+    onClick: function onClick() {
       return togglePauseResume(props);
     },
     "data-uppy-super-focusable": true
   }, isAllPaused ? h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "16",
     height: "16",
     viewBox: "0 0 16 16"
   }, h("g", {
     fill: "none",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   }, h("circle", {
     fill: "#888",
     cx: "8",
@@ -6750,13 +7540,13 @@ var PauseResumeButton = function PauseResumeButton(props) {
   }))) : h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-c-icon",
+    className: "uppy-c-icon",
     width: "16",
     height: "16",
     viewBox: "0 0 16 16"
   }, h("g", {
     fill: "none",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   }, h("circle", {
     fill: "#888",
     cx: "8",
@@ -6772,7 +7562,7 @@ var DoneBtn = function DoneBtn(props) {
   var i18n = props.i18n;
   return h("button", {
     type: "button",
-    class: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done",
+    className: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done",
     onClick: props.doneButtonHandler,
     "data-uppy-super-focusable": true
   }, i18n('done'));
@@ -6780,21 +7570,21 @@ var DoneBtn = function DoneBtn(props) {
 
 var LoadingSpinner = function LoadingSpinner() {
   return h("svg", {
-    class: "uppy-StatusBar-spinner",
+    className: "uppy-StatusBar-spinner",
     "aria-hidden": "true",
     focusable: "false",
     width: "14",
     height: "14"
   }, h("path", {
     d: "M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0",
-    "fill-rule": "evenodd"
+    fillRule: "evenodd"
   }));
 };
 
 var ProgressBarProcessing = function ProgressBarProcessing(props) {
   var value = Math.round(props.value * 100);
   return h("div", {
-    class: "uppy-StatusBar-content"
+    className: "uppy-StatusBar-content"
   }, h(LoadingSpinner, null), props.mode === 'determinate' ? value + "% \xB7 " : '', props.message);
 };
 
@@ -6805,12 +7595,12 @@ var renderDot = function renderDot() {
 var ProgressDetails = function ProgressDetails(props) {
   var ifShowFilesUploadedOfTotal = props.numUploads > 1;
   return h("div", {
-    class: "uppy-StatusBar-statusSecondary"
+    className: "uppy-StatusBar-statusSecondary"
   }, ifShowFilesUploadedOfTotal && props.i18n('filesUploadedOfTotal', {
     complete: props.complete,
     smart_count: props.numUploads
   }), h("span", {
-    class: "uppy-StatusBar-additionalInfo"
+    className: "uppy-StatusBar-additionalInfo"
   }, ifShowFilesUploadedOfTotal && renderDot(), props.i18n('dataUploadedOfTotal', {
     complete: prettierBytes(props.totalUploadedSize),
     total: prettierBytes(props.totalSize)
@@ -6821,7 +7611,7 @@ var ProgressDetails = function ProgressDetails(props) {
 
 var UnknownProgressDetails = function UnknownProgressDetails(props) {
   return h("div", {
-    class: "uppy-StatusBar-statusSecondary"
+    className: "uppy-StatusBar-statusSecondary"
   }, props.i18n('filesUploadedOfTotal', {
     complete: props.complete,
     smart_count: props.numUploads
@@ -6831,18 +7621,18 @@ var UnknownProgressDetails = function UnknownProgressDetails(props) {
 var UploadNewlyAddedFiles = function UploadNewlyAddedFiles(props) {
   var uploadBtnClassNames = classNames('uppy-u-reset', 'uppy-c-btn', 'uppy-StatusBar-actionBtn', 'uppy-StatusBar-actionBtn--uploadNewlyAdded');
   return h("div", {
-    class: "uppy-StatusBar-statusSecondary"
+    className: "uppy-StatusBar-statusSecondary"
   }, h("div", {
-    class: "uppy-StatusBar-statusSecondaryHint"
+    className: "uppy-StatusBar-statusSecondaryHint"
   }, props.i18n('xMoreFilesAdded', {
     smart_count: props.newFiles
   })), h("button", {
     type: "button",
-    class: uploadBtnClassNames,
+    className: uploadBtnClassNames,
     "aria-label": props.i18n('uploadXFiles', {
       smart_count: props.newFiles
     }),
-    onclick: props.startUpload
+    onClick: props.startUpload
   }, props.i18n('upload')));
 };
 
@@ -6859,31 +7649,31 @@ var ProgressBarUploading = function ProgressBarUploading(props) {
   var title = props.isAllPaused ? props.i18n('paused') : props.i18n('uploading');
   var showUploadNewlyAddedFiles = props.newFiles && props.isUploadStarted;
   return h("div", {
-    class: "uppy-StatusBar-content",
+    className: "uppy-StatusBar-content",
     "aria-label": title,
     title: title
   }, !props.isAllPaused ? h(LoadingSpinner, null) : null, h("div", {
-    class: "uppy-StatusBar-status"
+    className: "uppy-StatusBar-status"
   }, h("div", {
-    class: "uppy-StatusBar-statusPrimary"
+    className: "uppy-StatusBar-statusPrimary"
   }, props.supportsUploadProgress ? title + ": " + props.totalProgress + "%" : title), !props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails ? props.supportsUploadProgress ? h(ThrottledProgressDetails, props) : h(UnknownProgressDetails, props) : null, showUploadNewlyAddedFiles ? h(UploadNewlyAddedFiles, props) : null));
 };
 
-var ProgressBarComplete = function ProgressBarComplete(_ref) {
-  var totalProgress = _ref.totalProgress,
-      i18n = _ref.i18n;
+var ProgressBarComplete = function ProgressBarComplete(_ref2) {
+  var totalProgress = _ref2.totalProgress,
+      i18n = _ref2.i18n;
   return h("div", {
-    class: "uppy-StatusBar-content",
+    className: "uppy-StatusBar-content",
     role: "status",
     title: i18n('complete')
   }, h("div", {
-    class: "uppy-StatusBar-status"
+    className: "uppy-StatusBar-status"
   }, h("div", {
-    class: "uppy-StatusBar-statusPrimary"
+    className: "uppy-StatusBar-statusPrimary"
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-StatusBar-statusIndicator uppy-c-icon",
+    className: "uppy-StatusBar-statusIndicator uppy-c-icon",
     width: "15",
     height: "11",
     viewBox: "0 0 15 11"
@@ -6892,11 +7682,11 @@ var ProgressBarComplete = function ProgressBarComplete(_ref) {
   })), i18n('complete'))));
 };
 
-var ProgressBarError = function ProgressBarError(_ref2) {
-  var error = _ref2.error,
-      retryAll = _ref2.retryAll,
-      hideRetryButton = _ref2.hideRetryButton,
-      i18n = _ref2.i18n;
+var ProgressBarError = function ProgressBarError(_ref3) {
+  var error = _ref3.error,
+      retryAll = _ref3.retryAll,
+      hideRetryButton = _ref3.hideRetryButton,
+      i18n = _ref3.i18n;
 
   function displayErrorAlert() {
     var errorMessage = i18n('uploadFailed') + " \n\n " + error;
@@ -6904,29 +7694,29 @@ var ProgressBarError = function ProgressBarError(_ref2) {
   }
 
   return h("div", {
-    class: "uppy-StatusBar-content",
+    className: "uppy-StatusBar-content",
     role: "alert",
     title: i18n('uploadFailed')
   }, h("div", {
-    class: "uppy-StatusBar-status"
+    className: "uppy-StatusBar-status"
   }, h("div", {
-    class: "uppy-StatusBar-statusPrimary"
+    className: "uppy-StatusBar-statusPrimary"
   }, h("svg", {
     "aria-hidden": "true",
     focusable: "false",
-    class: "uppy-StatusBar-statusIndicator uppy-c-icon",
+    className: "uppy-StatusBar-statusIndicator uppy-c-icon",
     width: "11",
     height: "11",
     viewBox: "0 0 11 11"
   }, h("path", {
     d: "M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z"
   })), i18n('uploadFailed'))), h("span", {
-    class: "uppy-StatusBar-details",
+    className: "uppy-StatusBar-details",
     "aria-label": error,
     "data-microtip-position": "top-right",
     "data-microtip-size": "medium",
     role: "tooltip",
-    onclick: displayErrorAlert
+    onClick: displayErrorAlert
   }, "?"));
 };
 
@@ -6955,7 +7745,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9429),
     Plugin = _require.Plugin;
@@ -6969,6 +7761,8 @@ var statusBarStates = __webpack_require__(3242);
 var getSpeed = __webpack_require__(522);
 
 var getBytesRemaining = __webpack_require__(9599);
+
+var getTextDirection = __webpack_require__(8958);
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
@@ -6984,6 +7778,15 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     _this = _Plugin.call(this, uppy, opts) || this;
 
     _this.startUpload = function () {
+      var _this$uppy$getState = _this.uppy.getState(),
+          recoveredState = _this$uppy$getState.recoveredState;
+
+      if (recoveredState) {
+        _this.uppy.emit('restore-confirmed');
+
+        return;
+      }
+
       return _this.uppy.upload().catch(function () {// Error logged in Core
       });
     };
@@ -7061,7 +7864,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
   _proto.getTotalSpeed = function getTotalSpeed(files) {
     var totalSpeed = 0;
     files.forEach(function (file) {
-      totalSpeed = totalSpeed + getSpeed(file.progress);
+      totalSpeed += getSpeed(file.progress);
     });
     return totalSpeed;
   };
@@ -7079,13 +7882,17 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     return Math.round(totalBytesRemaining / totalSpeed * 10) / 10;
   };
 
-  _proto.getUploadingState = function getUploadingState(isAllErrored, isAllComplete, files) {
+  _proto.getUploadingState = function getUploadingState(isAllErrored, isAllComplete, recoveredState, files) {
     if (isAllErrored) {
       return statusBarStates.STATE_ERROR;
     }
 
     if (isAllComplete) {
       return statusBarStates.STATE_COMPLETE;
+    }
+
+    if (recoveredState) {
+      return statusBarStates.STATE_WAITING;
     }
 
     var state = statusBarStates.STATE_WAITING;
@@ -7119,7 +7926,8 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
         files = state.files,
         allowNewUpload = state.allowNewUpload,
         totalProgress = state.totalProgress,
-        error = state.error; // TODO: move this to Core, to share between Status Bar and Dashboard
+        error = state.error,
+        recoveredState = state.recoveredState; // TODO: move this to Core, to share between Status Bar and Dashboard
     // (and any other plugin that might need it, too)
 
     var filesArray = Object.keys(files).map(function (file) {
@@ -7127,7 +7935,14 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     });
     var newFiles = filesArray.filter(function (file) {
       return !file.progress.uploadStarted && !file.progress.preprocess && !file.progress.postprocess;
-    });
+    }); // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
+
+    if (recoveredState) {
+      newFiles = filesArray;
+    }
+
     var uploadStartedFiles = filesArray.filter(function (file) {
       return file.progress.uploadStarted;
     });
@@ -7156,8 +7971,8 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     var totalSize = 0;
     var totalUploadedSize = 0;
     startedFiles.forEach(function (file) {
-      totalSize = totalSize + (file.progress.bytesTotal || 0);
-      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0);
+      totalSize += file.progress.bytesTotal || 0;
+      totalUploadedSize += file.progress.bytesUploaded || 0;
     });
     var isUploadStarted = startedFiles.length > 0;
     var isAllComplete = totalProgress === 100 && completeFiles.length === Object.keys(files).length && processingFiles.length === 0;
@@ -7166,9 +7981,12 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     var isUploadInProgress = inProgressFiles.length > 0;
     var resumableUploads = capabilities.resumableUploads || false;
     var supportsUploadProgress = capabilities.uploadProgress !== false;
+    var isSomeGhost = filesArray.some(function (file) {
+      return file.isGhost;
+    });
     return StatusBarUI({
       error: error,
-      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload: allowNewUpload,
       totalProgress: totalProgress,
       totalSize: totalSize,
@@ -7178,6 +7996,8 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
       isUploadInProgress: isUploadInProgress,
+      isSomeGhost: isSomeGhost,
+      recoveredState: recoveredState,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
@@ -7202,6 +8022,16 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     });
   };
 
+  _proto.onMount = function onMount() {
+    // Set the text direction if the page has not defined one.
+    var element = this.el;
+    var direction = getTextDirection(element);
+
+    if (!direction) {
+      element.dir = 'ltr';
+    }
+  };
+
   _proto.install = function install() {
     var target = this.opts.target;
 
@@ -7215,7 +8045,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
   };
 
   return StatusBar;
-}(Plugin), _class.VERSION = "1.8.1", _temp);
+}(Plugin), _class.VERSION = "1.9.6", _temp);
 
 /***/ }),
 
@@ -7287,7 +8117,9 @@ var _class, _temp;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = __webpack_require__(9429),
     Plugin = _require.Plugin;
@@ -7318,7 +8150,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     _this = _Plugin.call(this, uppy, opts) || this;
 
     _this.onFileAdded = function (file) {
-      if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
+      if (!file.preview && file.data && isPreviewSupported(file.type) && !file.isRemote) {
         _this.addToQueue(file.id);
       }
     };
@@ -7345,15 +8177,12 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
     };
 
     _this.onRestored = function () {
-      var _this$uppy$getState = _this.uppy.getState(),
-          files = _this$uppy$getState.files;
+      var restoredFiles = _this.uppy.getFiles().filter(function (file) {
+        return file.isRestored;
+      });
 
-      var fileIDs = Object.keys(files);
-      fileIDs.forEach(function (fileID) {
-        var file = _this.uppy.getFile(fileID);
-
-        if (!file.isRestored) return; // Only add blob URLs; they are likely invalid after being restored.
-
+      restoredFiles.forEach(function (file) {
+        // Only add blob URLs; they are likely invalid after being restored.
         if (!file.preview || isObjectURL(file.preview)) {
           _this.addToQueue(file.id);
         }
@@ -7687,11 +8516,11 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
       .then(function () {
         return _this3.processQueue();
       });
-    } else {
-      this.queueProcessing = false;
-      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue');
-      this.uppy.emit('thumbnail:all-generated');
     }
+
+    this.queueProcessing = false;
+    this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue');
+    this.uppy.emit('thumbnail:all-generated');
   };
 
   _proto.requestThumbnail = function requestThumbnail(file) {
@@ -7749,7 +8578,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin) {
   };
 
   return ThumbnailGenerator;
-}(Plugin), _class.VERSION = "1.7.3", _temp);
+}(Plugin), _class.VERSION = "1.7.11", _temp);
 
 /***/ }),
 
@@ -8708,6 +9537,33 @@ module.exports = function getSpeed(fileProgress) {
   var uploadSpeed = fileProgress.bytesUploaded / (timeElapsed / 1000);
   return uploadSpeed;
 };
+
+/***/ }),
+
+/***/ 8958:
+/***/ ((module) => {
+
+/**
+ * Get the declared text direction for an element.
+ *
+ * @param {Node} element
+ * @returns {string|undefined}
+ */
+function getTextDirection(element) {
+  // There is another way to determine text direction using getComputedStyle(), as done here:
+  // https://github.com/pencil-js/text-direction/blob/2a235ce95089b3185acec3b51313cbba921b3811/text-direction.js
+  //
+  // We do not use that approach because we are interested specifically in the _declared_ text direction.
+  // If no text direction is declared, we have to provide our own explicit text direction so our
+  // bidirectional CSS style sheets work.
+  while (element && !element.dir) {
+    element = element.parentNode;
+  }
+
+  return element ? element.dir : undefined;
+}
+
+module.exports = getTextDirection;
 
 /***/ }),
 
@@ -18478,540 +19334,6 @@ var index = (function () {
 })();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (index);
-
-
-/***/ }),
-
-/***/ 4564:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var required = __webpack_require__(7418)
-  , qs = __webpack_require__(7129)
-  , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//
-  , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\\/]+)?([\S\s]*)/i
-  , windowsDriveLetter = /^[a-zA-Z]:/
-  , whitespace = '[\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\xA0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\\u2028\\u2029\\uFEFF]'
-  , left = new RegExp('^'+ whitespace +'+');
-
-/**
- * Trim a given string.
- *
- * @param {String} str String to trim.
- * @public
- */
-function trimLeft(str) {
-  return (str ? str : '').toString().replace(left, '');
-}
-
-/**
- * These are the parse rules for the URL parser, it informs the parser
- * about:
- *
- * 0. The char it Needs to parse, if it's a string it should be done using
- *    indexOf, RegExp using exec and NaN means set as current value.
- * 1. The property we should set when parsing this value.
- * 2. Indication if it's backwards or forward parsing, when set as number it's
- *    the value of extra chars that should be split off.
- * 3. Inherit from location if non existing in the parser.
- * 4. `toLowerCase` the resulting value.
- */
-var rules = [
-  ['#', 'hash'],                        // Extract from the back.
-  ['?', 'query'],                       // Extract from the back.
-  function sanitize(address, url) {     // Sanitize what is left of the address
-    return isSpecial(url.protocol) ? address.replace(/\\/g, '/') : address;
-  },
-  ['/', 'pathname'],                    // Extract from the back.
-  ['@', 'auth', 1],                     // Extract from the front.
-  [NaN, 'host', undefined, 1, 1],       // Set left over value.
-  [/:(\d+)$/, 'port', undefined, 1],    // RegExp the back.
-  [NaN, 'hostname', undefined, 1, 1]    // Set left over.
-];
-
-/**
- * These properties should not be copied or inherited from. This is only needed
- * for all non blob URL's as a blob URL does not include a hash, only the
- * origin.
- *
- * @type {Object}
- * @private
- */
-var ignore = { hash: 1, query: 1 };
-
-/**
- * The location object differs when your code is loaded through a normal page,
- * Worker or through a worker using a blob. And with the blobble begins the
- * trouble as the location object will contain the URL of the blob, not the
- * location of the page where our code is loaded in. The actual origin is
- * encoded in the `pathname` so we can thankfully generate a good "default"
- * location from it so we can generate proper relative URL's again.
- *
- * @param {Object|String} loc Optional default location object.
- * @returns {Object} lolcation object.
- * @public
- */
-function lolcation(loc) {
-  var globalVar;
-
-  if (typeof window !== 'undefined') globalVar = window;
-  else if (typeof __webpack_require__.g !== 'undefined') globalVar = __webpack_require__.g;
-  else if (typeof self !== 'undefined') globalVar = self;
-  else globalVar = {};
-
-  var location = globalVar.location || {};
-  loc = loc || location;
-
-  var finaldestination = {}
-    , type = typeof loc
-    , key;
-
-  if ('blob:' === loc.protocol) {
-    finaldestination = new Url(unescape(loc.pathname), {});
-  } else if ('string' === type) {
-    finaldestination = new Url(loc, {});
-    for (key in ignore) delete finaldestination[key];
-  } else if ('object' === type) {
-    for (key in loc) {
-      if (key in ignore) continue;
-      finaldestination[key] = loc[key];
-    }
-
-    if (finaldestination.slashes === undefined) {
-      finaldestination.slashes = slashes.test(loc.href);
-    }
-  }
-
-  return finaldestination;
-}
-
-/**
- * Check whether a protocol scheme is special.
- *
- * @param {String} The protocol scheme of the URL
- * @return {Boolean} `true` if the protocol scheme is special, else `false`
- * @private
- */
-function isSpecial(scheme) {
-  return (
-    scheme === 'file:' ||
-    scheme === 'ftp:' ||
-    scheme === 'http:' ||
-    scheme === 'https:' ||
-    scheme === 'ws:' ||
-    scheme === 'wss:'
-  );
-}
-
-/**
- * @typedef ProtocolExtract
- * @type Object
- * @property {String} protocol Protocol matched in the URL, in lowercase.
- * @property {Boolean} slashes `true` if protocol is followed by "//", else `false`.
- * @property {String} rest Rest of the URL that is not part of the protocol.
- */
-
-/**
- * Extract protocol information from a URL with/without double slash ("//").
- *
- * @param {String} address URL we want to extract from.
- * @param {Object} location
- * @return {ProtocolExtract} Extracted information.
- * @private
- */
-function extractProtocol(address, location) {
-  address = trimLeft(address);
-  location = location || {};
-
-  var match = protocolre.exec(address);
-  var protocol = match[1] ? match[1].toLowerCase() : '';
-  var forwardSlashes = !!match[2];
-  var otherSlashes = !!match[3];
-  var slashesCount = 0;
-  var rest;
-
-  if (forwardSlashes) {
-    if (otherSlashes) {
-      rest = match[2] + match[3] + match[4];
-      slashesCount = match[2].length + match[3].length;
-    } else {
-      rest = match[2] + match[4];
-      slashesCount = match[2].length;
-    }
-  } else {
-    if (otherSlashes) {
-      rest = match[3] + match[4];
-      slashesCount = match[3].length;
-    } else {
-      rest = match[4]
-    }
-  }
-
-  if (protocol === 'file:') {
-    if (slashesCount >= 2) {
-      rest = rest.slice(2);
-    }
-  } else if (isSpecial(protocol)) {
-    rest = match[4];
-  } else if (protocol) {
-    if (forwardSlashes) {
-      rest = rest.slice(2);
-    }
-  } else if (slashesCount >= 2 && isSpecial(location.protocol)) {
-    rest = match[4];
-  }
-
-  return {
-    protocol: protocol,
-    slashes: forwardSlashes || isSpecial(protocol),
-    slashesCount: slashesCount,
-    rest: rest
-  };
-}
-
-/**
- * Resolve a relative URL pathname against a base URL pathname.
- *
- * @param {String} relative Pathname of the relative URL.
- * @param {String} base Pathname of the base URL.
- * @return {String} Resolved pathname.
- * @private
- */
-function resolve(relative, base) {
-  if (relative === '') return base;
-
-  var path = (base || '/').split('/').slice(0, -1).concat(relative.split('/'))
-    , i = path.length
-    , last = path[i - 1]
-    , unshift = false
-    , up = 0;
-
-  while (i--) {
-    if (path[i] === '.') {
-      path.splice(i, 1);
-    } else if (path[i] === '..') {
-      path.splice(i, 1);
-      up++;
-    } else if (up) {
-      if (i === 0) unshift = true;
-      path.splice(i, 1);
-      up--;
-    }
-  }
-
-  if (unshift) path.unshift('');
-  if (last === '.' || last === '..') path.push('');
-
-  return path.join('/');
-}
-
-/**
- * The actual URL instance. Instead of returning an object we've opted-in to
- * create an actual constructor as it's much more memory efficient and
- * faster and it pleases my OCD.
- *
- * It is worth noting that we should not use `URL` as class name to prevent
- * clashes with the global URL instance that got introduced in browsers.
- *
- * @constructor
- * @param {String} address URL we want to parse.
- * @param {Object|String} [location] Location defaults for relative paths.
- * @param {Boolean|Function} [parser] Parser for the query string.
- * @private
- */
-function Url(address, location, parser) {
-  address = trimLeft(address);
-
-  if (!(this instanceof Url)) {
-    return new Url(address, location, parser);
-  }
-
-  var relative, extracted, parse, instruction, index, key
-    , instructions = rules.slice()
-    , type = typeof location
-    , url = this
-    , i = 0;
-
-  //
-  // The following if statements allows this module two have compatibility with
-  // 2 different API:
-  //
-  // 1. Node.js's `url.parse` api which accepts a URL, boolean as arguments
-  //    where the boolean indicates that the query string should also be parsed.
-  //
-  // 2. The `URL` interface of the browser which accepts a URL, object as
-  //    arguments. The supplied object will be used as default values / fall-back
-  //    for relative paths.
-  //
-  if ('object' !== type && 'string' !== type) {
-    parser = location;
-    location = null;
-  }
-
-  if (parser && 'function' !== typeof parser) parser = qs.parse;
-
-  location = lolcation(location);
-
-  //
-  // Extract protocol information before running the instructions.
-  //
-  extracted = extractProtocol(address || '', location);
-  relative = !extracted.protocol && !extracted.slashes;
-  url.slashes = extracted.slashes || relative && location.slashes;
-  url.protocol = extracted.protocol || location.protocol || '';
-  address = extracted.rest;
-
-  //
-  // When the authority component is absent the URL starts with a path
-  // component.
-  //
-  if (
-    extracted.protocol === 'file:' && (
-      extracted.slashesCount !== 2 || windowsDriveLetter.test(address)) ||
-    (!extracted.slashes &&
-      (extracted.protocol ||
-        extracted.slashesCount < 2 ||
-        !isSpecial(url.protocol)))
-  ) {
-    instructions[3] = [/(.*)/, 'pathname'];
-  }
-
-  for (; i < instructions.length; i++) {
-    instruction = instructions[i];
-
-    if (typeof instruction === 'function') {
-      address = instruction(address, url);
-      continue;
-    }
-
-    parse = instruction[0];
-    key = instruction[1];
-
-    if (parse !== parse) {
-      url[key] = address;
-    } else if ('string' === typeof parse) {
-      if (~(index = address.indexOf(parse))) {
-        if ('number' === typeof instruction[2]) {
-          url[key] = address.slice(0, index);
-          address = address.slice(index + instruction[2]);
-        } else {
-          url[key] = address.slice(index);
-          address = address.slice(0, index);
-        }
-      }
-    } else if ((index = parse.exec(address))) {
-      url[key] = index[1];
-      address = address.slice(0, index.index);
-    }
-
-    url[key] = url[key] || (
-      relative && instruction[3] ? location[key] || '' : ''
-    );
-
-    //
-    // Hostname, host and protocol should be lowercased so they can be used to
-    // create a proper `origin`.
-    //
-    if (instruction[4]) url[key] = url[key].toLowerCase();
-  }
-
-  //
-  // Also parse the supplied query string in to an object. If we're supplied
-  // with a custom parser as function use that instead of the default build-in
-  // parser.
-  //
-  if (parser) url.query = parser(url.query);
-
-  //
-  // If the URL is relative, resolve the pathname against the base URL.
-  //
-  if (
-      relative
-    && location.slashes
-    && url.pathname.charAt(0) !== '/'
-    && (url.pathname !== '' || location.pathname !== '')
-  ) {
-    url.pathname = resolve(url.pathname, location.pathname);
-  }
-
-  //
-  // Default to a / for pathname if none exists. This normalizes the URL
-  // to always have a /
-  //
-  if (url.pathname.charAt(0) !== '/' && isSpecial(url.protocol)) {
-    url.pathname = '/' + url.pathname;
-  }
-
-  //
-  // We should not add port numbers if they are already the default port number
-  // for a given protocol. As the host also contains the port number we're going
-  // override it with the hostname which contains no port number.
-  //
-  if (!required(url.port, url.protocol)) {
-    url.host = url.hostname;
-    url.port = '';
-  }
-
-  //
-  // Parse down the `auth` for the username and password.
-  //
-  url.username = url.password = '';
-  if (url.auth) {
-    instruction = url.auth.split(':');
-    url.username = instruction[0] || '';
-    url.password = instruction[1] || '';
-  }
-
-  url.origin = url.protocol !== 'file:' && isSpecial(url.protocol) && url.host
-    ? url.protocol +'//'+ url.host
-    : 'null';
-
-  //
-  // The href is just the compiled result.
-  //
-  url.href = url.toString();
-}
-
-/**
- * This is convenience method for changing properties in the URL instance to
- * insure that they all propagate correctly.
- *
- * @param {String} part          Property we need to adjust.
- * @param {Mixed} value          The newly assigned value.
- * @param {Boolean|Function} fn  When setting the query, it will be the function
- *                               used to parse the query.
- *                               When setting the protocol, double slash will be
- *                               removed from the final url if it is true.
- * @returns {URL} URL instance for chaining.
- * @public
- */
-function set(part, value, fn) {
-  var url = this;
-
-  switch (part) {
-    case 'query':
-      if ('string' === typeof value && value.length) {
-        value = (fn || qs.parse)(value);
-      }
-
-      url[part] = value;
-      break;
-
-    case 'port':
-      url[part] = value;
-
-      if (!required(value, url.protocol)) {
-        url.host = url.hostname;
-        url[part] = '';
-      } else if (value) {
-        url.host = url.hostname +':'+ value;
-      }
-
-      break;
-
-    case 'hostname':
-      url[part] = value;
-
-      if (url.port) value += ':'+ url.port;
-      url.host = value;
-      break;
-
-    case 'host':
-      url[part] = value;
-
-      if (/:\d+$/.test(value)) {
-        value = value.split(':');
-        url.port = value.pop();
-        url.hostname = value.join(':');
-      } else {
-        url.hostname = value;
-        url.port = '';
-      }
-
-      break;
-
-    case 'protocol':
-      url.protocol = value.toLowerCase();
-      url.slashes = !fn;
-      break;
-
-    case 'pathname':
-    case 'hash':
-      if (value) {
-        var char = part === 'pathname' ? '/' : '#';
-        url[part] = value.charAt(0) !== char ? char + value : value;
-      } else {
-        url[part] = value;
-      }
-      break;
-
-    default:
-      url[part] = value;
-  }
-
-  for (var i = 0; i < rules.length; i++) {
-    var ins = rules[i];
-
-    if (ins[4]) url[ins[1]] = url[ins[1]].toLowerCase();
-  }
-
-  url.origin = url.protocol !== 'file:' && isSpecial(url.protocol) && url.host
-    ? url.protocol +'//'+ url.host
-    : 'null';
-
-  url.href = url.toString();
-
-  return url;
-}
-
-/**
- * Transform the properties back in to a valid and full URL string.
- *
- * @param {Function} stringify Optional query stringify function.
- * @returns {String} Compiled version of the URL.
- * @public
- */
-function toString(stringify) {
-  if (!stringify || 'function' !== typeof stringify) stringify = qs.stringify;
-
-  var query
-    , url = this
-    , protocol = url.protocol;
-
-  if (protocol && protocol.charAt(protocol.length - 1) !== ':') protocol += ':';
-
-  var result = protocol + (url.slashes || isSpecial(url.protocol) ? '//' : '');
-
-  if (url.username) {
-    result += url.username;
-    if (url.password) result += ':'+ url.password;
-    result += '@';
-  }
-
-  result += url.host + url.pathname;
-
-  query = 'object' === typeof url.query ? stringify(url.query) : url.query;
-  if (query) result += '?' !== query.charAt(0) ? '?'+ query : query;
-
-  if (url.hash) result += url.hash;
-
-  return result;
-}
-
-Url.prototype = { set: set, toString: toString };
-
-//
-// Expose the URL parser and some additional properties that might be useful for
-// others or testing.
-//
-Url.extractProtocol = extractProtocol;
-Url.location = lolcation;
-Url.trimLeft = trimLeft;
-Url.qs = qs;
-
-module.exports = Url;
 
 
 /***/ }),
