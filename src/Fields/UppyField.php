@@ -25,14 +25,14 @@ class UppyField extends DamnFineUploaderField
     protected function setRequirements()
     {
         Requirements::set_force_js_to_bottom(true);
-        
+
         Requirements::javascript(
             'codem/silverstripe-damn-fine-uploader:client/dist/js/uppy.min.js',
             [
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-DPAJcWN+o24rMDj47lQtoPMIGzGdoz4pLvQ2fbYSF4LKwWLRF3uNkyz7MDH3OcuA"
+                "integrity" => "sha384-WNOHu0YCIeiotChq2Dc0FkC4TLhRC6U5LnxpuvlkCJeY/PLxt2XzBqKc2ErDKc5u"
             ]
         );
         Requirements::css(
@@ -40,7 +40,7 @@ class UppyField extends DamnFineUploaderField
             'screen',
             [
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-st1ctbcJUpae/o8qF9rQifou8RsT3S9Ys4v4nk3yIOYRmqxopnIZOREExj3tKKPQ"
+                "integrity" => "sha384-wMsaDhzUA/u8zxLFrGuTk7q3u0TI2Lli2G5pjPQecA8FiLH21IgJIgAb17iSH3Qx"
             ]
         );
     }
