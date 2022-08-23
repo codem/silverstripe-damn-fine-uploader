@@ -1,9 +1,9 @@
-const Uppy = require('@uppy/core');
-const XHRUpload = require('@uppy/xhr-upload');
-const Dashboard = require('@uppy/dashboard');
+import Uppy from '@uppy/core';
+import XHRUpload from '@uppy/xhr-upload';
+import Dashboard from '@uppy/dashboard';
 
-require('@uppy/core/dist/style.css');
-require('@uppy/dashboard/dist/style.css');
+import '@uppy/core/dist/style.css';
+import '@uppy/dashboard/dist/style.css';
 
 // Common
 import DFU from '../js/common.js';
@@ -42,7 +42,7 @@ if(dfu_uploaders_uppy) {
       allowedFileTypes: allowed_file_types
     };
 
-    const uppy = Uppy({
+    const uppy = new Uppy({
                       id: 'uppy-' + id,
                       autoProceed: false,
                       allowMultipleUploads: true,
@@ -56,11 +56,13 @@ if(dfu_uploaders_uppy) {
                       target: upload_element.querySelector('.dashboard'),
                       inline: true,
                       width: '100%',
+                      height: '370px',
                       waitForThumbnailsBeforeUpload: true,
                       showLinkToFileUploadResult: false,
                       proudlyDisplayPoweredByUppy: false,
                       showProgressDetails: true,
                       replaceTargetContent: true,
+                      hideProgressAfterFinish: true,
                       note: '',
                       doneButtonHandler: null
                     }
