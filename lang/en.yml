@@ -5,7 +5,7 @@ en:
     MAXIMUM_UPLOAD_SIZE: 'Note: Maximum php allowed size is %s MB'
     ACCEPTED_MIMETYPES: 'Accepted mime types allowed for uploads made via this field (one per line)'
     DEFAULT_MIMETYPES: 'Default if none set: %s'
-    FOLDER_DATE_FORMAT: 'Use a year/month/day upload folder format'
+    FOLDER_DATE_FORMAT: 'Use a year/month/day upload folder suffix'
     UPLOAD_A_FILE: 'Upload a file'
     PROCESSING_FILES: 'Processing files'
     CANCEL: 'Cancel'

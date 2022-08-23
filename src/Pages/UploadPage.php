@@ -2,17 +2,13 @@
 
 namespace Codem\DamnFineUploader;
 
-/**
- * @author James
- */
+use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
 use Silverstripe\Forms\FieldList;
 use Silverstripe\Forms\FormAction;
 use Silverstripe\Forms\Form;
-use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\HeaderField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Core\Convert;
@@ -26,10 +22,13 @@ use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
  * A page that handles file uploads
  * This page requires extension in code to handle file upload response to the user
  * as such it can only be created, edit and published by those with allowed permissions
+ * @author James
  */
 class UploadPage extends \Page implements PermissionProvider
 {
+
     use CMSFieldConfigurator;
+    use RestrictedUploadFolder;
 
     private static $db = [
         'MaxFileSizeMB' => 'Float',
@@ -150,25 +149,26 @@ class UploadPage extends \Page implements PermissionProvider
     }
 
     /**
+     * Folder creation is performed after the record is written
+     */
+    public function onAfterWrite()
+    {
+        // Ensure a folder is created
+        $this->createProtectedFolder();
+        // call parent write handling
+        parent::onAfterWrite();
+    }
+
+    /**
      * CMS editing fields for configuration
      */
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
 
-        $this->addGenericFields($fields, "Uploads");
-
         $fields->addFieldToTab(
             'Root.Uploads',
-            HeaderField::create(
-                'UploadFieldSettingsHeader',
-                _t('DamnFineUploader.FIELD', 'Field text')
-            )
-        );
-
-        $fields->addFieldsToTab(
-            'Root.Uploads',
-            [
+            CompositeField::create(
                 TextField::create(
                     'FormFieldTitle',
                     _t('DamnFineUploader.FORM_FIELD_TITLE', 'Form field title')
@@ -185,46 +185,12 @@ class UploadPage extends \Page implements PermissionProvider
                     'FormUploadButtonTitle',
                     _t('DamnFineUploader.FORM_FIELD_BUTTON_TITLE', 'Form upload button text')
                 )
-            ]
+            )->setTitle(_t('DamnFineUploader.FIELD', 'Field text'))
         );
 
-        // Use the same field handling as userforms:
-        $treeView = TreeDropdownField::create(
-            'FolderID',
-            _t('DamnFineUploader.SELECTUPLOADFOLDER', 'Select upload folder'),
-            Folder::class
-        );
-        $treeView->setDescription(EditableFileField::getFolderPermissionString($this->Folder()));
-        $fields->addFieldToTab(
-            'Root.Uploads',
-            $treeView
-        );
-
-        // Warn the user if the folder targeted by this field is not restricted
-        if ($this->FolderID && !$this->Folder()->hasRestrictedAccess()) {
-            $fields->addFieldToTab(
-                "Root.Uploads",
-                LiteralField::create(
-                    'FileUploadWarning',
-                    '<p class="alert alert-warning">' . _t(
-                        'DamnFineUploader.UnrestrictedFileUploadWarning',
-                        'Access to the current upload folder "{path}" is not restricted. Uploaded files will be publicly accessible if the exact URL is known.',
-                        ['path' => Convert::raw2att($this->Folder()->Filename)]
-                    )
-                    . '</p>'
-                )
-            );
-        }
-
-        $fields->insertBefore('FolderID', $fields->dataFieldByName('UseDateFolder'));
-
-        $fields->addFieldToTab(
-            'Root.Uploads',
-            HeaderField::create(
-                'UploadFieldSavingHeader',
-                _t('DamnFineUploader.SAVING', 'Saving')
-            ),
-            'UseDateFolder'
+        $this->addGenericFields(
+            $fields,
+            _t('DamnFineUploader.TAB_UPLOADS', 'Uploads')
         );
 
         return $fields;

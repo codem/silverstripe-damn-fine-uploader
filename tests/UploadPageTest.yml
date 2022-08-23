@@ -1,0 +1,4 @@
+SilverStripe\Security\Group:
+  admin:
+    Title: Administrators
+    Code: administrators
