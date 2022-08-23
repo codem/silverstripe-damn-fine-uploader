@@ -149,14 +149,14 @@ class UploadPage extends \Page implements PermissionProvider
     }
 
     /**
-     * Uppy is the only supported field implementation for now
+     * Folder creation is performed after the record is written
      */
-    public function onBeforeWrite()
+    public function onAfterWrite()
     {
         // Ensure a folder is created
         $this->createProtectedFolder();
         // call parent write handling
-        parent::onBeforeWrite();
+        parent::onAfterWrite();
     }
 
     /**
