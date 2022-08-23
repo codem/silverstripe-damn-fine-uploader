@@ -7,3 +7,6 @@ SilverStripe\Assets\File:
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - 'Codem\DamnFineUploader\SiteConfigExtension'
+SilverStripe\UserForms\Control\UserDefinedFormController:
+  extensions:
+    - 'Codem\DamnFineUploader\UserDefinedFormControllerExtension'

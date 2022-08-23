@@ -118,8 +118,6 @@ trait EditableDamnFineUploader
               * from the UserDefinedFormController
               */
             $field = $this->getSubmittedFormField();
-            // remove file ID values already associated with this field (not the file)
-            $field->Files()->removeAll();
 
             if(!empty($files)) {
                 foreach($files as $file) {
