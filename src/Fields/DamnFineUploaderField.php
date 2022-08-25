@@ -72,7 +72,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     private static $allowed_actions = [
         'upload',
-        'remove'
+        'remove',
+        'notify',
+        'presign'
     ];
 
     /**
@@ -282,6 +284,34 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
+     * By default fields do not support presign
+     * @param SilverStripe\Control\HTTPRequest $request
+     * @return SilverStripe\Control\HTTPResponse
+     */
+    public function presign(HTTPRequest $request) : HTTPResponse {
+        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
+      * Handle notification received after upload success, error or completion
+      * For completion the POST data will have a 'completed' key
+      * For per file completion notifications, the POST data will have a id being the uploader file id
+      * along with name, size, type and uuid keys
+      * The uuid is the value included in a {@link self::upload()} response
+      *
+      * This method simply notifies extends of a completed upload or completed batch
+      * by passing the request value to the extension
+      *
+      * @param SilverStripe\Control\HTTPRequest $request
+      * @return SilverStripe\Control\HTTPResponse
+      */
+    public function notify(HTTPRequest $request) {
+        $response = true;
+        $this->extend('onUploadNotify', $request, $response);
+        return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
      * Save the file somewhere, based on configuraton
      * @return SilverStripe\Assets\File
      * @throws InvalidFileException|Exception
@@ -413,6 +443,32 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
+     * Return a Relative notification link for this field
+     *
+     * @param string $action
+     *
+     * @return string
+     */
+    public function NotificationLink()
+    {
+        return Controller::join_links('field/' . $this->name, 'notify');
+    }
+
+    /**
+     * Return a Relative presign link for this field
+     * Per-file requests are sent to this URL and it should return a presigned URL
+     * for the specific file
+     *
+     * @param string $action
+     *
+     * @return string
+     */
+    public function PresignLink()
+    {
+        return Controller::join_links('field/' . $this->name, 'presign');
+    }
+
+    /**
      * Return a Relative remove link for this field (for remove file actions)
      *
      * @param string $action
@@ -496,7 +552,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // request endpoint
         $lib_config['request'] = [
-            'method' => 'POST',
+            'method' => $this->getHttpUploadMethod(),
             'uuidName' => self::UUID_NAME,
             'endpoint' => '',// see below
             'params' => []
@@ -539,6 +595,12 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $lib_config['validation']['acceptFiles'] = $this->default_accepted_types;
         }
 
+        // apply notification url, for use on completion
+        $lib_config['urls'] = [
+            'notificationUrl' => $this->getNotificationUrl(),
+            'presignUrl' => $this->getPresignUrl()
+        ];
+
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
 
@@ -563,6 +625,22 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         }
 
         $this->default_configuration_complete = true;
+    }
+
+    /**
+     * Return the HTTP method for upload
+     */
+    public function getHttpUploadMethod() : string {
+        return 'POST';
+    }
+
+    /**
+     * Notifcation URL for the field
+     */
+    public function getNotificationUrl() {
+        $action = $this->getForm()->FormAction();
+        $link = Controller::join_links($action, $this->NotificationLink());
+        return $link;
     }
 
     /**

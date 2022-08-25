@@ -245,6 +245,26 @@ module.exports = function (argument) {
 
 /***/ }),
 
+/***/ 8533:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $forEach = __webpack_require__(2092).forEach;
+var arrayMethodIsStrict = __webpack_require__(9341);
+
+var STRICT_METHOD = arrayMethodIsStrict('forEach');
+
+// `Array.prototype.forEach` method implementation
+// https://tc39.es/ecma262/#sec-array.prototype.foreach
+module.exports = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
+  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+// eslint-disable-next-line es/no-array-prototype-foreach -- safe
+} : [].forEach;
+
+
+/***/ }),
+
 /***/ 8457:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -434,6 +454,24 @@ module.exports = function (METHOD_NAME) {
       return { foo: 1 };
     };
     return array[METHOD_NAME](Boolean).foo !== 1;
+  });
+};
+
+
+/***/ }),
+
+/***/ 9341:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var fails = __webpack_require__(7293);
+
+module.exports = function (METHOD_NAME, argument) {
+  var method = [][METHOD_NAME];
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
+    method.call(null, argument || function () { throw 1; }, 1);
   });
 };
 
@@ -3114,6 +3152,29 @@ module.exports = function (name) {
 
 /***/ }),
 
+/***/ 7327:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(2109);
+var $filter = __webpack_require__(2092).filter;
+var arrayMethodHasSpeciesSupport = __webpack_require__(1194);
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
+
+// `Array.prototype.filter` method
+// https://tc39.es/ecma262/#sec-array.prototype.filter
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
 /***/ 1038:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -3196,62 +3257,6 @@ addToUnscopables('entries');
 
 /***/ }),
 
-/***/ 7042:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $ = __webpack_require__(2109);
-var isArray = __webpack_require__(3157);
-var isConstructor = __webpack_require__(4411);
-var isObject = __webpack_require__(111);
-var toAbsoluteIndex = __webpack_require__(1400);
-var lengthOfArrayLike = __webpack_require__(6244);
-var toIndexedObject = __webpack_require__(5656);
-var createProperty = __webpack_require__(6135);
-var wellKnownSymbol = __webpack_require__(5112);
-var arrayMethodHasSpeciesSupport = __webpack_require__(1194);
-
-var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('slice');
-
-var SPECIES = wellKnownSymbol('species');
-var nativeSlice = [].slice;
-var max = Math.max;
-
-// `Array.prototype.slice` method
-// https://tc39.es/ecma262/#sec-array.prototype.slice
-// fallback for not array-like ES3 strings and DOM objects
-$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
-  slice: function slice(start, end) {
-    var O = toIndexedObject(this);
-    var length = lengthOfArrayLike(O);
-    var k = toAbsoluteIndex(start, length);
-    var fin = toAbsoluteIndex(end === undefined ? length : end, length);
-    // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
-    var Constructor, result, n;
-    if (isArray(O)) {
-      Constructor = O.constructor;
-      // cross-realm fallback
-      if (isConstructor(Constructor) && (Constructor === Array || isArray(Constructor.prototype))) {
-        Constructor = undefined;
-      } else if (isObject(Constructor)) {
-        Constructor = Constructor[SPECIES];
-        if (Constructor === null) Constructor = undefined;
-      }
-      if (Constructor === Array || Constructor === undefined) {
-        return nativeSlice.call(O, k, fin);
-      }
-    }
-    result = new (Constructor === undefined ? Array : Constructor)(max(fin - k, 0));
-    for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
-    result.length = n;
-    return result;
-  }
-});
-
-
-/***/ }),
-
 /***/ 8309:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -3278,6 +3283,81 @@ if (DESCRIPTORS && !FUNCTION_NAME_EXISTS) {
     }
   });
 }
+
+
+/***/ }),
+
+/***/ 5003:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var $ = __webpack_require__(2109);
+var fails = __webpack_require__(7293);
+var toIndexedObject = __webpack_require__(5656);
+var nativeGetOwnPropertyDescriptor = __webpack_require__(1236).f;
+var DESCRIPTORS = __webpack_require__(9781);
+
+var FAILS_ON_PRIMITIVES = fails(function () { nativeGetOwnPropertyDescriptor(1); });
+var FORCED = !DESCRIPTORS || FAILS_ON_PRIMITIVES;
+
+// `Object.getOwnPropertyDescriptor` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+$({ target: 'Object', stat: true, forced: FORCED, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptor: function getOwnPropertyDescriptor(it, key) {
+    return nativeGetOwnPropertyDescriptor(toIndexedObject(it), key);
+  }
+});
+
+
+/***/ }),
+
+/***/ 9337:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var $ = __webpack_require__(2109);
+var DESCRIPTORS = __webpack_require__(9781);
+var ownKeys = __webpack_require__(3887);
+var toIndexedObject = __webpack_require__(5656);
+var getOwnPropertyDescriptorModule = __webpack_require__(1236);
+var createProperty = __webpack_require__(6135);
+
+// `Object.getOwnPropertyDescriptors` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptors
+$({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
+    var O = toIndexedObject(object);
+    var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+    var keys = ownKeys(O);
+    var result = {};
+    var index = 0;
+    var key, descriptor;
+    while (keys.length > index) {
+      descriptor = getOwnPropertyDescriptor(O, key = keys[index++]);
+      if (descriptor !== undefined) createProperty(result, key, descriptor);
+    }
+    return result;
+  }
+});
+
+
+/***/ }),
+
+/***/ 7941:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var $ = __webpack_require__(2109);
+var toObject = __webpack_require__(7908);
+var nativeKeys = __webpack_require__(1956);
+var fails = __webpack_require__(7293);
+
+var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
+
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+$({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
+  keys: function keys(it) {
+    return nativeKeys(toObject(it));
+  }
+});
 
 
 /***/ }),
@@ -3311,6 +3391,41 @@ var exec = __webpack_require__(2261);
 $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
   exec: exec
 });
+
+
+/***/ }),
+
+/***/ 9714:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var PROPER_FUNCTION_NAME = __webpack_require__(6530).PROPER;
+var redefine = __webpack_require__(1320);
+var anObject = __webpack_require__(9670);
+var $toString = __webpack_require__(1340);
+var fails = __webpack_require__(7293);
+var flags = __webpack_require__(7066);
+
+var TO_STRING = 'toString';
+var RegExpPrototype = RegExp.prototype;
+var nativeToString = RegExpPrototype[TO_STRING];
+
+var NOT_GENERIC = fails(function () { return nativeToString.call({ source: 'a', flags: 'b' }) != '/a/b'; });
+// FF44- RegExp#toString has a wrong name
+var INCORRECT_NAME = PROPER_FUNCTION_NAME && nativeToString.name != TO_STRING;
+
+// `RegExp.prototype.toString` method
+// https://tc39.es/ecma262/#sec-regexp.prototype.tostring
+if (NOT_GENERIC || INCORRECT_NAME) {
+  redefine(RegExp.prototype, TO_STRING, function toString() {
+    var R = anObject(this);
+    var p = $toString(R.source);
+    var rf = R.flags;
+    var f = $toString(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? flags.call(R) : rf);
+    return '/' + p + '/' + f;
+  }, { unsafe: true });
+}
 
 
 /***/ }),
@@ -3949,6 +4064,35 @@ if (!$Symbol[PROTOTYPE][TO_PRIMITIVE]) {
 setToStringTag($Symbol, SYMBOL);
 
 hiddenKeys[HIDDEN] = true;
+
+
+/***/ }),
+
+/***/ 4747:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var global = __webpack_require__(7854);
+var DOMIterables = __webpack_require__(8324);
+var DOMTokenListPrototype = __webpack_require__(8509);
+var forEach = __webpack_require__(8533);
+var createNonEnumerableProperty = __webpack_require__(8880);
+
+var handlePrototype = function (CollectionPrototype) {
+  // some Chrome versions have non-configurable methods on DOMTokenList
+  if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
+    createNonEnumerableProperty(CollectionPrototype, 'forEach', forEach);
+  } catch (error) {
+    CollectionPrototype.forEach = forEach;
+  }
+};
+
+for (var COLLECTION_NAME in DOMIterables) {
+  if (DOMIterables[COLLECTION_NAME]) {
+    handlePrototype(global[COLLECTION_NAME] && global[COLLECTION_NAME].prototype);
+  }
+}
+
+handlePrototype(DOMTokenListPrototype);
 
 
 /***/ }),
@@ -6597,10 +6741,8 @@ __webpack_require__.d(tokenStorage_namespaceObject, {
   "setItem": () => (setItem)
 });
 
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.from.js
-var es_array_from = __webpack_require__(1038);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.iterator.js
-var es_string_iterator = __webpack_require__(8783);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
+var web_dom_collections_for_each = __webpack_require__(4747);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
 var es_regexp_exec = __webpack_require__(4916);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.split.js
@@ -6611,6 +6753,8 @@ var es_function_name = __webpack_require__(8309);
 var es_array_iterator = __webpack_require__(6992);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
 var es_object_to_string = __webpack_require__(1539);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.iterator.js
+var es_string_iterator = __webpack_require__(8783);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.iterator.js
 var web_dom_collections_iterator = __webpack_require__(3948);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url.js
@@ -6623,8 +6767,14 @@ var es_symbol = __webpack_require__(2526);
 var es_symbol_description = __webpack_require__(1817);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.iterator.js
 var es_symbol_iterator = __webpack_require__(2165);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.slice.js
-var es_array_slice = __webpack_require__(7042);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
+var es_object_keys = __webpack_require__(7941);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
+var es_array_filter = __webpack_require__(7327);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptor.js
+var es_object_get_own_property_descriptor = __webpack_require__(5003);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptors.js
+var es_object_get_own_property_descriptors = __webpack_require__(9337);
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/hasProperty.js
 function has(object, key) {
   return Object.prototype.hasOwnProperty.call(object, key);
@@ -9442,1811 +9592,6 @@ class UIPlugin extends BasePlugin {
 
 
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js
-let non_secure_urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let non_secure_nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += non_secure_urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/NetworkError.js
-class NetworkError extends Error {
-  constructor(error, xhr) {
-    if (xhr === void 0) {
-      xhr = null;
-    }
-
-    super(`This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.`);
-    this.cause = error;
-    this.isNetworkError = true;
-    this.request = xhr;
-  }
-
-}
-
-/* harmony default export */ const lib_NetworkError = (NetworkError);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/fetchWithNetworkError.js
-
-/**
- * Wrapper around window.fetch that throws a NetworkError when appropriate
- */
-
-function fetchWithNetworkError() {
-  return fetch(...arguments).catch(err => {
-    if (err.name === 'AbortError') {
-      throw err;
-    } else {
-      throw new lib_NetworkError(err);
-    }
-  });
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/ErrorWithCause.js
-
-
-class ErrorWithCause extends Error {
-  constructor(message, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    super(message);
-    this.cause = options.cause;
-
-    if (this.cause && has(this.cause, 'isNetworkError')) {
-      this.isNetworkError = this.cause.isNetworkError;
-    }
-  }
-
-}
-
-/* harmony default export */ const lib_ErrorWithCause = (ErrorWithCause);
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/AuthError.js
-
-
-class AuthError extends Error {
-  constructor() {
-    super('Authorization required');
-    this.name = 'AuthError';
-    this.isAuthError = true;
-  }
-
-}
-
-/* harmony default export */ const lib_AuthError = (AuthError);
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/RequestClient.js
-
-
-let RequestClient_Symbol$for;
-
-function RequestClient_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-
-var RequestClient_id = 0;
-
-function RequestClient_classPrivateFieldLooseKey(name) { return "__private_" + RequestClient_id++ + "_" + name; }
-
-
-
-
-const RequestClient_packageJson = {
-  "version": "3.0.0"
-}; // Remove the trailing slash so we can always safely append /xyz.
-
-function stripSlash(url) {
-  return url.replace(/\/$/, '');
-}
-
-async function handleJSONResponse(res) {
-  if (res.status === 401) {
-    throw new lib_AuthError();
-  }
-
-  const jsonPromise = res.json();
-
-  if (res.status < 200 || res.status > 300) {
-    let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`;
-
-    try {
-      const errData = await jsonPromise;
-      errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg;
-      errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg;
-    } finally {
-      // eslint-disable-next-line no-unsafe-finally
-      throw new Error(errMsg);
-    }
-  }
-
-  return jsonPromise;
-}
-
-var _companionHeaders = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("companionHeaders");
-
-var _getPostResponseFunc = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getPostResponseFunc");
-
-var _getUrl = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getUrl");
-
-var _errorHandler = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("errorHandler");
-
-RequestClient_Symbol$for = Symbol.for('uppy test: getCompanionHeaders');
-class RequestClient_RequestClient {
-  constructor(uppy, opts) {
-    Object.defineProperty(this, _errorHandler, {
-      value: _errorHandler2
-    });
-    Object.defineProperty(this, _getUrl, {
-      value: _getUrl2
-    });
-    Object.defineProperty(this, _companionHeaders, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _getPostResponseFunc, {
-      writable: true,
-      value: skip => response => skip ? response : this.onReceiveResponse(response)
-    });
-    this.uppy = uppy;
-    this.opts = opts;
-    this.onReceiveResponse = this.onReceiveResponse.bind(this);
-    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token'];
-    this.preflightDone = false;
-    RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = opts == null ? void 0 : opts.companionHeaders;
-  }
-
-  setCompanionHeaders(headers) {
-    RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = headers;
-  }
-
-  [RequestClient_Symbol$for]() {
-    return RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders];
-  }
-
-  get hostname() {
-    const {
-      companion
-    } = this.uppy.getState();
-    const host = this.opts.companionUrl;
-    return stripSlash(companion && companion[host] ? companion[host] : host);
-  }
-
-  headers() {
-    return Promise.resolve({ ...RequestClient_RequestClient.defaultHeaders,
-      ...RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders]
-    });
-  }
-
-  onReceiveResponse(response) {
-    const state = this.uppy.getState();
-    const companion = state.companion || {};
-    const host = this.opts.companionUrl;
-    const {
-      headers
-    } = response; // Store the self-identified domain name for the Companion instance we just hit.
-
-    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
-      this.uppy.setState({
-        companion: { ...companion,
-          [host]: headers.get('i-am')
-        }
-      });
-    }
-
-    return response;
-  }
-
-  preflight(path) {
-    if (this.preflightDone) {
-      return Promise.resolve(this.allowedHeaders.slice());
-    }
-
-    return fetch(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method: 'OPTIONS'
-    }).then(response => {
-      if (response.headers.has('access-control-allow-headers')) {
-        this.allowedHeaders = response.headers.get('access-control-allow-headers').split(',').map(headerName => headerName.trim().toLowerCase());
-      }
-
-      this.preflightDone = true;
-      return this.allowedHeaders.slice();
-    }).catch(err => {
-      this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning');
-      this.preflightDone = true;
-      return this.allowedHeaders.slice();
-    });
-  }
-
-  preflightAndHeaders(path) {
-    return Promise.all([this.preflight(path), this.headers()]).then(_ref => {
-      let [allowedHeaders, headers] = _ref;
-      // filter to keep only allowed Headers
-      Object.keys(headers).forEach(header => {
-        if (!allowedHeaders.includes(header.toLowerCase())) {
-          this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`);
-          delete headers[header]; // eslint-disable-line no-param-reassign
-        }
-      });
-      return headers;
-    });
-  }
-
-  get(path, skipPostResponse) {
-    const method = 'get';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin'
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
-  }
-
-  post(path, data, skipPostResponse) {
-    const method = 'post';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin',
-      body: JSON.stringify(data)
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
-  }
-
-  delete(path, data, skipPostResponse) {
-    const method = 'delete';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(`${this.hostname}/${path}`, {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin',
-      body: data ? JSON.stringify(data) : null
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
-  }
-
-}
-
-function _getUrl2(url) {
-  if (/^(https?:|)\/\//.test(url)) {
-    return url;
-  }
-
-  return `${this.hostname}/${url}`;
-}
-
-function _errorHandler2(method, path) {
-  return err => {
-    var _err;
-
-    if (!((_err = err) != null && _err.isAuthError)) {
-      // eslint-disable-next-line no-param-reassign
-      err = new lib_ErrorWithCause(`Could not ${method} ${RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path)}`, {
-        cause: err
-      });
-    }
-
-    return Promise.reject(err);
-  };
-}
-
-RequestClient_RequestClient.VERSION = RequestClient_packageJson.version;
-RequestClient_RequestClient.defaultHeaders = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
-  'Uppy-Versions': `@uppy/companion-client=${RequestClient_RequestClient.VERSION}`
-};
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/tokenStorage.js
-
-/**
- * This module serves as an Async wrapper for LocalStorage
- */
-
-function setItem(key, value) {
-  return new Promise(resolve => {
-    localStorage.setItem(key, value);
-    resolve();
-  });
-}
-function getItem(key) {
-  return Promise.resolve(localStorage.getItem(key));
-}
-function removeItem(key) {
-  return new Promise(resolve => {
-    localStorage.removeItem(key);
-    resolve();
-  });
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/Provider.js
-
-
-
-
-
-const getName = id => {
-  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-};
-
-class Provider extends RequestClient_RequestClient {
-  constructor(uppy, opts) {
-    super(uppy, opts);
-    this.provider = opts.provider;
-    this.id = this.provider;
-    this.name = this.opts.name || getName(this.id);
-    this.pluginId = this.opts.pluginId;
-    this.tokenKey = `companion-${this.pluginId}-auth-token`;
-    this.companionKeysParams = this.opts.companionKeysParams;
-    this.preAuthToken = null;
-  }
-
-  headers() {
-    return Promise.all([super.headers(), this.getAuthToken()]).then(_ref => {
-      let [headers, token] = _ref;
-      const authHeaders = {};
-
-      if (token) {
-        authHeaders['uppy-auth-token'] = token;
-      }
-
-      if (this.companionKeysParams) {
-        authHeaders['uppy-credentials-params'] = btoa(JSON.stringify({
-          params: this.companionKeysParams
-        }));
-      }
-
-      return { ...headers,
-        ...authHeaders
-      };
-    });
-  }
-
-  onReceiveResponse(response) {
-    response = super.onReceiveResponse(response); // eslint-disable-line no-param-reassign
-
-    const plugin = this.uppy.getPlugin(this.pluginId);
-    const oldAuthenticated = plugin.getPluginState().authenticated;
-    const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400;
-    plugin.setPluginState({
-      authenticated
-    });
-    return response;
-  }
-
-  setAuthToken(token) {
-    return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token);
-  }
-
-  getAuthToken() {
-    return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey);
-  }
-  /**
-   * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
-   * or rejects if loading one fails.
-   */
-
-
-  async ensurePreAuth() {
-    if (this.companionKeysParams && !this.preAuthToken) {
-      await this.fetchPreAuthToken();
-
-      if (!this.preAuthToken) {
-        throw new Error('Could not load authentication data required for third-party login. Please try again later.');
-      }
-    }
-  }
-
-  authUrl(queries) {
-    if (queries === void 0) {
-      queries = {};
-    }
-
-    const params = new URLSearchParams(queries);
-
-    if (this.preAuthToken) {
-      params.set('uppyPreAuthToken', this.preAuthToken);
-    }
-
-    return `${this.hostname}/${this.id}/connect?${params}`;
-  }
-
-  fileUrl(id) {
-    return `${this.hostname}/${this.id}/get/${id}`;
-  }
-
-  async fetchPreAuthToken() {
-    if (!this.companionKeysParams) {
-      return;
-    }
-
-    try {
-      const res = await this.post(`${this.id}/preauth/`, {
-        params: this.companionKeysParams
-      });
-      this.preAuthToken = res.token;
-    } catch (err) {
-      this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning');
-    }
-  }
-
-  list(directory) {
-    return this.get(`${this.id}/list/${directory || ''}`);
-  }
-
-  logout() {
-    return this.get(`${this.id}/logout`).then(response => Promise.all([response, this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)])).then(_ref2 => {
-      let [response] = _ref2;
-      return response;
-    });
-  }
-
-  static initPlugin(plugin, opts, defaultOpts) {
-    /* eslint-disable no-param-reassign */
-    plugin.type = 'acquirer';
-    plugin.files = [];
-
-    if (defaultOpts) {
-      plugin.opts = { ...defaultOpts,
-        ...opts
-      };
-    }
-
-    if (opts.serverUrl || opts.serverPattern) {
-      throw new Error('`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in the 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for the Instagram plugin) and use the updated options.`');
-    }
-
-    if (opts.companionAllowedHosts) {
-      const pattern = opts.companionAllowedHosts; // validate companionAllowedHosts param
-
-      if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
-        throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`);
-      }
-
-      plugin.opts.companionAllowedHosts = pattern;
-    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
-      // does not start with https://
-      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`;
-    } else {
-      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin;
-    }
-
-    plugin.storage = plugin.opts.storage || tokenStorage_namespaceObject;
-    /* eslint-enable no-param-reassign */
-  }
-
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/SearchProvider.js
-
-
-
-
-const SearchProvider_getName = id => {
-  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-};
-
-class SearchProvider extends (/* unused pure expression or super */ null && (RequestClient)) {
-  constructor(uppy, opts) {
-    super(uppy, opts);
-    this.provider = opts.provider;
-    this.id = this.provider;
-    this.name = this.opts.name || SearchProvider_getName(this.id);
-    this.pluginId = this.opts.pluginId;
-  }
-
-  fileUrl(id) {
-    return `${this.hostname}/search/${this.id}/get/${id}`;
-  }
-
-  search(text, queries) {
-    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries ? `&${queries}` : ''}`);
-  }
-
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/Socket.js
-let Socket_Symbol$for, Socket_Symbol$for2;
-
-function Socket_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-
-var Socket_id = 0;
-
-function Socket_classPrivateFieldLooseKey(name) { return "__private_" + Socket_id++ + "_" + name; }
-
-
-
-var _queued = /*#__PURE__*/Socket_classPrivateFieldLooseKey("queued");
-
-var Socket_emitter = /*#__PURE__*/Socket_classPrivateFieldLooseKey("emitter");
-
-var _isOpen = /*#__PURE__*/Socket_classPrivateFieldLooseKey("isOpen");
-
-var _socket = /*#__PURE__*/Socket_classPrivateFieldLooseKey("socket");
-
-var _handleMessage = /*#__PURE__*/Socket_classPrivateFieldLooseKey("handleMessage");
-
-Socket_Symbol$for = Symbol.for('uppy test: getSocket');
-Socket_Symbol$for2 = Symbol.for('uppy test: getQueued');
-class UppySocket {
-  constructor(opts) {
-    Object.defineProperty(this, _queued, {
-      writable: true,
-      value: []
-    });
-    Object.defineProperty(this, Socket_emitter, {
-      writable: true,
-      value: namespace_emitter()
-    });
-    Object.defineProperty(this, _isOpen, {
-      writable: true,
-      value: false
-    });
-    Object.defineProperty(this, _socket, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _handleMessage, {
-      writable: true,
-      value: e => {
-        try {
-          const message = JSON.parse(e.data);
-          this.emit(message.action, message.payload);
-        } catch (err) {
-          // TODO: use a more robust error handler.
-          console.log(err); // eslint-disable-line no-console
-        }
-      }
-    });
-    this.opts = opts;
-
-    if (!opts || opts.autoOpen !== false) {
-      this.open();
-    }
-  }
-
-  get isOpen() {
-    return Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen];
-  }
-
-  [Socket_Symbol$for]() {
-    return Socket_classPrivateFieldLooseBase(this, _socket)[_socket];
-  }
-
-  [Socket_Symbol$for2]() {
-    return Socket_classPrivateFieldLooseBase(this, _queued)[_queued];
-  }
-
-  open() {
-    Socket_classPrivateFieldLooseBase(this, _socket)[_socket] = new WebSocket(this.opts.target);
-
-    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onopen = () => {
-      Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = true;
-
-      while (Socket_classPrivateFieldLooseBase(this, _queued)[_queued].length > 0 && Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
-        const first = Socket_classPrivateFieldLooseBase(this, _queued)[_queued].shift();
-
-        this.send(first.action, first.payload);
-      }
-    };
-
-    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onclose = () => {
-      Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = false;
-    };
-
-    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onmessage = Socket_classPrivateFieldLooseBase(this, _handleMessage)[_handleMessage];
-  }
-
-  close() {
-    var _classPrivateFieldLoo;
-
-    (_classPrivateFieldLoo = Socket_classPrivateFieldLooseBase(this, _socket)[_socket]) == null ? void 0 : _classPrivateFieldLoo.close();
-  }
-
-  send(action, payload) {
-    // attach uuid
-    if (!Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
-      Socket_classPrivateFieldLooseBase(this, _queued)[_queued].push({
-        action,
-        payload
-      });
-
-      return;
-    }
-
-    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].send(JSON.stringify({
-      action,
-      payload
-    }));
-  }
-
-  on(action, handler) {
-    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].on(action, handler);
-  }
-
-  emit(action, payload) {
-    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].emit(action, payload);
-  }
-
-  once(action, handler) {
-    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].once(action, handler);
-  }
-
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/index.js
-
-/**
- * Manages communications with Companion
- */
-
-
-
-
-
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/emitSocketProgress.js
-
-
-function emitSocketProgress(uploader, progressData, file) {
-  const {
-    progress,
-    bytesUploaded,
-    bytesTotal
-  } = progressData;
-
-  if (progress) {
-    uploader.uppy.log(`Upload progress: ${progress}`);
-    uploader.uppy.emit('upload-progress', file, {
-      uploader,
-      bytesUploaded,
-      bytesTotal
-    });
-  }
-}
-
-/* harmony default export */ const lib_emitSocketProgress = (lodash_throttle(emitSocketProgress, 300, {
-  leading: true,
-  trailing: true
-}));
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getSocketHost.js
-function getSocketHost(url) {
-  // get the host domain
-  const regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/i;
-  const host = regex.exec(url)[1];
-  const socketProtocol = /^http:\/\//i.test(url) ? 'ws' : 'wss';
-  return `${socketProtocol}://${host}`;
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/settle.js
-function settle(promises) {
-  const resolutions = [];
-  const rejections = [];
-
-  function resolved(value) {
-    resolutions.push(value);
-  }
-
-  function rejected(error) {
-    rejections.push(error);
-  }
-
-  const wait = Promise.all(promises.map(promise => promise.then(resolved, rejected)));
-  return wait.then(() => {
-    return {
-      successful: resolutions,
-      failed: rejections
-    };
-  });
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/EventTracker.js
-function EventTracker_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-
-var EventTracker_id = 0;
-
-function EventTracker_classPrivateFieldLooseKey(name) { return "__private_" + EventTracker_id++ + "_" + name; }
-
-var EventTracker_emitter = /*#__PURE__*/EventTracker_classPrivateFieldLooseKey("emitter");
-
-var _events = /*#__PURE__*/EventTracker_classPrivateFieldLooseKey("events");
-
-/**
- * Create a wrapper around an event emitter with a `remove` method to remove
- * all events that were added using the wrapped emitter.
- */
-class EventTracker {
-  constructor(emitter) {
-    Object.defineProperty(this, EventTracker_emitter, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _events, {
-      writable: true,
-      value: []
-    });
-    EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter] = emitter;
-  }
-
-  on(event, fn) {
-    EventTracker_classPrivateFieldLooseBase(this, _events)[_events].push([event, fn]);
-
-    return EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter].on(event, fn);
-  }
-
-  remove() {
-    for (const [event, fn] of EventTracker_classPrivateFieldLooseBase(this, _events)[_events].splice(0)) {
-      EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter].off(event, fn);
-    }
-  }
-
-}
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/ProgressTimeout.js
-function ProgressTimeout_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-
-var ProgressTimeout_id = 0;
-
-function ProgressTimeout_classPrivateFieldLooseKey(name) { return "__private_" + ProgressTimeout_id++ + "_" + name; }
-
-var _aliveTimer = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("aliveTimer");
-
-var _isDone = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("isDone");
-
-var _onTimedOut = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("onTimedOut");
-
-var _timeout = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("timeout");
-
-/**
- * Helper to abort upload requests if there has not been any progress for `timeout` ms.
- * Create an instance using `timer = new ProgressTimeout(10000, onTimeout)`
- * Call `timer.progress()` to signal that there has been progress of any kind.
- * Call `timer.done()` when the upload has completed.
- */
-class ProgressTimeout {
-  constructor(timeout, timeoutHandler) {
-    Object.defineProperty(this, _aliveTimer, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _isDone, {
-      writable: true,
-      value: false
-    });
-    Object.defineProperty(this, _onTimedOut, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _timeout, {
-      writable: true,
-      value: void 0
-    });
-    ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout] = timeout;
-    ProgressTimeout_classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut] = timeoutHandler;
-  }
-
-  progress() {
-    // Some browsers fire another progress event when the upload is
-    // cancelled, so we have to ignore progress after the timer was
-    // told to stop.
-    if (ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone]) return;
-
-    if (ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout] > 0) {
-      clearTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
-      ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = setTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut], ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout]);
-    }
-  }
-
-  done() {
-    if (!ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone]) {
-      clearTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
-      ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = null;
-      ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone] = true;
-    }
-  }
-
-}
-
-/* harmony default export */ const lib_ProgressTimeout = (ProgressTimeout);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/RateLimitedQueue.js
-function RateLimitedQueue_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-
-var RateLimitedQueue_id = 0;
-
-function RateLimitedQueue_classPrivateFieldLooseKey(name) { return "__private_" + RateLimitedQueue_id++ + "_" + name; }
-
-function createCancelError() {
-  return new Error('Cancelled');
-}
-
-var _activeRequests = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("activeRequests");
-
-var _queuedHandlers = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queuedHandlers");
-
-var _paused = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("paused");
-
-var _pauseTimer = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("pauseTimer");
-
-var _downLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("downLimit");
-
-var _upperLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("upperLimit");
-
-var _rateLimitingTimer = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("rateLimitingTimer");
-
-var _call = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("call");
-
-var _queueNext = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queueNext");
-
-var _next = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("next");
-
-var _queue = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queue");
-
-var _dequeue = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("dequeue");
-
-var _resume = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("resume");
-
-var _increaseLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("increaseLimit");
-
-class RateLimitedQueue {
-  constructor(limit) {
-    Object.defineProperty(this, _dequeue, {
-      value: _dequeue2
-    });
-    Object.defineProperty(this, _queue, {
-      value: _queue2
-    });
-    Object.defineProperty(this, _next, {
-      value: _next2
-    });
-    Object.defineProperty(this, _queueNext, {
-      value: _queueNext2
-    });
-    Object.defineProperty(this, _call, {
-      value: _call2
-    });
-    Object.defineProperty(this, _activeRequests, {
-      writable: true,
-      value: 0
-    });
-    Object.defineProperty(this, _queuedHandlers, {
-      writable: true,
-      value: []
-    });
-    Object.defineProperty(this, _paused, {
-      writable: true,
-      value: false
-    });
-    Object.defineProperty(this, _pauseTimer, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _downLimit, {
-      writable: true,
-      value: 1
-    });
-    Object.defineProperty(this, _upperLimit, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _rateLimitingTimer, {
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, _resume, {
-      writable: true,
-      value: () => this.resume()
-    });
-    Object.defineProperty(this, _increaseLimit, {
-      writable: true,
-      value: () => {
-        if (RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused]) {
-          RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 0);
-          return;
-        }
-
-        RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = this.limit;
-        this.limit = Math.ceil((RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] + RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit]) / 2);
-
-        for (let i = RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit]; i <= this.limit; i++) {
-          RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
-        }
-
-        if (RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] - RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] > 3) {
-          RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 2000);
-        } else {
-          RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = Math.floor(RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] / 2);
-        }
-      }
-    });
-
-    if (typeof limit !== 'number' || limit === 0) {
-      this.limit = Infinity;
-    } else {
-      this.limit = limit;
-    }
-  }
-
-  run(fn, queueOptions) {
-    if (!RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] && RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] < this.limit) {
-      return RateLimitedQueue_classPrivateFieldLooseBase(this, _call)[_call](fn);
-    }
-
-    return RateLimitedQueue_classPrivateFieldLooseBase(this, _queue)[_queue](fn, queueOptions);
-  }
-
-  wrapPromiseFunction(fn, queueOptions) {
-    var _this = this;
-
-    return function () {
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      let queuedRequest;
-      const outerPromise = new Promise((resolve, reject) => {
-        queuedRequest = _this.run(() => {
-          let cancelError;
-          let innerPromise;
-
-          try {
-            innerPromise = Promise.resolve(fn(...args));
-          } catch (err) {
-            innerPromise = Promise.reject(err);
-          }
-
-          innerPromise.then(result => {
-            if (cancelError) {
-              reject(cancelError);
-            } else {
-              queuedRequest.done();
-              resolve(result);
-            }
-          }, err => {
-            if (cancelError) {
-              reject(cancelError);
-            } else {
-              queuedRequest.done();
-              reject(err);
-            }
-          });
-          return () => {
-            cancelError = createCancelError();
-          };
-        }, queueOptions);
-      });
-
-      outerPromise.abort = () => {
-        queuedRequest.abort();
-      };
-
-      return outerPromise;
-    };
-  }
-
-  resume() {
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] = false;
-    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
-
-    for (let i = 0; i < this.limit; i++) {
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
-    }
-  }
-
-  /**
-   * Freezes the queue for a while or indefinitely.
-   *
-   * @param {number | null } [duration] Duration for the pause to happen, in milliseconds.
-   *                                    If omitted, the queue won't resume automatically.
-   */
-  pause(duration) {
-    if (duration === void 0) {
-      duration = null;
-    }
-
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] = true;
-    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
-
-    if (duration != null) {
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _resume)[_resume], duration);
-    }
-  }
-  /**
-   * Pauses the queue for a duration, and lower the limit of concurrent requests
-   * when the queue resumes. When the queue resumes, it tries to progressively
-   * increase the limit in `this.#increaseLimit` until another call is made to
-   * `this.rateLimit`.
-   * Call this function when using the RateLimitedQueue for network requests and
-   * the remote server responds with 429 HTTP code.
-   *
-   * @param {number} duration in milliseconds.
-   */
-
-
-  rateLimit(duration) {
-    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer]);
-    this.pause(duration);
-
-    if (this.limit > 1 && Number.isFinite(this.limit)) {
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] = this.limit - 1;
-      this.limit = RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit];
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], duration);
-    }
-  }
-
-  get isPaused() {
-    return RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused];
-  }
-
-}
-
-function _call2(fn) {
-  RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] += 1;
-  let done = false;
-  let cancelActive;
-
-  try {
-    cancelActive = fn();
-  } catch (err) {
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
-    throw err;
-  }
-
-  return {
-    abort: () => {
-      if (done) return;
-      done = true;
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
-      cancelActive();
-
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
-    },
-    done: () => {
-      if (done) return;
-      done = true;
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
-
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
-    }
-  };
-}
-
-function _queueNext2() {
-  // Do it soon but not immediately, this allows clearing out the entire queue synchronously
-  // one by one without continuously _advancing_ it (and starting new tasks before immediately
-  // aborting them)
-  queueMicrotask(() => RateLimitedQueue_classPrivateFieldLooseBase(this, _next)[_next]());
-}
-
-function _next2() {
-  if (RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] || RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] >= this.limit) {
-    return;
-  }
-
-  if (RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].length === 0) {
-    return;
-  } // Dispatch the next request, and update the abort/done handlers
-  // so that cancelling it does the Right Thing (and doesn't just try
-  // to dequeue an already-running request).
-
-
-  const next = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].shift();
-
-  const handler = RateLimitedQueue_classPrivateFieldLooseBase(this, _call)[_call](next.fn);
-
-  next.abort = handler.abort;
-  next.done = handler.done;
-}
-
-function _queue2(fn, options) {
-  if (options === void 0) {
-    options = {};
-  }
-
-  const handler = {
-    fn,
-    priority: options.priority || 0,
-    abort: () => {
-      RateLimitedQueue_classPrivateFieldLooseBase(this, _dequeue)[_dequeue](handler);
-    },
-    done: () => {
-      throw new Error('Cannot mark a queued request as done: this indicates a bug');
-    }
-  };
-
-  const index = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].findIndex(other => {
-    return handler.priority > other.priority;
-  });
-
-  if (index === -1) {
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].push(handler);
-  } else {
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 0, handler);
-  }
-
-  return handler;
-}
-
-function _dequeue2(handler) {
-  const index = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].indexOf(handler);
-
-  if (index !== -1) {
-    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 1);
-  }
-}
-
-const internalRateLimitedQueue = Symbol('__queue');
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isNetworkError.js
-function isNetworkError(xhr) {
-  if (!xhr) {
-    return false;
-  }
-
-  return xhr.readyState !== 0 && xhr.readyState !== 4 || xhr.status === 0;
-}
-
-/* harmony default export */ const lib_isNetworkError = (isNetworkError);
-;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/locale.js
-/* harmony default export */ const lib_locale = ({
-  strings: {
-    // Shown in the Informer if an upload is being canceled because it stalled for too long.
-    timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-  }
-});
-;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/index.js
-
-
-
-
-
-
-
-
-
-
-
-const lib_packageJson = {
-  "version": "3.0.0"
-};
-
-
-function buildResponseError(xhr, err) {
-  let error = err; // No error message
-
-  if (!error) error = new Error('Upload error'); // Got an error message string
-
-  if (typeof error === 'string') error = new Error(error); // Got something else
-
-  if (!(error instanceof Error)) {
-    error = Object.assign(new Error('Upload error'), {
-      data: error
-    });
-  }
-
-  if (lib_isNetworkError(xhr)) {
-    error = new lib_NetworkError(error, xhr);
-    return error;
-  }
-
-  error.request = xhr;
-  return error;
-}
-/**
- * Set `data.type` in the blob to `file.meta.type`,
- * because we might have detected a more accurate file type in Uppy
- * https://stackoverflow.com/a/50875615
- *
- * @param {object} file File object with `data`, `size` and `meta` properties
- * @returns {object} blob updated with the new `type` set from `file.meta.type`
- */
-
-
-function setTypeInBlob(file) {
-  const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type);
-  return dataWithUpdatedType;
-}
-
-class XHRUpload extends BasePlugin {
-  // eslint-disable-next-line global-require
-  constructor(uppy, opts) {
-    super(uppy, opts);
-    this.type = 'uploader';
-    this.id = this.opts.id || 'XHRUpload';
-    this.title = 'XHRUpload';
-    this.defaultLocale = lib_locale; // Default options
-
-    const defaultOptions = {
-      formData: true,
-      fieldName: opts.bundle ? 'files[]' : 'file',
-      method: 'post',
-      allowedMetaFields: null,
-      responseUrlFieldName: 'url',
-      bundle: false,
-      headers: {},
-      timeout: 30 * 1000,
-      limit: 5,
-      withCredentials: false,
-      responseType: '',
-
-      /**
-       * @param {string} responseText the response body string
-       */
-      getResponseData(responseText) {
-        let parsedResponse = {};
-
-        try {
-          parsedResponse = JSON.parse(responseText);
-        } catch (err) {
-          uppy.log(err);
-        }
-
-        return parsedResponse;
-      },
-
-      /**
-       *
-       * @param {string} _ the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
-       */
-      getResponseError(_, response) {
-        let error = new Error('Upload error');
-
-        if (lib_isNetworkError(response)) {
-          error = new lib_NetworkError(error, response);
-        }
-
-        return error;
-      },
-
-      /**
-       * Check if the response from the upload endpoint indicates that the upload was successful.
-       *
-       * @param {number} status the response status code
-       */
-      validateStatus(status) {
-        return status >= 200 && status < 300;
-      }
-
-    };
-    this.opts = { ...defaultOptions,
-      ...opts
-    };
-    this.i18nInit();
-    this.handleUpload = this.handleUpload.bind(this); // Simultaneous upload limiting is shared across all uploads with this plugin.
-
-    if (internalRateLimitedQueue in this.opts) {
-      this.requests = this.opts[internalRateLimitedQueue];
-    } else {
-      this.requests = new RateLimitedQueue(this.opts.limit);
-    }
-
-    if (this.opts.bundle && !this.opts.formData) {
-      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.');
-    }
-
-    if ((opts == null ? void 0 : opts.allowedMetaFields) === undefined && 'metaFields' in this.opts) {
-      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.');
-    }
-
-    this.uploaderEvents = Object.create(null);
-  }
-
-  getOptions(file) {
-    const overrides = this.uppy.getState().xhrUpload;
-    const {
-      headers
-    } = this.opts;
-    const opts = { ...this.opts,
-      ...(overrides || {}),
-      ...(file.xhrUpload || {}),
-      headers: {}
-    }; // Support for `headers` as a function, only in the XHRUpload settings.
-    // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
-    //
-    // ```js
-    // headers: (file) => ({ expires: file.meta.expires })
-    // ```
-
-    if (typeof headers === 'function') {
-      opts.headers = headers(file);
-    } else {
-      Object.assign(opts.headers, this.opts.headers);
-    }
-
-    if (overrides) {
-      Object.assign(opts.headers, overrides.headers);
-    }
-
-    if (file.xhrUpload) {
-      Object.assign(opts.headers, file.xhrUpload.headers);
-    }
-
-    return opts;
-  } // eslint-disable-next-line class-methods-use-this
-
-
-  addMetadata(formData, meta, opts) {
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields : Object.keys(meta); // Send along all fields by default.
-
-    allowedMetaFields.forEach(item => {
-      formData.append(item, meta[item]);
-    });
-  }
-
-  createFormDataUpload(file, opts) {
-    const formPost = new FormData();
-    this.addMetadata(formPost, file.meta, opts);
-    const dataWithUpdatedType = setTypeInBlob(file);
-
-    if (file.name) {
-      formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name);
-    } else {
-      formPost.append(opts.fieldName, dataWithUpdatedType);
-    }
-
-    return formPost;
-  }
-
-  createBundledUpload(files, opts) {
-    const formPost = new FormData();
-    const {
-      meta
-    } = this.uppy.getState();
-    this.addMetadata(formPost, meta, opts);
-    files.forEach(file => {
-      const options = this.getOptions(file);
-      const dataWithUpdatedType = setTypeInBlob(file);
-
-      if (file.name) {
-        formPost.append(options.fieldName, dataWithUpdatedType, file.name);
-      } else {
-        formPost.append(options.fieldName, dataWithUpdatedType);
-      }
-    });
-    return formPost;
-  }
-
-  upload(file, current, total) {
-    const opts = this.getOptions(file);
-    this.uppy.log(`uploading ${current} of ${total}`);
-    return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file);
-      const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
-      const xhr = new XMLHttpRequest();
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy);
-      let queuedRequest;
-      const timer = new lib_ProgressTimeout(opts.timeout, () => {
-        xhr.abort();
-        queuedRequest.done();
-        const error = new Error(this.i18n('timedOut', {
-          seconds: Math.ceil(opts.timeout / 1000)
-        }));
-        this.uppy.emit('upload-error', file, error);
-        reject(error);
-      });
-      const id = non_secure_nanoid();
-      xhr.upload.addEventListener('loadstart', () => {
-        this.uppy.log(`[XHRUpload] ${id} started`);
-      });
-      xhr.upload.addEventListener('progress', ev => {
-        this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`); // Begin checking for timeouts when progress starts, instead of loading,
-        // to avoid timing out requests on browser concurrency queue
-
-        timer.progress();
-
-        if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
-          });
-        }
-      });
-      xhr.addEventListener('load', () => {
-        this.uppy.log(`[XHRUpload] ${id} finished`);
-        timer.done();
-        queuedRequest.done();
-
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove();
-          this.uploaderEvents[file.id] = null;
-        }
-
-        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
-          const body = opts.getResponseData(xhr.responseText, xhr);
-          const uploadURL = body[opts.responseUrlFieldName];
-          const uploadResp = {
-            status: xhr.status,
-            body,
-            uploadURL
-          };
-          this.uppy.emit('upload-success', file, uploadResp);
-
-          if (uploadURL) {
-            this.uppy.log(`Download ${file.name} from ${uploadURL}`);
-          }
-
-          return resolve(file);
-        }
-
-        const body = opts.getResponseData(xhr.responseText, xhr);
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
-        const response = {
-          status: xhr.status,
-          body
-        };
-        this.uppy.emit('upload-error', file, error, response);
-        return reject(error);
-      });
-      xhr.addEventListener('error', () => {
-        this.uppy.log(`[XHRUpload] ${id} errored`);
-        timer.done();
-        queuedRequest.done();
-
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove();
-          this.uploaderEvents[file.id] = null;
-        }
-
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
-        this.uppy.emit('upload-error', file, error);
-        return reject(error);
-      });
-      xhr.open(opts.method.toUpperCase(), opts.endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
-      // before `open()` is called.
-
-      xhr.withCredentials = opts.withCredentials;
-
-      if (opts.responseType !== '') {
-        xhr.responseType = opts.responseType;
-      }
-
-      queuedRequest = this.requests.run(() => {
-        this.uppy.emit('upload-started', file); // When using an authentication system like JWT, the bearer token goes as a header. This
-        // header needs to be fresh each time the token is refreshed so computing and setting the
-        // headers just before the upload starts enables this kind of authentication to work properly.
-        // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
-
-        const currentOpts = this.getOptions(file);
-        Object.keys(currentOpts.headers).forEach(header => {
-          xhr.setRequestHeader(header, currentOpts.headers[header]);
-        });
-        xhr.send(data);
-        return () => {
-          timer.done();
-          xhr.abort();
-        };
-      });
-      this.onFileRemove(file.id, () => {
-        queuedRequest.abort();
-        reject(new Error('File removed'));
-      });
-      this.onCancelAll(file.id, _ref => {
-        let {
-          reason
-        } = _ref;
-
-        if (reason === 'user') {
-          queuedRequest.abort();
-        }
-
-        reject(new Error('Upload cancelled'));
-      });
-    });
-  }
-
-  uploadRemote(file) {
-    const opts = this.getOptions(file);
-    return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file);
-      const fields = {};
-      const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields // Send along all fields by default.
-      : Object.keys(file.meta);
-      allowedMetaFields.forEach(name => {
-        fields[name] = file.meta[name];
-      });
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient_RequestClient;
-      const client = new Client(this.uppy, file.remote.providerOptions);
-      client.post(file.remote.url, { ...file.remote.body,
-        protocol: 'multipart',
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers
-      }).then(res => {
-        const {
-          token
-        } = res;
-        const host = getSocketHost(file.remote.companionUrl);
-        const socket = new UppySocket({
-          target: `${host}/api/${token}`,
-          autoOpen: false
-        });
-        this.uploaderEvents[file.id] = new EventTracker(this.uppy);
-        let queuedRequest;
-        this.onFileRemove(file.id, () => {
-          socket.send('cancel', {});
-          queuedRequest.abort();
-          resolve(`upload ${file.id} was removed`);
-        });
-        this.onCancelAll(file.id, function (_temp) {
-          let {
-            reason
-          } = _temp === void 0 ? {} : _temp;
-
-          if (reason === 'user') {
-            socket.send('cancel', {});
-            queuedRequest.abort();
-          }
-
-          resolve(`upload ${file.id} was canceled`);
-        });
-        this.onRetry(file.id, () => {
-          socket.send('pause', {});
-          socket.send('resume', {});
-        });
-        this.onRetryAll(file.id, () => {
-          socket.send('pause', {});
-          socket.send('resume', {});
-        });
-        socket.on('progress', progressData => lib_emitSocketProgress(this, progressData, file));
-        socket.on('success', data => {
-          const body = opts.getResponseData(data.response.responseText, data.response);
-          const uploadURL = body[opts.responseUrlFieldName];
-          const uploadResp = {
-            status: data.response.status,
-            body,
-            uploadURL
-          };
-          this.uppy.emit('upload-success', file, uploadResp);
-          queuedRequest.done();
-
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove();
-            this.uploaderEvents[file.id] = null;
-          }
-
-          return resolve();
-        });
-        socket.on('error', errData => {
-          const resp = errData.response;
-          const error = resp ? opts.getResponseError(resp.responseText, resp) : Object.assign(new Error(errData.error.message), {
-            cause: errData.error
-          });
-          this.uppy.emit('upload-error', file, error);
-          queuedRequest.done();
-
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove();
-            this.uploaderEvents[file.id] = null;
-          }
-
-          reject(error);
-        });
-        queuedRequest = this.requests.run(() => {
-          socket.open();
-
-          if (file.isPaused) {
-            socket.send('pause', {});
-          }
-
-          return () => socket.close();
-        });
-      }).catch(err => {
-        this.uppy.emit('upload-error', file, err);
-        reject(err);
-      });
-    });
-  }
-
-  uploadBundle(files) {
-    return new Promise((resolve, reject) => {
-      const {
-        endpoint
-      } = this.opts;
-      const {
-        method
-      } = this.opts;
-      const optsFromState = this.uppy.getState().xhrUpload;
-      const formData = this.createBundledUpload(files, { ...this.opts,
-        ...(optsFromState || {})
-      });
-      const xhr = new XMLHttpRequest();
-
-      const emitError = error => {
-        files.forEach(file => {
-          this.uppy.emit('upload-error', file, error);
-        });
-      };
-
-      const timer = new lib_ProgressTimeout(this.opts.timeout, () => {
-        xhr.abort();
-        const error = new Error(this.i18n('timedOut', {
-          seconds: Math.ceil(this.opts.timeout / 1000)
-        }));
-        emitError(error);
-        reject(error);
-      });
-      xhr.upload.addEventListener('loadstart', () => {
-        this.uppy.log('[XHRUpload] started uploading bundle');
-        timer.progress();
-      });
-      xhr.upload.addEventListener('progress', ev => {
-        timer.progress();
-        if (!ev.lengthComputable) return;
-        files.forEach(file => {
-          this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: ev.loaded / ev.total * file.size,
-            bytesTotal: file.size
-          });
-        });
-      });
-      xhr.addEventListener('load', ev => {
-        timer.done();
-
-        if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
-          const body = this.opts.getResponseData(xhr.responseText, xhr);
-          const uploadResp = {
-            status: ev.target.status,
-            body
-          };
-          files.forEach(file => {
-            this.uppy.emit('upload-success', file, uploadResp);
-          });
-          return resolve();
-        }
-
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error');
-        error.request = xhr;
-        emitError(error);
-        return reject(error);
-      });
-      xhr.addEventListener('error', () => {
-        timer.done();
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error');
-        emitError(error);
-        return reject(error);
-      });
-      this.uppy.on('cancel-all', function (_temp2) {
-        let {
-          reason
-        } = _temp2 === void 0 ? {} : _temp2;
-        if (reason !== 'user') return;
-        timer.done();
-        xhr.abort();
-      });
-      xhr.open(method.toUpperCase(), endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
-      // before `open()` is called.
-
-      xhr.withCredentials = this.opts.withCredentials;
-
-      if (this.opts.responseType !== '') {
-        xhr.responseType = this.opts.responseType;
-      }
-
-      Object.keys(this.opts.headers).forEach(header => {
-        xhr.setRequestHeader(header, this.opts.headers[header]);
-      });
-      xhr.send(formData);
-      files.forEach(file => {
-        this.uppy.emit('upload-started', file);
-      });
-    });
-  }
-
-  uploadFiles(files) {
-    const promises = files.map((file, i) => {
-      const current = parseInt(i, 10) + 1;
-      const total = files.length;
-
-      if (file.error) {
-        return Promise.reject(new Error(file.error));
-      }
-
-      if (file.isRemote) {
-        return this.uploadRemote(file, current, total);
-      }
-
-      return this.upload(file, current, total);
-    });
-    return settle(promises);
-  }
-
-  onFileRemove(fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', file => {
-      if (fileID === file.id) cb(file.id);
-    });
-  }
-
-  onRetry(fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', targetFileID => {
-      if (fileID === targetFileID) {
-        cb();
-      }
-    });
-  }
-
-  onRetryAll(fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', () => {
-      if (!this.uppy.getFile(fileID)) return;
-      cb();
-    });
-  }
-
-  onCancelAll(fileID, eventHandler) {
-    var _this = this;
-
-    this.uploaderEvents[fileID].on('cancel-all', function () {
-      if (!_this.uppy.getFile(fileID)) return;
-      eventHandler(...arguments);
-    });
-  }
-
-  handleUpload(fileIDs) {
-    if (fileIDs.length === 0) {
-      this.uppy.log('[XHRUpload] No files to upload!');
-      return Promise.resolve();
-    } // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
-    // (basically just AwsS3) using the internal symbol
-
-
-    if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
-      this.uppy.log('[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0', 'warning');
-    }
-
-    this.uppy.log('[XHRUpload] Uploading...');
-    const files = fileIDs.map(fileID => this.uppy.getFile(fileID));
-
-    if (this.opts.bundle) {
-      // if bundle: true, we don’t support remote uploads
-      const isSomeFileRemote = files.some(file => file.isRemote);
-
-      if (isSomeFileRemote) {
-        throw new Error('Can’t upload remote files when the `bundle: true` option is set');
-      }
-
-      if (typeof this.opts.headers === 'function') {
-        throw new TypeError('`headers` may not be a function when the `bundle: true` option is set');
-      }
-
-      return this.uploadBundle(files);
-    }
-
-    return this.uploadFiles(files).then(() => null);
-  }
-
-  install() {
-    if (this.opts.bundle) {
-      const {
-        capabilities
-      } = this.uppy.getState();
-      this.uppy.setState({
-        capabilities: { ...capabilities,
-          individualCancellation: false
-        }
-      });
-    }
-
-    this.uppy.addUploader(this.handleUpload);
-  }
-
-  uninstall() {
-    if (this.opts.bundle) {
-      const {
-        capabilities
-      } = this.uppy.getState();
-      this.uppy.setState({
-        capabilities: { ...capabilities,
-          individualCancellation: true
-        }
-      });
-    }
-
-    this.uppy.removeUploader(this.handleUpload);
-  }
-
-}
-XHRUpload.VERSION = lib_packageJson.version;
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getSpeed.js
 function getSpeed(fileProgress) {
   if (!fileProgress.bytesUploaded) return 0;
@@ -11941,7 +10286,7 @@ function StatusBarUI_StatusBar(props) {
   }) : null));
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/locale.js
-/* harmony default export */ const status_bar_lib_locale = ({
+/* harmony default export */ const lib_locale = ({
   strings: {
     // Shown in the status bar while files are being uploaded.
     uploading: 'Uploading',
@@ -12090,7 +10435,7 @@ class StatusBar extends lib_UIPlugin {
     this.id = this.opts.id || 'StatusBar';
     this.title = 'StatusBar';
     this.type = 'progressindicator';
-    this.defaultLocale = status_bar_lib_locale; // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
+    this.defaultLocale = lib_locale; // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 
     const defaultOptions = {
       target: 'body',
@@ -12685,7 +11030,7 @@ var mini_umd = __webpack_require__(1443);
 
 
 
-const thumbnail_generator_lib_packageJson = {
+const lib_packageJson = {
   "version": "3.0.0"
 };
 /**
@@ -13083,7 +11428,7 @@ class ThumbnailGenerator extends lib_UIPlugin {
   }
 
 }
-ThumbnailGenerator.VERSION = thumbnail_generator_lib_packageJson.version;
+ThumbnailGenerator.VERSION = lib_packageJson.version;
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/findAllDOMElements.js
 
 /**
@@ -13283,9 +11628,9 @@ async function getDroppedFiles(dataTransfer, _temp) {
   }
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js
-let nanoid_non_secure_urlAlphabet =
+let non_secure_urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let nanoid_non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
+let non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
   return (size = defaultSize) => {
     let id = ''
     let i = size
@@ -13295,11 +11640,11 @@ let nanoid_non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
     return id
   }
 }
-let nanoid_non_secure_nanoid = (size = 21) => {
+let non_secure_nanoid = (size = 21) => {
   let id = ''
   let i = size
   while (i--) {
-    id += nanoid_non_secure_urlAlphabet[(Math.random() * 64) | 0]
+    id += non_secure_urlAlphabet[(Math.random() * 64) | 0]
   }
   return id
 }
@@ -15406,7 +13751,7 @@ class FileCard extends d {
     this.state = {
       formState: storedMetaData
     };
-    this.form.id = nanoid_non_secure_nanoid();
+    this.form.id = non_secure_nanoid();
   } // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
 
 
@@ -16937,7 +15282,7 @@ class Dashboard extends lib_UIPlugin {
     this.id = this.opts.id || 'Dashboard';
     this.title = 'Dashboard';
     this.type = 'orchestrator';
-    this.modalName = `uppy-Dashboard-${nanoid_non_secure_nanoid()}`;
+    this.modalName = `uppy-Dashboard-${non_secure_nanoid()}`;
     this.defaultLocale = dashboard_lib_locale; // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 
     const defaultOptions = {
@@ -16999,9 +15344,1823 @@ class Dashboard extends lib_UIPlugin {
 Dashboard.VERSION = Dashboard_packageJson.version;
 ;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/index.js
 
+;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/node_modules/nanoid/non-secure/index.js
+let nanoid_non_secure_urlAlphabet =
+  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
+let nanoid_non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
+  return (size = defaultSize) => {
+    let id = ''
+    let i = size
+    while (i--) {
+      id += alphabet[(Math.random() * alphabet.length) | 0]
+    }
+    return id
+  }
+}
+let nanoid_non_secure_nanoid = (size = 21) => {
+  let id = ''
+  let i = size
+  while (i--) {
+    id += nanoid_non_secure_urlAlphabet[(Math.random() * 64) | 0]
+  }
+  return id
+}
+
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/NetworkError.js
+class NetworkError extends Error {
+  constructor(error, xhr) {
+    if (xhr === void 0) {
+      xhr = null;
+    }
+
+    super(`This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.`);
+    this.cause = error;
+    this.isNetworkError = true;
+    this.request = xhr;
+  }
+
+}
+
+/* harmony default export */ const lib_NetworkError = (NetworkError);
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/fetchWithNetworkError.js
+
+/**
+ * Wrapper around window.fetch that throws a NetworkError when appropriate
+ */
+
+function fetchWithNetworkError() {
+  return fetch(...arguments).catch(err => {
+    if (err.name === 'AbortError') {
+      throw err;
+    } else {
+      throw new lib_NetworkError(err);
+    }
+  });
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/ErrorWithCause.js
+
+
+class ErrorWithCause extends Error {
+  constructor(message, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    super(message);
+    this.cause = options.cause;
+
+    if (this.cause && has(this.cause, 'isNetworkError')) {
+      this.isNetworkError = this.cause.isNetworkError;
+    }
+  }
+
+}
+
+/* harmony default export */ const lib_ErrorWithCause = (ErrorWithCause);
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/AuthError.js
+
+
+class AuthError extends Error {
+  constructor() {
+    super('Authorization required');
+    this.name = 'AuthError';
+    this.isAuthError = true;
+  }
+
+}
+
+/* harmony default export */ const lib_AuthError = (AuthError);
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/RequestClient.js
+
+
+let RequestClient_Symbol$for;
+
+function RequestClient_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var RequestClient_id = 0;
+
+function RequestClient_classPrivateFieldLooseKey(name) { return "__private_" + RequestClient_id++ + "_" + name; }
+
+
+
+
+const RequestClient_packageJson = {
+  "version": "3.0.0"
+}; // Remove the trailing slash so we can always safely append /xyz.
+
+function stripSlash(url) {
+  return url.replace(/\/$/, '');
+}
+
+async function handleJSONResponse(res) {
+  if (res.status === 401) {
+    throw new lib_AuthError();
+  }
+
+  const jsonPromise = res.json();
+
+  if (res.status < 200 || res.status > 300) {
+    let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`;
+
+    try {
+      const errData = await jsonPromise;
+      errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg;
+      errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg;
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      throw new Error(errMsg);
+    }
+  }
+
+  return jsonPromise;
+}
+
+var _companionHeaders = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("companionHeaders");
+
+var _getPostResponseFunc = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getPostResponseFunc");
+
+var _getUrl = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getUrl");
+
+var _errorHandler = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("errorHandler");
+
+RequestClient_Symbol$for = Symbol.for('uppy test: getCompanionHeaders');
+class RequestClient_RequestClient {
+  constructor(uppy, opts) {
+    Object.defineProperty(this, _errorHandler, {
+      value: _errorHandler2
+    });
+    Object.defineProperty(this, _getUrl, {
+      value: _getUrl2
+    });
+    Object.defineProperty(this, _companionHeaders, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _getPostResponseFunc, {
+      writable: true,
+      value: skip => response => skip ? response : this.onReceiveResponse(response)
+    });
+    this.uppy = uppy;
+    this.opts = opts;
+    this.onReceiveResponse = this.onReceiveResponse.bind(this);
+    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token'];
+    this.preflightDone = false;
+    RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = opts == null ? void 0 : opts.companionHeaders;
+  }
+
+  setCompanionHeaders(headers) {
+    RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = headers;
+  }
+
+  [RequestClient_Symbol$for]() {
+    return RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders];
+  }
+
+  get hostname() {
+    const {
+      companion
+    } = this.uppy.getState();
+    const host = this.opts.companionUrl;
+    return stripSlash(companion && companion[host] ? companion[host] : host);
+  }
+
+  headers() {
+    return Promise.resolve({ ...RequestClient_RequestClient.defaultHeaders,
+      ...RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders]
+    });
+  }
+
+  onReceiveResponse(response) {
+    const state = this.uppy.getState();
+    const companion = state.companion || {};
+    const host = this.opts.companionUrl;
+    const {
+      headers
+    } = response; // Store the self-identified domain name for the Companion instance we just hit.
+
+    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
+      this.uppy.setState({
+        companion: { ...companion,
+          [host]: headers.get('i-am')
+        }
+      });
+    }
+
+    return response;
+  }
+
+  preflight(path) {
+    if (this.preflightDone) {
+      return Promise.resolve(this.allowedHeaders.slice());
+    }
+
+    return fetch(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+      method: 'OPTIONS'
+    }).then(response => {
+      if (response.headers.has('access-control-allow-headers')) {
+        this.allowedHeaders = response.headers.get('access-control-allow-headers').split(',').map(headerName => headerName.trim().toLowerCase());
+      }
+
+      this.preflightDone = true;
+      return this.allowedHeaders.slice();
+    }).catch(err => {
+      this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning');
+      this.preflightDone = true;
+      return this.allowedHeaders.slice();
+    });
+  }
+
+  preflightAndHeaders(path) {
+    return Promise.all([this.preflight(path), this.headers()]).then(_ref => {
+      let [allowedHeaders, headers] = _ref;
+      // filter to keep only allowed Headers
+      Object.keys(headers).forEach(header => {
+        if (!allowedHeaders.includes(header.toLowerCase())) {
+          this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`);
+          delete headers[header]; // eslint-disable-line no-param-reassign
+        }
+      });
+      return headers;
+    });
+  }
+
+  get(path, skipPostResponse) {
+    const method = 'get';
+    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+      method,
+      headers,
+      credentials: this.opts.companionCookiesRule || 'same-origin'
+    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
+  }
+
+  post(path, data, skipPostResponse) {
+    const method = 'post';
+    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+      method,
+      headers,
+      credentials: this.opts.companionCookiesRule || 'same-origin',
+      body: JSON.stringify(data)
+    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
+  }
+
+  delete(path, data, skipPostResponse) {
+    const method = 'delete';
+    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(`${this.hostname}/${path}`, {
+      method,
+      headers,
+      credentials: this.opts.companionCookiesRule || 'same-origin',
+      body: data ? JSON.stringify(data) : null
+    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
+  }
+
+}
+
+function _getUrl2(url) {
+  if (/^(https?:|)\/\//.test(url)) {
+    return url;
+  }
+
+  return `${this.hostname}/${url}`;
+}
+
+function _errorHandler2(method, path) {
+  return err => {
+    var _err;
+
+    if (!((_err = err) != null && _err.isAuthError)) {
+      // eslint-disable-next-line no-param-reassign
+      err = new lib_ErrorWithCause(`Could not ${method} ${RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path)}`, {
+        cause: err
+      });
+    }
+
+    return Promise.reject(err);
+  };
+}
+
+RequestClient_RequestClient.VERSION = RequestClient_packageJson.version;
+RequestClient_RequestClient.defaultHeaders = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'Uppy-Versions': `@uppy/companion-client=${RequestClient_RequestClient.VERSION}`
+};
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/tokenStorage.js
+
+/**
+ * This module serves as an Async wrapper for LocalStorage
+ */
+
+function setItem(key, value) {
+  return new Promise(resolve => {
+    localStorage.setItem(key, value);
+    resolve();
+  });
+}
+function getItem(key) {
+  return Promise.resolve(localStorage.getItem(key));
+}
+function removeItem(key) {
+  return new Promise(resolve => {
+    localStorage.removeItem(key);
+    resolve();
+  });
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/Provider.js
+
+
+
+
+
+const getName = id => {
+  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+};
+
+class Provider extends RequestClient_RequestClient {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.provider = opts.provider;
+    this.id = this.provider;
+    this.name = this.opts.name || getName(this.id);
+    this.pluginId = this.opts.pluginId;
+    this.tokenKey = `companion-${this.pluginId}-auth-token`;
+    this.companionKeysParams = this.opts.companionKeysParams;
+    this.preAuthToken = null;
+  }
+
+  headers() {
+    return Promise.all([super.headers(), this.getAuthToken()]).then(_ref => {
+      let [headers, token] = _ref;
+      const authHeaders = {};
+
+      if (token) {
+        authHeaders['uppy-auth-token'] = token;
+      }
+
+      if (this.companionKeysParams) {
+        authHeaders['uppy-credentials-params'] = btoa(JSON.stringify({
+          params: this.companionKeysParams
+        }));
+      }
+
+      return { ...headers,
+        ...authHeaders
+      };
+    });
+  }
+
+  onReceiveResponse(response) {
+    response = super.onReceiveResponse(response); // eslint-disable-line no-param-reassign
+
+    const plugin = this.uppy.getPlugin(this.pluginId);
+    const oldAuthenticated = plugin.getPluginState().authenticated;
+    const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400;
+    plugin.setPluginState({
+      authenticated
+    });
+    return response;
+  }
+
+  setAuthToken(token) {
+    return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token);
+  }
+
+  getAuthToken() {
+    return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey);
+  }
+  /**
+   * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
+   * or rejects if loading one fails.
+   */
+
+
+  async ensurePreAuth() {
+    if (this.companionKeysParams && !this.preAuthToken) {
+      await this.fetchPreAuthToken();
+
+      if (!this.preAuthToken) {
+        throw new Error('Could not load authentication data required for third-party login. Please try again later.');
+      }
+    }
+  }
+
+  authUrl(queries) {
+    if (queries === void 0) {
+      queries = {};
+    }
+
+    const params = new URLSearchParams(queries);
+
+    if (this.preAuthToken) {
+      params.set('uppyPreAuthToken', this.preAuthToken);
+    }
+
+    return `${this.hostname}/${this.id}/connect?${params}`;
+  }
+
+  fileUrl(id) {
+    return `${this.hostname}/${this.id}/get/${id}`;
+  }
+
+  async fetchPreAuthToken() {
+    if (!this.companionKeysParams) {
+      return;
+    }
+
+    try {
+      const res = await this.post(`${this.id}/preauth/`, {
+        params: this.companionKeysParams
+      });
+      this.preAuthToken = res.token;
+    } catch (err) {
+      this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning');
+    }
+  }
+
+  list(directory) {
+    return this.get(`${this.id}/list/${directory || ''}`);
+  }
+
+  logout() {
+    return this.get(`${this.id}/logout`).then(response => Promise.all([response, this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)])).then(_ref2 => {
+      let [response] = _ref2;
+      return response;
+    });
+  }
+
+  static initPlugin(plugin, opts, defaultOpts) {
+    /* eslint-disable no-param-reassign */
+    plugin.type = 'acquirer';
+    plugin.files = [];
+
+    if (defaultOpts) {
+      plugin.opts = { ...defaultOpts,
+        ...opts
+      };
+    }
+
+    if (opts.serverUrl || opts.serverPattern) {
+      throw new Error('`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in the 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for the Instagram plugin) and use the updated options.`');
+    }
+
+    if (opts.companionAllowedHosts) {
+      const pattern = opts.companionAllowedHosts; // validate companionAllowedHosts param
+
+      if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
+        throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`);
+      }
+
+      plugin.opts.companionAllowedHosts = pattern;
+    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
+      // does not start with https://
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`;
+    } else {
+      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin;
+    }
+
+    plugin.storage = plugin.opts.storage || tokenStorage_namespaceObject;
+    /* eslint-enable no-param-reassign */
+  }
+
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/SearchProvider.js
+
+
+
+
+const SearchProvider_getName = id => {
+  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+};
+
+class SearchProvider extends (/* unused pure expression or super */ null && (RequestClient)) {
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.provider = opts.provider;
+    this.id = this.provider;
+    this.name = this.opts.name || SearchProvider_getName(this.id);
+    this.pluginId = this.opts.pluginId;
+  }
+
+  fileUrl(id) {
+    return `${this.hostname}/search/${this.id}/get/${id}`;
+  }
+
+  search(text, queries) {
+    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries ? `&${queries}` : ''}`);
+  }
+
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/Socket.js
+let Socket_Symbol$for, Socket_Symbol$for2;
+
+function Socket_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var Socket_id = 0;
+
+function Socket_classPrivateFieldLooseKey(name) { return "__private_" + Socket_id++ + "_" + name; }
+
+
+
+var _queued = /*#__PURE__*/Socket_classPrivateFieldLooseKey("queued");
+
+var Socket_emitter = /*#__PURE__*/Socket_classPrivateFieldLooseKey("emitter");
+
+var _isOpen = /*#__PURE__*/Socket_classPrivateFieldLooseKey("isOpen");
+
+var _socket = /*#__PURE__*/Socket_classPrivateFieldLooseKey("socket");
+
+var _handleMessage = /*#__PURE__*/Socket_classPrivateFieldLooseKey("handleMessage");
+
+Socket_Symbol$for = Symbol.for('uppy test: getSocket');
+Socket_Symbol$for2 = Symbol.for('uppy test: getQueued');
+class UppySocket {
+  constructor(opts) {
+    Object.defineProperty(this, _queued, {
+      writable: true,
+      value: []
+    });
+    Object.defineProperty(this, Socket_emitter, {
+      writable: true,
+      value: namespace_emitter()
+    });
+    Object.defineProperty(this, _isOpen, {
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, _socket, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _handleMessage, {
+      writable: true,
+      value: e => {
+        try {
+          const message = JSON.parse(e.data);
+          this.emit(message.action, message.payload);
+        } catch (err) {
+          // TODO: use a more robust error handler.
+          console.log(err); // eslint-disable-line no-console
+        }
+      }
+    });
+    this.opts = opts;
+
+    if (!opts || opts.autoOpen !== false) {
+      this.open();
+    }
+  }
+
+  get isOpen() {
+    return Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen];
+  }
+
+  [Socket_Symbol$for]() {
+    return Socket_classPrivateFieldLooseBase(this, _socket)[_socket];
+  }
+
+  [Socket_Symbol$for2]() {
+    return Socket_classPrivateFieldLooseBase(this, _queued)[_queued];
+  }
+
+  open() {
+    Socket_classPrivateFieldLooseBase(this, _socket)[_socket] = new WebSocket(this.opts.target);
+
+    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onopen = () => {
+      Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = true;
+
+      while (Socket_classPrivateFieldLooseBase(this, _queued)[_queued].length > 0 && Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
+        const first = Socket_classPrivateFieldLooseBase(this, _queued)[_queued].shift();
+
+        this.send(first.action, first.payload);
+      }
+    };
+
+    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onclose = () => {
+      Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = false;
+    };
+
+    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onmessage = Socket_classPrivateFieldLooseBase(this, _handleMessage)[_handleMessage];
+  }
+
+  close() {
+    var _classPrivateFieldLoo;
+
+    (_classPrivateFieldLoo = Socket_classPrivateFieldLooseBase(this, _socket)[_socket]) == null ? void 0 : _classPrivateFieldLoo.close();
+  }
+
+  send(action, payload) {
+    // attach uuid
+    if (!Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen]) {
+      Socket_classPrivateFieldLooseBase(this, _queued)[_queued].push({
+        action,
+        payload
+      });
+
+      return;
+    }
+
+    Socket_classPrivateFieldLooseBase(this, _socket)[_socket].send(JSON.stringify({
+      action,
+      payload
+    }));
+  }
+
+  on(action, handler) {
+    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].on(action, handler);
+  }
+
+  emit(action, payload) {
+    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].emit(action, payload);
+  }
+
+  once(action, handler) {
+    Socket_classPrivateFieldLooseBase(this, Socket_emitter)[Socket_emitter].once(action, handler);
+  }
+
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/index.js
+
+/**
+ * Manages communications with Companion
+ */
+
+
+
+
+
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/emitSocketProgress.js
+
+
+function emitSocketProgress(uploader, progressData, file) {
+  const {
+    progress,
+    bytesUploaded,
+    bytesTotal
+  } = progressData;
+
+  if (progress) {
+    uploader.uppy.log(`Upload progress: ${progress}`);
+    uploader.uppy.emit('upload-progress', file, {
+      uploader,
+      bytesUploaded,
+      bytesTotal
+    });
+  }
+}
+
+/* harmony default export */ const lib_emitSocketProgress = (lodash_throttle(emitSocketProgress, 300, {
+  leading: true,
+  trailing: true
+}));
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getSocketHost.js
+function getSocketHost(url) {
+  // get the host domain
+  const regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/i;
+  const host = regex.exec(url)[1];
+  const socketProtocol = /^http:\/\//i.test(url) ? 'ws' : 'wss';
+  return `${socketProtocol}://${host}`;
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/settle.js
+function settle(promises) {
+  const resolutions = [];
+  const rejections = [];
+
+  function resolved(value) {
+    resolutions.push(value);
+  }
+
+  function rejected(error) {
+    rejections.push(error);
+  }
+
+  const wait = Promise.all(promises.map(promise => promise.then(resolved, rejected)));
+  return wait.then(() => {
+    return {
+      successful: resolutions,
+      failed: rejections
+    };
+  });
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/EventTracker.js
+function EventTracker_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var EventTracker_id = 0;
+
+function EventTracker_classPrivateFieldLooseKey(name) { return "__private_" + EventTracker_id++ + "_" + name; }
+
+var EventTracker_emitter = /*#__PURE__*/EventTracker_classPrivateFieldLooseKey("emitter");
+
+var _events = /*#__PURE__*/EventTracker_classPrivateFieldLooseKey("events");
+
+/**
+ * Create a wrapper around an event emitter with a `remove` method to remove
+ * all events that were added using the wrapped emitter.
+ */
+class EventTracker {
+  constructor(emitter) {
+    Object.defineProperty(this, EventTracker_emitter, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _events, {
+      writable: true,
+      value: []
+    });
+    EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter] = emitter;
+  }
+
+  on(event, fn) {
+    EventTracker_classPrivateFieldLooseBase(this, _events)[_events].push([event, fn]);
+
+    return EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter].on(event, fn);
+  }
+
+  remove() {
+    for (const [event, fn] of EventTracker_classPrivateFieldLooseBase(this, _events)[_events].splice(0)) {
+      EventTracker_classPrivateFieldLooseBase(this, EventTracker_emitter)[EventTracker_emitter].off(event, fn);
+    }
+  }
+
+}
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/ProgressTimeout.js
+function ProgressTimeout_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var ProgressTimeout_id = 0;
+
+function ProgressTimeout_classPrivateFieldLooseKey(name) { return "__private_" + ProgressTimeout_id++ + "_" + name; }
+
+var _aliveTimer = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("aliveTimer");
+
+var _isDone = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("isDone");
+
+var _onTimedOut = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("onTimedOut");
+
+var _timeout = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("timeout");
+
+/**
+ * Helper to abort upload requests if there has not been any progress for `timeout` ms.
+ * Create an instance using `timer = new ProgressTimeout(10000, onTimeout)`
+ * Call `timer.progress()` to signal that there has been progress of any kind.
+ * Call `timer.done()` when the upload has completed.
+ */
+class ProgressTimeout {
+  constructor(timeout, timeoutHandler) {
+    Object.defineProperty(this, _aliveTimer, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _isDone, {
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, _onTimedOut, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _timeout, {
+      writable: true,
+      value: void 0
+    });
+    ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout] = timeout;
+    ProgressTimeout_classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut] = timeoutHandler;
+  }
+
+  progress() {
+    // Some browsers fire another progress event when the upload is
+    // cancelled, so we have to ignore progress after the timer was
+    // told to stop.
+    if (ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone]) return;
+
+    if (ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout] > 0) {
+      clearTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
+      ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = setTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _onTimedOut)[_onTimedOut], ProgressTimeout_classPrivateFieldLooseBase(this, _timeout)[_timeout]);
+    }
+  }
+
+  done() {
+    if (!ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone]) {
+      clearTimeout(ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer]);
+      ProgressTimeout_classPrivateFieldLooseBase(this, _aliveTimer)[_aliveTimer] = null;
+      ProgressTimeout_classPrivateFieldLooseBase(this, _isDone)[_isDone] = true;
+    }
+  }
+
+}
+
+/* harmony default export */ const lib_ProgressTimeout = (ProgressTimeout);
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/RateLimitedQueue.js
+function RateLimitedQueue_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var RateLimitedQueue_id = 0;
+
+function RateLimitedQueue_classPrivateFieldLooseKey(name) { return "__private_" + RateLimitedQueue_id++ + "_" + name; }
+
+function createCancelError() {
+  return new Error('Cancelled');
+}
+
+var _activeRequests = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("activeRequests");
+
+var _queuedHandlers = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queuedHandlers");
+
+var _paused = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("paused");
+
+var _pauseTimer = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("pauseTimer");
+
+var _downLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("downLimit");
+
+var _upperLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("upperLimit");
+
+var _rateLimitingTimer = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("rateLimitingTimer");
+
+var _call = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("call");
+
+var _queueNext = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queueNext");
+
+var _next = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("next");
+
+var _queue = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("queue");
+
+var _dequeue = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("dequeue");
+
+var _resume = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("resume");
+
+var _increaseLimit = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("increaseLimit");
+
+class RateLimitedQueue {
+  constructor(limit) {
+    Object.defineProperty(this, _dequeue, {
+      value: _dequeue2
+    });
+    Object.defineProperty(this, _queue, {
+      value: _queue2
+    });
+    Object.defineProperty(this, _next, {
+      value: _next2
+    });
+    Object.defineProperty(this, _queueNext, {
+      value: _queueNext2
+    });
+    Object.defineProperty(this, _call, {
+      value: _call2
+    });
+    Object.defineProperty(this, _activeRequests, {
+      writable: true,
+      value: 0
+    });
+    Object.defineProperty(this, _queuedHandlers, {
+      writable: true,
+      value: []
+    });
+    Object.defineProperty(this, _paused, {
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, _pauseTimer, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _downLimit, {
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, _upperLimit, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _rateLimitingTimer, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _resume, {
+      writable: true,
+      value: () => this.resume()
+    });
+    Object.defineProperty(this, _increaseLimit, {
+      writable: true,
+      value: () => {
+        if (RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused]) {
+          RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 0);
+          return;
+        }
+
+        RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = this.limit;
+        this.limit = Math.ceil((RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] + RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit]) / 2);
+
+        for (let i = RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit]; i <= this.limit; i++) {
+          RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
+        }
+
+        if (RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] - RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] > 3) {
+          RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], 2000);
+        } else {
+          RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] = Math.floor(RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit] / 2);
+        }
+      }
+    });
+
+    if (typeof limit !== 'number' || limit === 0) {
+      this.limit = Infinity;
+    } else {
+      this.limit = limit;
+    }
+  }
+
+  run(fn, queueOptions) {
+    if (!RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] && RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] < this.limit) {
+      return RateLimitedQueue_classPrivateFieldLooseBase(this, _call)[_call](fn);
+    }
+
+    return RateLimitedQueue_classPrivateFieldLooseBase(this, _queue)[_queue](fn, queueOptions);
+  }
+
+  wrapPromiseFunction(fn, queueOptions) {
+    var _this = this;
+
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      let queuedRequest;
+      const outerPromise = new Promise((resolve, reject) => {
+        queuedRequest = _this.run(() => {
+          let cancelError;
+          let innerPromise;
+
+          try {
+            innerPromise = Promise.resolve(fn(...args));
+          } catch (err) {
+            innerPromise = Promise.reject(err);
+          }
+
+          innerPromise.then(result => {
+            if (cancelError) {
+              reject(cancelError);
+            } else {
+              queuedRequest.done();
+              resolve(result);
+            }
+          }, err => {
+            if (cancelError) {
+              reject(cancelError);
+            } else {
+              queuedRequest.done();
+              reject(err);
+            }
+          });
+          return () => {
+            cancelError = createCancelError();
+          };
+        }, queueOptions);
+      });
+
+      outerPromise.abort = () => {
+        queuedRequest.abort();
+      };
+
+      return outerPromise;
+    };
+  }
+
+  resume() {
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] = false;
+    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
+
+    for (let i = 0; i < this.limit; i++) {
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
+    }
+  }
+
+  /**
+   * Freezes the queue for a while or indefinitely.
+   *
+   * @param {number | null } [duration] Duration for the pause to happen, in milliseconds.
+   *                                    If omitted, the queue won't resume automatically.
+   */
+  pause(duration) {
+    if (duration === void 0) {
+      duration = null;
+    }
+
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] = true;
+    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer]);
+
+    if (duration != null) {
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _pauseTimer)[_pauseTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _resume)[_resume], duration);
+    }
+  }
+  /**
+   * Pauses the queue for a duration, and lower the limit of concurrent requests
+   * when the queue resumes. When the queue resumes, it tries to progressively
+   * increase the limit in `this.#increaseLimit` until another call is made to
+   * `this.rateLimit`.
+   * Call this function when using the RateLimitedQueue for network requests and
+   * the remote server responds with 429 HTTP code.
+   *
+   * @param {number} duration in milliseconds.
+   */
+
+
+  rateLimit(duration) {
+    clearTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer]);
+    this.pause(duration);
+
+    if (this.limit > 1 && Number.isFinite(this.limit)) {
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _upperLimit)[_upperLimit] = this.limit - 1;
+      this.limit = RateLimitedQueue_classPrivateFieldLooseBase(this, _downLimit)[_downLimit];
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _rateLimitingTimer)[_rateLimitingTimer] = setTimeout(RateLimitedQueue_classPrivateFieldLooseBase(this, _increaseLimit)[_increaseLimit], duration);
+    }
+  }
+
+  get isPaused() {
+    return RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused];
+  }
+
+}
+
+function _call2(fn) {
+  RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] += 1;
+  let done = false;
+  let cancelActive;
+
+  try {
+    cancelActive = fn();
+  } catch (err) {
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
+    throw err;
+  }
+
+  return {
+    abort: () => {
+      if (done) return;
+      done = true;
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
+      cancelActive();
+
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
+    },
+    done: () => {
+      if (done) return;
+      done = true;
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
+
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
+    }
+  };
+}
+
+function _queueNext2() {
+  // Do it soon but not immediately, this allows clearing out the entire queue synchronously
+  // one by one without continuously _advancing_ it (and starting new tasks before immediately
+  // aborting them)
+  queueMicrotask(() => RateLimitedQueue_classPrivateFieldLooseBase(this, _next)[_next]());
+}
+
+function _next2() {
+  if (RateLimitedQueue_classPrivateFieldLooseBase(this, _paused)[_paused] || RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] >= this.limit) {
+    return;
+  }
+
+  if (RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].length === 0) {
+    return;
+  } // Dispatch the next request, and update the abort/done handlers
+  // so that cancelling it does the Right Thing (and doesn't just try
+  // to dequeue an already-running request).
+
+
+  const next = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].shift();
+
+  const handler = RateLimitedQueue_classPrivateFieldLooseBase(this, _call)[_call](next.fn);
+
+  next.abort = handler.abort;
+  next.done = handler.done;
+}
+
+function _queue2(fn, options) {
+  if (options === void 0) {
+    options = {};
+  }
+
+  const handler = {
+    fn,
+    priority: options.priority || 0,
+    abort: () => {
+      RateLimitedQueue_classPrivateFieldLooseBase(this, _dequeue)[_dequeue](handler);
+    },
+    done: () => {
+      throw new Error('Cannot mark a queued request as done: this indicates a bug');
+    }
+  };
+
+  const index = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].findIndex(other => {
+    return handler.priority > other.priority;
+  });
+
+  if (index === -1) {
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].push(handler);
+  } else {
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 0, handler);
+  }
+
+  return handler;
+}
+
+function _dequeue2(handler) {
+  const index = RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].indexOf(handler);
+
+  if (index !== -1) {
+    RateLimitedQueue_classPrivateFieldLooseBase(this, _queuedHandlers)[_queuedHandlers].splice(index, 1);
+  }
+}
+
+const internalRateLimitedQueue = Symbol('__queue');
+;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isNetworkError.js
+function isNetworkError(xhr) {
+  if (!xhr) {
+    return false;
+  }
+
+  return xhr.readyState !== 0 && xhr.readyState !== 4 || xhr.status === 0;
+}
+
+/* harmony default export */ const lib_isNetworkError = (isNetworkError);
+;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/locale.js
+/* harmony default export */ const xhr_upload_lib_locale = ({
+  strings: {
+    // Shown in the Informer if an upload is being canceled because it stalled for too long.
+    timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+  }
+});
+;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/index.js
+
+
+
+
+
+
+
+
+
+
+
+const xhr_upload_lib_packageJson = {
+  "version": "3.0.0"
+};
+
+
+function buildResponseError(xhr, err) {
+  let error = err; // No error message
+
+  if (!error) error = new Error('Upload error'); // Got an error message string
+
+  if (typeof error === 'string') error = new Error(error); // Got something else
+
+  if (!(error instanceof Error)) {
+    error = Object.assign(new Error('Upload error'), {
+      data: error
+    });
+  }
+
+  if (lib_isNetworkError(xhr)) {
+    error = new lib_NetworkError(error, xhr);
+    return error;
+  }
+
+  error.request = xhr;
+  return error;
+}
+/**
+ * Set `data.type` in the blob to `file.meta.type`,
+ * because we might have detected a more accurate file type in Uppy
+ * https://stackoverflow.com/a/50875615
+ *
+ * @param {object} file File object with `data`, `size` and `meta` properties
+ * @returns {object} blob updated with the new `type` set from `file.meta.type`
+ */
+
+
+function setTypeInBlob(file) {
+  const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type);
+  return dataWithUpdatedType;
+}
+
+class XHRUpload extends BasePlugin {
+  // eslint-disable-next-line global-require
+  constructor(uppy, opts) {
+    super(uppy, opts);
+    this.type = 'uploader';
+    this.id = this.opts.id || 'XHRUpload';
+    this.title = 'XHRUpload';
+    this.defaultLocale = xhr_upload_lib_locale; // Default options
+
+    const defaultOptions = {
+      formData: true,
+      fieldName: opts.bundle ? 'files[]' : 'file',
+      method: 'post',
+      allowedMetaFields: null,
+      responseUrlFieldName: 'url',
+      bundle: false,
+      headers: {},
+      timeout: 30 * 1000,
+      limit: 5,
+      withCredentials: false,
+      responseType: '',
+
+      /**
+       * @param {string} responseText the response body string
+       */
+      getResponseData(responseText) {
+        let parsedResponse = {};
+
+        try {
+          parsedResponse = JSON.parse(responseText);
+        } catch (err) {
+          uppy.log(err);
+        }
+
+        return parsedResponse;
+      },
+
+      /**
+       *
+       * @param {string} _ the response body string
+       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
+       */
+      getResponseError(_, response) {
+        let error = new Error('Upload error');
+
+        if (lib_isNetworkError(response)) {
+          error = new lib_NetworkError(error, response);
+        }
+
+        return error;
+      },
+
+      /**
+       * Check if the response from the upload endpoint indicates that the upload was successful.
+       *
+       * @param {number} status the response status code
+       */
+      validateStatus(status) {
+        return status >= 200 && status < 300;
+      }
+
+    };
+    this.opts = { ...defaultOptions,
+      ...opts
+    };
+    this.i18nInit();
+    this.handleUpload = this.handleUpload.bind(this); // Simultaneous upload limiting is shared across all uploads with this plugin.
+
+    if (internalRateLimitedQueue in this.opts) {
+      this.requests = this.opts[internalRateLimitedQueue];
+    } else {
+      this.requests = new RateLimitedQueue(this.opts.limit);
+    }
+
+    if (this.opts.bundle && !this.opts.formData) {
+      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.');
+    }
+
+    if ((opts == null ? void 0 : opts.allowedMetaFields) === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.');
+    }
+
+    this.uploaderEvents = Object.create(null);
+  }
+
+  getOptions(file) {
+    const overrides = this.uppy.getState().xhrUpload;
+    const {
+      headers
+    } = this.opts;
+    const opts = { ...this.opts,
+      ...(overrides || {}),
+      ...(file.xhrUpload || {}),
+      headers: {}
+    }; // Support for `headers` as a function, only in the XHRUpload settings.
+    // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
+    //
+    // ```js
+    // headers: (file) => ({ expires: file.meta.expires })
+    // ```
+
+    if (typeof headers === 'function') {
+      opts.headers = headers(file);
+    } else {
+      Object.assign(opts.headers, this.opts.headers);
+    }
+
+    if (overrides) {
+      Object.assign(opts.headers, overrides.headers);
+    }
+
+    if (file.xhrUpload) {
+      Object.assign(opts.headers, file.xhrUpload.headers);
+    }
+
+    return opts;
+  } // eslint-disable-next-line class-methods-use-this
+
+
+  addMetadata(formData, meta, opts) {
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields : Object.keys(meta); // Send along all fields by default.
+
+    allowedMetaFields.forEach(item => {
+      formData.append(item, meta[item]);
+    });
+  }
+
+  createFormDataUpload(file, opts) {
+    const formPost = new FormData();
+    this.addMetadata(formPost, file.meta, opts);
+    const dataWithUpdatedType = setTypeInBlob(file);
+
+    if (file.name) {
+      formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name);
+    } else {
+      formPost.append(opts.fieldName, dataWithUpdatedType);
+    }
+
+    return formPost;
+  }
+
+  createBundledUpload(files, opts) {
+    const formPost = new FormData();
+    const {
+      meta
+    } = this.uppy.getState();
+    this.addMetadata(formPost, meta, opts);
+    files.forEach(file => {
+      const options = this.getOptions(file);
+      const dataWithUpdatedType = setTypeInBlob(file);
+
+      if (file.name) {
+        formPost.append(options.fieldName, dataWithUpdatedType, file.name);
+      } else {
+        formPost.append(options.fieldName, dataWithUpdatedType);
+      }
+    });
+    return formPost;
+  }
+
+  upload(file, current, total) {
+    const opts = this.getOptions(file);
+    this.uppy.log(`uploading ${current} of ${total}`);
+    return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file);
+      const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
+      const xhr = new XMLHttpRequest();
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy);
+      let queuedRequest;
+      const timer = new lib_ProgressTimeout(opts.timeout, () => {
+        xhr.abort();
+        queuedRequest.done();
+        const error = new Error(this.i18n('timedOut', {
+          seconds: Math.ceil(opts.timeout / 1000)
+        }));
+        this.uppy.emit('upload-error', file, error);
+        reject(error);
+      });
+      const id = nanoid_non_secure_nanoid();
+      xhr.upload.addEventListener('loadstart', () => {
+        this.uppy.log(`[XHRUpload] ${id} started`);
+      });
+      xhr.upload.addEventListener('progress', ev => {
+        this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`); // Begin checking for timeouts when progress starts, instead of loading,
+        // to avoid timing out requests on browser concurrency queue
+
+        timer.progress();
+
+        if (ev.lengthComputable) {
+          this.uppy.emit('upload-progress', file, {
+            uploader: this,
+            bytesUploaded: ev.loaded,
+            bytesTotal: ev.total
+          });
+        }
+      });
+      xhr.addEventListener('load', () => {
+        this.uppy.log(`[XHRUpload] ${id} finished`);
+        timer.done();
+        queuedRequest.done();
+
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove();
+          this.uploaderEvents[file.id] = null;
+        }
+
+        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
+          const body = opts.getResponseData(xhr.responseText, xhr);
+          const uploadURL = body[opts.responseUrlFieldName];
+          const uploadResp = {
+            status: xhr.status,
+            body,
+            uploadURL
+          };
+          this.uppy.emit('upload-success', file, uploadResp);
+
+          if (uploadURL) {
+            this.uppy.log(`Download ${file.name} from ${uploadURL}`);
+          }
+
+          return resolve(file);
+        }
+
+        const body = opts.getResponseData(xhr.responseText, xhr);
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
+        const response = {
+          status: xhr.status,
+          body
+        };
+        this.uppy.emit('upload-error', file, error, response);
+        return reject(error);
+      });
+      xhr.addEventListener('error', () => {
+        this.uppy.log(`[XHRUpload] ${id} errored`);
+        timer.done();
+        queuedRequest.done();
+
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove();
+          this.uploaderEvents[file.id] = null;
+        }
+
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr));
+        this.uppy.emit('upload-error', file, error);
+        return reject(error);
+      });
+      xhr.open(opts.method.toUpperCase(), opts.endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
+      // before `open()` is called.
+
+      xhr.withCredentials = opts.withCredentials;
+
+      if (opts.responseType !== '') {
+        xhr.responseType = opts.responseType;
+      }
+
+      queuedRequest = this.requests.run(() => {
+        this.uppy.emit('upload-started', file); // When using an authentication system like JWT, the bearer token goes as a header. This
+        // header needs to be fresh each time the token is refreshed so computing and setting the
+        // headers just before the upload starts enables this kind of authentication to work properly.
+        // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
+
+        const currentOpts = this.getOptions(file);
+        Object.keys(currentOpts.headers).forEach(header => {
+          xhr.setRequestHeader(header, currentOpts.headers[header]);
+        });
+        xhr.send(data);
+        return () => {
+          timer.done();
+          xhr.abort();
+        };
+      });
+      this.onFileRemove(file.id, () => {
+        queuedRequest.abort();
+        reject(new Error('File removed'));
+      });
+      this.onCancelAll(file.id, _ref => {
+        let {
+          reason
+        } = _ref;
+
+        if (reason === 'user') {
+          queuedRequest.abort();
+        }
+
+        reject(new Error('Upload cancelled'));
+      });
+    });
+  }
+
+  uploadRemote(file) {
+    const opts = this.getOptions(file);
+    return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file);
+      const fields = {};
+      const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields // Send along all fields by default.
+      : Object.keys(file.meta);
+      allowedMetaFields.forEach(name => {
+        fields[name] = file.meta[name];
+      });
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient_RequestClient;
+      const client = new Client(this.uppy, file.remote.providerOptions);
+      client.post(file.remote.url, { ...file.remote.body,
+        protocol: 'multipart',
+        endpoint: opts.endpoint,
+        size: file.data.size,
+        fieldname: opts.fieldName,
+        metadata: fields,
+        httpMethod: opts.method,
+        useFormData: opts.formData,
+        headers: opts.headers
+      }).then(res => {
+        const {
+          token
+        } = res;
+        const host = getSocketHost(file.remote.companionUrl);
+        const socket = new UppySocket({
+          target: `${host}/api/${token}`,
+          autoOpen: false
+        });
+        this.uploaderEvents[file.id] = new EventTracker(this.uppy);
+        let queuedRequest;
+        this.onFileRemove(file.id, () => {
+          socket.send('cancel', {});
+          queuedRequest.abort();
+          resolve(`upload ${file.id} was removed`);
+        });
+        this.onCancelAll(file.id, function (_temp) {
+          let {
+            reason
+          } = _temp === void 0 ? {} : _temp;
+
+          if (reason === 'user') {
+            socket.send('cancel', {});
+            queuedRequest.abort();
+          }
+
+          resolve(`upload ${file.id} was canceled`);
+        });
+        this.onRetry(file.id, () => {
+          socket.send('pause', {});
+          socket.send('resume', {});
+        });
+        this.onRetryAll(file.id, () => {
+          socket.send('pause', {});
+          socket.send('resume', {});
+        });
+        socket.on('progress', progressData => lib_emitSocketProgress(this, progressData, file));
+        socket.on('success', data => {
+          const body = opts.getResponseData(data.response.responseText, data.response);
+          const uploadURL = body[opts.responseUrlFieldName];
+          const uploadResp = {
+            status: data.response.status,
+            body,
+            uploadURL
+          };
+          this.uppy.emit('upload-success', file, uploadResp);
+          queuedRequest.done();
+
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove();
+            this.uploaderEvents[file.id] = null;
+          }
+
+          return resolve();
+        });
+        socket.on('error', errData => {
+          const resp = errData.response;
+          const error = resp ? opts.getResponseError(resp.responseText, resp) : Object.assign(new Error(errData.error.message), {
+            cause: errData.error
+          });
+          this.uppy.emit('upload-error', file, error);
+          queuedRequest.done();
+
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove();
+            this.uploaderEvents[file.id] = null;
+          }
+
+          reject(error);
+        });
+        queuedRequest = this.requests.run(() => {
+          socket.open();
+
+          if (file.isPaused) {
+            socket.send('pause', {});
+          }
+
+          return () => socket.close();
+        });
+      }).catch(err => {
+        this.uppy.emit('upload-error', file, err);
+        reject(err);
+      });
+    });
+  }
+
+  uploadBundle(files) {
+    return new Promise((resolve, reject) => {
+      const {
+        endpoint
+      } = this.opts;
+      const {
+        method
+      } = this.opts;
+      const optsFromState = this.uppy.getState().xhrUpload;
+      const formData = this.createBundledUpload(files, { ...this.opts,
+        ...(optsFromState || {})
+      });
+      const xhr = new XMLHttpRequest();
+
+      const emitError = error => {
+        files.forEach(file => {
+          this.uppy.emit('upload-error', file, error);
+        });
+      };
+
+      const timer = new lib_ProgressTimeout(this.opts.timeout, () => {
+        xhr.abort();
+        const error = new Error(this.i18n('timedOut', {
+          seconds: Math.ceil(this.opts.timeout / 1000)
+        }));
+        emitError(error);
+        reject(error);
+      });
+      xhr.upload.addEventListener('loadstart', () => {
+        this.uppy.log('[XHRUpload] started uploading bundle');
+        timer.progress();
+      });
+      xhr.upload.addEventListener('progress', ev => {
+        timer.progress();
+        if (!ev.lengthComputable) return;
+        files.forEach(file => {
+          this.uppy.emit('upload-progress', file, {
+            uploader: this,
+            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesTotal: file.size
+          });
+        });
+      });
+      xhr.addEventListener('load', ev => {
+        timer.done();
+
+        if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+          const body = this.opts.getResponseData(xhr.responseText, xhr);
+          const uploadResp = {
+            status: ev.target.status,
+            body
+          };
+          files.forEach(file => {
+            this.uppy.emit('upload-success', file, uploadResp);
+          });
+          return resolve();
+        }
+
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error');
+        error.request = xhr;
+        emitError(error);
+        return reject(error);
+      });
+      xhr.addEventListener('error', () => {
+        timer.done();
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error');
+        emitError(error);
+        return reject(error);
+      });
+      this.uppy.on('cancel-all', function (_temp2) {
+        let {
+          reason
+        } = _temp2 === void 0 ? {} : _temp2;
+        if (reason !== 'user') return;
+        timer.done();
+        xhr.abort();
+      });
+      xhr.open(method.toUpperCase(), endpoint, true); // IE10 does not allow setting `withCredentials` and `responseType`
+      // before `open()` is called.
+
+      xhr.withCredentials = this.opts.withCredentials;
+
+      if (this.opts.responseType !== '') {
+        xhr.responseType = this.opts.responseType;
+      }
+
+      Object.keys(this.opts.headers).forEach(header => {
+        xhr.setRequestHeader(header, this.opts.headers[header]);
+      });
+      xhr.send(formData);
+      files.forEach(file => {
+        this.uppy.emit('upload-started', file);
+      });
+    });
+  }
+
+  uploadFiles(files) {
+    const promises = files.map((file, i) => {
+      const current = parseInt(i, 10) + 1;
+      const total = files.length;
+
+      if (file.error) {
+        return Promise.reject(new Error(file.error));
+      }
+
+      if (file.isRemote) {
+        return this.uploadRemote(file, current, total);
+      }
+
+      return this.upload(file, current, total);
+    });
+    return settle(promises);
+  }
+
+  onFileRemove(fileID, cb) {
+    this.uploaderEvents[fileID].on('file-removed', file => {
+      if (fileID === file.id) cb(file.id);
+    });
+  }
+
+  onRetry(fileID, cb) {
+    this.uploaderEvents[fileID].on('upload-retry', targetFileID => {
+      if (fileID === targetFileID) {
+        cb();
+      }
+    });
+  }
+
+  onRetryAll(fileID, cb) {
+    this.uploaderEvents[fileID].on('retry-all', () => {
+      if (!this.uppy.getFile(fileID)) return;
+      cb();
+    });
+  }
+
+  onCancelAll(fileID, eventHandler) {
+    var _this = this;
+
+    this.uploaderEvents[fileID].on('cancel-all', function () {
+      if (!_this.uppy.getFile(fileID)) return;
+      eventHandler(...arguments);
+    });
+  }
+
+  handleUpload(fileIDs) {
+    if (fileIDs.length === 0) {
+      this.uppy.log('[XHRUpload] No files to upload!');
+      return Promise.resolve();
+    } // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
+    // (basically just AwsS3) using the internal symbol
+
+
+    if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
+      this.uppy.log('[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0', 'warning');
+    }
+
+    this.uppy.log('[XHRUpload] Uploading...');
+    const files = fileIDs.map(fileID => this.uppy.getFile(fileID));
+
+    if (this.opts.bundle) {
+      // if bundle: true, we don’t support remote uploads
+      const isSomeFileRemote = files.some(file => file.isRemote);
+
+      if (isSomeFileRemote) {
+        throw new Error('Can’t upload remote files when the `bundle: true` option is set');
+      }
+
+      if (typeof this.opts.headers === 'function') {
+        throw new TypeError('`headers` may not be a function when the `bundle: true` option is set');
+      }
+
+      return this.uploadBundle(files);
+    }
+
+    return this.uploadFiles(files).then(() => null);
+  }
+
+  install() {
+    if (this.opts.bundle) {
+      const {
+        capabilities
+      } = this.uppy.getState();
+      this.uppy.setState({
+        capabilities: { ...capabilities,
+          individualCancellation: false
+        }
+      });
+    }
+
+    this.uppy.addUploader(this.handleUpload);
+  }
+
+  uninstall() {
+    if (this.opts.bundle) {
+      const {
+        capabilities
+      } = this.uppy.getState();
+      this.uppy.setState({
+        capabilities: { ...capabilities,
+          individualCancellation: true
+        }
+      });
+    }
+
+    this.uppy.removeUploader(this.handleUpload);
+  }
+
+}
+XHRUpload.VERSION = xhr_upload_lib_packageJson.version;
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.from.js
+var es_array_from = __webpack_require__(1038);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.match.js
 var es_string_match = __webpack_require__(4723);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
+var es_regexp_to_string = __webpack_require__(9714);
 ;// CONCATENATED MODULE: ./client/src/js/common.js
+
+
+
+
+
 
 
 
@@ -17210,77 +17369,186 @@ function DFU() {
     var result = mimetype.match(pattern);
     return result != null;
   };
+  /**
+   * Notify the configured notification URL
+   * @param bool whether upload success or error
+   * @param object file the Uppy file object (https://uppy.io/docs/uppy/#File-Objects)
+   * @param string uri a URN or URL representing the file
+   * @param string notificationUrl
+   */
+
+
+  this.notify = function (result, uppyFile, uri, notificationUrl) {
+    try {
+      var formData = {
+        'uploaded': 1,
+        'result': result ? 1 : 0,
+        'id': uppyFile.id,
+        'name': uppyFile.name ? uppyFile.name : '',
+        'size': uppyFile.size ? uppyFile.size : '',
+        'type': uppyFile.type ? uppyFile.type : '',
+        'uri': uri,
+        'src': window.location.href
+      };
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', notificationUrl);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(new URLSearchParams(formData).toString());
+    } catch (e) {
+      console.error('Could not notify (' + (result ? 1 : 0) + ') - ' + e);
+    }
+  };
+  /**
+   * Notify completion to the configured notify URL
+   * @param object 'The result parameter is an object with arrays of successful and failed files'
+   * @param string notification URL
+   */
+
+
+  this.notifyComplete = function (result, notificationUrl) {
+    try {
+      var formData = {
+        'uploaded': 1,
+        'completed': 1,
+        'successful': result.successful.length,
+        'failed': result.failed.length,
+        'uploadId': result.uploadID,
+        'src': window.location.href
+      };
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', notificationUrl);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(new URLSearchParams(formData).toString());
+    } catch (e) {
+      console.error('Could not notify completion: ' + e);
+    }
+  };
+  /**
+   * Get a pre-signed URL for a file
+   * @param File the file needing a pre signed URL
+   * @param string presign URL (the service that does the presigning)
+   */
+
+
+  this.setPresignedUrl = function (file, presignUrl, callback) {
+    try {
+      var formData = {
+        'id': file.id,
+        'name': file.name
+      };
+
+      var xhrSuccess = function xhrSuccess() {
+        var response = JSON.parse(xhr.responseText);
+        var preSignedUrl = response.presignedurl ? response.presignedurl : false;
+        callback(file, preSignedUrl);
+      };
+
+      var xhrError = function xhrError() {
+        callback(file, false);
+      };
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', presignUrl);
+      xhr.onload = xhrSuccess;
+      xhr.onerror = xhrError;
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(new URLSearchParams(formData).toString());
+    } catch (e) {
+      console.error('Could not get presigned url: ' + e);
+    }
+  };
 }
-;// CONCATENATED MODULE: ./client/src/js/uppy.js
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+;// CONCATENATED MODULE: ./client/src/js/loader.js
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+/**
+ * DFU Loader applied to a single DOM Element representing an upload field
+ */
 
 
 
 
+function DFULoader(opts) {
+  this.uploadElement = opts.uploadElement;
 
+  this.init = function () {};
 
+  this.handle = function () {
+    var _this = this;
 
-
-
-
-
-
-
-
-
-
-
-
- // Common
-
-
-
-var dfu_uploaders_uppy = Array.from(document.getElementsByClassName('dfu-uploader-uppy'));
-
-if (dfu_uploaders_uppy) {
-  var dfu_uppy_upload_handler = function dfu_uppy_upload_handler(upload_element) {
     var dfu = new DFU();
     dfu.init();
-    var config = JSON.parse(upload_element.dataset.config);
-    var id = upload_element.id;
+    var config = JSON.parse(this.uploadElement.dataset.config);
+    var id = this.uploadElement.id;
+    var uploadType = this.uploadElement.dataset.uploadType; // default httpMethod is post
+
+    var httpMethod = config.request.method ? config.request.method : 'POST';
+    var formData = true;
+    var bundle = false;
+
+    switch (httpMethod) {
+      case 'PUT':
+        formData = false;
+        break;
+    }
+
     var meta = {};
 
     if (_typeof(config.request.params) == 'object') {
       meta = config.request.params;
     }
 
-    var max_file_size = config.validation.sizeLimit ? config.validation.sizeLimit : null;
-    var max_num_files = config.validation.itemLimit ? config.validation.itemLimit : null;
-    var min_num_files = null;
-    var allowed_file_types = config.validation.acceptFiles ? config.validation.acceptFiles.split(',') : ['image/*']; // default to images
+    var maxFileSize = config.validation.sizeLimit ? config.validation.sizeLimit : null;
+    var maxNumFiles = config.validation.itemLimit ? config.validation.itemLimit : null;
+    var minNumFiles = null;
+    var allowedFileTypes = config.validation.acceptFiles ? config.validation.acceptFiles.split(',') : ['image/*']; // default to images
 
-    var max_image_width = config.validation.image.maxWidth ? config.validation.image.maxWidth : 0;
-    var max_image_height = config.validation.image.maxHeight ? config.validation.image.maxHeight : 0;
-    var min_image_width = config.validation.image.minWidth ? config.validation.image.minWidth : 0;
-    var min_image_height = config.validation.image.minHeight ? config.validation.image.minHeight : 0;
+    var maxImageWidth = config.validation.image.maxWidth ? config.validation.image.maxWidth : 0;
+    var maxImageHeight = config.validation.image.maxHeight ? config.validation.image.maxHeight : 0;
+    var minImageWidth = config.validation.image.minWidth ? config.validation.image.minWidth : 0;
+    var minImageHeight = config.validation.image.minHeight ? config.validation.image.minHeight : 0;
     var restrictions = {
-      maxFileSize: max_file_size,
-      maxNumberOfFiles: max_num_files,
-      minNumberOfFiles: min_num_files,
-      allowedFileTypes: allowed_file_types
+      maxFileSize: maxFileSize,
+      maxNumberOfFiles: maxNumFiles,
+      minNumberOfFiles: minNumFiles,
+      allowedFileTypes: allowedFileTypes
     };
+    var notificationUrl = config.urls.notificationUrl ? config.urls.notificationUrl : null;
+    var preSignUrlForFile = config.urls.presignUrl ? config.urls.presignUrl : null;
     var uppy = new lib_Uppy({
       id: 'uppy-' + id,
       autoProceed: false,
-      allowMultipleUploads: true,
+      allowMultipleUploadBatches: true,
       debug: false,
       meta: meta,
       restrictions: restrictions
     }).use(Dashboard, {
       id: 'dashboard-' + id,
-      target: upload_element.querySelector('.dashboard'),
+      target: this.uploadElement.querySelector('.dashboard'),
       inline: true,
       width: '100%',
       height: '370px',
@@ -17293,34 +17561,57 @@ if (dfu_uploaders_uppy) {
       note: '',
       doneButtonHandler: null
     }).use(XHRUpload, {
-      method: 'post',
-      formData: true,
-      bundle: false,
-      // max allowed files here ?
-      fieldName: upload_element.dataset.name,
+      method: httpMethod,
+      formData: formData,
+      bundle: bundle,
+      fieldName: this.uploadElement.dataset.name,
       endpoint: config.request.endpoint
     });
     uppy.on('upload-success', function (file, response) {
-      // Single upload success
-      if (response.body.uuid) {
-        dfu.appendField(upload_element, file.id, response.body.uuid);
+      var uri = '';
+      var endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+
+      if (endpoint) {
+        uri = endpoint;
+      } else if (response.body.uuid) {
+        uri = response.body.uuid;
+      } // notify success
+
+
+      dfu.notify(true, file, uri, notificationUrl); // Append field when a uri is available
+
+      if (uri) {
+        dfu.appendField(_this.uploadElement, file.id, uri);
       }
     });
     uppy.on('upload-error', function (file, response) {
-      // Single upload error
-      dfu.removeField(upload_element, file.id);
+      var uri = '';
+      var endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+
+      if (endpoint) {
+        uri = endpoint;
+      } else if (response.body.uuid) {
+        uri = response.body.uuid;
+      } // notify error
+
+
+      dfu.notify(false, file, uri, notificationUrl); // Single upload error
+
+      dfu.removeField(_this.uploadElement, file.id);
     });
     uppy.on('error', function (result) {
       // all error
-      dfu.handleUnblock(upload_element);
+      dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('complete', function (result) {
-      // all complete
-      dfu.handleUnblock(upload_element);
+      // ping completion url
+      dfu.notifyComplete(result, notificationUrl); // all complete
+
+      dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('cancel-all', function (result) {
       // all cancelled
-      dfu.handleUnblock(upload_element);
+      dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('file-removed', function (file, reason) {
       // a file was removed
@@ -17328,12 +17619,43 @@ if (dfu_uploaders_uppy) {
 
       if (items.length == 0) {
         // all files removed
-        dfu.handleUnblock(upload_element);
+        dfu.handleUnblock(_this.uploadElement);
       }
     });
     uppy.on('file-added', function (file) {
       // block submit
-      dfu.handleSubmit(upload_element); // set required file meta
+      dfu.handleSubmit(_this.uploadElement); // update pre-signed URLs if required
+
+      if (preSignUrlForFile) {
+        // initially clear the endpoint for this file
+        uppy.setFileState(file.id, {
+          xhrUpload: _objectSpread(_objectSpread({}, file.xhrUpload), {}, {
+            endpoint: ''
+          })
+        });
+        dfu.setPresignedUrl( // the file
+        file, // URL to get presigned URLs from
+        preSignUrlForFile, // callback to set pre-signed URL
+        function (file, preSignedUrl) {
+          if (preSignedUrl) {
+            uppy.setFileState(file.id, {
+              xhrUpload: _objectSpread(_objectSpread({}, file.xhrUpload), {}, {
+                endpoint: preSignedUrl
+              })
+            });
+          } else {
+            // failed to get a presigned URL
+            message = 'This file could not be added due to a system error. Please try again later.';
+            uppy.removeFile(file.id);
+            uppy.info({
+              message: message,
+              type: 'error',
+              duration: 7500
+            });
+          }
+        });
+      } // set required file meta
+
 
       var meta = {};
       meta[config.request.uuidName] = file.id;
@@ -17350,16 +17672,16 @@ if (dfu_uploaders_uppy) {
           var remove = false;
           var message = '';
 
-          if (max_image_width > 0 && image.width > max_image_width) {
+          if (maxImageWidth > 0 && image.width > maxImageWidth) {
             message = config.messages.maxWidthImageError;
             remove = true;
-          } else if (max_image_height > 0 && image.height > max_image_height) {
+          } else if (maxImageHeight > 0 && image.height > maxImageHeight) {
             message = config.messages.maxHeightImageError;
             remove = true;
-          } else if (min_image_width > 0 && image.width < min_image_width) {
+          } else if (minImageWidth > 0 && image.width < minImageWidth) {
             message = config.messages.minWidthImageError;
             remove = true;
-          } else if (min_image_height > 0 && image.height < min_image_height) {
+          } else if (minImageHeight > 0 && image.height < minImageHeight) {
             message = config.messages.minHeightImageError;
             remove = true;
           }
@@ -17381,26 +17703,25 @@ if (dfu_uploaders_uppy) {
       }
     });
   };
-
-  var _iterator = _createForOfIteratorHelper(dfu_uploaders_uppy),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var elem = _step.value;
-
-      try {
-        dfu_uppy_upload_handler(elem);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
 }
+;// CONCATENATED MODULE: ./client/src/js/uppy.js
+
+
+
+
+
+var dfuXHRUploaders = document.querySelectorAll('.dfu-uploader-uppy');
+dfuXHRUploaders.forEach(function (dfuXHRUploaderElement) {
+  try {
+    var dfuLoader = new DFULoader({
+      uploadElement: dfuXHRUploaderElement
+    });
+    dfuLoader.init();
+    dfuLoader.handle();
+  } catch (e) {
+    console.error('Caught uploader error:' + e);
+  }
+});
 })();
 
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
