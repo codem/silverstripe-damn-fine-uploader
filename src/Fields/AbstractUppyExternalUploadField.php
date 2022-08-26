@@ -152,27 +152,28 @@ abstract class AbstractUppyExternalUploadField extends UppyField
         try {
 
             $response = false;
-            $form = $this->getForm();
-            $securityToken = $form->getSecurityToken();
-            $tokenValue = $securityToken->getValue();
-            $tokenName = $securityToken->getName();
             $post = $request->postVars();
 
-            if(empty($post['meta'])) {
-                throw new \Exception("Missing meta key in the submitted notification");
-            }
+            if(isset($post['uri'])) {
 
-            // Validate token in meta, token value must match the value for this field's form
-            $meta = json_decode($post['meta'], true, 512, JSON_THROW_ON_ERROR);
-            if(empty($meta[ $tokenName ])) {
-                throw new \Exception("No security token in the submitted notification");
-            }
-            if($meta[ $tokenName ] !== $tokenValue) {
-                throw new \Exception("Security token value does not match the expected value");
-            }
-            if(isset($post['completed'])) {
-                // batch completion notification
-            } else if(isset($post['uri'])) {
+                $form = $this->getForm();
+                $securityToken = $form->getSecurityToken();
+                $tokenValue = $securityToken->getValue();
+                $tokenName = $securityToken->getName();
+
+                if(empty($post['meta'])) {
+                    throw new \Exception("Missing meta key in the submitted notification");
+                }
+
+                // Validate token in meta, token value must match the value for this field's form
+                $meta = json_decode($post['meta'], true, 512, JSON_THROW_ON_ERROR);
+                if(empty($meta[ $tokenName ])) {
+                    throw new \Exception("No security token in the submitted notification");
+                }
+                if($meta[ $tokenName ] !== $tokenValue) {
+                    throw new \Exception("Security token value does not match the expected value");
+                }
+
                 // single file upload completion
                 $externalUpload = ExternalUpload::create([
                     'ServiceName' => static::getServiceName(),
