@@ -34,8 +34,13 @@ class ExternalUpload extends DataObject
         'ServiceTitle' => 'Varchar(255)',
         'Title' => 'Varchar(255)',
         'Description' => 'Text',
+        'IsSuccess' => 'Boolean',
+        'UploadSize' => 'Int',
+        'UploadType' => 'Varchar(255)',
         'UploadHash' => 'Varchar(255)',
         'UploadUri' => 'Text',
+        'UploadSrc' => 'Text',
+        'UploadBatchId' => 'Varchar(255)'
     ];
 
     /**
@@ -57,13 +62,6 @@ class ExternalUpload extends DataObject
         'Created.Nice' => 'Created',
         'UploadHash' => 'Upload code',
         'UploadUri' => 'Upload URL'
-    ];
-
-    /**
-     * @var array
-     */
-    private static $has_one = [
-        'ExternalUploadPage' => ExternalUploadPage::class
     ];
 
     /**

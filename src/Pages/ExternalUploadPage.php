@@ -20,13 +20,6 @@ class ExternalUploadPage extends UploadPage
     ];
 
     /**
-     * @var array
-     */
-    private static $has_many = [
-        'ExternalUploads' => ExternalUploads::class,
-    ];
-
-    /**
      * Add default values to database
      * @var array
      */
@@ -86,5 +79,7 @@ class ExternalUploadPage extends UploadPage
         }
         return $uploadField;
     }
+
+
 
 }

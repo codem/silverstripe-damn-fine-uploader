@@ -293,22 +293,13 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-      * Handle notification received after upload success, error or completion
-      * For completion the POST data will have a 'completed' key
-      * For per file completion notifications, the POST data will have a id being the uploader file id
-      * along with name, size, type and uuid keys
-      * The uuid is the value included in a {@link self::upload()} response
-      *
-      * This method simply notifies extends of a completed upload or completed batch
-      * by passing the request value to the extension
-      *
-      * @param SilverStripe\Control\HTTPRequest $request
-      * @return SilverStripe\Control\HTTPResponse
-      */
-    public function notify(HTTPRequest $request) {
-        $response = true;
-        $this->extend('onUploadNotify', $request, $response);
-        return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+     * Handle notification received after upload success, error or completion
+     * By default fields do not support notify, child fields should support this
+     * @param SilverStripe\Control\HTTPRequest $request
+     * @return SilverStripe\Control\HTTPResponse
+     */
+    public function notify(HTTPRequest $request) : HTTPResponse {
+        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
     }
 
     /**

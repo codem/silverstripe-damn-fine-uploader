@@ -76,4 +76,11 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
         return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function notify(HTTPRequest $request) : HTTPResponse {
+        return parent::notify($request);
+    }
+
 }

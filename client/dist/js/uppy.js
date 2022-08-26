@@ -17373,22 +17373,24 @@ function DFU() {
    * Notify the configured notification URL
    * @param bool whether upload success or error
    * @param object file the Uppy file object (https://uppy.io/docs/uppy/#File-Objects)
+   * @param object  the uppy response with response data from the remote endpoint
    * @param string uri a URN or URL representing the file
    * @param string notificationUrl
    */
 
 
-  this.notify = function (result, uppyFile, uri, notificationUrl) {
+  this.notify = function (result, uppyFile, uppyResponse, uri, notificationUrl) {
     try {
       var formData = {
-        'uploaded': 1,
-        'result': result ? 1 : 0,
-        'id': uppyFile.id,
-        'name': uppyFile.name ? uppyFile.name : '',
-        'size': uppyFile.size ? uppyFile.size : '',
-        'type': uppyFile.type ? uppyFile.type : '',
-        'uri': uri,
-        'src': window.location.href
+        uploaded: 1,
+        result: result ? 1 : 0,
+        id: uppyFile.id,
+        name: uppyFile.name ? uppyFile.name : '',
+        size: uppyFile.size ? uppyFile.size : '',
+        type: uppyFile.type ? uppyFile.type : '',
+        uri: uri,
+        src: window.location.href,
+        meta: JSON.stringify(uppyFile.meta)
       };
       var xhr = new XMLHttpRequest();
       xhr.open('POST', notificationUrl);
@@ -17408,12 +17410,12 @@ function DFU() {
   this.notifyComplete = function (result, notificationUrl) {
     try {
       var formData = {
-        'uploaded': 1,
-        'completed': 1,
-        'successful': result.successful.length,
-        'failed': result.failed.length,
-        'uploadId': result.uploadID,
-        'src': window.location.href
+        uploaded: 1,
+        completed: 1,
+        successful: result.successful.length,
+        failed: result.failed.length,
+        uploadId: result.uploadID,
+        src: window.location.href
       };
       var xhr = new XMLHttpRequest();
       xhr.open('POST', notificationUrl);
@@ -17578,7 +17580,7 @@ function DFULoader(opts) {
       } // notify success
 
 
-      dfu.notify(true, file, uri, notificationUrl); // Append field when a uri is available
+      dfu.notify(true, file, response, uri, notificationUrl); // Append field when a uri is available
 
       if (uri) {
         dfu.appendField(_this.uploadElement, file.id, uri);

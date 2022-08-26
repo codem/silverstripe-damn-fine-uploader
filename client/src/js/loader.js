@@ -29,7 +29,7 @@ export default function DFULoader(opts) {
         break;
     }
 
-    var meta = {};
+    let meta = {};
     if(typeof config.request.params == 'object') {
       meta = config.request.params;
     }
@@ -98,7 +98,7 @@ export default function DFULoader(opts) {
       }
 
       // notify success
-      dfu.notify(true, file, uri, notificationUrl);
+      dfu.notify(true, file, response, uri, notificationUrl);
 
       // Append field when a uri is available
       if(uri) {

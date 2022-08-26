@@ -2,6 +2,8 @@
 
 namespace Codem\DamnFineUploader;
 
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -131,6 +133,70 @@ abstract class AbstractUppyExternalUploadField extends UppyField
     public function getServiceConfigValue(string $key) {
         $value = array_key_exists($key, $this->serviceConfig) ? $this->serviceConfig[ $key ] : null;
         return $value;
+    }
+
+    /**
+      * Handle notification received after upload success, error or completion
+      * For completion the POST data will have a 'completed' key
+      * For per file completion notifications, the POST data will have a id being the uploader file id
+      * along with name, size, type and uuid keys
+      * The uuid is the value included in a {@link self::upload()} response
+      *
+      * This method simply notifies extends of a completed upload or completed batch
+      * by passing the request value to the extension
+      *
+      * @param SilverStripe\Control\HTTPRequest $request
+      * @return SilverStripe\Control\HTTPResponse
+      */
+    public function notify(HTTPRequest $request) : HTTPResponse {
+        try {
+
+            $response = false;
+            $form = $this->getForm();
+            $securityToken = $form->getSecurityToken();
+            $tokenValue = $securityToken->getValue();
+            $tokenName = $securityToken->getName();
+            $post = $request->postVars();
+
+            if(empty($post['meta'])) {
+                throw new \Exception("Missing meta key in the submitted notification");
+            }
+
+            // Validate token in meta, token value must match the value for this field's form
+            $meta = json_decode($post['meta'], true, 512, JSON_THROW_ON_ERROR);
+            if(empty($meta[ $tokenName ])) {
+                throw new \Exception("No security token in the submitted notification");
+            }
+            if($meta[ $tokenName ] !== $tokenValue) {
+                throw new \Exception("Security token value does not match the expected value");
+            }
+            if(isset($post['completed'])) {
+                // batch completion notification
+            } else if(isset($post['uri'])) {
+                // single file upload completion
+                $externalUpload = ExternalUpload::create([
+                    'ServiceName' => static::getServiceName(),
+                    'ServiceTitle' => static::getServiceDescription(),
+                    'Title' => isset($post['name']) ? $post['name'] : '',
+                    'Description' => '',
+                    'IsSuccess' => isset($post['result']) ? $post['result'] : 0,
+                    'UploadSize' => isset($post['size']) ? $post['size'] : 0,
+                    'UploadType' => isset($post['type']) ? $post['type'] : '',
+                    'UploadHash' => isset($post['id']) ? $post['id'] : '',
+                    'UploadUri' => isset($post['uri']) ? $post['uri'] : '',
+                    'UploadSrc' => isset($post['src']) ? $post['src'] : '',
+                    'UploadBatchId' => ''
+                ]);
+                $id = $externalUpload->write();
+            }
+            $response = true;
+        } catch (\Exception $e) {
+            // failed to notify
+            $response = false;
+            Logger::log("Failed notify() post upload: " . $e->getMessage(), "NOTICE");
+        } finally {
+            return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+        }
     }
 
 }
