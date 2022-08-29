@@ -38,6 +38,32 @@ abstract class AbstractUppyExternalUploadField extends UppyField
     abstract public function getServiceClient() : ?object;
 
     /**
+     * By default, external fields do not handle remove
+     */
+    public function remove(HTTPRequest $request) : HTTPResponse {
+        $response = false;
+        return (new HTTPResponse(json_encode($response), 400))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * By default, external fields do not handle upload as the request goes to an external URL
+     */
+    public function upload(HTTPRequest $request) : HTTPResponse {
+        $response = false;
+        return (new HTTPResponse(json_encode($response), 400))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Presign URL for the field
+     * @return string
+     */
+    public function getPresignUrl() : string {
+        $action = $this->getForm()->FormAction();
+        $link = Controller::join_links($action, $this->PresignLink());
+        return $link;
+    }
+
+    /**
      * @return string
      */
     final public static function getServiceName() : string {

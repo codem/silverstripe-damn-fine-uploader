@@ -19,18 +19,10 @@ class UppyField extends DamnFineUploaderField
      * @var array
      */
     private static $allowed_actions = [
-        'upload',
+        'upload', // local upload endpoint
         'notify', // notify of completed upload
         'presign' // return a presigned URL for a single file
     ];
-
-    /**
-     * @inheritdoc
-     * This field does not handle determining presign urls per file
-     */
-    public function getPresignUrl() {
-        return "";
-    }
 
     protected function setRequirements()
     {

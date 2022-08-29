@@ -32,27 +32,9 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
      * @var array
      */
     private static $allowed_actions = [
-        'upload',
         'notify', // notify of completed upload
         'presign' // return a presigned URL for a single file
     ];
-
-    /**
-     * Presign URL for the field
-     */
-    public function getPresignUrl() {
-        $action = $this->getForm()->FormAction();
-        $link = Controller::join_links($action, $this->PresignLink());
-        return $link;
-    }
-
-    /**
-     * @inheritdoc
-     * The upload endpoint is the signed URL
-     */
-    public function getRequestEndpoint() {
-        return $this->generateSignedUrl();
-    }
 
     /**
      * @inheritdoc

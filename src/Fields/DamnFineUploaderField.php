@@ -424,8 +424,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Return a Relative upload link for this field
      *
-     * @param string $action
-     *
      * @return string
      */
     public function UploadLink()
@@ -435,8 +433,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Return a Relative notification link for this field
-     *
-     * @param string $action
      *
      * @return string
      */
@@ -450,7 +446,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Per-file requests are sent to this URL and it should return a presigned URL
      * for the specific file
      *
-     * @param string $action
+     * This link is only useful for uploaders that need to get a presigned url per file
+     * via the presign() handler
      *
      * @return string
      */
@@ -461,8 +458,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Return a Relative remove link for this field (for remove file actions)
-     *
-     * @param string $action
      *
      * @return string
      */
@@ -626,9 +621,16 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
+     * This field does not return presign urls by default
+     */
+    public function getPresignUrl() : string {
+        return "";
+    }
+
+    /**
      * Notifcation URL for the field
      */
-    public function getNotificationUrl() {
+    public function getNotificationUrl() : string {
         $action = $this->getForm()->FormAction();
         $link = Controller::join_links($action, $this->NotificationLink());
         return $link;
