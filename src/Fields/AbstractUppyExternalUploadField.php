@@ -226,4 +226,14 @@ abstract class AbstractUppyExternalUploadField extends UppyField
         }
     }
 
+    /**
+     * For external destinations, there is no limit (override in subclass)
+     * Return bytes being the max upload size for the destination
+     * @return int
+     */
+    public function getSystemAllowedMaxFileSize()
+    {
+        return 0;
+    }
+
 }
