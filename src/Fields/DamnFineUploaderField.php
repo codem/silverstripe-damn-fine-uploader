@@ -64,6 +64,19 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         'application/xml', 'application/xhtml+xml'
     ];
 
+    /**
+     * @var array
+     * Array of types that are never allowed in uploads
+     */
+    private static $denied_types = [
+        '.php',
+        '.js',
+        '.css',
+        '.svg',
+        '.html',
+        '.xml'
+    ];
+
     protected $default_configuration_complete = false;
 
     /**
@@ -598,7 +611,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (empty($this->lib_config['validation']['sizeLimit'])) {
             // if not yet set, use the system size
             $this->lib_config['validation']['sizeLimit'] = $system_max_file_size;
-        } else {
+        } else if($system_max_file_size > 0) {
             // ensure that the size is under the system size
             $this->lib_config['validation']['sizeLimit'] = min($this->lib_config['validation']['sizeLimit'], $system_max_file_size);
         }
@@ -757,32 +770,59 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Set accepted types for this file, extensions are determined based on the types provided
+     * Filter the provided types - types without a period are given one
+     * types in the denied types and mimetypes configuration are removed
      * @param array $types
      * @return array
      */
-    public function filterTypes(array $types) {
-        $denied = $this->config()->get('denied_mimetypes');
-        if(!empty($denied) && is_array($denied)) {
+    public function filterTypes(array $types) : array {
+        // ensure that types without a period get one
+        array_walk(
+            $types,
+            function( &$value, $key ) {
+                if(strpos($value, ".") === false && strpos($value, "/") === false) {
+                    $value = ".{$value}";
+                }
+            }
+        );
+        // Remove denied types
+        $denied = array_merge(
+            $this->config()->get('denied_mimetypes'),
+            $this->config()->get('denied_types')
+        );
+        if(!empty($denied)) {
             // returns values in $types that are not in the list of denied types
             $types = array_diff($types, $denied);
         }
-        return array_filter($types);
+        return array_unique( array_filter($types) );
     }
 
     /**
-     * Set accepted types for this file, extensions are determined based on the types provided
+     * Set accepted types for this file upload, extensions are determined based on the types provided
+     *
      * If called, this is merged into the lib_config during setUploaderDefaultConfig()
+     *
+     * The allowed types are set in the format specified by https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#unique_file_type_specifiers:
+     *
+     *      + A valid case-insensitive filename extension, starting with a period (".") character. For example: .jpg, .pdf, or .doc.
+     *      + A valid MIME type string, with no extensions. (image/png)
+     *      + The string video/* meaning "any video file" (substitute video for the category)
+     *
+     * For compatibility with other Silverstripe uploaders, the extension e.g "png" is allowed and will be set as .png
+     *
+     * Extensions are automatically determined based on the types provided
      * @param array $types
      * @return self
      */
     public function setAcceptedTypes(array $types)
     {
         $types = $this->filterTypes($types);
-        // set as a comma delimited string
+        // ensure the type array is
         $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);
         // based on filtered types, set allowed extensions
         $this->runtime_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);
+        // set allowed extensions on the validator via  UploadReceiver trait
+        $this->setAllowedExtensions($this->runtime_config['validation']['allowedExtensions']);
         return $this;
     }
 
@@ -809,7 +849,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Returns the system provided max file size, in bytes
-     * @returns int
+     * @return int
      */
     public function getSystemAllowedMaxFileSize()
     {
@@ -820,13 +860,17 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Set the maximum allowed filesize, in bytes
      * Note that if the system setting is lower, that will be used
+     * @param float bytes
      */
     public function setAllowedMaxFileSize($bytes)
     {
-        $bytes = (int)$bytes;
         $system = $this->getSystemAllowedMaxFileSize();
-        $limit = min($bytes, $system);
-        $this->runtime_config['validation']['sizeLimit'] = $limit;
+        if($system > 0) {
+            $limit = min($bytes, $system);
+        } else {
+            $limit = $bytes;
+        }
+        $this->runtime_config['validation']['sizeLimit'] = round($limit);
 
         return $this;
     }
@@ -878,20 +922,46 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Return a list of extensions matching the file types provided
-     * @param array $types e.g  ['image/jpg', 'image/gif']
+     * @param array $types example: [ 'png', '.png', 'image.png', 'image/*' ]
      * @return array
      */
     final public function getExtensionsForTypes(array $types)
     {
-        $mime_types = HTTP::config()->uninherited('MimeTypes');
-        $keys = [];
+        $mimeTypes = HTTP::config()->uninherited('MimeTypes');
+        $extensions = [];
         foreach ($types as $type) {
-            $result = array_keys($mime_types, $type);
-            if (is_array($result)) {
-                $keys = array_merge($keys, $result);
+            if(strpos($type, ".") === false && strpos($type, "/") === false) {
+                // e.g "png"
+                $extensions[] = $type;
+            } else if(strpos($type, ".") === 0) {
+                // e.g ".png" - add the standard extension, without the .
+                $extensions[] = substr($type, 1);
+            } else {
+                $parts = explode("/", $type);
+                $filtered = array_filter(
+                    $mimeTypes,
+                    function($mimeType, $extension) use ($type, $parts) {
+                        if($mimeType == $type) {
+                            // exact mimetype match
+                            return true;
+                        } else if(count($parts) == 2 && $parts[1] == "*") {
+                            // that the mimetype (image/png) starts with image/
+                            return  strpos( $mimeType, $parts[0] . "/") === 0;
+                        } else {
+                            return false;
+                        }
+                    },
+                    ARRAY_FILTER_USE_BOTH
+                );
+                if(!empty($filtered)) {
+                    $extensions = array_merge($extensions, array_keys($filtered));
+                }
             }
         }
-        return $keys;
+        // return extensions with empty values removed
+        $extensions = array_filter($extensions);
+        sort( $extensions );
+        return $extensions;
     }
 
     /**
