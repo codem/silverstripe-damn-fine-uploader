@@ -1066,19 +1066,25 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Test accepted mimetypes for an image/* value
+     * Test accepted mimetypes for an image/* value or extensions if they are
+     * in a supported image category
      */
-    public function AcceptsImages()
+    public function AcceptsImages() : bool
     {
+        // Check accepted types first
         $types = $this->getAcceptedTypes();
-        $accepts = false;
         foreach ($types as $type) {
             if (strpos($type, "image/") === 0) {
-                $accepts = true;
+                return true;
                 break;
             }
         }
-        return $accepts;
+
+        // Check types for extensions against categories
+        $categoryExtensions = File::get_category_extensions(['image', 'image/supported']);
+        $allowedExtensions =  $this->getAllowedExtensions();
+        $diff = array_intersect($categoryExtensions, $allowedExtensions);
+        return count($diff) > 0;
     }
 
     public function Field($properties = [])
