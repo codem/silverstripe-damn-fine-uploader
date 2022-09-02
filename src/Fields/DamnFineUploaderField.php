@@ -529,6 +529,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $lib_config['messages'] = [
             'emptyError' => _t('DamnFineUploader.ZERO_BYTES', 'The file {file} seems to be empty'),
             'noFilesError' => _t('DamnFineUploader.NO_FILES', 'No files were submitted'),
+            'fileCannotBeUploadedError' => _t('DamnFineUploader.FILE_CANNOT_BE_UPLOAD', 'This file could not be added due to a system error. Please try again later.'),
             'minSizeError' => _t('DamnFineUploader.FILE_SMALL', 'The file is too small, please upload a file larger than {minSizeLimit}'),
             'sizeError' => _t('DamnFineUploader.FILE_LARGE', 'The file is too large, please upload a file smaller than {sizeLimit}'),
             'maxHeightImageError' => _t('DamnFineUploader.IMAGE_TALL', 'The image height is greater than the maximum allowed height'),

@@ -236,9 +236,13 @@ export default function DFU() {
       };
 
       let xhrSuccess = function() {
-        let response = JSON.parse(xhr.responseText);
-        let preSignedUrl = response.presignedurl ? response.presignedurl : false;
-        callback(file, preSignedUrl);
+        if(xhr.status != 200) {
+          callback(file, false);
+        } else if(xhr.readyState == 4) {
+          let response = JSON.parse(xhr.responseText);
+          let preSignedUrl = response.presignedurl ? response.presignedurl : false;
+          callback(file, preSignedUrl);
+        }
       };
 
       let xhrError = function() {
@@ -247,8 +251,8 @@ export default function DFU() {
 
       let xhr = new XMLHttpRequest();
       xhr.open( 'POST', presignUrl );
-      xhr.onload = xhrSuccess;
-      xhr.onerror = xhrError;
+      xhr.addEventListener('load', xhrSuccess);
+      xhr.addEventListener('error', xhrError);
       xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
       xhr.send( new URLSearchParams(formData).toString() );
     } catch (e) {

@@ -17440,9 +17440,13 @@ function DFU() {
       };
 
       var xhrSuccess = function xhrSuccess() {
-        var response = JSON.parse(xhr.responseText);
-        var preSignedUrl = response.presignedurl ? response.presignedurl : false;
-        callback(file, preSignedUrl);
+        if (xhr.status != 200) {
+          callback(file, false);
+        } else if (xhr.readyState == 4) {
+          var response = JSON.parse(xhr.responseText);
+          var preSignedUrl = response.presignedurl ? response.presignedurl : false;
+          callback(file, preSignedUrl);
+        }
       };
 
       var xhrError = function xhrError() {
@@ -17451,8 +17455,8 @@ function DFU() {
 
       var xhr = new XMLHttpRequest();
       xhr.open('POST', presignUrl);
-      xhr.onload = xhrSuccess;
-      xhr.onerror = xhrError;
+      xhr.addEventListener('load', xhrSuccess);
+      xhr.addEventListener('error', xhrError);
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.send(new URLSearchParams(formData).toString());
     } catch (e) {
@@ -17647,11 +17651,10 @@ function DFULoader(opts) {
             });
           } else {
             // failed to get a presigned URL
-            message = 'This file could not be added due to a system error. Please try again later.';
             uppy.removeFile(file.id);
             uppy.info({
-              message: message,
-              type: 'error',
+              message: config.messages.fileCannotBeUploadedError,
+              type: 'warning',
               duration: 7500
             });
           }

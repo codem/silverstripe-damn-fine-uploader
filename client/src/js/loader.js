@@ -179,11 +179,10 @@ export default function DFULoader(opts) {
               });
             } else {
               // failed to get a presigned URL
-              message = 'This file could not be added due to a system error. Please try again later.';
               uppy.removeFile(file.id);
               uppy.info({
-                message: message,
-                type: 'error',
+                message: config.messages.fileCannotBeUploadedError,
+                type: 'warning',
                 duration: 7500
               });
             }
