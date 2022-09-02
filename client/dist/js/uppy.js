@@ -17675,7 +17675,7 @@ function DFULoader(opts) {
 
         image.onload = function () {
           var remove = false;
-          var message = '';
+          var message = config.messages.dimensionsMismatchError;
 
           if (maxImageWidth > 0 && image.width > maxImageWidth) {
             message = config.messages.maxWidthImageError;
@@ -17692,10 +17692,6 @@ function DFULoader(opts) {
           }
 
           if (remove) {
-            if (!message) {
-              message = 'The image does not match the allowed dimensions';
-            }
-
             uppy.removeFile(file.id);
             uppy.info({
               message: message,

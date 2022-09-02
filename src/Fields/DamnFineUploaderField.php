@@ -532,6 +532,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             'fileCannotBeUploadedError' => _t('DamnFineUploader.FILE_CANNOT_BE_UPLOAD', 'This file could not be added due to a system error. Please try again later.'),
             'minSizeError' => _t('DamnFineUploader.FILE_SMALL', 'The file is too small, please upload a file larger than {minSizeLimit}'),
             'sizeError' => _t('DamnFineUploader.FILE_LARGE', 'The file is too large, please upload a file smaller than {sizeLimit}'),
+            'dimensionsMismatchError' => _t('DamnFineUploader.DIMENSIONS_MISMATCH', 'The image does not match the allowed dimensions'),
             'maxHeightImageError' => _t('DamnFineUploader.IMAGE_TALL', 'The image height is greater than the maximum allowed height'),
             'maxWidthImageError' => _t('DamnFineUploader.IMAGE_WIDE', 'The image width is greater than the maximum allowed width'),
             'minHeightImageError' => _t('DamnFineUploader.IMAGE_SHORT', 'The image height is smaller than the minimum allowed height'),

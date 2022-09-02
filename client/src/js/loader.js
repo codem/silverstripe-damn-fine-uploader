@@ -198,14 +198,14 @@ export default function DFULoader(opts) {
       if( dfu.isImage(file.data.type)) {
 
         // handle image dimension validation
-        const data = file.data;
-        const url = URL.createObjectURL(data);
-        const image = new Image();
+        let data = file.data;
+        let url = URL.createObjectURL(data);
+        let image = new Image();
         image.src = url;
         image.onload = () => {
 
-          var remove = false;
-          var message = '';
+          let remove = false;
+          let message = config.messages.dimensionsMismatchError;
 
           if(maxImageWidth > 0 && image.width > maxImageWidth) {
             message = config.messages.maxWidthImageError;
@@ -222,9 +222,6 @@ export default function DFULoader(opts) {
           }
 
           if(remove) {
-            if(!message) {
-              message = 'The image does not match the allowed dimensions';
-            }
             uppy.removeFile(file.id);
             uppy.info({
               message: message,
