@@ -17223,7 +17223,7 @@ function DFU() {
     var field = f.elements[name];
 
     if (field) {
-      oldField = f.removeChild(field);
+      oldField = upload_element.removeChild(field);
     }
   };
   /**
@@ -17254,7 +17254,7 @@ function DFU() {
         field.value = uuid;
         field.name = name;
         field.classList.add('dfu_uploaded_file');
-        f.appendChild(field);
+        upload_element.appendChild(field);
       }
 
       return field;
@@ -17506,8 +17506,8 @@ function DFULoader(opts) {
   this.handle = function () {
     var _this = this;
 
-    var dfu = new DFU();
-    dfu.init();
+    this.uploadElement.dfu = new DFU();
+    this.uploadElement.dfu.init();
     var config = JSON.parse(this.uploadElement.dataset.config);
     var id = this.uploadElement.id;
     var uploadType = this.uploadElement.dataset.uploadType; // default httpMethod is post
@@ -17584,10 +17584,11 @@ function DFULoader(opts) {
       } // notify success
 
 
-      dfu.notify(true, file, response, uri, notificationUrl); // Append field when a uri is available
+      _this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl); // Append field when a uri is available
+
 
       if (uri) {
-        dfu.appendField(_this.uploadElement, file.id, uri);
+        _this.uploadElement.dfu.appendField(_this.uploadElement, file.id, uri);
       }
     });
     uppy.on('upload-error', function (file, response) {
@@ -17601,23 +17602,25 @@ function DFULoader(opts) {
       } // notify error
 
 
-      dfu.notify(false, file, uri, notificationUrl); // Single upload error
+      _this.uploadElement.dfu.notify(false, file, uri, notificationUrl); // Single upload error
 
-      dfu.removeField(_this.uploadElement, file.id);
+
+      _this.uploadElement.dfu.removeField(_this.uploadElement, file.id);
     });
     uppy.on('error', function (result) {
       // all error
-      dfu.handleUnblock(_this.uploadElement);
+      _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('complete', function (result) {
       // ping completion url
-      dfu.notifyComplete(result, notificationUrl); // all complete
+      _this.uploadElement.dfu.notifyComplete(result, notificationUrl); // all complete
 
-      dfu.handleUnblock(_this.uploadElement);
+
+      _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('cancel-all', function (result) {
       // all cancelled
-      dfu.handleUnblock(_this.uploadElement);
+      _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('file-removed', function (file, reason) {
       // a file was removed
@@ -17625,12 +17628,13 @@ function DFULoader(opts) {
 
       if (items.length == 0) {
         // all files removed
-        dfu.handleUnblock(_this.uploadElement);
+        _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
       }
     });
     uppy.on('file-added', function (file) {
       // block submit
-      dfu.handleSubmit(_this.uploadElement); // update pre-signed URLs if required
+      _this.uploadElement.dfu.handleSubmit(_this.uploadElement); // update pre-signed URLs if required
+
 
       if (preSignUrlForFile) {
         // initially clear the endpoint for this file
@@ -17639,7 +17643,8 @@ function DFULoader(opts) {
             endpoint: ''
           })
         });
-        dfu.setPresignedUrl( // the file
+
+        _this.uploadElement.dfu.setPresignedUrl( // the file
         file, // URL to get presigned URLs from
         preSignUrlForFile, // callback to set pre-signed URL
         function (file, preSignedUrl) {
@@ -17666,7 +17671,7 @@ function DFULoader(opts) {
       meta[config.request.uuidName] = file.id;
       uppy.setFileMeta(file.id, meta);
 
-      if (dfu.isImage(file.data.type)) {
+      if (_this.uploadElement.dfu.isImage(file.data.type)) {
         // handle image dimension validation
         var data = file.data;
         var url = URL.createObjectURL(data);
@@ -17703,6 +17708,8 @@ function DFULoader(opts) {
         };
       }
     });
+    var ev = new Event('uploaderReady');
+    this.uploadElement.dispatchEvent(ev);
   };
 }
 ;// CONCATENATED MODULE: ./client/src/js/uppy.js

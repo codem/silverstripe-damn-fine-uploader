@@ -13,8 +13,8 @@ export default function DFULoader(opts) {
 
   this.handle = function() {
 
-    var dfu = new DFU();
-    dfu.init();
+    this.uploadElement.dfu = new DFU();
+    this.uploadElement.dfu.init();
 
     const config = JSON.parse(this.uploadElement.dataset.config);
     const id = this.uploadElement.id;
@@ -98,11 +98,11 @@ export default function DFULoader(opts) {
       }
 
       // notify success
-      dfu.notify(true, file, response, uri, notificationUrl);
+      this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl);
 
       // Append field when a uri is available
       if(uri) {
-        dfu.appendField( this.uploadElement, file.id, uri );
+        this.uploadElement.dfu.appendField( this.uploadElement, file.id, uri );
       }
     });
 
@@ -116,26 +116,26 @@ export default function DFULoader(opts) {
         uri = response.body.uuid;
       }
       // notify error
-      dfu.notify(false, file, uri, notificationUrl);
+      this.uploadElement.dfu.notify(false, file, uri, notificationUrl);
       // Single upload error
-      dfu.removeField( this.uploadElement, file.id );
+      this.uploadElement.dfu.removeField( this.uploadElement, file.id );
     });
 
     uppy.on('error', (result) => {
       // all error
-      dfu.handleUnblock(this.uploadElement);
+      this.uploadElement.dfu.handleUnblock(this.uploadElement);
     });
 
     uppy.on('complete', (result) => {
       // ping completion url
-      dfu.notifyComplete(result, notificationUrl);
+      this.uploadElement.dfu.notifyComplete(result, notificationUrl);
       // all complete
-      dfu.handleUnblock(this.uploadElement);
+      this.uploadElement.dfu.handleUnblock(this.uploadElement);
     });
 
     uppy.on('cancel-all', (result) => {
       // all cancelled
-      dfu.handleUnblock(this.uploadElement);
+      this.uploadElement.dfu.handleUnblock(this.uploadElement);
     });
 
     uppy.on('file-removed', (file, reason) => {
@@ -143,14 +143,14 @@ export default function DFULoader(opts) {
       const items = uppy.getFiles();
       if(items.length == 0) {
         // all files removed
-        dfu.handleUnblock(this.uploadElement);
+        this.uploadElement.dfu.handleUnblock(this.uploadElement);
       }
     });
 
     uppy.on('file-added', (file) => {
 
       // block submit
-      dfu.handleSubmit(this.uploadElement);
+      this.uploadElement.dfu.handleSubmit(this.uploadElement);
 
       // update pre-signed URLs if required
       if(preSignUrlForFile) {
@@ -163,7 +163,7 @@ export default function DFULoader(opts) {
           }
         });
 
-        dfu.setPresignedUrl(
+        this.uploadElement.dfu.setPresignedUrl(
           // the file
           file,
           // URL to get presigned URLs from
@@ -195,7 +195,7 @@ export default function DFULoader(opts) {
       meta[ config.request.uuidName ] = file.id;
       uppy.setFileMeta( file.id, meta );
 
-      if( dfu.isImage(file.data.type)) {
+      if( this.uploadElement.dfu.isImage(file.data.type)) {
 
         // handle image dimension validation
         let data = file.data;
@@ -235,6 +235,9 @@ export default function DFULoader(opts) {
       }
 
     });
+
+    let ev = new Event('uploaderReady');
+    this.uploadElement.dispatchEvent(ev);
 
   };
 

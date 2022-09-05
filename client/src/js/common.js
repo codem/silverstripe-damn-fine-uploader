@@ -44,7 +44,7 @@ export default function DFU() {
     var name = this.getFieldName(upload_element, id);
     var field = f.elements[name];
     if(field) {
-      oldField = f.removeChild(field);
+      oldField = upload_element.removeChild(field);
     }
   };
   /**
@@ -70,7 +70,7 @@ export default function DFU() {
         field.value = uuid;
         field.name = name;
         field.classList.add('dfu_uploaded_file');
-        f.appendChild(field);
+        upload_element.appendChild(field);
       }
       return field;
     } catch (e) {
