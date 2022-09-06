@@ -116,7 +116,7 @@ export default function DFULoader(opts) {
         uri = response.body.uuid;
       }
       // notify error
-      this.uploadElement.dfu.notify(false, file, uri, notificationUrl);
+      this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl);
       // Single upload error
       this.uploadElement.dfu.removeField( this.uploadElement, file.id );
     });

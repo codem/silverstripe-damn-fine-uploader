@@ -17602,7 +17602,7 @@ function DFULoader(opts) {
       } // notify error
 
 
-      _this.uploadElement.dfu.notify(false, file, uri, notificationUrl); // Single upload error
+      _this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl); // Single upload error
 
 
       _this.uploadElement.dfu.removeField(_this.uploadElement, file.id);
