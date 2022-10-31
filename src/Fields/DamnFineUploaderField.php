@@ -51,6 +51,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     protected $implementation = '';
 
     /**
+     * @var bool
+     */
+    protected $supportsNotifications = false;
+
+    /**
      * @var array
      * Array of mimetypes that are never allowed in uploads
      */
@@ -646,8 +651,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Notifcation URL for the field
      */
     public function getNotificationUrl() : string {
-        $action = $this->getForm()->FormAction();
-        $link = Controller::join_links($action, $this->NotificationLink());
+        $link = "";
+        if($this->supportsNotifications) {
+            $action = $this->getForm()->FormAction();
+            $link = Controller::join_links($action, $this->NotificationLink());
+        }
         return $link;
     }
 

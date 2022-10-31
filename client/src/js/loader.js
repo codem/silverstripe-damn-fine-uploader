@@ -90,16 +90,21 @@ export default function DFULoader(opts) {
     uppy.on('upload-success', (file, response) => {
 
       let uri = '';
-      let endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      let endpoint = '';
+      try {
+        endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      } catch (e) {
+        // no endpoint
+      }
       if(endpoint) {
         uri = endpoint;
       } else if(response.body.uuid) {
         uri = response.body.uuid;
       }
-
-      // notify success
-      this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl);
-
+      if(notificationUrl) {
+        // notify success
+        this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl);
+      }
       // Append field when a uri is available
       if(uri) {
         this.uploadElement.dfu.appendField( this.uploadElement, file.id, uri );
@@ -109,14 +114,21 @@ export default function DFULoader(opts) {
 
     uppy.on('upload-error', (file, response) => {
       let uri = '';
-      let endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      let endpoint = '';
+      try {
+        file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      } catch (e) {
+        // no endpoint
+      }
       if(endpoint) {
         uri = endpoint;
       } else if(response.body.uuid) {
         uri = response.body.uuid;
       }
-      // notify error
-      this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl);
+      if(notificationUrl) {
+        // notify error
+        this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl);
+      }
       // Single upload error
       this.uploadElement.dfu.removeField( this.uploadElement, file.id );
     });
@@ -127,8 +139,10 @@ export default function DFULoader(opts) {
     });
 
     uppy.on('complete', (result) => {
-      // ping completion url
-      this.uploadElement.dfu.notifyComplete(result, notificationUrl);
+      if(notificationUrl) {
+        // ping completion url
+        this.uploadElement.dfu.notifyComplete(result, notificationUrl);
+      }
       // all complete
       this.uploadElement.dfu.handleUnblock(this.uploadElement);
     });

@@ -17,6 +17,12 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 {
 
     /**
+     * External upload fields support notifications on upload
+     * @var bool
+     */
+    protected $supportsNotifications = true;
+
+    /**
      * @var array
      */
     protected $serviceConfig = [];

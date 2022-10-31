@@ -17575,16 +17575,23 @@ function DFULoader(opts) {
     });
     uppy.on('upload-success', function (file, response) {
       var uri = '';
-      var endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      var endpoint = '';
+
+      try {
+        endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      } catch (e) {// no endpoint
+      }
 
       if (endpoint) {
         uri = endpoint;
       } else if (response.body.uuid) {
         uri = response.body.uuid;
-      } // notify success
+      }
 
-
-      _this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl); // Append field when a uri is available
+      if (notificationUrl) {
+        // notify success
+        _this.uploadElement.dfu.notify(true, file, response, uri, notificationUrl);
+      } // Append field when a uri is available
 
 
       if (uri) {
@@ -17593,16 +17600,23 @@ function DFULoader(opts) {
     });
     uppy.on('upload-error', function (file, response) {
       var uri = '';
-      var endpoint = file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      var endpoint = '';
+
+      try {
+        file.xhrUpload.endpoint ? file.xhrUpload.endpoint : '';
+      } catch (e) {// no endpoint
+      }
 
       if (endpoint) {
         uri = endpoint;
       } else if (response.body.uuid) {
         uri = response.body.uuid;
-      } // notify error
+      }
 
-
-      _this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl); // Single upload error
+      if (notificationUrl) {
+        // notify error
+        _this.uploadElement.dfu.notify(false, file, response, uri, notificationUrl);
+      } // Single upload error
 
 
       _this.uploadElement.dfu.removeField(_this.uploadElement, file.id);
@@ -17612,8 +17626,10 @@ function DFULoader(opts) {
       _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
     });
     uppy.on('complete', function (result) {
-      // ping completion url
-      _this.uploadElement.dfu.notifyComplete(result, notificationUrl); // all complete
+      if (notificationUrl) {
+        // ping completion url
+        _this.uploadElement.dfu.notifyComplete(result, notificationUrl);
+      } // all complete
 
 
       _this.uploadElement.dfu.handleUnblock(_this.uploadElement);
