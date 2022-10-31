@@ -51,6 +51,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     protected $implementation = '';
 
     /**
+     * @var bool
+     */
+    protected $supportsNotifications = false;
+
+    /**
      * @var array
      * Array of mimetypes that are never allowed in uploads
      */
@@ -64,6 +69,19 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         'application/xml', 'application/xhtml+xml'
     ];
 
+    /**
+     * @var array
+     * Array of types that are never allowed in uploads
+     */
+    private static $denied_types = [
+        '.php',
+        '.js',
+        '.css',
+        '.svg',
+        '.html',
+        '.xml'
+    ];
+
     protected $default_configuration_complete = false;
 
     /**
@@ -72,7 +90,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     private static $allowed_actions = [
         'upload',
-        'remove'
+        'remove',
+        'notify',
+        'presign'
     ];
 
     /**
@@ -282,6 +302,25 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
+     * By default fields do not support presign
+     * @param SilverStripe\Control\HTTPRequest $request
+     * @return SilverStripe\Control\HTTPResponse
+     */
+    public function presign(HTTPRequest $request) : HTTPResponse {
+        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Handle notification received after upload success, error or completion
+     * By default fields do not support notify, child fields should support this
+     * @param SilverStripe\Control\HTTPRequest $request
+     * @return SilverStripe\Control\HTTPResponse
+     */
+    public function notify(HTTPRequest $request) : HTTPResponse {
+        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
+    }
+
+    /**
      * Save the file somewhere, based on configuraton
      * @return SilverStripe\Assets\File
      * @throws InvalidFileException|Exception
@@ -403,8 +442,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Return a Relative upload link for this field
      *
-     * @param string $action
-     *
      * @return string
      */
     public function UploadLink()
@@ -413,9 +450,32 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Return a Relative remove link for this field (for remove file actions)
+     * Return a Relative notification link for this field
      *
-     * @param string $action
+     * @return string
+     */
+    public function NotificationLink()
+    {
+        return Controller::join_links('field/' . $this->name, 'notify');
+    }
+
+    /**
+     * Return a Relative presign link for this field
+     * Per-file requests are sent to this URL and it should return a presigned URL
+     * for the specific file
+     *
+     * This link is only useful for uploaders that need to get a presigned url per file
+     * via the presign() handler
+     *
+     * @return string
+     */
+    public function PresignLink()
+    {
+        return Controller::join_links('field/' . $this->name, 'presign');
+    }
+
+    /**
+     * Return a Relative remove link for this field (for remove file actions)
      *
      * @return string
      */
@@ -474,8 +534,10 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $lib_config['messages'] = [
             'emptyError' => _t('DamnFineUploader.ZERO_BYTES', 'The file {file} seems to be empty'),
             'noFilesError' => _t('DamnFineUploader.NO_FILES', 'No files were submitted'),
+            'fileCannotBeUploadedError' => _t('DamnFineUploader.FILE_CANNOT_BE_UPLOAD', 'This file could not be added due to a system error. Please try again later.'),
             'minSizeError' => _t('DamnFineUploader.FILE_SMALL', 'The file is too small, please upload a file larger than {minSizeLimit}'),
             'sizeError' => _t('DamnFineUploader.FILE_LARGE', 'The file is too large, please upload a file smaller than {sizeLimit}'),
+            'dimensionsMismatchError' => _t('DamnFineUploader.DIMENSIONS_MISMATCH', 'The image does not match the allowed dimensions'),
             'maxHeightImageError' => _t('DamnFineUploader.IMAGE_TALL', 'The image height is greater than the maximum allowed height'),
             'maxWidthImageError' => _t('DamnFineUploader.IMAGE_WIDE', 'The image width is greater than the maximum allowed width'),
             'minHeightImageError' => _t('DamnFineUploader.IMAGE_SHORT', 'The image height is smaller than the minimum allowed height'),
@@ -496,7 +558,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // request endpoint
         $lib_config['request'] = [
-            'method' => 'POST',
+            'method' => $this->getHttpUploadMethod(),
             'uuidName' => self::UUID_NAME,
             'endpoint' => '',// see below
             'params' => []
@@ -539,6 +601,12 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $lib_config['validation']['acceptFiles'] = $this->default_accepted_types;
         }
 
+        // apply notification url, for use on completion
+        $lib_config['urls'] = [
+            'notificationUrl' => $this->getNotificationUrl(),
+            'presignUrl' => $this->getPresignUrl()
+        ];
+
         // merge runtime config into default config, create lib_config
         $this->lib_config = array_replace_recursive($lib_config, $this->runtime_config);
 
@@ -550,7 +618,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (empty($this->lib_config['validation']['sizeLimit'])) {
             // if not yet set, use the system size
             $this->lib_config['validation']['sizeLimit'] = $system_max_file_size;
-        } else {
+        } else if($system_max_file_size > 0) {
             // ensure that the size is under the system size
             $this->lib_config['validation']['sizeLimit'] = min($this->lib_config['validation']['sizeLimit'], $system_max_file_size);
         }
@@ -563,6 +631,32 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         }
 
         $this->default_configuration_complete = true;
+    }
+
+    /**
+     * Return the HTTP method for upload
+     */
+    public function getHttpUploadMethod() : string {
+        return 'POST';
+    }
+
+    /**
+     * This field does not return presign urls by default
+     */
+    public function getPresignUrl() : string {
+        return "";
+    }
+
+    /**
+     * Notifcation URL for the field
+     */
+    public function getNotificationUrl() : string {
+        $link = "";
+        if($this->supportsNotifications) {
+            $action = $this->getForm()->FormAction();
+            $link = Controller::join_links($action, $this->NotificationLink());
+        }
+        return $link;
     }
 
     /**
@@ -686,32 +780,59 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Set accepted types for this file, extensions are determined based on the types provided
+     * Filter the provided types - types without a period are given one
+     * types in the denied types and mimetypes configuration are removed
      * @param array $types
      * @return array
      */
-    public function filterTypes(array $types) {
-        $denied = $this->config()->get('denied_mimetypes');
-        if(!empty($denied) && is_array($denied)) {
+    public function filterTypes(array $types) : array {
+        // ensure that types without a period get one
+        array_walk(
+            $types,
+            function( &$value, $key ) {
+                if(strpos($value, ".") === false && strpos($value, "/") === false) {
+                    $value = ".{$value}";
+                }
+            }
+        );
+        // Remove denied types
+        $denied = array_merge(
+            $this->config()->get('denied_mimetypes'),
+            $this->config()->get('denied_types')
+        );
+        if(!empty($denied)) {
             // returns values in $types that are not in the list of denied types
             $types = array_diff($types, $denied);
         }
-        return array_filter($types);
+        return array_unique( array_filter($types) );
     }
 
     /**
-     * Set accepted types for this file, extensions are determined based on the types provided
+     * Set accepted types for this file upload, extensions are determined based on the types provided
+     *
      * If called, this is merged into the lib_config during setUploaderDefaultConfig()
+     *
+     * The allowed types are set in the format specified by https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#unique_file_type_specifiers:
+     *
+     *      + A valid case-insensitive filename extension, starting with a period (".") character. For example: .jpg, .pdf, or .doc.
+     *      + A valid MIME type string, with no extensions. (image/png)
+     *      + The string video/* meaning "any video file" (substitute video for the category)
+     *
+     * For compatibility with other Silverstripe uploaders, the extension e.g "png" is allowed and will be set as .png
+     *
+     * Extensions are automatically determined based on the types provided
      * @param array $types
      * @return self
      */
     public function setAcceptedTypes(array $types)
     {
         $types = $this->filterTypes($types);
-        // set as a comma delimited string
+        // ensure the type array is
         $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);
         // based on filtered types, set allowed extensions
         $this->runtime_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes($types);
+        // set allowed extensions on the validator via  UploadReceiver trait
+        $this->setAllowedExtensions($this->runtime_config['validation']['allowedExtensions']);
         return $this;
     }
 
@@ -738,7 +859,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Returns the system provided max file size, in bytes
-     * @returns int
+     * @return int
      */
     public function getSystemAllowedMaxFileSize()
     {
@@ -749,13 +870,17 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Set the maximum allowed filesize, in bytes
      * Note that if the system setting is lower, that will be used
+     * @param float bytes
      */
     public function setAllowedMaxFileSize($bytes)
     {
-        $bytes = (int)$bytes;
         $system = $this->getSystemAllowedMaxFileSize();
-        $limit = min($bytes, $system);
-        $this->runtime_config['validation']['sizeLimit'] = $limit;
+        if($system > 0) {
+            $limit = min($bytes, $system);
+        } else {
+            $limit = $bytes;
+        }
+        $this->runtime_config['validation']['sizeLimit'] = round($limit);
 
         return $this;
     }
@@ -807,20 +932,46 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Return a list of extensions matching the file types provided
-     * @param array $types e.g  ['image/jpg', 'image/gif']
+     * @param array $types example: [ 'png', '.png', 'image.png', 'image/*' ]
      * @return array
      */
     final public function getExtensionsForTypes(array $types)
     {
-        $mime_types = HTTP::config()->uninherited('MimeTypes');
-        $keys = [];
+        $mimeTypes = HTTP::config()->uninherited('MimeTypes');
+        $extensions = [];
         foreach ($types as $type) {
-            $result = array_keys($mime_types, $type);
-            if (is_array($result)) {
-                $keys = array_merge($keys, $result);
+            if(strpos($type, ".") === false && strpos($type, "/") === false) {
+                // e.g "png"
+                $extensions[] = $type;
+            } else if(strpos($type, ".") === 0) {
+                // e.g ".png" - add the standard extension, without the .
+                $extensions[] = substr($type, 1);
+            } else {
+                $parts = explode("/", $type);
+                $filtered = array_filter(
+                    $mimeTypes,
+                    function($mimeType, $extension) use ($type, $parts) {
+                        if($mimeType == $type) {
+                            // exact mimetype match
+                            return true;
+                        } else if(count($parts) == 2 && $parts[1] == "*") {
+                            // that the mimetype (image/png) starts with image/
+                            return  strpos( $mimeType, $parts[0] . "/") === 0;
+                        } else {
+                            return false;
+                        }
+                    },
+                    ARRAY_FILTER_USE_BOTH
+                );
+                if(!empty($filtered)) {
+                    $extensions = array_merge($extensions, array_keys($filtered));
+                }
             }
         }
-        return $keys;
+        // return extensions with empty values removed
+        $extensions = array_filter($extensions);
+        sort( $extensions );
+        return $extensions;
     }
 
     /**
@@ -924,19 +1075,25 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     }
 
     /**
-     * Test accepted mimetypes for an image/* value
+     * Test accepted mimetypes for an image/* value or extensions if they are
+     * in a supported image category
      */
-    public function AcceptsImages()
+    public function AcceptsImages() : bool
     {
+        // Check accepted types first
         $types = $this->getAcceptedTypes();
-        $accepts = false;
         foreach ($types as $type) {
             if (strpos($type, "image/") === 0) {
-                $accepts = true;
+                return true;
                 break;
             }
         }
-        return $accepts;
+
+        // Check types for extensions against categories
+        $categoryExtensions = File::get_category_extensions(['image', 'image/supported']);
+        $allowedExtensions =  $this->getAllowedExtensions();
+        $diff = array_intersect($categoryExtensions, $allowedExtensions);
+        return count($diff) > 0;
     }
 
     public function Field($properties = [])

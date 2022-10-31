@@ -34,7 +34,7 @@ class UserFormFieldTest extends FunctionalTest
 
     private $fixture_file_count = 0;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         // permission
@@ -59,7 +59,7 @@ class UserFormFieldTest extends FunctionalTest
 
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
         TestAssetStore::reset();

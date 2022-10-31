@@ -17,12 +17,12 @@ class UploadPageTest extends SapphireTest
 
     protected static $fixture_file = 'UploadPageTest.yml';
 
-    public function setUp() {
+    public function setUp() : void {
         parent::setUp();
         SSViewer::set_themes([SSViewer::PUBLIC_THEME, SSViewer::DEFAULT_THEME]);
     }
 
-    public function tearDown() {
+    public function tearDown() : void {
         parent::tearDown();
     }
 

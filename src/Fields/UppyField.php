@@ -19,7 +19,9 @@ class UppyField extends DamnFineUploaderField
      * @var array
      */
     private static $allowed_actions = [
-        'upload',
+        'upload', // local upload endpoint
+        'notify', // notify of completed upload
+        'presign' // return a presigned URL for a single file
     ];
 
     protected function setRequirements()
@@ -32,7 +34,7 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-WNOHu0YCIeiotChq2Dc0FkC4TLhRC6U5LnxpuvlkCJeY/PLxt2XzBqKc2ErDKc5u"
+                "integrity" => "sha384-VTJ5P3SvXaxJ0Ru0wZQBriOToApPK/ud1N+1wiuC7Y69IJTahGMHl/aSPPIoX9rB"
             ]
         );
         Requirements::css(
@@ -40,7 +42,7 @@ class UppyField extends DamnFineUploaderField
             'screen',
             [
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-wMsaDhzUA/u8zxLFrGuTk7q3u0TI2Lli2G5pjPQecA8FiLH21IgJIgAb17iSH3Qx"
+                "integrity" => "sha384-bjIi0TLXqUTiwbFUVHbHw0IzbVY1S91yfozOcZaJ9IdzcyAObEiZZGn6F5MaZXOZ"
             ]
         );
     }

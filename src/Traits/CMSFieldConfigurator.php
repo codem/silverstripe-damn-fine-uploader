@@ -85,7 +85,7 @@ trait CMSFieldConfigurator
      * Add generic CMS fields to the record
      * @return FieldList
      */
-    public function addGenericFields(FieldList $fields, $tab = "Main") : FieldList
+    public function addGenericFields(FieldList $fields, string $tab = "Main") : FieldList
     {
 
         $fields->removeByName([
@@ -133,17 +133,18 @@ trait CMSFieldConfigurator
             )->setTitle( _t('DamnFineUploader.RESTRICTIONS', 'Restrictions') )
         );
 
-        // Saving
-        $useDateFieldField = CheckboxField::create('UseDateFolder')
-            ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder suffix'))
-            ->setDescription(
-                _t(
-                    'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
-                    'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/12/31'
-                )
-        );
-
         // SAVING
+        // local saving (may be removed for external uploads)
+        $this->addSaveLocationFields($fields, $tab);
+
+        return $fields;
+    }
+
+    /**
+     * Local save fields
+     */
+    public function addSaveLocationFields(FieldList $fields, string $tab) {
+
         // determine folder name for field
         $folder = $this->Folder();
         if($folder && $folder->exists()) {
@@ -159,11 +160,21 @@ trait CMSFieldConfigurator
             $uploadFolderRestrictionNote = '';
         }
 
+        $useDateFolderField = CheckboxField::create('UseDateFolder')
+            ->setTitle(_t('DamnFineUploader.FOLDER_DATE_FORMAT', 'Use a year/month/day upload folder suffix'))
+            ->setDescription(
+                _t(
+                    'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
+                    'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/12/31'
+                )
+        );
+
+
         // Composite field for showing save details
         $fields->addFieldToTab(
             'Root.' . $tab,
             CompositeField::create(
-                $useDateFieldField,
+                $useDateFolderField,
                 ReadonlyField::create(
                     'UploadFolderLocation',
                     _t('DamnFineUploader.UPLOAD_FOLDER_LOCATION', 'Upload folder location'),
@@ -190,6 +201,5 @@ trait CMSFieldConfigurator
                 )
             );
         }
-        return $fields;
     }
 }

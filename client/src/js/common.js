@@ -44,7 +44,7 @@ export default function DFU() {
     var name = this.getFieldName(upload_element, id);
     var field = f.elements[name];
     if(field) {
-      oldField = f.removeChild(field);
+      oldField = upload_element.removeChild(field);
     }
   };
   /**
@@ -70,7 +70,7 @@ export default function DFU() {
         field.value = uuid;
         field.name = name;
         field.classList.add('dfu_uploaded_file');
-        f.appendChild(field);
+        upload_element.appendChild(field);
       }
       return field;
     } catch (e) {
@@ -165,5 +165,99 @@ export default function DFU() {
     var result = mimetype.match(pattern);
     return result != null;
   };
+
+  /**
+   * Notify the configured notification URL
+   * @param bool whether upload success or error
+   * @param object file the Uppy file object (https://uppy.io/docs/uppy/#File-Objects)
+   * @param object  the uppy response with response data from the remote endpoint
+   * @param string uri a URN or URL representing the file
+   * @param string notificationUrl
+   */
+  this.notify = function(result, uppyFile, uppyResponse, uri, notificationUrl) {
+    try {
+
+      let formData = {
+        uploaded: 1,
+        result: result ? 1 : 0,
+        id: uppyFile.id,
+        name: uppyFile.name ? uppyFile.name : '',
+        size: uppyFile.size ? uppyFile.size : '',
+        type: uppyFile.type ? uppyFile.type : '',
+        uri: uri,
+        src: window.location.href,
+        meta: JSON.stringify(uppyFile.meta)
+      };
+
+      let xhr = new XMLHttpRequest();
+      xhr.open( 'POST', notificationUrl );
+      xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+      xhr.send( new URLSearchParams(formData).toString() );
+    } catch (e) {
+      console.error('Could not notify (' + (result ? 1 : 0) + ') - ' + e);
+    }
+  };
+
+  /**
+   * Notify completion to the configured notify URL
+   * @param object 'The result parameter is an object with arrays of successful and failed files'
+   * @param string notification URL
+   */
+  this.notifyComplete = function(result, notificationUrl) {
+    try {
+      let formData = {
+        uploaded: 1,
+        completed: 1,
+        successful: result.successful.length,
+        failed: result.failed.length,
+        uploadId: result.uploadID,
+        src: window.location.href
+      };
+      let xhr = new XMLHttpRequest();
+      xhr.open( 'POST', notificationUrl );
+      xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+      xhr.send( new URLSearchParams(formData).toString() );
+    } catch (e) {
+      console.error('Could not notify completion: ' +  e);
+    }
+  };
+
+  /**
+   * Get a pre-signed URL for a file
+   * @param File the file needing a pre signed URL
+   * @param string presign URL (the service that does the presigning)
+   */
+  this.setPresignedUrl = function(file, presignUrl, callback) {
+    try {
+
+      let formData = {
+        'id': file.id,
+        'name': file.name
+      };
+
+      let xhrSuccess = function() {
+        if(xhr.status != 200) {
+          callback(file, false);
+        } else if(xhr.readyState == 4) {
+          let response = JSON.parse(xhr.responseText);
+          let preSignedUrl = response.presignedurl ? response.presignedurl : false;
+          callback(file, preSignedUrl);
+        }
+      };
+
+      let xhrError = function() {
+        callback(file, false);
+      };
+
+      let xhr = new XMLHttpRequest();
+      xhr.open( 'POST', presignUrl );
+      xhr.addEventListener('load', xhrSuccess);
+      xhr.addEventListener('error', xhrError);
+      xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+      xhr.send( new URLSearchParams(formData).toString() );
+    } catch (e) {
+      console.error('Could not get presigned url: ' +  e);
+    }
+  }
 
 }
