@@ -47,7 +47,7 @@ class EditableUploadField extends EditableFileField
      */
     public function onBeforeWrite()
     {
-        // Ensure a folder is created to bypass EditableFileField folder creation
+        // RestrictedUploadFolder: ensure a folder is created
         $this->createProtectedFolder();
         // call parent write handling
         parent::onBeforeWrite();
