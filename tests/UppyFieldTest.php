@@ -55,7 +55,7 @@ class UppyFieldTest extends SapphireTest
         $system_max_filesize = $field->getSystemAllowedMaxFileSize();
         $resolved_max_filesize = min($system_max_filesize, $max_filesize);
 
-        $expected_extensions = "jpe, jpeg, jpg, gif";
+        $expected_extensions = "gif, jpe, jpeg, jpg";
         $expected_types = ['image/jpg','image/jpeg', 'image/gif'];
         $expected_max_filesize = $resolved_max_filesize;
         $expected_min_filesize = 0;// as > max
