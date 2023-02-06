@@ -126,8 +126,7 @@ class UserFormFieldTest extends FunctionalTest
             $upload_field_name = $field_name . "[file_upload_{$file->ID}]";
             $editable_dummy_field = EditableTextField::create([
                 "Name" => $upload_field_name,
-                "Title" => "Dummy form field for upload of #{$file->ID}",
-                "ParentID" => $page->ID
+                "Title" => "Dummy form field for upload of #{$file->ID}"
             ]);
             $editable_dummy_field->write();
 
