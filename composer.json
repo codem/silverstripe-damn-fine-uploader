@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^7.4 || ^8.0 || ^8.1",
         "silverstripe/userforms": "^5.11.0",
         "silverstripe/mimevalidator": "^2.3.0",
         "symbiote/silverstripe-multivaluefield": "^5.3.0"
