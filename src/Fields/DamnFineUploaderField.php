@@ -325,7 +325,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * @return SilverStripe\Assets\File
      * @throws InvalidFileException|Exception
      */
-    final private function saveFile($file_upload, string $uuid, string $form_security_token_value)
+    private function saveFile($file_upload, string $uuid, string $form_security_token_value)
     {
 
         // Set allowed max file size
