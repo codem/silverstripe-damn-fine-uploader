@@ -1,7 +1,7 @@
 {
   "js/uppy.js.map": {
     "src": "js/uppy.js.map",
-    "integrity": "sha384-EmrOCttqr+4LucaBD6nWMzbdDLooJmiWLcvg9Z1VvPYy1zIo79sYjU0QnF+T5cqh"
+    "integrity": "sha384-ePoUHulCzVTDj3R2eEWTXsFV1WMenChT4wsSG8MnYxCz9n8rAof55oGAUoReevMz"
   },
   "js/uppy.min.js.map": {
     "src": "js/uppy.min.js.map",
@@ -21,7 +21,7 @@
   },
   "uppy.js": {
     "src": "js/uppy.js",
-    "integrity": "sha384-KUfhGd1fDzLNE5rhwvu3IKiZBnL+UbtxRaYpTjUNpWIjK67i13cHWSeynzuvc8UB"
+    "integrity": "sha384-G3ijnlnZs75TCQPvmwiHSF61YEpBqq0AwRa6/esB8P1NKPYNrS2KFZEI2GZhh/Oy"
   },
   "uppy.min.css": {
     "src": "styles/uppy.min.css",
