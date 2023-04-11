@@ -5533,14 +5533,6 @@ $({ global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
 
 /***/ }),
 
-/***/ 1443:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-!function(e,t){ true?t(exports):0}(this,(function(e){"use strict";function t(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var s="undefined"!=typeof self?self:__webpack_require__.g;const i="undefined"!=typeof navigator,n=i&&"undefined"==typeof HTMLImageElement,r=!("undefined"==typeof __webpack_require__.g||"undefined"==typeof process||!process.versions||!process.versions.node),a=s.Buffer,h=!!a,f=e=>void 0!==e;function l(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(f).length)}function o(e){let t=new Error(e);throw delete t.stack,t}function u(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const d=e=>String.fromCharCode.apply(null,e),c="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class p{static from(e,t){return e instanceof this&&e.le===t?e:new p(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof p){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&o("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else o("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=p){return e instanceof DataView||e instanceof p?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||o("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new p(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,c?c.decode(i):h?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(d(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return d(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return d(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function g(e,t){o(`${e} '${t}' was not loaded, try using full build of exifr.`)}class m extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||g(this.kind,e),t&&(e in t||function(e,t){o(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||g(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var y=new m("file parser"),b=new m("segment parser"),w=new m("file reader");let k=s.fetch;const O="Invalid input argument";function v(e,t){return(s=e).startsWith("data:")||s.length>1e4?A(e,t,"base64"):r&&e.includes("://")?S(e,t,"url",U):r?A(e,t,"fs"):i?S(e,t,"url",U):void o(O);var s}async function S(e,t,s,i){return w.has(s)?A(e,t,s):i?async function(e,t){let s=await t(e);return new p(s)}(e,i):void o(`Parser ${s} is not loaded`)}async function A(e,t,s){let i=new(w.get(s))(e,t);return await i.read(),i}const U=e=>k(e).then((e=>e.arrayBuffer())),x=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class C extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function B(e,t,s){let i=new C;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function V(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const I=new Map,L=new Map,T=new Map,P=37500,z=37510,F=33723,j=34675,E=34665,_=34853,D=40965,M=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],N=["jfif","xmp","icc","iptc","ihdr"],R=["tiff",...N],$=["ifd0","ifd1","exif","gps","interop"],K=[...R,...$],W=["makerNote","userComment"],X=["translateKeys","translateValues","reviveValues","multiSegment"],H=[...X,"sanitize","mergeOutput","silentErrors"];class Y{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class G extends Y{get needed(){return this.enabled||this.deps.size>0}constructor(e,s,i,n){if(super(),t(this,"enabled",!1),t(this,"skip",new Set),t(this,"pick",new Set),t(this,"deps",new Set),t(this,"translateKeys",!1),t(this,"translateValues",!1),t(this,"reviveValues",!1),this.key=e,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=$.includes(e),this.canBeFiltered&&(this.dict=I.get(e)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:o(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of X)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,te(this.pick,this.deps)):this.enabled&&this.pick.size>0&&te(this.pick,this.deps)}}var J={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},q=new Map;class Q extends Y{static useCached(e){let t=q.get(e);return void 0!==t||(t=new this(e),q.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):o(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=i?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of M)this[e]=J[e];for(e of H)this[e]=J[e];for(e of W)this[e]=J[e];for(e of K)this[e]=new G(e,J[e],void 0,this)}setupFromTrue(){let e;for(e of M)this[e]=J[e];for(e of H)this[e]=J[e];for(e of W)this[e]=!0;for(e of K)this[e]=new G(e,!0,void 0,this)}setupFromArray(e){let t;for(t of M)this[t]=J[t];for(t of H)this[t]=J[t];for(t of W)this[t]=J[t];for(t of K)this[t]=new G(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,$)}setupFromObject(e){let t;for(t of($.ifd0=$.ifd0||$.image,$.ifd1=$.ifd1||$.thumbnail,Object.assign(this,e),M))this[t]=ee(e[t],J[t]);for(t of H)this[t]=ee(e[t],J[t]);for(t of W)this[t]=ee(e[t],J[t]);for(t of R)this[t]=new G(t,J[t],e[t],this);for(t of $)this[t]=new G(t,J[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,$,K),!0===e.tiff?this.batchEnableWithBool($,!0):!1===e.tiff?this.batchEnableWithUserValue($,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,$):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,$)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=Z(e,s);for(let[e,s]of t)te(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=Z(t,s);for(let[t,s]of e)te(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(P):t.skip.add(P),this.userComment?t.deps.add(z):t.skip.add(z),s.enabled||e.skip.add(700),i.enabled||e.skip.add(F),n.enabled||e.skip.add(j)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(D),e.deps.add(D)),t.needed&&e.deps.add(E),s.needed&&e.deps.add(_),this.tiff.enabled=$.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of $)this[e].finalizeFilters()}get onlyTiff(){return!N.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of R)this[e].enabled&&!b.has(e)&&g("segment parser",e)}}function Z(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=I.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function ee(e,t){return void 0!==e?e:void 0!==t?t:void 0}function te(e,t){for(let s of t)e.add(s)}t(Q,"default",J);class se{constructor(e){t(this,"parsers",{}),t(this,"output",{}),t(this,"errors",[]),t(this,"pushToErrors",(e=>this.errors.push(e))),this.options=Q.useCached(e)}async read(e){this.file=await function(e,t){return"string"==typeof e?v(e,t):i&&!n&&e instanceof HTMLImageElement?v(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new p(e):i&&e instanceof Blob?S(e,t,"blob",x):void o(O)}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of y)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),o("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),l(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=b.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function ie(e,t){let s=new se(t);return await s.read(e),s.parse()}var ne=Object.freeze({__proto__:null,parse:ie,Exifr:se,fileParsers:y,segmentParsers:b,fileReaders:w,tagKeys:I,tagValues:L,tagRevivers:T,createDictionary:B,extendDictionary:V,fetchUrlAsArrayBuffer:U,readBlobAsArrayBuffer:x,chunkedProps:M,otherSegments:N,segments:R,tiffBlocks:$,segmentsAndBlocks:K,tiffExtractables:W,inheritables:X,allFormatters:H,Options:Q});class re{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new Q({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof p?e:new p(e)}constructor(e,s={},i){t(this,"errors",[]),t(this,"raw",new Map),t(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(e),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=T.get(t),i=L.get(t),n=I.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}t(re,"headerLength",4),t(re,"type",void 0),t(re,"multiSegment",!1),t(re,"canHandle",(()=>!1));function ae(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function he(e){return e>=224&&e<=239}function fe(e,t,s){for(let[i,n]of b)if(n.canHandle(e,t,s))return i}class le extends class{constructor(e,s,i){t(this,"errors",[]),t(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){o(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):o("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(e),this.options=e,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(b.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...e){super(...e),t(this,"appSegments",[]),t(this,"jpegSegments",[]),t(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(b.keyList())):(e=void 0===e?b.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&b.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=b.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),he(s)){if(i=f.getUint16(e+2),n=fe(f,e,i),n&&o.has(n)&&(r=b.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=re.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(ae(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=b.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}t(le,"type","jpeg"),y.set("jpeg",le);const oe=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class ue extends re{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=oe[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&o(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&o(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:o(`Invalid tiff type ${e}`)}}}class de extends ue{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&o("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&o(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,u(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(E),this.interopOffset=t.get(D),this.gpsOffset=t.get(_),this.xmp=t.get(700),this.iptc=t.get(F),this.icc=t.get(j),this.options.sanitize&&(t.delete(E),t.delete(D),t.delete(_),t.delete(700),t.delete(F),t.delete(j)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,u(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(D)),this.makerNote=e.get(P),this.userComment=e.get(z),this.options.sanitize&&(e.delete(D),e.delete(P),e.delete(z)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ce(...e.get(2),e.get(1))),e.set("longitude",ce(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of $)if(e=this[t],!l(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ce(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}t(de,"type","tiff"),t(de,"headerLength",10),b.set("tiff",de);var pe=Object.freeze({__proto__:null,default:ne,Exifr:se,fileParsers:y,segmentParsers:b,fileReaders:w,tagKeys:I,tagValues:L,tagRevivers:T,createDictionary:B,extendDictionary:V,fetchUrlAsArrayBuffer:U,readBlobAsArrayBuffer:x,chunkedProps:M,otherSegments:N,segments:R,tiffBlocks:$,segmentsAndBlocks:K,tiffExtractables:W,inheritables:X,allFormatters:H,Options:Q,parse:ie});const ge={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},me=Object.assign({},ge,{firstChunkSize:4e4,gps:[1,2,3,4]});const ye=Object.assign({},ge,{tiff:!1,ifd1:!0,mergeOutput:!1});const be=Object.assign({},ge,{firstChunkSize:4e4,ifd0:[274]});async function we(e){let t=new se(be);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const ke=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});if(e.rotateCanvas=!0,e.rotateCss=!0,"object"==typeof navigator){let t=navigator.userAgent;if(t.includes("iPad")||t.includes("iPhone")){let s=t.match(/OS (\d+)_(\d+)/);if(s){let[,t,i]=s,n=Number(t)+.1*Number(i);e.rotateCanvas=n<13.4,e.rotateCss=!1}}else if(t.includes("OS X 10")){let[,s]=t.match(/OS X 10[_.](\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<15}if(t.includes("Chrome/")){let[,s]=t.match(/Chrome\/(\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<81}else if(t.includes("Firefox/")){let[,s]=t.match(/Firefox\/(\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<77}}class Oe extends p{constructor(...e){super(...e),t(this,"ranges",new ve),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=h?a.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class ve{constructor(){t(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>Se(e,t.offset,i)||Se(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function Se(e,t,s){return e<=t&&t<=s}class Ae extends Oe{constructor(e,s){super(0),t(this,"chunksRead",0),this.input=e,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}w.set("blob",class extends Ae{async readWhole(){this.chunked=!1;let e=await x(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await x(i);return this.set(n,e,!0)}}),e.Exifr=se,e.Options=Q,e.allFormatters=H,e.chunkedProps=M,e.createDictionary=B,e.default=pe,e.extendDictionary=V,e.fetchUrlAsArrayBuffer=U,e.fileParsers=y,e.fileReaders=w,e.gps=async function(e){let t=new se(me);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}},e.gpsOnlyOptions=me,e.inheritables=X,e.orientation=we,e.orientationOnlyOptions=be,e.otherSegments=N,e.parse=ie,e.readBlobAsArrayBuffer=x,e.rotation=async function(t){let s=await we(t);return Object.assign({canvas:e.rotateCanvas,css:e.rotateCss},ke[s])},e.rotations=ke,e.segmentParsers=b,e.segments=R,e.segmentsAndBlocks=K,e.tagKeys=I,e.tagRevivers=T,e.tagValues=L,e.thumbnail=async function(e){let t=new se(ye);await t.read(e);let s=await t.extractThumbnail();return s&&h?a.from(s):s},e.thumbnailOnlyOptions=ye,e.thumbnailUrl=async function(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}},e.tiffBlocks=$,e.tiffExtractables=W,Object.defineProperty(e,"__esModule",{value:!0})}));
-
-
-/***/ }),
-
 /***/ 81:
 /***/ ((module) => {
 
@@ -6679,7 +6671,7 @@ module.exports = function(text, test, separator) {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -6982,7 +6974,7 @@ var lib_id = 0;
 function lib_classPrivateFieldLooseKey(name) { return "__private_" + lib_id++ + "_" + name; }
 
 const packageJson = {
-  "version": "3.0.0"
+  "version": "3.0.2"
 };
 /**
  * Default store that keeps state in a simple object.
@@ -7139,6 +7131,8 @@ function getFileType(file) {
   return 'application/octet-stream';
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/generateFileID.js
+
+
 function encodeCharacter(character) {
   return character.charCodeAt(0).toString(32);
 }
@@ -7185,6 +7179,22 @@ function generateFileID(file) {
   }
 
   return id;
+} // If the provider has a stable, unique ID, then we can use that to identify the file.
+// Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
+
+function hasFileStableId(file) {
+  if (!file.isRemote || !file.remote) return false; // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
+
+  const stableIdProviders = new Set(['box', 'dropbox', 'drive', 'facebook', 'unsplash']);
+  return stableIdProviders.has(file.remote.provider);
+}
+
+function getSafeFileId(file) {
+  if (hasFileStableId(file)) return file.id;
+  const fileType = getFileType(file);
+  return generateFileID({ ...file,
+    type: fileType
+  });
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/supportsUploadProgress.js
 // Edge 15.x does not fire 'progress' events on uploads.
@@ -7347,10 +7357,14 @@ class Restricter {
       allowedFileTypes
     } = this.getOpts().restrictions;
 
-    if (maxNumberOfFiles && files.length + 1 > maxNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', {
-        smart_count: maxNumberOfFiles
-      })}`);
+    if (maxNumberOfFiles) {
+      const nonGhostFiles = files.filter(f => !f.isGhost);
+
+      if (nonGhostFiles.length + 1 > maxNumberOfFiles) {
+        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', {
+          smart_count: maxNumberOfFiles
+        })}`);
+      }
     }
 
     if (allowedFileTypes) {
@@ -7471,6 +7485,7 @@ class Restricter {
     connectedToInternet: 'Connected to the Internet',
     // Strings for remote providers
     noFilesFound: 'You have no files or folders here',
+    noSearchResults: 'Unfortunately, there are no results for this search',
     selectX: {
       0: 'Select %{smart_count}',
       1: 'Select %{smart_count}'
@@ -7488,6 +7503,7 @@ class Restricter {
     searchImages: 'Search for images',
     enterTextToSearch: 'Enter text to search for images',
     search: 'Search',
+    resetSearch: 'Reset search',
     emptyFolderAdded: 'No files were added from empty folder',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
@@ -7521,7 +7537,7 @@ function Uppy_classPrivateFieldLooseKey(name) { return "__private_" + Uppy_id++ 
 
 
 const Uppy_packageJson = {
-  "version": "3.0.0"
+  "version": "3.1.2"
 };
 
 /**
@@ -7817,7 +7833,7 @@ class Uppy {
 
     if (newOpts.locale) {
       this.iteratePlugins(plugin => {
-        plugin.setOptions();
+        plugin.setOptions(newOpts);
       });
     } // Note: this is not the preact `setState`, it's an internal function that has the same name.
 
@@ -7836,16 +7852,18 @@ class Uppy {
     };
     const updatedFiles = {};
     Object.keys(files).forEach(fileID => {
-      const updatedFile = { ...files[fileID]
+      updatedFiles[fileID] = { ...files[fileID],
+        progress: { ...files[fileID].progress,
+          ...defaultProgress
+        }
       };
-      updatedFile.progress = { ...updatedFile.progress,
-        ...defaultProgress
-      };
-      updatedFiles[fileID] = updatedFile;
     });
     this.setState({
       files: updatedFiles,
-      totalProgress: 0
+      totalProgress: 0,
+      allowNewUpload: true,
+      error: null,
+      recoveredState: null
     });
     this.emit('reset-progress');
   }
@@ -8807,7 +8825,7 @@ function _informAndEmit2(error, file) {
     message,
     details
   }, 'error', this.opts.infoTimeout);
-  this.log(`${message} ${details}`.trim(), 'error');
+  this.log(error, 'warning');
 }
 
 function _checkRequiredMetaFieldsOnFile2(file) {
@@ -8859,6 +8877,7 @@ function _checkAndCreateFileStateObject2(files, fileDescriptor) {
   // If the actual File object is passed from input[type=file] or drag-drop,
   // we normalize it to match Uppy file object
   if (fileDescriptor instanceof File) {
+    // eslint-disable-next-line no-param-reassign
     fileDescriptor = {
       name: fileDescriptor.name,
       type: fileDescriptor.type,
@@ -8871,11 +8890,9 @@ function _checkAndCreateFileStateObject2(files, fileDescriptor) {
   const fileName = getFileName(fileType, fileDescriptor);
   const fileExtension = getFileNameAndExtension(fileName).extension;
   const isRemote = Boolean(fileDescriptor.isRemote);
-  const fileID = generateFileID({ ...fileDescriptor,
-    type: fileType
-  });
+  const id = getSafeFileId(fileDescriptor);
 
-  if (this.checkIfFileAlreadyExists(fileID)) {
+  if (this.checkIfFileAlreadyExists(id)) {
     const error = new RestrictionError(this.i18n('noDuplicates', {
       fileName
     }));
@@ -8892,7 +8909,7 @@ function _checkAndCreateFileStateObject2(files, fileDescriptor) {
   const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null;
   let newFile = {
     source: fileDescriptor.source || '',
-    id: fileID,
+    id,
     name: fileName,
     extension: fileExtension || '',
     meta: { ...this.getState().meta,
@@ -8994,6 +9011,25 @@ function _addListeners2() {
     } else {
       Uppy_classPrivateFieldLooseBase(this, _informAndEmit)[_informAndEmit](error);
     }
+  });
+  let uploadStalledWarningRecentlyEmitted;
+  this.on('upload-stalled', (error, files) => {
+    const {
+      message
+    } = error;
+    const details = files.map(file => file.meta.name).join(', ');
+
+    if (!uploadStalledWarningRecentlyEmitted) {
+      this.info({
+        message,
+        details
+      }, 'warning', this.opts.infoTimeout);
+      uploadStalledWarningRecentlyEmitted = setTimeout(() => {
+        uploadStalledWarningRecentlyEmitted = null;
+      }, this.opts.infoTimeout);
+    }
+
+    this.log(`${message} ${details}`.trim(), 'warning');
   });
   this.on('upload', () => {
     this.setState({
@@ -9265,7 +9301,7 @@ async function _runUpload2(uploadID) {
 Uppy.VERSION = Uppy_packageJson.version;
 /* harmony default export */ const lib_Uppy = (Uppy);
 ;// CONCATENATED MODULE: ./node_modules/preact/dist/preact.module.js
-var n,l,u,i,t,o,r,f={},e=[],c=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function s(n,l){for(var u in l)n[u]=l[u];return n}function a(n){var l=n.parentNode;l&&l.removeChild(n)}function h(l,u,i){var t,o,r,f={};for(r in u)"key"==r?t=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):i),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return v(l,f,t,o,null)}function v(n,i,t,o,r){var f={type:n,props:i,key:t,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++u:r};return null==r&&null!=l.vnode&&l.vnode(f),f}function y(){return{current:null}}function p(n){return n.children}function d(n,l){this.props=n,this.context=l}function _(n,l){if(null==l)return n.__?_(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?_(n):null}function k(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return k(n)}}function b(n){(!n.__d&&(n.__d=!0)&&t.push(n)&&!g.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||setTimeout)(g)}function g(){for(var n;g.__r=t.length;)n=t.sort(function(n,l){return n.__v.__b-l.__v.__b}),t=[],n.some(function(n){var l,u,i,t,o,r;n.__d&&(o=(t=(l=n).__v).__e,(r=l.__P)&&(u=[],(i=s({},t)).__v=t.__v+1,j(r,t,i,l.__n,void 0!==r.ownerSVGElement,null!=t.__h?[o]:null,u,null==o?_(t):o,t.__h),z(u,t),t.__e!=o&&k(t)))})}function w(n,l,u,i,t,o,r,c,s,a){var h,y,d,k,b,g,w,x=i&&i.__k||e,C=x.length;for(u.__k=[],h=0;h<l.length;h++)if(null!=(k=u.__k[h]=null==(k=l[h])||"boolean"==typeof k?null:"string"==typeof k||"number"==typeof k||"bigint"==typeof k?v(null,k,null,null,k):Array.isArray(k)?v(p,{children:k},null,null,null):k.__b>0?v(k.type,k.props,k.key,null,k.__v):k)){if(k.__=u,k.__b=u.__b+1,null===(d=x[h])||d&&k.key==d.key&&k.type===d.type)x[h]=void 0;else for(y=0;y<C;y++){if((d=x[y])&&k.key==d.key&&k.type===d.type){x[y]=void 0;break}d=null}j(n,k,d=d||f,t,o,r,c,s,a),b=k.__e,(y=k.ref)&&d.ref!=y&&(w||(w=[]),d.ref&&w.push(d.ref,null,k),w.push(y,k.__c||b,k)),null!=b?(null==g&&(g=b),"function"==typeof k.type&&k.__k===d.__k?k.__d=s=m(k,s,n):s=A(n,k,d,x,b,s),"function"==typeof u.type&&(u.__d=s)):s&&d.__e==s&&s.parentNode!=n&&(s=_(d))}for(u.__e=g,h=C;h--;)null!=x[h]&&("function"==typeof u.type&&null!=x[h].__e&&x[h].__e==u.__d&&(u.__d=_(i,h+1)),N(x[h],x[h]));if(w)for(h=0;h<w.length;h++)M(w[h],w[++h],w[++h])}function m(n,l,u){for(var i,t=n.__k,o=0;t&&o<t.length;o++)(i=t[o])&&(i.__=n,l="function"==typeof i.type?m(i,l,u):A(u,i,i,t,i.__e,l));return l}function x(n,l){return l=l||[],null==n||"boolean"==typeof n||(Array.isArray(n)?n.some(function(n){x(n,l)}):l.push(n)),l}function A(n,l,u,i,t,o){var r,f,e;if(void 0!==l.__d)r=l.__d,l.__d=void 0;else if(null==u||t!=o||null==t.parentNode)n:if(null==o||o.parentNode!==n)n.appendChild(t),r=null;else{for(f=o,e=0;(f=f.nextSibling)&&e<i.length;e+=2)if(f==t)break n;n.insertBefore(t,o),r=o}return void 0!==r?r:t.nextSibling}function C(n,l,u,i,t){var o;for(o in u)"children"===o||"key"===o||o in l||H(n,o,null,u[o],i);for(o in l)t&&"function"!=typeof l[o]||"children"===o||"key"===o||"value"===o||"checked"===o||u[o]===l[o]||H(n,o,l[o],u[o],i)}function $(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]=null==u?"":"number"!=typeof u||c.test(l)?u:u+"px"}function H(n,l,u,i,t){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof i&&(n.style.cssText=i=""),i)for(l in i)u&&l in u||$(n.style,l,"");if(u)for(l in u)i&&u[l]===i[l]||$(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/Capture$/,"")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?i||n.addEventListener(l,o?T:I,o):n.removeEventListener(l,o?T:I,o);else if("dangerouslySetInnerHTML"!==l){if(t)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null!=u&&(!1!==u||"a"===l[0]&&"r"===l[1])?n.setAttribute(l,u):n.removeAttribute(l))}}function I(n){this.l[n.type+!1](l.event?l.event(n):n)}function T(n){this.l[n.type+!0](l.event?l.event(n):n)}function j(n,u,i,t,o,r,f,e,c){var a,h,v,y,_,k,b,g,m,x,A,C,$,H=u.type;if(void 0!==u.constructor)return null;null!=i.__h&&(c=i.__h,e=u.__e=i.__e,u.__h=null,r=[e]),(a=l.__b)&&a(u);try{n:if("function"==typeof H){if(g=u.props,m=(a=H.contextType)&&t[a.__c],x=a?m?m.props.value:a.__:t,i.__c?b=(h=u.__c=i.__c).__=h.__E:("prototype"in H&&H.prototype.render?u.__c=h=new H(g,x):(u.__c=h=new d(g,x),h.constructor=H,h.render=O),m&&m.sub(h),h.props=g,h.state||(h.state={}),h.context=x,h.__n=t,v=h.__d=!0,h.__h=[]),null==h.__s&&(h.__s=h.state),null!=H.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=s({},h.__s)),s(h.__s,H.getDerivedStateFromProps(g,h.__s))),y=h.props,_=h.state,v)null==H.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(null==H.getDerivedStateFromProps&&g!==y&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(g,x),!h.__e&&null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(g,h.__s,x)||u.__v===i.__v){h.props=g,h.state=h.__s,u.__v!==i.__v&&(h.__d=!1),h.__v=u,u.__e=i.__e,u.__k=i.__k,u.__k.forEach(function(n){n&&(n.__=u)}),h.__h.length&&f.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(g,h.__s,x),null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(y,_,k)})}if(h.context=x,h.props=g,h.__v=u,h.__P=n,A=l.__r,C=0,"prototype"in H&&H.prototype.render)h.state=h.__s,h.__d=!1,A&&A(u),a=h.render(h.props,h.state,h.context);else do{h.__d=!1,A&&A(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++C<25);h.state=h.__s,null!=h.getChildContext&&(t=s(s({},t),h.getChildContext())),v||null==h.getSnapshotBeforeUpdate||(k=h.getSnapshotBeforeUpdate(y,_)),$=null!=a&&a.type===p&&null==a.key?a.props.children:a,w(n,Array.isArray($)?$:[$],u,i,t,o,r,f,e,c),h.base=u.__e,u.__h=null,h.__h.length&&f.push(h),b&&(h.__E=h.__=null),h.__e=!1}else null==r&&u.__v===i.__v?(u.__k=i.__k,u.__e=i.__e):u.__e=L(i.__e,u,i,t,o,r,f,c);(a=l.diffed)&&a(u)}catch(n){u.__v=null,(c||null!=r)&&(u.__e=e,u.__h=!!c,r[r.indexOf(e)]=null),l.__e(n,u,i)}}function z(n,u){l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function L(l,u,i,t,o,r,e,c){var s,h,v,y=i.props,p=u.props,d=u.type,k=0;if("svg"===d&&(o=!0),null!=r)for(;k<r.length;k++)if((s=r[k])&&"setAttribute"in s==!!d&&(d?s.localName===d:3===s.nodeType)){l=s,r[k]=null;break}if(null==l){if(null===d)return document.createTextNode(p);l=o?document.createElementNS("http://www.w3.org/2000/svg",d):document.createElement(d,p.is&&p),r=null,c=!1}if(null===d)y===p||c&&l.data===p||(l.data=p);else{if(r=r&&n.call(l.childNodes),h=(y=i.props||f).dangerouslySetInnerHTML,v=p.dangerouslySetInnerHTML,!c){if(null!=r)for(y={},k=0;k<l.attributes.length;k++)y[l.attributes[k].name]=l.attributes[k].value;(v||h)&&(v&&(h&&v.__html==h.__html||v.__html===l.innerHTML)||(l.innerHTML=v&&v.__html||""))}if(C(l,p,y,o,c),v)u.__k=[];else if(k=u.props.children,w(l,Array.isArray(k)?k:[k],u,i,t,o&&"foreignObject"!==d,r,e,r?r[0]:i.__k&&_(i,0),c),null!=r)for(k=r.length;k--;)null!=r[k]&&a(r[k]);c||("value"in p&&void 0!==(k=p.value)&&(k!==l.value||"progress"===d&&!k||"option"===d&&k!==y.value)&&H(l,"value",k,y.value,!1),"checked"in p&&void 0!==(k=p.checked)&&k!==l.checked&&H(l,"checked",k,y.checked,!1))}return l}function M(n,u,i){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,i)}}function N(n,u,i){var t,o;if(l.unmount&&l.unmount(n),(t=n.ref)&&(t.current&&t.current!==n.__e||M(t,null,u)),null!=(t=n.__c)){if(t.componentWillUnmount)try{t.componentWillUnmount()}catch(n){l.__e(n,u)}t.base=t.__P=null}if(t=n.__k)for(o=0;o<t.length;o++)t[o]&&N(t[o],u,"function"!=typeof n.type);i||null==n.__e||a(n.__e),n.__e=n.__d=void 0}function O(n,l,u){return this.constructor(n,u)}function P(u,i,t){var o,r,e;l.__&&l.__(u,i),r=(o="function"==typeof t)?null:t&&t.__k||i.__k,e=[],j(i,u=(!o&&t||i).__k=h(p,null,[u]),r||f,f,void 0!==i.ownerSVGElement,!o&&t?[t]:r?null:i.firstChild?n.call(i.childNodes):null,e,!o&&t?t:r?r.__e:i.firstChild,o),z(e,u)}function S(n,l){P(n,l,S)}function q(l,u,i){var t,o,r,f=s({},l.props);for(r in u)"key"==r?t=u[r]:"ref"==r?o=u[r]:f[r]=u[r];return arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):i),v(l.type,f,t||l.key,o||l.ref,null)}function B(n,l){var u={__c:l="__cC"+r++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,i;return this.getChildContext||(u=[],(i={})[l]=this,this.getChildContext=function(){return i},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(b)},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=e.slice,l={__e:function(n,l,u,i){for(var t,o,r;l=l.__;)if((t=l.__c)&&!t.__)try{if((o=t.constructor)&&null!=o.getDerivedStateFromError&&(t.setState(o.getDerivedStateFromError(n)),r=t.__d),null!=t.componentDidCatch&&(t.componentDidCatch(n,i||{}),r=t.__d),r)return t.__E=t}catch(l){n=l}throw n}},u=0,i=function(n){return null!=n&&void 0===n.constructor},d.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=s({},this.state),"function"==typeof n&&(n=n(s({},u),this.props)),n&&s(u,n),null!=n&&this.__v&&(l&&this.__h.push(l),b(this))},d.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),b(this))},d.prototype.render=p,t=[],g.__r=0,r=0;
+var preact_module_n,l,u,i,t,o,r,f={},e=[],c=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function s(n,l){for(var u in l)n[u]=l[u];return n}function a(n){var l=n.parentNode;l&&l.removeChild(n)}function h(l,u,i){var t,o,r,f={};for(r in u)"key"==r?t=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?preact_module_n.call(arguments,2):i),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return v(l,f,t,o,null)}function v(n,i,t,o,r){var f={type:n,props:i,key:t,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:null==r?++u:r};return null==r&&null!=l.vnode&&l.vnode(f),f}function y(){return{current:null}}function p(n){return n.children}function d(n,l){this.props=n,this.context=l}function _(n,l){if(null==l)return n.__?_(n.__,n.__.__k.indexOf(n)+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?_(n):null}function k(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return k(n)}}function b(n){(!n.__d&&(n.__d=!0)&&t.push(n)&&!g.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||setTimeout)(g)}function g(){for(var n;g.__r=t.length;)n=t.sort(function(n,l){return n.__v.__b-l.__v.__b}),t=[],n.some(function(n){var l,u,i,t,o,r;n.__d&&(o=(t=(l=n).__v).__e,(r=l.__P)&&(u=[],(i=s({},t)).__v=t.__v+1,j(r,t,i,l.__n,void 0!==r.ownerSVGElement,null!=t.__h?[o]:null,u,null==o?_(t):o,t.__h),z(u,t),t.__e!=o&&k(t)))})}function w(n,l,u,i,t,o,r,c,s,a){var h,y,d,k,b,g,w,x=i&&i.__k||e,C=x.length;for(u.__k=[],h=0;h<l.length;h++)if(null!=(k=u.__k[h]=null==(k=l[h])||"boolean"==typeof k?null:"string"==typeof k||"number"==typeof k||"bigint"==typeof k?v(null,k,null,null,k):Array.isArray(k)?v(p,{children:k},null,null,null):k.__b>0?v(k.type,k.props,k.key,null,k.__v):k)){if(k.__=u,k.__b=u.__b+1,null===(d=x[h])||d&&k.key==d.key&&k.type===d.type)x[h]=void 0;else for(y=0;y<C;y++){if((d=x[y])&&k.key==d.key&&k.type===d.type){x[y]=void 0;break}d=null}j(n,k,d=d||f,t,o,r,c,s,a),b=k.__e,(y=k.ref)&&d.ref!=y&&(w||(w=[]),d.ref&&w.push(d.ref,null,k),w.push(y,k.__c||b,k)),null!=b?(null==g&&(g=b),"function"==typeof k.type&&k.__k===d.__k?k.__d=s=m(k,s,n):s=A(n,k,d,x,b,s),"function"==typeof u.type&&(u.__d=s)):s&&d.__e==s&&s.parentNode!=n&&(s=_(d))}for(u.__e=g,h=C;h--;)null!=x[h]&&("function"==typeof u.type&&null!=x[h].__e&&x[h].__e==u.__d&&(u.__d=_(i,h+1)),N(x[h],x[h]));if(w)for(h=0;h<w.length;h++)M(w[h],w[++h],w[++h])}function m(n,l,u){for(var i,t=n.__k,o=0;t&&o<t.length;o++)(i=t[o])&&(i.__=n,l="function"==typeof i.type?m(i,l,u):A(u,i,i,t,i.__e,l));return l}function x(n,l){return l=l||[],null==n||"boolean"==typeof n||(Array.isArray(n)?n.some(function(n){x(n,l)}):l.push(n)),l}function A(n,l,u,i,t,o){var r,f,e;if(void 0!==l.__d)r=l.__d,l.__d=void 0;else if(null==u||t!=o||null==t.parentNode)n:if(null==o||o.parentNode!==n)n.appendChild(t),r=null;else{for(f=o,e=0;(f=f.nextSibling)&&e<i.length;e+=2)if(f==t)break n;n.insertBefore(t,o),r=o}return void 0!==r?r:t.nextSibling}function C(n,l,u,i,t){var o;for(o in u)"children"===o||"key"===o||o in l||H(n,o,null,u[o],i);for(o in l)t&&"function"!=typeof l[o]||"children"===o||"key"===o||"value"===o||"checked"===o||u[o]===l[o]||H(n,o,l[o],u[o],i)}function $(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]=null==u?"":"number"!=typeof u||c.test(l)?u:u+"px"}function H(n,l,u,i,t){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof i&&(n.style.cssText=i=""),i)for(l in i)u&&l in u||$(n.style,l,"");if(u)for(l in u)i&&u[l]===i[l]||$(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/Capture$/,"")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?i||n.addEventListener(l,o?T:I,o):n.removeEventListener(l,o?T:I,o);else if("dangerouslySetInnerHTML"!==l){if(t)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("href"!==l&&"list"!==l&&"form"!==l&&"tabIndex"!==l&&"download"!==l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null!=u&&(!1!==u||"a"===l[0]&&"r"===l[1])?n.setAttribute(l,u):n.removeAttribute(l))}}function I(n){this.l[n.type+!1](l.event?l.event(n):n)}function T(n){this.l[n.type+!0](l.event?l.event(n):n)}function j(n,u,i,t,o,r,f,e,c){var a,h,v,y,_,k,b,g,m,x,A,C,$,H=u.type;if(void 0!==u.constructor)return null;null!=i.__h&&(c=i.__h,e=u.__e=i.__e,u.__h=null,r=[e]),(a=l.__b)&&a(u);try{n:if("function"==typeof H){if(g=u.props,m=(a=H.contextType)&&t[a.__c],x=a?m?m.props.value:a.__:t,i.__c?b=(h=u.__c=i.__c).__=h.__E:("prototype"in H&&H.prototype.render?u.__c=h=new H(g,x):(u.__c=h=new d(g,x),h.constructor=H,h.render=O),m&&m.sub(h),h.props=g,h.state||(h.state={}),h.context=x,h.__n=t,v=h.__d=!0,h.__h=[]),null==h.__s&&(h.__s=h.state),null!=H.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=s({},h.__s)),s(h.__s,H.getDerivedStateFromProps(g,h.__s))),y=h.props,_=h.state,v)null==H.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(null==H.getDerivedStateFromProps&&g!==y&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(g,x),!h.__e&&null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(g,h.__s,x)||u.__v===i.__v){h.props=g,h.state=h.__s,u.__v!==i.__v&&(h.__d=!1),h.__v=u,u.__e=i.__e,u.__k=i.__k,u.__k.forEach(function(n){n&&(n.__=u)}),h.__h.length&&f.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(g,h.__s,x),null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(y,_,k)})}if(h.context=x,h.props=g,h.__v=u,h.__P=n,A=l.__r,C=0,"prototype"in H&&H.prototype.render)h.state=h.__s,h.__d=!1,A&&A(u),a=h.render(h.props,h.state,h.context);else do{h.__d=!1,A&&A(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++C<25);h.state=h.__s,null!=h.getChildContext&&(t=s(s({},t),h.getChildContext())),v||null==h.getSnapshotBeforeUpdate||(k=h.getSnapshotBeforeUpdate(y,_)),$=null!=a&&a.type===p&&null==a.key?a.props.children:a,w(n,Array.isArray($)?$:[$],u,i,t,o,r,f,e,c),h.base=u.__e,u.__h=null,h.__h.length&&f.push(h),b&&(h.__E=h.__=null),h.__e=!1}else null==r&&u.__v===i.__v?(u.__k=i.__k,u.__e=i.__e):u.__e=L(i.__e,u,i,t,o,r,f,c);(a=l.diffed)&&a(u)}catch(n){u.__v=null,(c||null!=r)&&(u.__e=e,u.__h=!!c,r[r.indexOf(e)]=null),l.__e(n,u,i)}}function z(n,u){l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function L(l,u,i,t,o,r,e,c){var s,h,v,y=i.props,p=u.props,d=u.type,k=0;if("svg"===d&&(o=!0),null!=r)for(;k<r.length;k++)if((s=r[k])&&"setAttribute"in s==!!d&&(d?s.localName===d:3===s.nodeType)){l=s,r[k]=null;break}if(null==l){if(null===d)return document.createTextNode(p);l=o?document.createElementNS("http://www.w3.org/2000/svg",d):document.createElement(d,p.is&&p),r=null,c=!1}if(null===d)y===p||c&&l.data===p||(l.data=p);else{if(r=r&&preact_module_n.call(l.childNodes),h=(y=i.props||f).dangerouslySetInnerHTML,v=p.dangerouslySetInnerHTML,!c){if(null!=r)for(y={},k=0;k<l.attributes.length;k++)y[l.attributes[k].name]=l.attributes[k].value;(v||h)&&(v&&(h&&v.__html==h.__html||v.__html===l.innerHTML)||(l.innerHTML=v&&v.__html||""))}if(C(l,p,y,o,c),v)u.__k=[];else if(k=u.props.children,w(l,Array.isArray(k)?k:[k],u,i,t,o&&"foreignObject"!==d,r,e,r?r[0]:i.__k&&_(i,0),c),null!=r)for(k=r.length;k--;)null!=r[k]&&a(r[k]);c||("value"in p&&void 0!==(k=p.value)&&(k!==l.value||"progress"===d&&!k||"option"===d&&k!==y.value)&&H(l,"value",k,y.value,!1),"checked"in p&&void 0!==(k=p.checked)&&k!==l.checked&&H(l,"checked",k,y.checked,!1))}return l}function M(n,u,i){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,i)}}function N(n,u,i){var t,o;if(l.unmount&&l.unmount(n),(t=n.ref)&&(t.current&&t.current!==n.__e||M(t,null,u)),null!=(t=n.__c)){if(t.componentWillUnmount)try{t.componentWillUnmount()}catch(n){l.__e(n,u)}t.base=t.__P=null}if(t=n.__k)for(o=0;o<t.length;o++)t[o]&&N(t[o],u,"function"!=typeof n.type);i||null==n.__e||a(n.__e),n.__e=n.__d=void 0}function O(n,l,u){return this.constructor(n,u)}function P(u,i,t){var o,r,e;l.__&&l.__(u,i),r=(o="function"==typeof t)?null:t&&t.__k||i.__k,e=[],j(i,u=(!o&&t||i).__k=h(p,null,[u]),r||f,f,void 0!==i.ownerSVGElement,!o&&t?[t]:r?null:i.firstChild?preact_module_n.call(i.childNodes):null,e,!o&&t?t:r?r.__e:i.firstChild,o),z(e,u)}function S(n,l){P(n,l,S)}function q(l,u,i){var t,o,r,f=s({},l.props);for(r in u)"key"==r?t=u[r]:"ref"==r?o=u[r]:f[r]=u[r];return arguments.length>2&&(f.children=arguments.length>3?preact_module_n.call(arguments,2):i),v(l.type,f,t||l.key,o||l.ref,null)}function B(n,l){var u={__c:l="__cC"+r++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,i;return this.getChildContext||(u=[],(i={})[l]=this,this.getChildContext=function(){return i},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(b)},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}preact_module_n=e.slice,l={__e:function(n,l,u,i){for(var t,o,r;l=l.__;)if((t=l.__c)&&!t.__)try{if((o=t.constructor)&&null!=o.getDerivedStateFromError&&(t.setState(o.getDerivedStateFromError(n)),r=t.__d),null!=t.componentDidCatch&&(t.componentDidCatch(n,i||{}),r=t.__d),r)return t.__E=t}catch(l){n=l}throw n}},u=0,i=function(n){return null!=n&&void 0===n.constructor},d.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=s({},this.state),"function"==typeof n&&(n=n(s({},u),this.props)),n&&s(u,n),null!=n&&this.__v&&(l&&this.__h.push(l),b(this))},d.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),b(this))},d.prototype.render=p,t=[],g.__r=0,r=0;
 //# sourceMappingURL=preact.module.js.map
 
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isDOMElement.js
@@ -9480,11 +9516,32 @@ class UIPlugin extends BasePlugin {
     });
   }
 
+  getTargetPlugin(target) {
+    let targetPlugin;
+
+    if (typeof target === 'object' && target instanceof UIPlugin) {
+      // Targeting a plugin *instance*
+      targetPlugin = target;
+    } else if (typeof target === 'function') {
+      // Targeting a plugin type
+      const Target = target; // Find the target plugin instance.
+
+      this.uppy.iteratePlugins(p => {
+        if (p instanceof Target) {
+          targetPlugin = p;
+        }
+      });
+    }
+
+    return targetPlugin;
+  }
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    */
+
+
   mount(target, plugin) {
     const callerPluginName = plugin.id;
     const targetElement = findDOMElement(target);
@@ -9523,21 +9580,7 @@ class UIPlugin extends BasePlugin {
       return this.el;
     }
 
-    let targetPlugin;
-
-    if (typeof target === 'object' && target instanceof UIPlugin) {
-      // Targeting a plugin *instance*
-      targetPlugin = target;
-    } else if (typeof target === 'function') {
-      // Targeting a plugin type
-      const Target = target; // Find the target plugin instance.
-
-      this.uppy.iteratePlugins(p => {
-        if (p instanceof Target) {
-          targetPlugin = p;
-        }
-      });
-    }
+    const targetPlugin = this.getTargetPlugin(target);
 
     if (targetPlugin) {
       this.uppy.log(`Installing ${callerPluginName} to ${targetPlugin.id}`);
@@ -10343,7 +10386,7 @@ function StatusBarUI_StatusBar(props) {
 
 
 const StatusBar_packageJson = {
-  "version": "3.0.0"
+  "version": "3.1.0"
 };
 
 
@@ -10369,7 +10412,7 @@ function getTotalETA(files) {
 }
 
 function getUploadingState(error, isAllComplete, recoveredState, files) {
-  if (error && !isAllComplete) {
+  if (error) {
     return StatusBarStates.STATE_ERROR;
   }
 
@@ -10908,7 +10951,7 @@ TransitionGroup.defaultProps = {
 
 
 const Informer_packageJson = {
-  "version": "3.0.0"
+  "version": "3.0.1"
 };
 /**
  * Informer
@@ -11015,8 +11058,9 @@ function isPreviewSupported(fileType) {
 
   return /^[^/]+\/(jpe?g|gif|png|svg|svg\+xml|bmp|webp|avif)$/.test(fileType);
 }
-// EXTERNAL MODULE: ./node_modules/exifr/dist/mini.umd.js
-var mini_umd = __webpack_require__(1443);
+;// CONCATENATED MODULE: ./node_modules/exifr/dist/mini.esm.mjs
+function mini_esm_e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var mini_esm_t="undefined"!=typeof self?self:global;const mini_esm_s="undefined"!=typeof navigator,mini_esm_i=mini_esm_s&&"undefined"==typeof HTMLImageElement,mini_esm_n=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),mini_esm_r=mini_esm_t.Buffer,mini_esm_a=!!mini_esm_r,mini_esm_h=e=>void 0!==e;function mini_esm_f(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(mini_esm_h).length)}function mini_esm_l(e){let t=new Error(e);throw delete t.stack,t}function mini_esm_o(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const mini_esm_u=e=>String.fromCharCode.apply(null,e),mini_esm_d="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class mini_esm_c{static from(e,t){return e instanceof this&&e.le===t?e:new mini_esm_c(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof mini_esm_c){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&mini_esm_l("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else mini_esm_l("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=mini_esm_c){return e instanceof DataView||e instanceof mini_esm_c?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||mini_esm_l("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new mini_esm_c(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,mini_esm_d?mini_esm_d.decode(i):mini_esm_a?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(mini_esm_u(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return mini_esm_u(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return mini_esm_u(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function mini_esm_p(e,t){mini_esm_l(`${e} '${t}' was not loaded, try using full build of exifr.`)}class mini_esm_g extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||mini_esm_p(this.kind,e),t&&(e in t||function(e,t){mini_esm_l(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||mini_esm_p(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var mini_esm_m=new mini_esm_g("file parser"),mini_esm_y=new mini_esm_g("segment parser"),mini_esm_b=new mini_esm_g("file reader");let mini_esm_w=mini_esm_t.fetch;function mini_esm_k(e,t){return(i=e).startsWith("data:")||i.length>1e4?mini_esm_v(e,t,"base64"):mini_esm_n&&e.includes("://")?mini_esm_O(e,t,"url",mini_esm_S):mini_esm_n?mini_esm_v(e,t,"fs"):mini_esm_s?mini_esm_O(e,t,"url",mini_esm_S):void mini_esm_l("Invalid input argument");var i}async function mini_esm_O(e,t,s,i){return mini_esm_b.has(s)?mini_esm_v(e,t,s):i?async function(e,t){let s=await t(e);return new mini_esm_c(s)}(e,i):void mini_esm_l(`Parser ${s} is not loaded`)}async function mini_esm_v(e,t,s){let i=new(mini_esm_b.get(s))(e,t);return await i.read(),i}const mini_esm_S=e=>mini_esm_w(e).then((e=>e.arrayBuffer())),mini_esm_A=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class U extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function mini_esm_x(e,t,s){let i=new U;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function mini_esm_C(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const mini_esm_B=new Map,V=new Map,mini_esm_I=new Map,mini_esm_L=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],mini_esm_T=["jfif","xmp","icc","iptc","ihdr"],mini_esm_z=["tiff",...mini_esm_T],mini_esm_P=["ifd0","ifd1","exif","gps","interop"],F=[...mini_esm_z,...mini_esm_P],mini_esm_j=["makerNote","userComment"],E=["translateKeys","translateValues","reviveValues","multiSegment"],mini_esm_M=[...E,"sanitize","mergeOutput","silentErrors"];class mini_esm_{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class D extends mini_esm_{get needed(){return this.enabled||this.deps.size>0}constructor(t,s,i,n){if(super(),mini_esm_e(this,"enabled",!1),mini_esm_e(this,"skip",new Set),mini_esm_e(this,"pick",new Set),mini_esm_e(this,"deps",new Set),mini_esm_e(this,"translateKeys",!1),mini_esm_e(this,"translateValues",!1),mini_esm_e(this,"reviveValues",!1),this.key=t,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=mini_esm_P.includes(t),this.canBeFiltered&&(this.dict=mini_esm_B.get(t)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:mini_esm_l(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of E)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,X(this.pick,this.deps)):this.enabled&&this.pick.size>0&&X(this.pick,this.deps)}}var mini_esm_N={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},mini_esm_$=new Map;class R extends mini_esm_{static useCached(e){let t=mini_esm_$.get(e);return void 0!==t||(t=new this(e),mini_esm_$.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):mini_esm_l(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=mini_esm_s?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=mini_esm_N[e];for(e of F)this[e]=new D(e,mini_esm_N[e],void 0,this)}setupFromTrue(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=!0;for(e of F)this[e]=new D(e,!0,void 0,this)}setupFromArray(e){let t;for(t of mini_esm_L)this[t]=mini_esm_N[t];for(t of mini_esm_M)this[t]=mini_esm_N[t];for(t of mini_esm_j)this[t]=mini_esm_N[t];for(t of F)this[t]=new D(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,mini_esm_P)}setupFromObject(e){let t;for(t of(mini_esm_P.ifd0=mini_esm_P.ifd0||mini_esm_P.image,mini_esm_P.ifd1=mini_esm_P.ifd1||mini_esm_P.thumbnail,Object.assign(this,e),mini_esm_L))this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_M)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_j)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_z)this[t]=new D(t,mini_esm_N[t],e[t],this);for(t of mini_esm_P)this[t]=new D(t,mini_esm_N[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,mini_esm_P,F),!0===e.tiff?this.batchEnableWithBool(mini_esm_P,!0):!1===e.tiff?this.batchEnableWithUserValue(mini_esm_P,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,mini_esm_P):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,mini_esm_P)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=K(e,s);for(let[e,s]of t)X(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=K(t,s);for(let[t,s]of e)X(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),s.enabled||e.skip.add(700),i.enabled||e.skip.add(33723),n.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),s.needed&&e.deps.add(34853),this.tiff.enabled=mini_esm_P.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of mini_esm_P)this[e].finalizeFilters()}get onlyTiff(){return!mini_esm_T.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of mini_esm_z)this[e].enabled&&!mini_esm_y.has(e)&&mini_esm_p("segment parser",e)}}function K(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=mini_esm_B.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function W(e,t){return void 0!==e?e:void 0!==t?t:void 0}function X(e,t){for(let s of t)e.add(s)}mini_esm_e(R,"default",mini_esm_N);class mini_esm_H{constructor(t){mini_esm_e(this,"parsers",{}),mini_esm_e(this,"output",{}),mini_esm_e(this,"errors",[]),mini_esm_e(this,"pushToErrors",(e=>this.errors.push(e))),this.options=R.useCached(t)}async read(e){this.file=await function(e,t){return"string"==typeof e?mini_esm_k(e,t):mini_esm_s&&!mini_esm_i&&e instanceof HTMLImageElement?mini_esm_k(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new mini_esm_c(e):mini_esm_s&&e instanceof Blob?mini_esm_O(e,t,"blob",mini_esm_A):void mini_esm_l("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of mini_esm_m)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),mini_esm_l("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),mini_esm_f(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=mini_esm_y.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function Y(e,t){let s=new mini_esm_H(t);return await s.read(e),s.parse()}var G=Object.freeze({__proto__:null,parse:Y,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:F,tiffExtractables:mini_esm_j,inheritables:E,allFormatters:mini_esm_M,Options:R});class J{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new R({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof mini_esm_c?e:new mini_esm_c(e)}constructor(t,s={},i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"raw",new Map),mini_esm_e(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(t),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=mini_esm_I.get(t),i=V.get(t),n=mini_esm_B.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}mini_esm_e(J,"headerLength",4),mini_esm_e(J,"type",void 0),mini_esm_e(J,"multiSegment",!1),mini_esm_e(J,"canHandle",(()=>!1));function mini_esm_q(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Q(e){return e>=224&&e<=239}function Z(e,t,s){for(let[i,n]of mini_esm_y)if(n.canHandle(e,t,s))return i}class ee extends class{constructor(t,s,i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){mini_esm_l(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):mini_esm_l("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(t),this.options=t,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(mini_esm_y.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...t){super(...t),mini_esm_e(this,"appSegments",[]),mini_esm_e(this,"jpegSegments",[]),mini_esm_e(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(mini_esm_y.keyList())):(e=void 0===e?mini_esm_y.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&mini_esm_y.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=mini_esm_y.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),Q(s)){if(i=f.getUint16(e+2),n=Z(f,e,i),n&&o.has(n)&&(r=mini_esm_y.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=J.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(mini_esm_q(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=mini_esm_y.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}mini_esm_e(ee,"type","jpeg"),mini_esm_m.set("jpeg",ee);const te=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class se extends J{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=te[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&mini_esm_l(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&mini_esm_l(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:mini_esm_l(`Invalid tiff type ${e}`)}}}class ie extends se{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&mini_esm_l("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&mini_esm_l(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,mini_esm_o(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,mini_esm_o(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ne(...e.get(2),e.get(1))),e.set("longitude",ne(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of mini_esm_P)if(e=this[t],!mini_esm_f(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ne(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}mini_esm_e(ie,"type","tiff"),mini_esm_e(ie,"headerLength",10),mini_esm_y.set("tiff",ie);var re=Object.freeze({__proto__:null,default:G,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:F,tiffExtractables:mini_esm_j,inheritables:E,allFormatters:mini_esm_M,Options:R,parse:Y});const ae={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},he=Object.assign({},ae,{firstChunkSize:4e4,gps:[1,2,3,4]});async function fe(e){let t=new mini_esm_H(he);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}}const le=Object.assign({},ae,{tiff:!1,ifd1:!0,mergeOutput:!1});async function oe(e){let t=new mini_esm_H(le);await t.read(e);let s=await t.extractThumbnail();return s&&mini_esm_a?mini_esm_r.from(s):s}async function ue(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}}const de=Object.assign({},ae,{firstChunkSize:4e4,ifd0:[274]});async function ce(e){let t=new mini_esm_H(de);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const pe=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let ge=!0,me=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,s]=t,i=Number(e)+.1*Number(s);ge=i<13.4,me=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);ge=me=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);ge=me=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);ge=me=Number(t)<77}}async function ye(e){let t=await ce(e);return Object.assign({canvas:ge,css:me},pe[t])}class be extends mini_esm_c{constructor(...t){super(...t),mini_esm_e(this,"ranges",new we),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=mini_esm_a?mini_esm_r.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class we{constructor(){mini_esm_e(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>ke(e,t.offset,i)||ke(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function ke(e,t,s){return e<=t&&t<=s}class Oe extends be{constructor(t,s){super(0),mini_esm_e(this,"chunksRead",0),this.input=t,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}mini_esm_b.set("blob",class extends Oe{async readWhole(){this.chunked=!1;let e=await mini_esm_A(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await mini_esm_A(i);return this.set(n,e,!0)}});/* harmony default export */ const mini_esm = ((/* unused pure expression or super */ null && (re)));
+
 ;// CONCATENATED MODULE: ./node_modules/@uppy/thumbnail-generator/lib/locale.js
 /* harmony default export */ const thumbnail_generator_lib_locale = ({
   strings: {
@@ -11031,7 +11075,7 @@ var mini_umd = __webpack_require__(1443);
 
 
 const lib_packageJson = {
-  "version": "3.0.0"
+  "version": "3.0.2"
 };
 /**
  * Save a <canvas> element's content to a Blob object.
@@ -11257,7 +11301,7 @@ class ThumbnailGenerator extends lib_UIPlugin {
         reject(event.error || new Error('Could not create thumbnail'));
       });
     });
-    const orientationPromise = (0,mini_umd.rotation)(file.data).catch(() => 1);
+    const orientationPromise = ye(file.data).catch(() => 1);
     return Promise.all([onload, orientationPromise]).then(_ref => {
       let [image, orientation] = _ref;
       const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg);
@@ -11455,25 +11499,6 @@ function findAllDOMElements(element) {
  * Converts list into array
  */
 /* harmony default export */ const toArray = (Array.from);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/getRelativePath.js
-/**
- * Get the relative path from the FileEntry#fullPath, because File#webkitRelativePath is always '', at least onDrop.
- *
- * @param {FileEntry} fileEntry
- *
- * @returns {string|null} - if file is not in a folder - return null (this is to
- * be consistent with .relativePath-s of files selected from My Device). If file
- * is in a folder - return its fullPath, e.g. '/simpsons/hi.jpeg'.
- */
-function getRelativePath(fileEntry) {
-  // fileEntry.fullPath - "/simpsons/hi.jpeg" or undefined (for browsers that don't support it)
-  // fileEntry.name - "hi.jpeg"
-  if (!fileEntry.fullPath || fileEntry.fullPath === `/${fileEntry.name}`) {
-    return null;
-  }
-
-  return fileEntry.fullPath;
-}
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/getFilesAndDirectoriesFromDirectory.js
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
@@ -11508,9 +11533,9 @@ function getFilesAndDirectoriesFromDirectory(directoryReader, oldEntries, logDro
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/index.js
 
-
 /**
- * Interop between deprecated webkitGetAsEntry and standard getAsFileSystemHandle.
+ * Polyfill for the new (experimental) getAsFileSystemHandle API (using the popular webkitGetAsEntry behind the scenes)
+ * so that we can switch to the getAsFileSystemHandle API once it (hopefully) becomes standard
  */
 
 function getAsFileSystemHandleFromEntry(entry, logDropError) {
@@ -11518,6 +11543,7 @@ function getAsFileSystemHandleFromEntry(entry, logDropError) {
   return {
     // eslint-disable-next-line no-nested-ternary
     kind: entry.isFile ? 'file' : entry.isDirectory ? 'directory' : undefined,
+    name: entry.name,
 
     getFile() {
       return new Promise((resolve, reject) => entry.file(resolve, reject));
@@ -11537,51 +11563,80 @@ function getAsFileSystemHandleFromEntry(entry, logDropError) {
   };
 }
 
-async function* createPromiseToAddFileOrParseDirectory(entry) {
+async function* createPromiseToAddFileOrParseDirectory(entry, relativePath, lastResortFile) {
+  if (lastResortFile === void 0) {
+    lastResortFile = undefined;
+  }
+
   // For each dropped item, - make sure it's a file/directory, and start deepening in!
   if (entry.kind === 'file') {
     const file = await entry.getFile();
 
-    if (file !== null) {
-      file.relativePath = getRelativePath(entry);
+    if (file != null) {
+      file.relativePath = relativePath ? `${relativePath}/${entry.name}` : null;
       yield file;
-    }
+    } else if (lastResortFile != null) yield lastResortFile;
   } else if (entry.kind === 'directory') {
     for await (const handle of entry.values()) {
-      yield* createPromiseToAddFileOrParseDirectory(handle);
+      // Recurse on the directory, appending the dir name to the relative path
+      yield* createPromiseToAddFileOrParseDirectory(handle, `${relativePath}/${entry.name}`);
     }
-  }
+  } else if (lastResortFile != null) yield lastResortFile;
 }
+/**
+ * Load all files from data transfer, and recursively read any directories.
+ * Note that IE is not supported for drag-drop, because IE doesn't support Data Transfers
+ *
+ * @param {DataTransfer} dataTransfer
+ * @param {*} logDropError on error
+ */
+
 
 async function* getFilesFromDataTransfer(dataTransfer, logDropError) {
-  const entries = await Promise.all(Array.from(dataTransfer.items, async item => {
-    var _await$item$getAsFile;
+  // Retrieving the dropped items must happen synchronously
+  // otherwise only the first item gets treated and the other ones are garbage collected.
+  // https://github.com/transloadit/uppy/pull/3998
+  const fileSystemHandles = await Promise.all(Array.from(dataTransfer.items, async item => {
+    var _fileSystemHandle;
 
-    const lastResortFile = item.getAsFile(); // Chromium bug, see https://github.com/transloadit/uppy/issues/3505.
+    let fileSystemHandle; // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
+    // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
+    // or else Chrome will crash when running in HTTP: https://github.com/transloadit/uppy/issues/4133
+    // if (window.isSecureContext && item.getAsFileSystemHandle != null) entry = await item.getAsFileSystemHandle()
+    // `webkitGetAsEntry` exists in all popular browsers (including non-WebKit browsers),
+    // however it may be renamed to getAsEntry() in the future, so you should code defensively, looking for both.
+    // from https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/webkitGetAsEntry
 
-    const entry = (_await$item$getAsFile = await (item.getAsFileSystemHandle == null ? void 0 : item.getAsFileSystemHandle())) != null ? _await$item$getAsFile : getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError);
+    const getAsEntry = () => typeof item.getAsEntry === 'function' ? item.getAsEntry() : item.webkitGetAsEntry(); // eslint-disable-next-line prefer-const
+
+
+    (_fileSystemHandle = fileSystemHandle) != null ? _fileSystemHandle : fileSystemHandle = getAsFileSystemHandleFromEntry(getAsEntry(), logDropError);
     return {
-      lastResortFile,
-      entry
+      fileSystemHandle,
+      lastResortFile: item.getAsFile() // can be used as a fallback in case other methods fail
+
     };
   }));
 
   for (const {
     lastResortFile,
-    entry
-  } of entries) {
-    // :entry can be null when we drop the url e.g.
-    if (entry != null) {
+    fileSystemHandle
+  } of fileSystemHandles) {
+    // fileSystemHandle and lastResortFile can be null when we drop an url.
+    if (fileSystemHandle != null) {
       try {
-        yield* createPromiseToAddFileOrParseDirectory(entry, logDropError);
+        yield* createPromiseToAddFileOrParseDirectory(fileSystemHandle, '', lastResortFile);
       } catch (err) {
-        if (lastResortFile) {
+        // Example: If dropping a symbolic link, Chromium will throw:
+        // "DOMException: A requested file or directory could not be found at the time an operation was processed.",
+        // So we will use lastResortFile instead. See https://github.com/transloadit/uppy/issues/3505.
+        if (lastResortFile != null) {
           yield lastResortFile;
         } else {
           logDropError(err);
         }
       }
-    }
+    } else if (lastResortFile != null) yield lastResortFile;
   }
 }
 ;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/fallbackApi.js
@@ -12085,7 +12140,8 @@ function FilePreview(props) {
 
 
 const metaFieldIdToName = (metaFieldId, metaFields) => {
-  const field = metaFields.filter(f => f.id === metaFieldId);
+  const fields = typeof metaFields === 'function' ? metaFields() : metaFields;
+  const field = fields.filter(f => f.id === metaFieldId);
   return field[0].name;
 };
 
@@ -12190,7 +12246,7 @@ function ProgressIndicatorButton(props) {
   return h("div", {
     className: "uppy-Dashboard-Item-progress"
   }, h("button", {
-    className: "uppy-u-reset uppy-Dashboard-Item-progressIndicator",
+    className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator",
     type: "button",
     "aria-label": progressIndicatorTitle(props),
     title: progressIndicatorTitle(props),
@@ -12375,6 +12431,10 @@ const renderFileName = props => {
   } = props.file.meta;
 
   function getMaxNameLength() {
+    if (props.singleFile) {
+      return 200;
+    }
+
     if (props.containerWidth <= 352) {
       return 35;
     }
@@ -12435,7 +12495,7 @@ const ErrorButton = _ref => {
 
   if (file.error) {
     return h("button", {
-      className: "uppy-u-reset uppy-Dashboard-Item-errorDetails",
+      className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-errorDetails",
       "aria-label": file.error,
       "data-microtip-position": "bottom",
       "data-microtip-size": "medium",
@@ -12542,7 +12602,7 @@ function EditButton(_ref) {
 
   if (!uploadInProgressOrComplete && metaFields && metaFields.length > 0 || !uploadInProgressOrComplete && canEditFile(file)) {
     return h("button", {
-      className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
+      className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
       type: "button",
       "aria-label": i18n('editFileWithFilename', {
         file: file.meta.name
@@ -12793,7 +12853,8 @@ class FileItem extends d {
       i18n: this.props.i18n,
       toggleAddFilesPanel: this.props.toggleAddFilesPanel,
       toggleFileCard: this.props.toggleFileCard,
-      metaFields: this.props.metaFields
+      metaFields: this.props.metaFields,
+      singleFile: this.props.singleFile
     }), h(Buttons, {
       file: file,
       metaFields: this.props.metaFields,
@@ -12981,7 +13042,6 @@ function FileList_extends() { FileList_extends = Object.assign ? Object.assign.b
 
 
 
-
 function chunks(list, size) {
   const chunked = [];
   let currentChunk = [];
@@ -12998,12 +13058,8 @@ function chunks(list, size) {
 }
 
 /* harmony default export */ const FileList = (props => {
-  const noFiles = props.totalFileCount === 0;
-  const dashboardFilesClass = classnames('uppy-Dashboard-files', {
-    'uppy-Dashboard-files--noFiles': noFiles
-  }); // It's not great that this is hardcoded!
+  // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
-
   const rowHeight = props.itemsPerRow === 1 // Mobile
   ? 71 // 190px height + 2 * 5px margin
   : 200;
@@ -13027,6 +13083,7 @@ function chunks(list, size) {
     isWide: props.isWide,
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
+    singleFile: props.singleFile,
     // callbacks
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
@@ -13046,6 +13103,7 @@ function chunks(list, size) {
   // associated with the `VirtualList` element.
   // We use the first file ID as the key—this should not change across scroll rerenders
   h("div", {
+    class: "uppy-Dashboard-filesInner",
     role: "presentation",
     key: row[0]
   }, row.map(fileID => h(FileItem, FileList_extends({
@@ -13060,8 +13118,14 @@ function chunks(list, size) {
     file: props.files[fileID]
   }))));
 
+  if (props.singleFile) {
+    return h("div", {
+      class: "uppy-Dashboard-files"
+    }, renderRow(rows[0]));
+  }
+
   return h(components_VirtualList, {
-    class: dashboardFilesClass,
+    class: "uppy-Dashboard-files",
     role: "list",
     data: rows,
     renderRow: renderRow,
@@ -13121,7 +13185,7 @@ class AddFiles extends d {
       });
     };
 
-    this.renderHiddenCameraInput = (type, refCallback) => {
+    this.renderHiddenCameraInput = (type, nativeCameraFacingMode, refCallback) => {
       const typeToAccept = {
         photo: 'image/*',
         video: 'video/*'
@@ -13135,7 +13199,7 @@ class AddFiles extends d {
         type: "file",
         name: `camera-${type}`,
         onChange: this.onFileInputChange,
-        capture: "user",
+        capture: nativeCameraFacingMode,
         accept: accept,
         ref: refCallback
       });
@@ -13153,24 +13217,19 @@ class AddFiles extends d {
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerFileInputClick
+      }, h("div", {
+        className: "uppy-DashboardTab-inner"
       }, h("svg", {
+        className: "uppy-DashboardTab-iconMyDevice",
         "aria-hidden": "true",
         focusable: "false",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, h("g", {
-        fill: "none",
-        fillRule: "evenodd"
-      }, h("rect", {
-        className: "uppy-ProviderIconBg",
-        width: "32",
-        height: "32",
-        rx: "16",
-        fill: "#2275D7"
-      }), h("path", {
-        d: "M21.973 21.152H9.863l-1.108-5.087h14.464l-1.246 5.087zM9.935 11.37h3.958l.886 1.444a.673.673 0 0 0 .585.316h6.506v1.37H9.935v-3.13zm14.898 3.44a.793.793 0 0 0-.616-.31h-.978v-2.126c0-.379-.275-.613-.653-.613H15.75l-.886-1.445a.673.673 0 0 0-.585-.316H9.232c-.378 0-.667.209-.667.587V14.5h-.782a.793.793 0 0 0-.61.303.795.795 0 0 0-.155.663l1.45 6.633c.078.36.396.618.764.618h13.354c.36 0 .674-.246.76-.595l1.631-6.636a.795.795 0 0 0-.144-.675z",
-        fill: "#FFF"
+      }, h("path", {
+        d: "M8.45 22.087l-1.305-6.674h17.678l-1.572 6.674H8.45zm4.975-12.412l1.083 1.765a.823.823 0 00.715.386h7.951V13.5H8.587V9.675h4.838zM26.043 13.5h-1.195v-2.598c0-.463-.336-.75-.798-.75h-8.356l-1.082-1.766A.823.823 0 0013.897 8H7.728c-.462 0-.815.256-.815.718V13.5h-.956a.97.97 0 00-.746.37.972.972 0 00-.19.81l1.724 8.565c.095.44.484.755.933.755H24c.44 0 .824-.3.929-.727l2.043-8.568a.972.972 0 00-.176-.825.967.967 0 00-.753-.38z",
+        fill: "currentcolor",
+        "fill-rule": "evenodd"
       }))), h("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('myDevice'))));
@@ -13188,25 +13247,18 @@ class AddFiles extends d {
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerPhotoCameraInputClick
+      }, h("div", {
+        className: "uppy-DashboardTab-inner"
       }, h("svg", {
         "aria-hidden": "true",
         focusable: "false",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, h("g", {
-        fill: "none",
-        fillRule: "evenodd"
-      }, h("rect", {
-        className: "uppy-ProviderIconBg",
-        fill: "#03BFEF",
-        width: "32",
-        height: "32",
-        rx: "16"
-      }), h("path", {
-        d: "M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z",
-        fill: "#FFF",
-        fillRule: "nonzero"
+      }, h("path", {
+        d: "M23.5 9.5c1.417 0 2.5 1.083 2.5 2.5v9.167c0 1.416-1.083 2.5-2.5 2.5h-15c-1.417 0-2.5-1.084-2.5-2.5V12c0-1.417 1.083-2.5 2.5-2.5h2.917l1.416-2.167C13 7.167 13.25 7 13.5 7h5c.25 0 .5.167.667.333L20.583 9.5H23.5zM16 11.417a4.706 4.706 0 00-4.75 4.75 4.704 4.704 0 004.75 4.75 4.703 4.703 0 004.75-4.75c0-2.663-2.09-4.75-4.75-4.75zm0 7.825c-1.744 0-3.076-1.332-3.076-3.074 0-1.745 1.333-3.077 3.076-3.077 1.744 0 3.074 1.333 3.074 3.076s-1.33 3.075-3.074 3.075z",
+        fill: "#02B383",
+        "fill-rule": "nonzero"
       }))), h("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('takePictureBtn'))));
@@ -13224,21 +13276,18 @@ class AddFiles extends d {
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerVideoCameraInputClick
+      }, h("div", {
+        className: "uppy-DashboardTab-inner"
       }, h("svg", {
         "aria-hidden": "true",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, h("rect", {
-        fill: "#1abc9c",
-        width: "32",
-        height: "32",
-        rx: "16"
-      }), h("path", {
-        fill: "#FFF",
+      }, h("path", {
+        fill: "#FF675E",
         fillRule: "nonzero",
         d: "m21.254 14.277 2.941-2.588c.797-.313 1.243.818 1.09 1.554-.01 2.094.02 4.189-.017 6.282-.126.915-1.145 1.08-1.58.34l-2.434-2.142c-.192.287-.504 1.305-.738.468-.104-1.293-.028-2.596-.05-3.894.047-.312.381.823.426 1.069.063-.384.206-.744.362-1.09zm-12.939-3.73c3.858.013 7.717-.025 11.574.02.912.129 1.492 1.237 1.351 2.217-.019 2.412.04 4.83-.03 7.239-.17 1.025-1.166 1.59-2.029 1.429-3.705-.012-7.41.025-11.114-.019-.913-.129-1.492-1.237-1.352-2.217.018-2.404-.036-4.813.029-7.214.136-.82.83-1.473 1.571-1.454z "
-      })), h("div", {
+      }))), h("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('recordVideoBtn'))));
     };
@@ -13253,8 +13302,7 @@ class AddFiles extends d {
       }, text);
     };
 
-    this.renderDropPasteBrowseTagline = () => {
-      const numberOfAcquirers = this.props.acquirers.length;
+    this.renderDropPasteBrowseTagline = numberOfAcquirers => {
       const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick);
       const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick); // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
       // to Camel
@@ -13290,7 +13338,9 @@ class AddFiles extends d {
         "aria-selected": this.props.activePickerPanel.id === acquirer.id,
         "data-uppy-super-focusable": true,
         onClick: () => this.props.showPanel(acquirer.id)
-      }, acquirer.icon(), h("div", {
+      }, h("div", {
+        className: "uppy-DashboardTab-inner"
+      }, acquirer.icon()), h("div", {
         className: "uppy-DashboardTab-name"
       }, acquirer.name)));
     };
@@ -13313,10 +13363,55 @@ class AddFiles extends d {
         showNativePhotoCameraButton,
         showNativeVideoCameraButton
       } = this.props;
-      return h("div", {
+      let list = [];
+      const myDeviceKey = 'myDevice';
+
+      if (!disableLocalFiles) {
+        list.push({
+          key: myDeviceKey,
+          elements: this.renderMyDeviceAcquirer()
+        });
+        if (showNativePhotoCameraButton) list.push({
+          key: 'nativePhotoCameraButton',
+          elements: this.renderPhotoCamera()
+        });
+        if (showNativeVideoCameraButton) list.push({
+          key: 'nativePhotoCameraButton',
+          elements: this.renderVideoCamera()
+        });
+      }
+
+      list.push(...acquirers.map(acquirer => ({
+        key: acquirer.id,
+        elements: this.renderAcquirer(acquirer)
+      }))); // doesn't make sense to show only a lonely "My Device"
+
+      const hasOnlyMyDevice = list.length === 1 && list[0].key === myDeviceKey;
+      if (hasOnlyMyDevice) list = []; // Group last two buttons, so we don’t end up with
+      // just one button on a new line
+
+      const listWithoutLastTwo = [...list];
+      const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length);
+
+      const renderList = l => l.map(_ref => {
+        let {
+          key,
+          elements
+        } = _ref;
+        return h(p, {
+          key: key
+        }, elements);
+      });
+
+      return h(p, null, this.renderDropPasteBrowseTagline(list.length), h("div", {
         className: "uppy-Dashboard-AddFiles-list",
         role: "tablist"
-      }, !disableLocalFiles && this.renderMyDeviceAcquirer(), !disableLocalFiles && showNativePhotoCameraButton && this.renderPhotoCamera(), !disableLocalFiles && showNativeVideoCameraButton && this.renderVideoCamera(), acquirers.length > 0 && this.renderAcquirers(acquirers));
+      }, renderList(listWithoutLastTwo), h("span", {
+        role: "presentation",
+        style: {
+          'white-space': 'nowrap'
+        }
+      }, renderList(lastTwo))));
     };
   }
 
@@ -13362,7 +13457,8 @@ class AddFiles extends d {
   render() {
     const {
       showNativePhotoCameraButton,
-      showNativeVideoCameraButton
+      showNativeVideoCameraButton,
+      nativeCameraFacingMode
     } = this.props;
     return h("div", {
       className: "uppy-Dashboard-AddFiles"
@@ -13370,11 +13466,11 @@ class AddFiles extends d {
       this.fileInput = ref;
     }), this.renderHiddenInput(true, ref => {
       this.folderInput = ref;
-    }), showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', ref => {
+    }), showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', nativeCameraFacingMode, ref => {
       this.mobilePhotoFileInput = ref;
-    }), showNativeVideoCameraButton && this.renderHiddenCameraInput('video', ref => {
+    }), showNativeVideoCameraButton && this.renderHiddenCameraInput('video', nativeCameraFacingMode, ref => {
       this.mobileVideoFileInput = ref;
-    }), this.renderDropPasteBrowseTagline(), this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles), h("div", {
+    }), this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles), h("div", {
       className: "uppy-Dashboard-AddFiles-info"
     }, this.props.note && h("div", {
       className: "uppy-Dashboard-note"
@@ -13599,6 +13695,9 @@ function UploadStatus(_ref) {
     case 'complete':
       return i18n('uploadComplete');
 
+    case 'error':
+      return i18n('error');
+
     default:
   }
 }
@@ -13652,6 +13751,51 @@ function PanelTopBar(props) {
 }
 
 /* harmony default export */ const PickerPanelTopBar = (PanelTopBar);
+;// CONCATENATED MODULE: ./node_modules/preact/hooks/dist/hooks.module.js
+var hooks_module_t,hooks_module_r,hooks_module_u,hooks_module_i,hooks_module_o=0,hooks_module_c=[],hooks_module_f=[],hooks_module_e=l.__b,hooks_module_a=l.__r,hooks_module_v=l.diffed,hooks_module_l=l.__c,hooks_module_m=l.unmount;function hooks_module_d(t,u){l.__h&&l.__h(hooks_module_r,t,hooks_module_o||u),hooks_module_o=0;var i=hooks_module_r.__H||(hooks_module_r.__H={__:[],__h:[]});return t>=i.__.length&&i.__.push({__V:hooks_module_f}),i.__[t]}function hooks_module_p(n){return hooks_module_o=1,hooks_module_y(hooks_module_z,n)}function hooks_module_y(n,u,i){var o=hooks_module_d(hooks_module_t++,2);if(o.t=n,!o.__c&&(o.__=[i?i(u):hooks_module_z(void 0,u),function(n){var t=o.__N?o.__N[0]:o.__[0],r=o.t(t,n);t!==r&&(o.__N=[r,o.__[1]],o.__c.setState({}))}],o.__c=hooks_module_r,!hooks_module_r.u)){hooks_module_r.u=!0;var c=hooks_module_r.shouldComponentUpdate;hooks_module_r.shouldComponentUpdate=function(n,t,r){if(!o.__c.__H)return!0;var u=o.__c.__H.__.filter(function(n){return n.__c});if(u.every(function(n){return!n.__N}))return!c||c.call(this,n,t,r);var i=!1;return u.forEach(function(n){if(n.__N){var t=n.__[0];n.__=n.__N,n.__N=void 0,t!==n.__[0]&&(i=!0)}}),!!i&&(!c||c.call(this,n,t,r))}}return o.__N||o.__}function hooks_module_h(u,i){var o=hooks_module_d(hooks_module_t++,3);!l.__s&&hooks_module_w(o.__H,i)&&(o.__=u,o.i=i,hooks_module_r.__H.__h.push(o))}function hooks_module_s(u,i){var o=hooks_module_d(hooks_module_t++,4);!n.__s&&hooks_module_w(o.__H,i)&&(o.__=u,o.i=i,hooks_module_r.__h.push(o))}function hooks_module_(n){return hooks_module_o=5,hooks_module_F(function(){return{current:n}},[])}function hooks_module_A(n,t,r){hooks_module_o=6,hooks_module_s(function(){return"function"==typeof n?(n(t()),function(){return n(null)}):n?(n.current=t(),function(){return n.current=null}):void 0},null==r?r:r.concat(n))}function hooks_module_F(n,r){var u=hooks_module_d(hooks_module_t++,7);return hooks_module_w(u.__H,r)?(u.__V=n(),u.i=r,u.__h=n,u.__V):u.__}function hooks_module_T(n,t){return hooks_module_o=8,hooks_module_F(function(){return n},t)}function hooks_module_q(n){var u=hooks_module_r.context[n.__c],i=hooks_module_d(hooks_module_t++,9);return i.c=n,u?(null==i.__&&(i.__=!0,u.sub(hooks_module_r)),u.props.value):n.__}function hooks_module_x(t,r){n.useDebugValue&&n.useDebugValue(r?r(t):t)}function hooks_module_V(n){var u=hooks_module_d(hooks_module_t++,10),i=hooks_module_p();return u.__=n,hooks_module_r.componentDidCatch||(hooks_module_r.componentDidCatch=function(n){u.__&&u.__(n),i[1](n)}),[i[0],function(){i[1](void 0)}]}function hooks_module_b(){for(var t;t=hooks_module_c.shift();)if(t.__P&&t.__H)try{t.__H.__h.forEach(hooks_module_j),t.__H.__h.forEach(hooks_module_k),t.__H.__h=[]}catch(r){t.__H.__h=[],l.__e(r,t.__v)}}l.__b=function(n){hooks_module_r=null,hooks_module_e&&hooks_module_e(n)},l.__r=function(n){hooks_module_a&&hooks_module_a(n),hooks_module_t=0;var i=(hooks_module_r=n.__c).__H;i&&(hooks_module_u===hooks_module_r?(i.__h=[],hooks_module_r.__h=[],i.__.forEach(function(n){n.__N&&(n.__=n.__N),n.__V=hooks_module_f,n.__N=n.i=void 0})):(i.__h.forEach(hooks_module_j),i.__h.forEach(hooks_module_k),i.__h=[])),hooks_module_u=hooks_module_r},l.diffed=function(t){hooks_module_v&&hooks_module_v(t);var o=t.__c;o&&o.__H&&(o.__H.__h.length&&(1!==hooks_module_c.push(o)&&hooks_module_i===l.requestAnimationFrame||((hooks_module_i=l.requestAnimationFrame)||function(n){var t,r=function(){clearTimeout(u),hooks_module_g&&cancelAnimationFrame(t),setTimeout(n)},u=setTimeout(r,100);hooks_module_g&&(t=requestAnimationFrame(r))})(hooks_module_b)),o.__H.__.forEach(function(n){n.i&&(n.__H=n.i),n.__V!==hooks_module_f&&(n.__=n.__V),n.i=void 0,n.__V=hooks_module_f})),hooks_module_u=hooks_module_r=null},l.__c=function(t,r){r.some(function(t){try{t.__h.forEach(hooks_module_j),t.__h=t.__h.filter(function(n){return!n.__||hooks_module_k(n)})}catch(u){r.some(function(n){n.__h&&(n.__h=[])}),r=[],l.__e(u,t.__v)}}),hooks_module_l&&hooks_module_l(t,r)},l.unmount=function(t){hooks_module_m&&hooks_module_m(t);var r,u=t.__c;u&&u.__H&&(u.__H.__.forEach(function(n){try{hooks_module_j(n)}catch(n){r=n}}),r&&l.__e(r,u.__v))};var hooks_module_g="function"==typeof requestAnimationFrame;function hooks_module_j(n){var t=hooks_module_r,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),hooks_module_r=t}function hooks_module_k(n){var t=hooks_module_r;n.__c=n.__(),hooks_module_r=t}function hooks_module_w(n,t){return!n||n.length!==t.length||t.some(function(t,r){return t!==n[r]})}function hooks_module_z(n,t){return"function"==typeof t?t(n):t}
+//# sourceMappingURL=hooks.module.js.map
+
+;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileCard/RenderMetaFields.js
+
+function RenderMetaFields(props) {
+  const {
+    computedMetaFields,
+    requiredMetaFields,
+    updateMeta,
+    form,
+    formState
+  } = props;
+  const fieldCSSClasses = {
+    text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
+  };
+  return computedMetaFields.map(field => {
+    const id = `uppy-Dashboard-FileCard-input-${field.id}`;
+    const required = requiredMetaFields.includes(field.id);
+    return h("fieldset", {
+      key: field.id,
+      className: "uppy-Dashboard-FileCard-fieldset"
+    }, h("label", {
+      className: "uppy-Dashboard-FileCard-label",
+      htmlFor: id
+    }, field.name), field.render !== undefined ? field.render({
+      value: formState[field.id],
+      onChange: newVal => updateMeta(newVal, field.id),
+      fieldCSSClasses,
+      required,
+      form: form.id
+    }, h) : h("input", {
+      className: fieldCSSClasses.text,
+      id: id,
+      form: form.id,
+      type: field.type || 'text',
+      required: required,
+      value: formState[field.id],
+      placeholder: field.placeholder,
+      onInput: ev => updateMeta(ev.target.value, field.id),
+      "data-uppy-super-focusable": true
+    }));
+  });
+}
 ;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileCard/index.js
 
 
@@ -13660,185 +13804,135 @@ function PanelTopBar(props) {
 
 
 
-class FileCard extends d {
-  constructor(props) {
-    super(props);
-    this.form = document.createElement('form');
 
-    this.updateMeta = (newVal, name) => {
-      this.setState(_ref => {
-        let {
-          formState
-        } = _ref;
-        return {
-          formState: { ...formState,
-            [name]: newVal
-          }
-        };
-      });
-    };
+function FileCard(props) {
+  var _getMetaFields;
 
-    this.handleSave = e => {
-      e.preventDefault();
-      const fileID = this.props.fileCardFor;
-      this.props.saveFileCard(this.state.formState, fileID);
-    };
+  const {
+    uppy,
+    files,
+    fileCardFor,
+    toggleFileCard,
+    saveFileCard,
+    metaFields,
+    requiredMetaFields,
+    openFileEditor,
+    i18n,
+    i18nArray,
+    className,
+    canEditFile
+  } = props;
 
-    this.handleCancel = () => {
-      const file = this.props.files[this.props.fileCardFor];
-      this.props.uppy.emit('file-editor:cancel', file);
-      this.props.toggleFileCard(false);
-    };
+  const getMetaFields = () => {
+    return typeof metaFields === 'function' ? metaFields(files[fileCardFor]) : metaFields;
+  };
 
-    this.saveOnEnter = ev => {
-      if (ev.keyCode === 13) {
-        ev.stopPropagation();
-        ev.preventDefault();
-        const file = this.props.files[this.props.fileCardFor];
-        this.props.saveFileCard(this.state.formState, file.id);
-      }
-    };
+  const file = files[fileCardFor];
+  const computedMetaFields = (_getMetaFields = getMetaFields()) != null ? _getMetaFields : [];
+  const showEditButton = canEditFile(file);
+  const storedMetaData = {};
+  computedMetaFields.forEach(field => {
+    var _file$meta$field$id;
 
-    this.renderMetaFields = () => {
-      const metaFields = this.getMetaFields() || [];
-      const fieldCSSClasses = {
-        text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
-      };
-      return metaFields.map(field => {
-        const id = `uppy-Dashboard-FileCard-input-${field.id}`;
-        const required = this.props.requiredMetaFields.includes(field.id);
-        return h("fieldset", {
-          key: field.id,
-          className: "uppy-Dashboard-FileCard-fieldset"
-        }, h("label", {
-          className: "uppy-Dashboard-FileCard-label",
-          htmlFor: id
-        }, field.name), field.render !== undefined ? field.render({
-          value: this.state.formState[field.id],
-          onChange: newVal => this.updateMeta(newVal, field.id),
-          fieldCSSClasses,
-          required,
-          form: this.form.id
-        }, h) : h("input", {
-          className: fieldCSSClasses.text,
-          id: id,
-          form: this.form.id,
-          type: field.type || 'text',
-          required: required,
-          value: this.state.formState[field.id],
-          placeholder: field.placeholder // If `form` attribute is not supported, we need to capture pressing Enter to avoid bubbling in case Uppy is
-          // embedded inside a <form>.
-          ,
-          onKeyUp: 'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter,
-          onKeyDown: 'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter,
-          onKeyPress: 'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter,
-          onInput: ev => this.updateMeta(ev.target.value, field.id),
-          "data-uppy-super-focusable": true
-        }));
-      });
-    };
+    storedMetaData[field.id] = (_file$meta$field$id = file.meta[field.id]) != null ? _file$meta$field$id : '';
+  });
+  const [formState, setFormState] = hooks_module_p(storedMetaData);
+  const handleSave = hooks_module_T(ev => {
+    ev.preventDefault();
+    saveFileCard(formState, fileCardFor);
+  }, [saveFileCard, formState, fileCardFor]);
 
-    const _file = this.props.files[this.props.fileCardFor];
-
-    const _metaFields = this.getMetaFields() || [];
-
-    const storedMetaData = {};
-
-    _metaFields.forEach(field => {
-      storedMetaData[field.id] = _file.meta[field.id] || '';
+  const updateMeta = (newVal, name) => {
+    setFormState({
+      [name]: newVal
     });
+  };
 
-    this.state = {
-      formState: storedMetaData
+  const handleCancel = () => {
+    uppy.emit('file-editor:cancel', file);
+    toggleFileCard(false);
+  };
+
+  const [form] = hooks_module_p(() => {
+    const formEl = document.createElement('form');
+    formEl.setAttribute('tabindex', '-1');
+    formEl.id = non_secure_nanoid();
+    return formEl;
+  });
+  hooks_module_h(() => {
+    document.body.appendChild(form);
+    form.addEventListener('submit', handleSave);
+    return () => {
+      form.removeEventListener('submit', handleSave);
+      document.body.removeChild(form);
     };
-    this.form.id = non_secure_nanoid();
-  } // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
-
-
-  componentWillMount() {
-    // eslint-disable-line react/no-deprecated
-    this.form.addEventListener('submit', this.handleSave);
-    document.body.appendChild(this.form);
-  }
-
-  componentWillUnmount() {
-    this.form.removeEventListener('submit', this.handleSave);
-    document.body.removeChild(this.form);
-  }
-
-  getMetaFields() {
-    return typeof this.props.metaFields === 'function' ? this.props.metaFields(this.props.files[this.props.fileCardFor]) : this.props.metaFields;
-  }
-
-  render() {
-    const file = this.props.files[this.props.fileCardFor];
-    const showEditButton = this.props.canEditFile(file);
-    return h("div", {
-      className: classnames('uppy-Dashboard-FileCard', this.props.className),
-      "data-uppy-panelType": "FileCard",
-      onDragOver: utils_ignoreEvent,
-      onDragLeave: utils_ignoreEvent,
-      onDrop: utils_ignoreEvent,
-      onPaste: utils_ignoreEvent
-    }, h("div", {
-      className: "uppy-DashboardContent-bar"
-    }, h("div", {
-      className: "uppy-DashboardContent-title",
-      role: "heading",
-      "aria-level": "1"
-    }, this.props.i18nArray('editing', {
-      file: h("span", {
-        className: "uppy-DashboardContent-titleFile"
-      }, file.meta ? file.meta.name : file.name)
-    })), h("button", {
-      className: "uppy-DashboardContent-back",
-      type: "button",
-      form: this.form.id,
-      title: this.props.i18n('finishEditingFile'),
-      onClick: this.handleCancel
-    }, this.props.i18n('cancel'))), h("div", {
-      className: "uppy-Dashboard-FileCard-inner"
-    }, h("div", {
-      className: "uppy-Dashboard-FileCard-preview",
-      style: {
-        backgroundColor: getIconByMime(file.type).color
-      }
-    }, h(FilePreview, {
-      file: file
-    }), showEditButton && h("button", {
-      type: "button",
-      className: "uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",
-      onClick: event => {
-        // When opening the image editor we want to save any meta fields changes.
-        // Otherwise it's confusing for the user to click save in the editor,
-        // but the changes here are discarded. This bypasses validation,
-        // but we are okay with that.
-        this.handleSave(event);
-        this.props.openFileEditor(file);
-      },
-      form: this.form.id
-    }, this.props.i18n('editFile'))), h("div", {
-      className: "uppy-Dashboard-FileCard-info"
-    }, this.renderMetaFields()), h("div", {
-      className: "uppy-Dashboard-FileCard-actions"
-    }, h("button", {
-      className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn" // If `form` attribute is supported, we want a submit button to trigger the form validation.
-      // Otherwise, fallback to a classic button with a onClick event handler.
-      ,
-      type: 'form' in HTMLButtonElement.prototype ? 'submit' : 'button',
-      onClick: 'form' in HTMLButtonElement.prototype ? undefined : this.handleSave,
-      form: this.form.id
-    }, this.props.i18n('saveChanges')), h("button", {
-      className: "uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",
-      type: "button",
-      onClick: this.handleCancel,
-      form: this.form.id
-    }, this.props.i18n('cancel')))));
-  }
-
+  }, [form, handleSave]);
+  return h("div", {
+    className: classnames('uppy-Dashboard-FileCard', className),
+    "data-uppy-panelType": "FileCard",
+    onDragOver: utils_ignoreEvent,
+    onDragLeave: utils_ignoreEvent,
+    onDrop: utils_ignoreEvent,
+    onPaste: utils_ignoreEvent
+  }, h("div", {
+    className: "uppy-DashboardContent-bar"
+  }, h("div", {
+    className: "uppy-DashboardContent-title",
+    role: "heading",
+    "aria-level": "1"
+  }, i18nArray('editing', {
+    file: h("span", {
+      className: "uppy-DashboardContent-titleFile"
+    }, file.meta ? file.meta.name : file.name)
+  })), h("button", {
+    className: "uppy-DashboardContent-back",
+    type: "button",
+    form: form.id,
+    title: i18n('finishEditingFile'),
+    onClick: handleCancel
+  }, i18n('cancel'))), h("div", {
+    className: "uppy-Dashboard-FileCard-inner"
+  }, h("div", {
+    className: "uppy-Dashboard-FileCard-preview",
+    style: {
+      backgroundColor: getIconByMime(file.type).color
+    }
+  }, h(FilePreview, {
+    file: file
+  }), showEditButton && h("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",
+    onClick: event => {
+      // When opening the image editor we want to save any meta fields changes.
+      // Otherwise it's confusing for the user to click save in the editor,
+      // but the changes here are discarded. This bypasses validation,
+      // but we are okay with that.
+      handleSave(event);
+      openFileEditor(file);
+    }
+  }, i18n('editFile'))), h("div", {
+    className: "uppy-Dashboard-FileCard-info"
+  }, h(RenderMetaFields, {
+    computedMetaFields: computedMetaFields,
+    requiredMetaFields: requiredMetaFields,
+    updateMeta: updateMeta,
+    form: form,
+    formState: formState
+  })), h("div", {
+    className: "uppy-Dashboard-FileCard-actions"
+  }, h("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn" // If `form` attribute is supported, we want a submit button to trigger the form validation.
+    // Otherwise, fallback to a classic button with a onClick event handler.
+    ,
+    type: "submit",
+    form: form.id
+  }, i18n('saveChanges')), h("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",
+    type: "button",
+    onClick: handleCancel,
+    form: form.id
+  }, i18n('cancel')))));
 }
-
-/* harmony default export */ const components_FileCard = (FileCard);
 ;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/Slide.js
 
 
@@ -13958,6 +14052,7 @@ const WIDTH_MD = 576;
 const HEIGHT_MD = 400;
 function Dashboard_Dashboard(props) {
   const noFiles = props.totalFileCount === 0;
+  const singleFile = props.totalFileCount === 1;
   const isSizeMD = props.containerWidth > WIDTH_MD;
   const dashboardClassName = classnames({
     'uppy-Dashboard': true,
@@ -13971,7 +14066,8 @@ function Dashboard_Dashboard(props) {
     'uppy-size--xl': props.containerWidth > WIDTH_XL,
     'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
-    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
+    'uppy-Dashboard--singleFile': singleFile
   }); // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
 
   let itemsPerRow = 1; // mobile
@@ -14065,6 +14161,7 @@ function Dashboard_Dashboard(props) {
     className: "uppy-Dashboard-serviceMsg-text"
   }, renderRestoredText())), showFileList ? h(FileList // eslint-disable-next-line react/jsx-props-no-spreading
   , Dashboard_extends({}, props, {
+    singleFile: singleFile,
     itemsPerRow: itemsPerRow
   })) : // eslint-disable-next-line react/jsx-props-no-spreading
   h(components_AddFiles, Dashboard_extends({}, props, {
@@ -14073,7 +14170,7 @@ function Dashboard_Dashboard(props) {
     key: "AddFiles"
   }, props, {
     isSizeMD: isSizeMD
-  })) : null), h(components_Slide, null, props.fileCardFor ? h(components_FileCard, Dashboard_extends({
+  })) : null), h(components_Slide, null, props.fileCardFor ? h(FileCard, Dashboard_extends({
     key: "FileCard"
   }, props)) : null), h(components_Slide, null, props.activePickerPanel ? h(components_PickerPanelContent, Dashboard_extends({
     key: "Picker"
@@ -14114,6 +14211,8 @@ function Dashboard_Dashboard(props) {
     editFile: 'Edit file',
     // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
     editing: 'Editing %{file}',
+    // Shown on the main upload screen when an upload error occurs
+    error: 'Error',
     // Used as the screen reader label for the button that saves metadata edits and returns to the
     // file list view.
     finishEditingFile: 'Finish editing file',
@@ -14197,9 +14296,8 @@ function Dashboard_classPrivateFieldLooseKey(name) { return "__private_" + Dashb
 
 
 
-
 const Dashboard_packageJson = {
-  "version": "3.0.0"
+  "version": "3.3.2"
 };
 
 const memoize = memoizeOne["default"] || memoizeOne;
@@ -14231,6 +14329,10 @@ function defaultPickerIcon() {
  */
 
 
+var _disabledNodes = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("disabledNodes");
+
+var _generateLargeThumbnailIfSingleFile = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("generateLargeThumbnailIfSingleFile");
+
 var _openFileEditorWhenFilesAdded = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("openFileEditorWhenFilesAdded");
 
 var _attachRenderFunctionToTarget = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("attachRenderFunctionToTarget");
@@ -14249,6 +14351,10 @@ class Dashboard extends lib_UIPlugin {
 
     super(uppy, _opts);
     _this = this;
+    Object.defineProperty(this, _disabledNodes, {
+      writable: true,
+      value: null
+    });
 
     this.removeTarget = plugin => {
       const pluginState = this.getPluginState(); // filter out the one we want to remove
@@ -14313,6 +14419,7 @@ class Dashboard extends lib_UIPlugin {
         activePickerPanel,
         activeOverlayType: 'PickerPanel'
       });
+      this.uppy.emit('dashboard:show-panel', id);
     };
 
     this.canEditFile = file => {
@@ -14561,7 +14668,6 @@ class Dashboard extends lib_UIPlugin {
           width,
           height
         } = uppyDashboardInnerEl.contentRect;
-        this.uppy.log(`[Dashboard] resized: ${width} / ${height}`, 'debug');
         this.setPluginState({
           containerWidth: width,
           containerHeight: height,
@@ -14577,7 +14683,7 @@ class Dashboard extends lib_UIPlugin {
         if ( // if ResizeObserver hasn't yet fired,
         !pluginState.areInsidesReadyToBeVisible // and it's not due to the modal being closed
         && !isModalAndClosed) {
-          this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug');
+          this.uppy.log('[Dashboard] resize event didn’t fire on time: defaulted to mobile layout', 'warning');
           this.setPluginState({
             areInsidesReadyToBeVisible: true
           });
@@ -14602,28 +14708,25 @@ class Dashboard extends lib_UIPlugin {
       }
     };
 
-    this.disableAllFocusableElements = disable => {
-      const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS));
+    this.disableInteractiveElements = disable => {
+      var _classPrivateFieldLoo;
+
+      const NODES_TO_DISABLE = ['a[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', '[role="button"]:not([disabled])'];
+      const nodesToDisable = (_classPrivateFieldLoo = Dashboard_classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes]) != null ? _classPrivateFieldLoo : toArray(this.el.querySelectorAll(NODES_TO_DISABLE)).filter(node => !node.classList.contains('uppy-Dashboard-close'));
+
+      for (const node of nodesToDisable) {
+        // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
+        if (node.tagName === 'A') {
+          node.setAttribute('aria-disabled', disable);
+        } else {
+          node.disabled = disable;
+        }
+      }
 
       if (disable) {
-        focusableNodes.forEach(node => {
-          // save previous tabindex in a data-attribute, to restore when enabling
-          const currentTabIndex = node.getAttribute('tabindex');
-
-          if (currentTabIndex) {
-            node.dataset.inertTabindex = currentTabIndex; // eslint-disable-line no-param-reassign
-          }
-
-          node.setAttribute('tabindex', '-1');
-        });
+        Dashboard_classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes] = nodesToDisable;
       } else {
-        focusableNodes.forEach(node => {
-          if ('inertTabindex' in node.dataset) {
-            node.setAttribute('tabindex', node.dataset.inertTabindex);
-          } else {
-            node.removeAttribute('tabindex');
-          }
-        });
+        Dashboard_classPrivateFieldLooseBase(this, _disabledNodes)[_disabledNodes] = null;
       }
 
       this.dashboardIsDisabled = disable;
@@ -14856,6 +14959,32 @@ class Dashboard extends lib_UIPlugin {
       this.uppy.emit('restore-canceled');
     };
 
+    Object.defineProperty(this, _generateLargeThumbnailIfSingleFile, {
+      writable: true,
+      value: () => {
+        if (this.opts.disableThumbnailGenerator) {
+          return;
+        }
+
+        const LARGE_THUMBNAIL = 600;
+        const files = this.uppy.getFiles();
+
+        if (files.length === 1) {
+          const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);
+          thumbnailGenerator == null ? void 0 : thumbnailGenerator.setOptions({
+            thumbnailWidth: LARGE_THUMBNAIL
+          });
+          const fileForThumbnail = { ...files[0],
+            preview: undefined
+          };
+          thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
+            thumbnailGenerator == null ? void 0 : thumbnailGenerator.setOptions({
+              thumbnailWidth: this.opts.thumbnailWidth
+            });
+          });
+        }
+      }
+    });
     Object.defineProperty(this, _openFileEditorWhenFilesAdded, {
       writable: true,
       value: files => {
@@ -14885,7 +15014,9 @@ class Dashboard extends lib_UIPlugin {
       this.uppy.on('file-added', this.hideAllPanels);
       this.uppy.on('dashboard:modal-closed', this.hideAllPanels);
       this.uppy.on('file-editor:complete', this.hideAllPanels);
-      this.uppy.on('complete', this.handleComplete); // ___Why fire on capture?
+      this.uppy.on('complete', this.handleComplete);
+      this.uppy.on('files-added', Dashboard_classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
+      this.uppy.on('file-removed', Dashboard_classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]); // ___Why fire on capture?
       //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
 
       document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true);
@@ -14915,6 +15046,8 @@ class Dashboard extends lib_UIPlugin {
       this.uppy.off('dashboard:modal-closed', this.hideAllPanels);
       this.uppy.off('file-editor:complete', this.hideAllPanels);
       this.uppy.off('complete', this.handleComplete);
+      this.uppy.off('files-added', Dashboard_classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
+      this.uppy.off('file-removed', Dashboard_classPrivateFieldLooseBase(this, _generateLargeThumbnailIfSingleFile)[_generateLargeThumbnailIfSingleFile]);
       document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently);
       document.removeEventListener('click', this.recordIfFocusedOnUppyRecently);
 
@@ -14956,12 +15089,12 @@ class Dashboard extends lib_UIPlugin {
 
     this.afterUpdate = () => {
       if (this.opts.disabled && !this.dashboardIsDisabled) {
-        this.disableAllFocusableElements(true);
+        this.disableInteractiveElements(true);
         return;
       }
 
       if (!this.opts.disabled && this.dashboardIsDisabled) {
-        this.disableAllFocusableElements(false);
+        this.disableInteractiveElements(false);
       }
 
       this.superFocusOnEachUpdate();
@@ -15080,7 +15213,7 @@ class Dashboard extends lib_UIPlugin {
         activePickerPanel: pluginState.activePickerPanel,
         showFileEditor: pluginState.showFileEditor,
         saveFileEditor: this.saveFileEditor,
-        disableAllFocusableElements: this.disableAllFocusableElements,
+        disableInteractiveElements: this.disableInteractiveElements,
         animateOpenClose: this.opts.animateOpenClose,
         isClosing: pluginState.isClosing,
         progressindicators,
@@ -15130,6 +15263,7 @@ class Dashboard extends lib_UIPlugin {
         showSelectedFiles: this.opts.showSelectedFiles,
         showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
         showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
+        nativeCameraFacingMode: this.opts.nativeCameraFacingMode,
         handleCancelRestore: this.handleCancelRestore,
         handleRequestThumbnail: this.handleRequestThumbnail,
         handleCancelThumbnail: this.handleCancelThumbnail,
@@ -15445,7 +15579,7 @@ function RequestClient_classPrivateFieldLooseKey(name) { return "__private_" + R
 
 
 const RequestClient_packageJson = {
-  "version": "3.0.0"
+  "version": "3.1.2"
 }; // Remove the trailing slash so we can always safely append /xyz.
 
 function stripSlash(url) {
@@ -15459,35 +15593,37 @@ async function handleJSONResponse(res) {
 
   const jsonPromise = res.json();
 
-  if (res.status < 200 || res.status > 300) {
-    let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`;
-
-    try {
-      const errData = await jsonPromise;
-      errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg;
-      errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg;
-    } finally {
-      // eslint-disable-next-line no-unsafe-finally
-      throw new Error(errMsg);
-    }
+  if (res.ok) {
+    return jsonPromise;
   }
 
-  return jsonPromise;
-}
+  let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`;
+
+  try {
+    const errData = await jsonPromise;
+    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg;
+    errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg;
+  } catch {
+    /* if the response contains invalid JSON, let's ignore the error */
+  }
+
+  throw new Error(errMsg);
+} // todo pull out into core instead?
+
+
+const allowedHeadersCache = new Map();
 
 var _companionHeaders = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("companionHeaders");
 
-var _getPostResponseFunc = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getPostResponseFunc");
-
 var _getUrl = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("getUrl");
 
-var _errorHandler = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("errorHandler");
+var _request = /*#__PURE__*/RequestClient_classPrivateFieldLooseKey("request");
 
 RequestClient_Symbol$for = Symbol.for('uppy test: getCompanionHeaders');
 class RequestClient_RequestClient {
   constructor(uppy, opts) {
-    Object.defineProperty(this, _errorHandler, {
-      value: _errorHandler2
+    Object.defineProperty(this, _request, {
+      value: _request2
     });
     Object.defineProperty(this, _getUrl, {
       value: _getUrl2
@@ -15496,15 +15632,9 @@ class RequestClient_RequestClient {
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, _getPostResponseFunc, {
-      writable: true,
-      value: skip => response => skip ? response : this.onReceiveResponse(response)
-    });
     this.uppy = uppy;
     this.opts = opts;
     this.onReceiveResponse = this.onReceiveResponse.bind(this);
-    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token'];
-    this.preflightDone = false;
     RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders] = opts == null ? void 0 : opts.companionHeaders;
   }
 
@@ -15524,19 +15654,24 @@ class RequestClient_RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host);
   }
 
-  headers() {
-    return Promise.resolve({ ...RequestClient_RequestClient.defaultHeaders,
+  async headers() {
+    const defaultHeaders = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient_RequestClient.VERSION}`
+    };
+    return { ...defaultHeaders,
       ...RequestClient_classPrivateFieldLooseBase(this, _companionHeaders)[_companionHeaders]
-    });
+    };
   }
 
-  onReceiveResponse(response) {
+  onReceiveResponse(_ref) {
+    let {
+      headers
+    } = _ref;
     const state = this.uppy.getState();
     const companion = state.companion || {};
-    const host = this.opts.companionUrl;
-    const {
-      headers
-    } = response; // Store the self-identified domain name for the Companion instance we just hit.
+    const host = this.opts.companionUrl; // Store the self-identified domain name for the Companion instance we just hit.
 
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
@@ -15545,72 +15680,118 @@ class RequestClient_RequestClient {
         }
       });
     }
-
-    return response;
   }
 
-  preflight(path) {
-    if (this.preflightDone) {
-      return Promise.resolve(this.allowedHeaders.slice());
-    }
+  /*
+    Preflight was added to avoid breaking change between older Companion-client versions and
+    newer Companion versions and vice-versa. Usually the break will manifest via CORS errors because a
+    version of companion-client could be sending certain headers to a version of Companion server that
+    does not support those headers. In which case, the default preflight would lead to CORS.
+    So to avoid those errors, we do preflight ourselves, to see what headers the Companion server
+    we are communicating with allows. And based on that, companion-client knows what headers to
+    send and what headers to not send.
+     The preflight only happens once throughout the life-cycle of a certain
+    Companion-client <-> Companion-server pair (allowedHeadersCache).
+    Subsequent requests use the cached result of the preflight.
+    However if there is an error retrieving the allowed headers, we will try again next time
+  */
+  async preflight(path) {
+    const allowedHeadersCached = allowedHeadersCache.get(this.hostname);
+    if (allowedHeadersCached != null) return allowedHeadersCached;
+    const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token'];
 
-    return fetch(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method: 'OPTIONS'
-    }).then(response => {
-      if (response.headers.has('access-control-allow-headers')) {
-        this.allowedHeaders = response.headers.get('access-control-allow-headers').split(',').map(headerName => headerName.trim().toLowerCase());
+    const promise = (async () => {
+      try {
+        const response = await fetch(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+          method: 'OPTIONS'
+        });
+        const header = response.headers.get('access-control-allow-headers');
+
+        if (header == null || header === '*') {
+          allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders);
+          return fallbackAllowedHeaders;
+        }
+
+        this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`);
+        const allowedHeaders = header.split(',').map(headerName => headerName.trim().toLowerCase());
+        allowedHeadersCache.set(this.hostname, allowedHeaders);
+        return allowedHeaders;
+      } catch (err) {
+        this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning'); // If the user gets a network error or similar, we should try preflight
+        // again next time, or else we might get incorrect behaviour.
+
+        allowedHeadersCache.delete(this.hostname); // re-fetch next time
+
+        return fallbackAllowedHeaders;
+      }
+    })();
+
+    allowedHeadersCache.set(this.hostname, promise);
+    return promise;
+  }
+
+  async preflightAndHeaders(path) {
+    const [allowedHeaders, headers] = await Promise.all([this.preflight(path), this.headers()]); // filter to keep only allowed Headers
+
+    return Object.fromEntries(Object.entries(headers).filter(_ref2 => {
+      let [header] = _ref2;
+
+      if (!allowedHeaders.includes(header.toLowerCase())) {
+        this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`);
+        return false;
       }
 
-      this.preflightDone = true;
-      return this.allowedHeaders.slice();
-    }).catch(err => {
-      this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning');
-      this.preflightDone = true;
-      return this.allowedHeaders.slice();
+      return true;
+    }));
+  }
+
+  async get(path, options) {
+    if (options === void 0) {
+      options = undefined;
+    }
+
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return RequestClient_classPrivateFieldLooseBase(this, _request)[_request]({ ...options,
+      path
     });
   }
 
-  preflightAndHeaders(path) {
-    return Promise.all([this.preflight(path), this.headers()]).then(_ref => {
-      let [allowedHeaders, headers] = _ref;
-      // filter to keep only allowed Headers
-      Object.keys(headers).forEach(header => {
-        if (!allowedHeaders.includes(header.toLowerCase())) {
-          this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`);
-          delete headers[header]; // eslint-disable-line no-param-reassign
-        }
-      });
-      return headers;
+  async post(path, data, options) {
+    if (options === void 0) {
+      options = undefined;
+    }
+
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return RequestClient_classPrivateFieldLooseBase(this, _request)[_request]({ ...options,
+      path,
+      method: 'POST',
+      data
     });
   }
 
-  get(path, skipPostResponse) {
-    const method = 'get';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin'
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
-  }
+  async delete(path, data, options) {
+    if (data === void 0) {
+      data = undefined;
+    }
 
-  post(path, data, skipPostResponse) {
-    const method = 'post';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin',
-      body: JSON.stringify(data)
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
-  }
-
-  delete(path, data, skipPostResponse) {
-    const method = 'delete';
-    return this.preflightAndHeaders(path).then(headers => fetchWithNetworkError(`${this.hostname}/${path}`, {
-      method,
-      headers,
-      credentials: this.opts.companionCookiesRule || 'same-origin',
-      body: data ? JSON.stringify(data) : null
-    })).then(RequestClient_classPrivateFieldLooseBase(this, _getPostResponseFunc)[_getPostResponseFunc](skipPostResponse)).then(handleJSONResponse).catch(RequestClient_classPrivateFieldLooseBase(this, _errorHandler)[_errorHandler](method, path));
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = {
+      skipPostResponse: options
+    };
+    return RequestClient_classPrivateFieldLooseBase(this, _request)[_request]({ ...options,
+      path,
+      method: 'DELETE',
+      data
+    });
   }
 
 }
@@ -15623,27 +15804,35 @@ function _getUrl2(url) {
   return `${this.hostname}/${url}`;
 }
 
-function _errorHandler2(method, path) {
-  return err => {
-    var _err;
+async function _request2(_ref3) {
+  let {
+    path,
+    method = 'GET',
+    data,
+    skipPostResponse,
+    signal
+  } = _ref3;
 
-    if (!((_err = err) != null && _err.isAuthError)) {
-      // eslint-disable-next-line no-param-reassign
-      err = new lib_ErrorWithCause(`Could not ${method} ${RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path)}`, {
-        cause: err
-      });
-    }
-
-    return Promise.reject(err);
-  };
+  try {
+    const headers = await this.preflightAndHeaders(path);
+    const response = await fetchWithNetworkError(RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path), {
+      method,
+      signal,
+      headers,
+      credentials: this.opts.companionCookiesRule || 'same-origin',
+      body: data ? JSON.stringify(data) : null
+    });
+    if (!skipPostResponse) this.onReceiveResponse(response);
+    return handleJSONResponse(response);
+  } catch (err) {
+    if (err != null && err.isAuthError) throw err;
+    throw new lib_ErrorWithCause(`Could not ${method} ${RequestClient_classPrivateFieldLooseBase(this, _getUrl)[_getUrl](path)}`, {
+      cause: err
+    });
+  }
 }
 
 RequestClient_RequestClient.VERSION = RequestClient_packageJson.version;
-RequestClient_RequestClient.defaultHeaders = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
-  'Uppy-Versions': `@uppy/companion-client=${RequestClient_RequestClient.VERSION}`
-};
 ;// CONCATENATED MODULE: ./node_modules/@uppy/companion-client/lib/tokenStorage.js
 
 /**
@@ -15687,30 +15876,27 @@ class Provider extends RequestClient_RequestClient {
     this.preAuthToken = null;
   }
 
-  headers() {
-    return Promise.all([super.headers(), this.getAuthToken()]).then(_ref => {
-      let [headers, token] = _ref;
-      const authHeaders = {};
+  async headers() {
+    const [headers, token] = await Promise.all([super.headers(), this.getAuthToken()]);
+    const authHeaders = {};
 
-      if (token) {
-        authHeaders['uppy-auth-token'] = token;
-      }
+    if (token) {
+      authHeaders['uppy-auth-token'] = token;
+    }
 
-      if (this.companionKeysParams) {
-        authHeaders['uppy-credentials-params'] = btoa(JSON.stringify({
-          params: this.companionKeysParams
-        }));
-      }
+    if (this.companionKeysParams) {
+      authHeaders['uppy-credentials-params'] = btoa(JSON.stringify({
+        params: this.companionKeysParams
+      }));
+    }
 
-      return { ...headers,
-        ...authHeaders
-      };
-    });
+    return { ...headers,
+      ...authHeaders
+    };
   }
 
   onReceiveResponse(response) {
-    response = super.onReceiveResponse(response); // eslint-disable-line no-param-reassign
-
+    super.onReceiveResponse(response);
     const plugin = this.uppy.getPlugin(this.pluginId);
     const oldAuthenticated = plugin.getPluginState().authenticated;
     const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400;
@@ -15781,8 +15967,8 @@ class Provider extends RequestClient_RequestClient {
   }
 
   logout() {
-    return this.get(`${this.id}/logout`).then(response => Promise.all([response, this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)])).then(_ref2 => {
-      let [response] = _ref2;
+    return this.get(`${this.id}/logout`).then(response => Promise.all([response, this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)])).then(_ref => {
+      let [response] = _ref;
       return response;
     });
   }
@@ -15922,6 +16108,7 @@ class UppySocket {
   }
 
   open() {
+    if (Socket_classPrivateFieldLooseBase(this, _socket)[_socket] != null) return;
     Socket_classPrivateFieldLooseBase(this, _socket)[_socket] = new WebSocket(this.opts.target);
 
     Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onopen = () => {
@@ -15936,6 +16123,7 @@ class UppySocket {
 
     Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onclose = () => {
       Socket_classPrivateFieldLooseBase(this, _isOpen)[_isOpen] = false;
+      Socket_classPrivateFieldLooseBase(this, _socket)[_socket] = null;
     };
 
     Socket_classPrivateFieldLooseBase(this, _socket)[_socket].onmessage = Socket_classPrivateFieldLooseBase(this, _handleMessage)[_handleMessage];
@@ -16154,8 +16342,28 @@ var RateLimitedQueue_id = 0;
 
 function RateLimitedQueue_classPrivateFieldLooseKey(name) { return "__private_" + RateLimitedQueue_id++ + "_" + name; }
 
-function createCancelError() {
-  return new Error('Cancelled');
+function createCancelError(cause) {
+  return new Error('Cancelled', {
+    cause
+  });
+}
+
+function abortOn(signal) {
+  if (signal != null) {
+    const abortPromise = () => this.abort(signal.reason);
+
+    signal.addEventListener('abort', abortPromise, {
+      once: true
+    });
+
+    const removeAbortListener = () => {
+      signal.removeEventListener('abort', abortPromise);
+    };
+
+    this.then(removeAbortListener, removeAbortListener);
+  }
+
+  return this;
 }
 
 var _activeRequests = /*#__PURE__*/RateLimitedQueue_classPrivateFieldLooseKey("activeRequests");
@@ -16308,16 +16516,17 @@ class RateLimitedQueue {
               reject(err);
             }
           });
-          return () => {
-            cancelError = createCancelError();
+          return cause => {
+            cancelError = createCancelError(cause);
           };
         }, queueOptions);
       });
 
-      outerPromise.abort = () => {
-        queuedRequest.abort();
+      outerPromise.abort = cause => {
+        queuedRequest.abort(cause);
       };
 
+      outerPromise.abortOn = abortOn;
       return outerPromise;
     };
   }
@@ -16391,11 +16600,11 @@ function _call2(fn) {
   }
 
   return {
-    abort: () => {
+    abort: cause => {
       if (done) return;
       done = true;
       RateLimitedQueue_classPrivateFieldLooseBase(this, _activeRequests)[_activeRequests] -= 1;
-      cancelActive();
+      cancelActive(cause);
 
       RateLimitedQueue_classPrivateFieldLooseBase(this, _queueNext)[_queueNext]();
     },
@@ -16488,10 +16697,16 @@ function isNetworkError(xhr) {
 /* harmony default export */ const xhr_upload_lib_locale = ({
   strings: {
     // Shown in the Informer if an upload is being canceled because it stalled for too long.
-    timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+    uploadStalled: 'Upload has not made any progress for %{seconds} seconds. You may want to retry it.'
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/index.js
+function xhr_upload_lib_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+
+var xhr_upload_lib_id = 0;
+
+function xhr_upload_lib_classPrivateFieldLooseKey(name) { return "__private_" + xhr_upload_lib_id++ + "_" + name; }
+
 
 
 
@@ -16504,7 +16719,7 @@ function isNetworkError(xhr) {
 
 
 const xhr_upload_lib_packageJson = {
-  "version": "3.0.0"
+  "version": "3.1.1"
 };
 
 
@@ -16544,10 +16759,39 @@ function setTypeInBlob(file) {
   return dataWithUpdatedType;
 }
 
+var _queueRequestSocketToken = /*#__PURE__*/xhr_upload_lib_classPrivateFieldLooseKey("queueRequestSocketToken");
+
+var _requestSocketToken = /*#__PURE__*/xhr_upload_lib_classPrivateFieldLooseKey("requestSocketToken");
+
 class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
-  constructor(uppy, opts) {
-    super(uppy, opts);
+  constructor(uppy, _opts) {
+    super(uppy, _opts);
+    Object.defineProperty(this, _queueRequestSocketToken, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _requestSocketToken, {
+      writable: true,
+      value: async file => {
+        const opts = this.getOptions(file);
+        const Client = file.remote.providerOptions.provider ? Provider : RequestClient_RequestClient;
+        const client = new Client(this.uppy, file.remote.providerOptions);
+        const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields // Send along all fields by default.
+        : Object.keys(file.meta);
+        const res = await client.post(file.remote.url, { ...file.remote.body,
+          protocol: 'multipart',
+          endpoint: opts.endpoint,
+          size: file.data.size,
+          fieldname: opts.fieldName,
+          metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+          httpMethod: opts.method,
+          useFormData: opts.formData,
+          headers: opts.headers
+        });
+        return res.token;
+      }
+    });
     this.type = 'uploader';
     this.id = this.opts.id || 'XHRUpload';
     this.title = 'XHRUpload';
@@ -16555,7 +16799,7 @@ class XHRUpload extends BasePlugin {
 
     const defaultOptions = {
       formData: true,
-      fieldName: opts.bundle ? 'files[]' : 'file',
+      fieldName: _opts.bundle ? 'files[]' : 'file',
       method: 'post',
       allowedMetaFields: null,
       responseUrlFieldName: 'url',
@@ -16607,7 +16851,7 @@ class XHRUpload extends BasePlugin {
 
     };
     this.opts = { ...defaultOptions,
-      ...opts
+      ..._opts
     };
     this.i18nInit();
     this.handleUpload = this.handleUpload.bind(this); // Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -16622,11 +16866,14 @@ class XHRUpload extends BasePlugin {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.');
     }
 
-    if ((opts == null ? void 0 : opts.allowedMetaFields) === undefined && 'metaFields' in this.opts) {
+    if ((_opts == null ? void 0 : _opts.allowedMetaFields) === undefined && 'metaFields' in this.opts) {
       throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.');
     }
 
     this.uploaderEvents = Object.create(null);
+    xhr_upload_lib_classPrivateFieldLooseBase(this, _queueRequestSocketToken)[_queueRequestSocketToken] = this.requests.wrapPromiseFunction(xhr_upload_lib_classPrivateFieldLooseBase(this, _requestSocketToken)[_requestSocketToken], {
+      priority: -1
+    });
   }
 
   getOptions(file) {
@@ -16714,13 +16961,10 @@ class XHRUpload extends BasePlugin {
       this.uploaderEvents[file.id] = new EventTracker(this.uppy);
       let queuedRequest;
       const timer = new lib_ProgressTimeout(opts.timeout, () => {
-        xhr.abort();
-        queuedRequest.done();
-        const error = new Error(this.i18n('timedOut', {
+        const error = new Error(this.i18n('uploadStalled', {
           seconds: Math.ceil(opts.timeout / 1000)
         }));
-        this.uppy.emit('upload-error', file, error);
-        reject(error);
+        this.uppy.emit('upload-stalled', error, [file]);
       });
       const id = nanoid_non_secure_nanoid();
       xhr.upload.addEventListener('loadstart', () => {
@@ -16833,62 +17077,43 @@ class XHRUpload extends BasePlugin {
     });
   }
 
-  uploadRemote(file) {
-    const opts = this.getOptions(file);
-    return new Promise((resolve, reject) => {
+  // NOTE! Keep this duplicated code in sync with other plugins
+  // TODO we should probably abstract this into a common function
+  async uploadRemote(file) {
+    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
+    try {
       this.uppy.emit('upload-started', file);
-      const fields = {};
-      const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields // Send along all fields by default.
-      : Object.keys(file.meta);
-      allowedMetaFields.forEach(name => {
-        fields[name] = file.meta[name];
+
+      if (file.serverToken) {
+        return await this.connectToServerSocket(file);
+      }
+
+      const serverToken = await xhr_upload_lib_classPrivateFieldLooseBase(this, _queueRequestSocketToken)[_queueRequestSocketToken](file);
+      if (!this.uppy.getState().files[file.id]) return undefined;
+      this.uppy.setFileState(file.id, {
+        serverToken
       });
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient_RequestClient;
-      const client = new Client(this.uppy, file.remote.providerOptions);
-      client.post(file.remote.url, { ...file.remote.body,
-        protocol: 'multipart',
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers
-      }).then(res => {
-        const {
-          token
-        } = res;
-        const host = getSocketHost(file.remote.companionUrl);
-        const socket = new UppySocket({
-          target: `${host}/api/${token}`,
-          autoOpen: false
-        });
-        this.uploaderEvents[file.id] = new EventTracker(this.uppy);
-        let queuedRequest;
-        this.onFileRemove(file.id, () => {
-          socket.send('cancel', {});
-          queuedRequest.abort();
-          resolve(`upload ${file.id} was removed`);
-        });
-        this.onCancelAll(file.id, function (_temp) {
-          let {
-            reason
-          } = _temp === void 0 ? {} : _temp;
+      return await this.connectToServerSocket(this.uppy.getFile(file.id));
+    } catch (err) {
+      this.uppy.setFileState(file.id, {
+        serverToken: undefined
+      });
+      this.uppy.emit('upload-error', file, err);
+      throw err;
+    }
+  }
 
-          if (reason === 'user') {
-            socket.send('cancel', {});
-            queuedRequest.abort();
-          }
+  async connectToServerSocket(file) {
+    return new Promise((resolve, reject) => {
+      const opts = this.getOptions(file);
+      const token = file.serverToken;
+      const host = getSocketHost(file.remote.companionUrl);
+      let socket;
 
-          resolve(`upload ${file.id} was canceled`);
-        });
-        this.onRetry(file.id, () => {
-          socket.send('pause', {});
-          socket.send('resume', {});
-        });
-        this.onRetryAll(file.id, () => {
-          socket.send('pause', {});
-          socket.send('resume', {});
+      const createSocket = () => {
+        if (socket != null) return;
+        socket = new UppySocket({
+          target: `${host}/api/${token}`
         });
         socket.on('progress', progressData => lib_emitSocketProgress(this, progressData, file));
         socket.on('success', data => {
@@ -16900,7 +17125,9 @@ class XHRUpload extends BasePlugin {
             uploadURL
           };
           this.uppy.emit('upload-success', file, uploadResp);
-          queuedRequest.done();
+          queuedRequest.done(); // eslint-disable-line no-use-before-define
+
+          socket.close();
 
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove();
@@ -16915,7 +17142,7 @@ class XHRUpload extends BasePlugin {
             cause: errData.error
           });
           this.uppy.emit('upload-error', file, error);
-          queuedRequest.done();
+          queuedRequest.done(); // eslint-disable-line no-use-before-define
 
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove();
@@ -16924,19 +17151,68 @@ class XHRUpload extends BasePlugin {
 
           reject(error);
         });
-        queuedRequest = this.requests.run(() => {
-          socket.open();
+      };
 
-          if (file.isPaused) {
-            socket.send('pause', {});
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy);
+      let queuedRequest = this.requests.run(() => {
+        if (file.isPaused) {
+          var _socket;
+
+          (_socket = socket) == null ? void 0 : _socket.send('pause', {});
+        } else {
+          createSocket();
+        }
+
+        return () => socket.close();
+      });
+      this.onFileRemove(file.id, () => {
+        var _socket2;
+
+        (_socket2 = socket) == null ? void 0 : _socket2.send('cancel', {});
+        queuedRequest.abort();
+        resolve(`upload ${file.id} was removed`);
+      });
+      this.onCancelAll(file.id, function (_temp) {
+        let {
+          reason
+        } = _temp === void 0 ? {} : _temp;
+
+        if (reason === 'user') {
+          var _socket3;
+
+          (_socket3 = socket) == null ? void 0 : _socket3.send('cancel', {});
+          queuedRequest.abort();
+        }
+
+        resolve(`upload ${file.id} was canceled`);
+      });
+
+      const onRetryRequest = () => {
+        if (socket == null) {
+          queuedRequest.abort();
+        } else {
+          socket.send('pause', {});
+          queuedRequest.done();
+        }
+
+        queuedRequest = this.requests.run(() => {
+          if (!file.isPaused) {
+            if (socket == null) {
+              createSocket();
+            } else {
+              socket.send('resume', {});
+            }
           }
 
           return () => socket.close();
         });
-      }).catch(err => {
-        this.uppy.emit('upload-error', file, err);
-        reject(err);
-      });
+      };
+
+      this.onRetry(file.id, onRetryRequest);
+      this.onRetryAll(file.id, onRetryRequest);
+    }).catch(err => {
+      this.uppy.emit('upload-error', file, err);
+      return Promise.reject(err);
     });
   }
 
@@ -16961,12 +17237,10 @@ class XHRUpload extends BasePlugin {
       };
 
       const timer = new lib_ProgressTimeout(this.opts.timeout, () => {
-        xhr.abort();
-        const error = new Error(this.i18n('timedOut', {
+        const error = new Error(this.i18n('uploadStalled', {
           seconds: Math.ceil(this.opts.timeout / 1000)
         }));
-        emitError(error);
-        reject(error);
+        this.uppy.emit('upload-stalled', error, files);
       });
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log('[XHRUpload] started uploading bundle');
