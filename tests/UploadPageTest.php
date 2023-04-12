@@ -64,6 +64,13 @@ class UploadPageTest extends SapphireTest
         $this->assertTrue($folder->exists());
         $this->assertTrue($folder->hasRestrictedAccess());
 
+        // write the page again, assert the folder has not changed
+        $uploadPage->Title = 'Updated ' . $title;
+        $uploadPage->write();
+
+        $updatedFolder = $uploadPage->Folder();
+        $this->assertEquals($folder->getFilename(), $updatedFolder->getFilename() );
+
         $uploadPageController = UploadPageController::create( $uploadPage );
 
         $form = $uploadPageController->Form();

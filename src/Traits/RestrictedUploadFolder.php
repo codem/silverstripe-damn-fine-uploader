@@ -13,16 +13,19 @@ trait RestrictedUploadFolder {
     /**
      * Create the default upload folder and apply restrictions
      * @note when applied to EditableUploadField, this overrides {@link SilverStripe\UserForms\Model\EditableFormField\EditableFileField::createdProtectedFolder()}
+     * and is called during field/page write (so no write called here)
      */
     public function createProtectedFolder(): void
     {
-        if($this->exists()) {
+        $folder = $this->Folder();
+        if(!$folder->exists()) {
+            $suffix = bin2hex( random_bytes(4) );
             if($this instanceof SiteTree) {
-                $folderName = "page-{$this->ID}/uploads";
+                $folderName = "page-{$suffix}/uploads";
             } else if( $this instanceof EditableUploadField ) {
-                $folderName = "form-{$this->ParentID}/uploads-{$this->ID}";
+                $folderName = "form-{$suffix}/uploads";
             } else {
-                $folderName = "uploads-{$this->ID}";
+                $folderName = "uploads-{$suffix}";
             }
             $folder = UserDefinedFormAdmin::getFormSubmissionFolder($folderName);
             $this->FolderID = $folder->ID;
