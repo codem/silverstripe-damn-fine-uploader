@@ -5,6 +5,7 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\AssetAdmin\Controller\AssetAdmin;
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTP;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
@@ -149,7 +150,7 @@ trait CMSFieldConfigurator
         $folder = $this->Folder();
         if($folder && $folder->exists()) {
             $uploadFolderLocation = $folder->getFilename();
-            $uploadFolderLink = AssetAdmin::create()->getFileEditLink($folder);
+            $uploadFolderLink = Controller::join_links( AssetAdmin::create()->Link( 'show/' ), $folder->ID );
             $uploadFolderDescription = "<a target=\"_blank\" href=\"{$uploadFolderLink}\">"
                 . _t('DamnFineUploader.VIEW_FOLDER_ADMIN', 'View folder')
                 . "</a>";
