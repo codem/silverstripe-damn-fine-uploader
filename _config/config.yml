@@ -7,7 +7,7 @@ Codem\DamnFineUploader\DamnFineUploaderField:
   # config for the frontend lib
   implementation:
     validation:
-      acceptFiles: 'image/jpg,image/jpeg,image/png,image/webp'
+      acceptFiles: 'image/jpg,image/gif,image/png,image/webp,image/jpeg'
       itemLimit: 3
       sizeLimit: 5242880
       image:

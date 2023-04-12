@@ -78,10 +78,7 @@ class UploadPageController extends \PageController
             $field->setUseDateFolder($data->UseDateFolder == 1);
         }
 
-        $types = $data->getAllowedMimeTypes();
-        if (!empty($types)) {
-            $field->setAcceptedTypes($types);
-        }
+        $field->setAcceptedTypes($data->getAllowedTypes());
 
         return $field;
     }

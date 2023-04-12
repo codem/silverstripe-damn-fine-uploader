@@ -39,14 +39,24 @@ trait CMSFieldConfigurator
     }
 
     /**
+     * Gets allowed types based on the select file types
+     */
+    public function getAllowedTypes() : array {
+        $selected = $this->SelectedFileTypes;
+        $allowedTypes = json_decode($selected, true);
+        if(json_last_error() == JSON_ERROR_NONE && is_array($allowedTypes)) {
+            return array_unique($allowedTypes);
+        }
+        return [];
+    }
+
+    /**
      * Get the allowed mime types, based on the selected file types
      * @return array
      */
     public function getAllowedMimeTypes() {
-        $selected = $this->SelectedFileTypes;
-        $mimetypes = [];
-        $types = json_decode($selected, true);
-        if(json_last_error() == JSON_ERROR_NONE && is_array($types)) {
+        $types = $this->getAllowedTypes();
+        if(count($types) > 0) {
             foreach($types as $type) {
                 $expected = $this->getMimeTypes($type);
                 $mimetypes = array_merge($mimetypes, $expected);
@@ -96,30 +106,13 @@ trait CMSFieldConfigurator
         ]);
 
         // get allowed types field
-        $mimetypes = $this->getAllowedMimeTypes();
-        $typeDescription = trim(implode(", ", $mimetypes));
-        if(!$typeDescription) {
-            $typeDescription = _t(
-                'DamnFineUploader.NONE',
-                '(none)'
-            );
-        }
         $typeSelectionField = TypeSelectionField::create('SelectedFileTypes')
             ->setTitle(
                 _t(
                     'DamnFineUploader.SELECT_FILE_TYPES',
                     'Select allowed file types for this upload field'
                 )
-            )
-            ->setDescription(
-                _t(
-                    'DamnFineUploader.ALLOWED_MIME_TYPES',
-                    "The following mimetypes are allowed, based on this selection: <strong>{types}</strong>",
-                    [
-                        'types' => $typeDescription
-                    ]
-                )
-        );
+            );
 
         // Restrictions
         $fields->addFieldToTab(

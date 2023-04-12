@@ -165,11 +165,9 @@ trait EditableDamnFineUploader
         $field = $this->getUploaderField();
 
         // Apply configurable settings
+
         // set accepted types on the field e.g image/jpeg
-        $types = $this->getAllowedMimeTypes();
-        if (!empty($types)) {
-            $field->setAcceptedTypes($types);
-        }
+        $field->setAcceptedTypes($this->getAllowedTypes());
 
         // max file size, handle in bytes, provided in MB
         $bytes = $this->MaxFileSizeMB * 1048576;

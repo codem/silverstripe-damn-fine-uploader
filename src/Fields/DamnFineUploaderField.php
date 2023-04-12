@@ -596,9 +596,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             }
         }
 
-        // fallback to default accepted file types if none set
+        // fallback to default accepted file types if none set in configuration
         if (empty($lib_config['validation']['acceptFiles'])) {
-            $lib_config['validation']['acceptFiles'] = $this->default_accepted_types;
+            $lib_config['validation']['acceptFiles'] = $this->getDefaultAcceptedTypes();
         }
 
         // apply notification url, for use on completion
@@ -790,7 +790,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         array_walk(
             $types,
             function( &$value, $key ) {
-                if(strpos($value, ".") === false && strpos($value, "/") === false) {
+                $value = trim($value);
+                if($value != "" && strpos($value, ".") === false && strpos($value, "/") === false) {
                     $value = ".{$value}";
                 }
             }
@@ -804,7 +805,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             // returns values in $types that are not in the list of denied types
             $types = array_diff($types, $denied);
         }
-        return array_unique( array_filter($types) );
+        return array_values( array_unique( array_filter($types) ) );
     }
 
     /**
@@ -826,6 +827,10 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function setAcceptedTypes(array $types)
     {
+        if(count($types) == 0) {
+            // cannot set empty types
+            return $this;
+        }
         $types = $this->filterTypes($types);
         // ensure the type array is
         $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);
@@ -841,20 +846,29 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * This should be called after setUploaderDefaultConfig() is processed
      * @return array
      */
-    public function getAcceptedTypes()
+    public function getAcceptedTypes() : array
     {
-        $mimetypes = $this->lib_config['validation']['acceptFiles'];
-        if (is_string($mimetypes)) {
-            // configuration is provided as a string
-            $mimetypes = explode(",", $mimetypes);
-            // @var array
-            $mimetypes = $this->filterTypes($mimetypes);
-            $this->lib_config['validation']['acceptFiles'] = implode(",", $mimetypes);
-            $this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes( $mimetypes );
-            return $mimetypes;
-        } else {
-            return [];
+        $acceptFiles = $this->lib_config['validation']['acceptFiles'];
+        // configuration is provided as a string
+        $acceptedTypes = [];
+        if (is_string($acceptFiles)) {
+            $acceptedTypes = array_filter(explode(",", $acceptFiles));
         }
+        if(count($acceptedTypes) == 0) {
+            $acceptedTypes = explode(",", $this->getDefaultAcceptedTypes());
+        }
+        // @var array
+        $acceptedTypes = $this->filterTypes($acceptedTypes);
+        $this->lib_config['validation']['acceptFiles'] = implode(",", $acceptedTypes);
+        $this->lib_config['validation']['allowedExtensions'] = $this->getExtensionsForTypes( $acceptedTypes );
+        return $acceptedTypes;
+    }
+
+    /**
+     * Return the default accepted types
+     */
+    public function getDefaultAcceptedTypes() : string {
+        return $this->default_accepted_types;
     }
 
     /**
