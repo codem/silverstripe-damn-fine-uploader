@@ -184,7 +184,7 @@ trait CMSFieldConfigurator
         );
 
         // Apply restricted access warning (taken from userforms module)
-        if($folder && !$folder->hasRestrictedAccess()) {
+        if($folder && $folder->exists() && !$folder->hasRestrictedAccess()) {
             $fields->insertBefore(
                 'UploadFolderLocation',
                 LiteralField::create(
