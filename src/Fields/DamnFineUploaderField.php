@@ -215,9 +215,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     private function getFileFromRequest(HTTPRequest $request)
     {
-        $post = $request->postVars();
-        if (isset($post[ $this->file_input_param ])) {
-            return $post[ $this->file_input_param ];
+        if (isset($_FILES[ $this->file_input_param ])) {
+            return $_FILES[ $this->file_input_param ];
         } else {
             return false;
         }
