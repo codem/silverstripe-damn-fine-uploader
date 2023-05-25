@@ -2,6 +2,7 @@
 
 namespace Codem\DamnFineUploader\Tests;
 
+use Codem\DamnFineUploader\DamnFineUploaderField;
 use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Control\RequestHandler;
@@ -11,6 +12,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Validator;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
 use PageController;
 use DOMDocument;
 use DOMElement;
@@ -165,4 +167,108 @@ class UppyFieldTest extends SapphireTest
 
         $this->assertEquals($security_token_value, $config->request->params->{$token_name}, "Security Token value does not match {$security_token_value}");
     }
+
+    /**
+     * Setting empty accepted types
+     */
+    public function testSetEmptyAcceptedTypes() {
+        $field = UppyField::create('DefaultAcceptedTypes', 'Default accepted types');
+        $field->setAcceptedTypes([]);// will override any configuration value
+        $field->initFieldConfig();
+        $acceptedTypes = $field->getAcceptedTypes();
+        $expectedTypes = $field->getDefaultAcceptedTypes();
+        $this->assertEquals($expectedTypes, implode(",", $acceptedTypes));
+    }
+
+    public function testAcceptedTypes() {
+        Config::modify()->merge(
+            DamnFineUploaderField::class,
+            'denied_types',
+            [
+                '.bmp',
+            ]
+        );
+        $types = [".jpg",".png",".jpeg",".bmp"];
+        $field = UppyField::create('AcceptedTypes', 'Accepted types');
+        $field->setAcceptedTypes($types);
+        $field->initFieldConfig();
+        $acceptedTypes = $field->getAcceptedTypes();
+        $expectedTypes = [".jpg",".png",".jpeg"];
+        $this->assertEquals($expectedTypes, $acceptedTypes);
+    }
+
+    public function testDeniedTypes() {
+        Config::modify()->set(
+            DamnFineUploaderField::class,
+            'denied_mimetypes',
+            [
+                'text/x-no', 'text/denied'
+            ]
+        );
+        Config::modify()->set(
+            DamnFineUploaderField::class,
+            'denied_types',
+            [
+                '.no',
+                '.denied'
+            ]
+        );
+        $types = [".jpg",".denied"];
+        $field = UppyField::create('DeniedTypes', 'Denied types');
+        $field->setAcceptedTypes($types);
+        $field->initFieldConfig();
+        $this->assertTrue( $field->isDeniedMimeType('text/denied') );
+        $acceptedTypes = $field->getAcceptedTypes();
+        $expectedTypes = [".jpg"];
+        $this->assertEquals($expectedTypes, $acceptedTypes);
+    }
+
+    /**
+     * Test filterTypes method
+     */
+    public function testFilterTypes() {
+        Config::modify()->set(
+            DamnFineUploaderField::class,
+            'denied_mimetypes',
+            [
+                'text/x-no', 'text/denied','image/not-allowed'
+            ]
+        );
+        Config::modify()->set(
+            DamnFineUploaderField::class,
+            'denied_types',
+            [
+                '.no',
+                '.denied',
+                '.other'
+            ]
+        );
+        $types = [".other", " ", "", ".webp", "image/*", "image/not-allowed"];
+        $field = UppyField::create('FilterTypes', 'Filter types');
+        $field->setAcceptedTypes($types);
+        $field->initFieldConfig();
+        $filterTypes = $field->filterTypes($types);
+        $expectedTypes = [".webp","image/*"];
+        $this->assertEquals($expectedTypes, $filterTypes);
+    }
+
+    /**
+     * Test wildcard category/* handling
+     */
+    public function testWildcardTypes() {
+        $types = ["image/*"];
+        $field = UppyField::create('WildcardTypes', 'Wildcard types');
+        $field->setAcceptedTypes($types);
+        $field->initFieldConfig();
+        $acceptedTypes = $field->getAcceptedTypes();
+        $this->assertEquals( $types, $acceptedTypes );
+        $acceptedExtensions = $field->getExtensionsForTypes( $acceptedTypes );
+        $this->assertNotEmpty( $acceptedExtensions );
+        // test for well know image types
+        foreach(["jpg","png","pcx","bmp","png", "jpeg","gif"] as $extension) {
+            $this->assertContains( $extension, $acceptedExtensions );
+        }
+    }
+
+
 }
