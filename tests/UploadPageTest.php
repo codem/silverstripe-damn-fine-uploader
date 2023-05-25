@@ -30,6 +30,7 @@ class UploadPageTest extends SapphireTest
         $title = 'Test upload page';
         $fileTypes = ["jpeg","jpg","png","webp","pdf"];
         $expectedMimeTypes = "image/jpeg,image/png,image/webp,application/pdf";
+        $expectedAcceptFiles = ".jpeg,.jpg,.png,.webp,.pdf";
         $fileUploadLimit = 3;
         $maxFileSizeMb = 3.5;
         $useDateFolder = 1;
@@ -95,7 +96,7 @@ class UploadPageTest extends SapphireTest
         $this->assertEquals($config->validation->sizeLimit, ($maxFileSizeMb * 1024 * 1024), "Item sizeLimit {$config->validation->sizeLimit} does not match => {$maxFileSizeMb}");
 
         // file types
-        $this->assertEquals($expectedMimeTypes, $config->validation->acceptFiles, "Accept files does not match expected");
+        $this->assertEquals($expectedAcceptFiles, $config->validation->acceptFiles, "Accept files does not match expected");
 
         $this->assertEquals($config->request->method, "POST", "Upload endpoint {$config->request->method} does not match POST");
 
