@@ -56,6 +56,7 @@ trait CMSFieldConfigurator
      */
     public function getAllowedMimeTypes() {
         $types = $this->getAllowedTypes();
+        $mimetypes = [];
         if(count($types) > 0) {
             foreach($types as $type) {
                 $expected = $this->getMimeTypes($type);
