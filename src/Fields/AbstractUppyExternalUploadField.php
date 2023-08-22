@@ -18,6 +18,16 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 {
 
     /**
+     * @var string
+     */
+    const SERVICE_NAME = '';
+
+    /**
+     * @var string
+     */
+    const SERVICE_DESCRIPTION = '';
+
+    /**
      * External upload fields support notifications on upload
      * @var bool
      */
