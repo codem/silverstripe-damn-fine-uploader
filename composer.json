@@ -48,7 +48,7 @@
                 "src/Fields/",
                 "src/Models/",
                 "src/Pages/",
-                "src/Tasks/",
+                "src/Services/",
                 "src/Traits/"
             ],
             "Codem\\DamnFineUploader\\Tests\\": "tests/"
