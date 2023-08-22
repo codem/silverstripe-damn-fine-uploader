@@ -43,7 +43,7 @@ trait CMSFieldConfigurator
      */
     public function getAllowedTypes() : array {
         $selected = $this->SelectedFileTypes;
-        $allowedTypes = json_decode($selected, true);
+        $allowedTypes = json_decode($selected ?? '', true);
         if(json_last_error() == JSON_ERROR_NONE && is_array($allowedTypes)) {
             return array_unique($allowedTypes);
         }
