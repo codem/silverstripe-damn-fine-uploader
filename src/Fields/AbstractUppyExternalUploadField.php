@@ -177,8 +177,8 @@ abstract class AbstractUppyExternalUploadField extends UppyField
       * This method simply notifies extends of a completed upload or completed batch
       * by passing the request value to the extension
       *
-      * @param SilverStripe\Control\HTTPRequest $request
-      * @return SilverStripe\Control\HTTPResponse
+      * @param HTTPRequest $request
+      * @return HTTPResponse
       */
     public function notify(HTTPRequest $request) : HTTPResponse {
         try {
