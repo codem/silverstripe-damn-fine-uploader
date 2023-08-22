@@ -2,6 +2,7 @@
 
 namespace Codem\DamnFineUploader;
 
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
