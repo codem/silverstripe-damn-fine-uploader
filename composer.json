@@ -50,7 +50,8 @@
                 "src/Pages/",
                 "src/Tasks/",
                 "src/Traits/"
-            ]
+            ],
+            "Codem\\DamnFineUploader\\Tests\\": "tests/"
         }
     }
 }
