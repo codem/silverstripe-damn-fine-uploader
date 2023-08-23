@@ -28,7 +28,7 @@ Codem\DamnFineUploader\EditableUploadField:
   upload-field-1:
     Name: 'upload_field_name'
     Title: 'Upload field title'
-    SelectedFileTypes: '["gif","jpeg","jpg","webp"]'
+    SelectedFileTypes: '["gif","jpeg","jpg"]'
     MaxFileSizeMB: 10
     UseDateFolder: 1
     FileUploadLimit: 3

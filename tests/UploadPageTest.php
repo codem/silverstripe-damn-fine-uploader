@@ -6,8 +6,10 @@ use Codem\DamnFineUploader\DamnFineUploaderField;
 use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UploadPageController;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\SecurityToken;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\SSViewer;
 
 /**
@@ -23,6 +25,21 @@ class UploadPageTest extends SapphireTest
     public function setUp() : void {
         parent::setUp();
         SSViewer::set_themes([SSViewer::PUBLIC_THEME, SSViewer::DEFAULT_THEME]);
+
+        // Set basic image + document allowed extensions
+        Config::modify()->set(
+            File::class,
+            'allowed_extensions',
+            ['jpg', 'jpeg', 'png','gif', 'doc', 'docx', 'pdf', 'txt', 'csv']
+        );
+
+        // SiteConfig allows a subset
+        $allowed = ['jpg', 'jpeg', 'png','gif', 'doc', 'docx', 'pdf'];
+        $config = SiteConfig::current_site_config();
+        // set a default set of images
+        $config->AllowedFileExtensions = $allowed;
+        $config->write();
+
     }
 
     public function tearDown() : void {
@@ -30,10 +47,11 @@ class UploadPageTest extends SapphireTest
     }
 
     public function testUploadPage() {
+
         $title = 'Test upload page';
-        $fileTypes = ["jpeg","jpg","png","webp","pdf"];
+        $fileTypes = ["jpeg","jpg","png","pdf"];
         $expectedMimeTypes = "image/jpeg,image/png,image/webp,application/pdf";
-        $expectedAcceptFiles = ".jpeg,.jpg,.png,.webp,.pdf";
+        $expectedAcceptFiles = ".jpeg,.jpg,.png,.pdf";
         $fileUploadLimit = 3;
         $maxFileSizeMb = 3.5;
         $useDateFolder = 1;
