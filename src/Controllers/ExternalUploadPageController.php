@@ -31,8 +31,8 @@ class ExternalUploadPageController extends UploadPageController
     ];
 
     /**
-     * Return a field implementing the ExternalUploadRequirements interface
-     * @return ExternalUploadRequirements;
+     * Return the upload field
+     * @return AbstractUppyExternalUploadField;
      */
     protected function getUploadField()
     {

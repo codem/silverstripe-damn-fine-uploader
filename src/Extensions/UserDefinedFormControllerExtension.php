@@ -18,7 +18,7 @@ class UserDefinedFormControllerExtension extends Extension
                 if(!($field instanceof SubmittedUploadField)) {
                     continue;
                 }
-                /** @var SilverStripe\ORM\HasManyList */
+                /** @var \SilverStripe\ORM\HasManyList */
                 $files = $field->getSubmittedFiles();
                 foreach($files as $file) {
                     $attachments[] = $file;

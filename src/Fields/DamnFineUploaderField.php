@@ -136,7 +136,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Get custom validator for this field
      *
-     * @return SilverStripe\MimeValidator\MimeUploadValidator
+     * @return MimeUploadValidator
      */
     public function getValidator()
     {
@@ -147,8 +147,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Set custom validator for this field
      *
-     * @param Upload_Validator $validator
-     * @return $this
      */
     public function setValidator(MimeUploadValidator $validator)
     {
@@ -175,15 +173,15 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Response for a successful upload
      * @param array $file_upload the uploaded file
      * @param string $uuid our unique ref of the file
-     * @return SilverStripe\Control\HTTPResponse
+     * @return HTTPResponse
      */
     abstract protected function uploadSuccessfulResponse(array $file_upload, $uuid);
 
     /**
      * Response for a failed upload
      * @param array $file_upload the uploaded file (or empty array, if it could not be found)
-     * @param string $error_message
-     * @return SilverStripe\Control\HTTPResponse
+     * @param string $error
+     * @return HTTPResponse
      */
     abstract protected function uploadErrorResponse(array $file_upload, $error);
 
@@ -191,21 +189,21 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Error response
      * @param string $result error string
      * @param int $code HTTP error code
-     * @return SilverStripe\Control\HTTPResponse
+     * @return HTTPResponse
      */
     abstract protected function errorResponse($result, $code = 400);
 
     /**
      * Return the response on successful removal
-     * @return SilverStripe\Control\HTTPResponse
+     * @return HTTPResponse
      */
     abstract protected function removeSuccessResponse();
 
     /**
      * Return the response on failed removal
      * @param array $file_upload file (or empty array, if it could not be found)
-     * @param string $error_message
-     * @return SilverStripe\Control\HTTPResponse
+     * @param string $error
+     * @return HTTPResponse
      */
     abstract protected function removeErrorResponse(array $file_upload, $error);
 
@@ -274,8 +272,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
       *
       * Implementations can implement their own upload method
       *
-      * @param SilverStripe\Control\HTTPRequest $request
-      * @return SilverStripe\Control\HTTPResponse
+      * @param HTTPRequest $request
+      * @return HTTPResponse
       */
     public function upload(HTTPRequest $request)
     {
@@ -302,8 +300,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * By default fields do not support presign
-     * @param SilverStripe\Control\HTTPRequest $request
-     * @return SilverStripe\Control\HTTPResponse
+     * @param HTTPRequest $request
+     * @return HTTPResponse
      */
     public function presign(HTTPRequest $request) : HTTPResponse {
         return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
@@ -312,8 +310,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Handle notification received after upload success, error or completion
      * By default fields do not support notify, child fields should support this
-     * @param SilverStripe\Control\HTTPRequest $request
-     * @return SilverStripe\Control\HTTPResponse
+     * @param HTTPRequest $request
+     * @return HTTPResponse
      */
     public function notify(HTTPRequest $request) : HTTPResponse {
         return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
@@ -321,7 +319,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Save the file somewhere, based on configuraton
-     * @return SilverStripe\Assets\File
+     * @return \SilverStripe\Assets\File
      * @throws InvalidFileException|Exception
      */
     private function saveFile($file_upload, string $uuid, string $form_security_token_value)
@@ -883,7 +881,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Set the maximum allowed filesize, in bytes
      * Note that if the system setting is lower, that will be used
-     * @param float bytes
+     * @param float $bytes
      */
     public function setAllowedMaxFileSize($bytes)
     {
@@ -1220,7 +1218,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Validate the upload request
      * On success, returns an HTTPResponse matching the libraries expected 'Upload OK' result
      * On failure, returns boolean false or throws an \Exception
-     * @return SilverStripe\Control\HTTPResponse|false
+     * @return HTTPResponse|false
      * @throws InvalidRequestException
      * @throws \Exception
      */

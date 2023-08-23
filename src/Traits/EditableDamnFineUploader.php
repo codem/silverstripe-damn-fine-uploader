@@ -18,6 +18,7 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\UserForms\Extension\UserFormFileExtension;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\UserForms\Model\EditableFormField;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 
 /**

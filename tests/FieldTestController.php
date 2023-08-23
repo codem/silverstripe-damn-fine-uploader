@@ -1,6 +1,6 @@
 <?php
 
-namespace Codem\DamnFineUploader;
+namespace Codem\DamnFineUploader\Tests;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\TestOnly;

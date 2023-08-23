@@ -1,7 +1,8 @@
 <?php
 
-namespace Codem\DamnFineUploader;
+namespace Codem\DamnFineUploader\Tests;
 
+use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
 use Silverstripe\Forms\FieldList;

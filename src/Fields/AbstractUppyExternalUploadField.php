@@ -2,6 +2,7 @@
 
 namespace Codem\DamnFineUploader;
 
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
@@ -15,6 +16,16 @@ use SilverStripe\Security\RandomGenerator;
  */
 abstract class AbstractUppyExternalUploadField extends UppyField
 {
+
+    /**
+     * @var string
+     */
+    const SERVICE_NAME = '';
+
+    /**
+     * @var string
+     */
+    const SERVICE_DESCRIPTION = '';
 
     /**
      * External upload fields support notifications on upload
@@ -177,8 +188,8 @@ abstract class AbstractUppyExternalUploadField extends UppyField
       * This method simply notifies extends of a completed upload or completed batch
       * by passing the request value to the extension
       *
-      * @param SilverStripe\Control\HTTPRequest $request
-      * @return SilverStripe\Control\HTTPResponse
+      * @param HTTPRequest $request
+      * @return HTTPResponse
       */
     public function notify(HTTPRequest $request) : HTTPResponse {
         try {
