@@ -1,7 +1,10 @@
 <?php
 
-namespace Codem\DamnFineUploader;
+namespace Codem\DamnFineUploader\Tests;
 
+use Codem\DamnFineUploader\DamnFineUploaderField;
+use Codem\DamnFineUploader\UploadPage;
+use Codem\DamnFineUploader\UploadPageController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\SecurityToken;

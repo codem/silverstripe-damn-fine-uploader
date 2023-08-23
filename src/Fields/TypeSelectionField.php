@@ -24,8 +24,10 @@ class TypeSelectionField extends CheckboxsetField
         $data = [];
         if($config->AllowedFileExtensions) {
             $types = $config->AllowedFileExtensions->getValues();
-            foreach($types as $type) {
-                $data[$type] = $type;
+            if(is_array($types)) {
+                foreach($types as $type) {
+                    $data[$type] = $type;
+                }
             }
         }
         return $data;

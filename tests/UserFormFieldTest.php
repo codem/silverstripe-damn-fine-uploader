@@ -1,6 +1,6 @@
 <?php
 
-namespace Codem\DamnFineUploader;
+namespace Codem\DamnFineUploader\Tests;
 
 use SilverStripe\Forms\LabelField;
 use SilverStripe\Assets\File;
@@ -33,6 +33,8 @@ class UserFormFieldTest extends FunctionalTest
     protected static $disable_themes = true;
 
     private $fixture_file_count = 0;
+
+    protected $usesDatabase = true;
 
     protected function setUp() : void
     {

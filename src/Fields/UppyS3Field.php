@@ -45,8 +45,8 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
 
     /**
      * Pre sign a URL for a single file, called when a file is added to the uploader
-     * @param SilverStripe\Control\HTTPRequest $request
-     * @return SilverStripe\Control\HTTPResponse
+     * @param HTTPRequest $request
+     * @return HTTPResponse
      */
     public function presign(HTTPRequest $request) : HTTPResponse {
         $post = $request->postVars();
