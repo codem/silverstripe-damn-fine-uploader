@@ -16,10 +16,10 @@
     "lint": "eslint client/src && sass-lint -v client/src"
   },
   "devDependencies": {
-    "@babel/core": "^7.15",
-    "@babel/plugin-transform-arrow-functions": "^7.14",
-    "@babel/plugin-transform-runtime": "^7.15",
-    "@babel/preset-env": "^7.15",
+    "@babel/core": "^7.24",
+    "@babel/plugin-transform-arrow-functions": "^7.24",
+    "@babel/plugin-transform-runtime": "^7.24",
+    "@babel/preset-env": "^7.24",
     "babel-loader": "^8.2",
     "core-js": "^3.18.3",
     "css-loader": "^6",
