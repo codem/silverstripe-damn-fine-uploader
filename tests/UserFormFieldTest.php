@@ -2,6 +2,8 @@
 
 namespace Codem\DamnFineUploader\Tests;
 
+use Codem\DamnFineUploader\UppyField;
+use Codem\DamnFineUploader\SubmittedUploadField;
 use SilverStripe\Forms\LabelField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
@@ -16,6 +18,7 @@ use Silverstripe\Forms\FieldList;
 use Silverstripe\Forms\Form;
 use Silverstripe\Forms\HiddenField;
 use SilverStripe\Security\SecurityToken;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\UserForms\Control\UserDefinedFormController;
 use SilverStripe\UserForms\Extension\UserFormFileExtension;
 use SilverStripe\UserForms\Model\UserDefinedForm;
@@ -58,6 +61,20 @@ class UserFormFieldTest extends FunctionalTest
 
         // ensure tokens are enabled
         SecurityToken::enable();
+
+        // Set basic image + document allowed extensions
+        Config::modify()->set(
+            File::class,
+            'allowed_extensions',
+            ['jpg', 'jpeg', 'png','gif', 'doc', 'docx', 'pdf', 'txt', 'csv']
+        );
+
+        // SiteConfig allows a subset
+        $allowed = ['jpg', 'jpeg', 'png','gif', 'doc', 'docx', 'pdf'];
+        $config = SiteConfig::current_site_config();
+        // set a default set of images
+        $config->AllowedFileExtensions = $allowed;
+        $config->write();
 
     }
 
