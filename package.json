@@ -39,9 +39,9 @@
     "webpack-subresource-integrity": "^5"
   },
   "dependencies": {
-    "@uppy/core": "^3.4.0",
-    "@uppy/dashboard": "^3.5.1",
-    "@uppy/drag-drop": "^3.0.3",
-    "@uppy/xhr-upload": "^3.3.2"
+    "@uppy/core": "^3.13",
+    "@uppy/dashboard": "^3.9",
+    "@uppy/drag-drop": "^3.1",
+    "@uppy/xhr-upload": "^3.6"
   }
 }
