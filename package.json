@@ -16,18 +16,18 @@
     "lint": "eslint client/src && sass-lint -v client/src"
   },
   "devDependencies": {
-    "@babel/core": "^7.15",
-    "@babel/plugin-transform-arrow-functions": "^7.14",
-    "@babel/plugin-transform-runtime": "^7.15",
-    "@babel/preset-env": "^7.15",
-    "babel-loader": "^8.2",
-    "core-js": "^3.18.3",
-    "css-loader": "^6",
-    "css-minimizer-webpack-plugin": "^3",
+    "@babel/core": "^7.24",
+    "@babel/plugin-transform-arrow-functions": "^7.24",
+    "@babel/plugin-transform-runtime": "^7.24",
+    "@babel/preset-env": "^7.24",
+    "babel-loader": "^9",
+    "core-js": "^3.37",
+    "css-loader": "^7",
+    "css-minimizer-webpack-plugin": "^7",
     "kind-of": "^6.0.3",
     "mini-css-extract-plugin": "^2",
     "minimist": "^1.2.6",
-    "nanoid": "^3.3.4",
+    "nanoid": "^5",
     "set-value": "^4.1.0",
     "terser": "^5.14.2",
     "terser-webpack-plugin": "^5.3.5",
@@ -35,13 +35,13 @@
     "webpack": "^5",
     "webpack-assets-manifest": "^5",
     "webpack-bundle-analyzer": "^4.5",
-    "webpack-cli": "^4",
+    "webpack-cli": "^5",
     "webpack-subresource-integrity": "^5"
   },
   "dependencies": {
-    "@uppy/core": "^3.1.2",
-    "@uppy/dashboard": "^3.3.2",
-    "@uppy/drag-drop": "^3.0.1",
-    "@uppy/xhr-upload": "^3.1.1"
+    "@uppy/core": "^3.13",
+    "@uppy/dashboard": "^3.9",
+    "@uppy/drag-drop": "^3.1",
+    "@uppy/xhr-upload": "^3.6"
   }
 }
