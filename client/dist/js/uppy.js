@@ -372,19 +372,6 @@ if (true) {
 
 /***/ }),
 
-/***/ 6993:
-/***/ ((module) => {
-
-module.exports = function isShallowEqual (a, b) {
-  if (a === b) return true
-  for (var i in a) if (!(i in b)) return false
-  for (var i in b) if (a[i] !== b[i]) return false
-  return true
-}
-
-
-/***/ }),
-
 /***/ 1873:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8268,9 +8255,9 @@ var web_url_to_json = __webpack_require__(7208);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.js
 var web_url_search_params = __webpack_require__(8408);
 ;// ./node_modules/@uppy/utils/lib/Translator.js
-function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function _classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var id = 0;
-function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
+function _classPrivateFieldLooseKey(e) { return "__private_" + id++ + "_" + e; }
 // We're using a generic because languages have different plural rules.
 
 // eslint-disable-next-line no-use-before-define
@@ -8427,13 +8414,13 @@ function _apply2(locale) {
 }
 // EXTERNAL MODULE: ./node_modules/namespace-emitter/index.js
 var namespace_emitter = __webpack_require__(3835);
-;// ./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js
+;// ./node_modules/nanoid/non-secure/index.js
 let urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 let customAlphabet = (alphabet, defaultSize = 21) => {
   return (size = defaultSize) => {
     let id = ''
-    let i = size
+    let i = size | 0
     while (i--) {
       id += alphabet[(Math.random() * alphabet.length) | 0]
     }
@@ -8442,7 +8429,7 @@ let customAlphabet = (alphabet, defaultSize = 21) => {
 }
 let nanoid = (size = 21) => {
   let id = ''
-  let i = size
+  let i = size | 0
   while (i--) {
     id += urlAlphabet[(Math.random() * 64) | 0]
   }
@@ -8452,13 +8439,13 @@ let nanoid = (size = 21) => {
 // EXTERNAL MODULE: ./node_modules/lodash/throttle.js
 var throttle = __webpack_require__(7350);
 ;// ./node_modules/@uppy/store-default/lib/index.js
-function lib_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function lib_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var lib_id = 0;
-function lib_classPrivateFieldLooseKey(name) { return "__private_" + lib_id++ + "_" + name; }
+function lib_classPrivateFieldLooseKey(e) { return "__private_" + lib_id++ + "_" + e; }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const packageJson = {
-  "version": "3.2.2"
+  "version": "4.2.0"
 };
 var _callbacks = /*#__PURE__*/lib_classPrivateFieldLooseKey("callbacks");
 var _publish = /*#__PURE__*/lib_classPrivateFieldLooseKey("publish");
@@ -8865,9 +8852,10 @@ class Restricter {
 
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null && file.size > maxFileSize) {
+      var _file$name;
       throw new RestrictionError(this.getI18n()('exceedsSize', {
         size: prettierBytes(maxFileSize),
-        file: file.name
+        file: (_file$name = file.name) != null ? _file$name : this.getI18n()('unnamed')
       }), {
         file
       });
@@ -8899,8 +8887,9 @@ class Restricter {
     }
   }
   getMissingRequiredMetaFields(file) {
+    var _file$name2;
     const error = new RestrictionError(this.getI18n()('missingRequiredMetaFieldOnFile', {
-      fileName: file.name
+      fileName: (_file$name2 = file.name) != null ? _file$name2 : this.getI18n()('unnamed')
     }));
     const {
       requiredMetaFields
@@ -8958,6 +8947,9 @@ class Restricter {
     openFolderNamed: 'Open folder %{name}',
     cancel: 'Cancel',
     logOut: 'Log out',
+    logIn: 'Log in',
+    pickFiles: 'Pick files',
+    pickPhotos: 'Pick photos',
     filter: 'Filter',
     resetFilter: 'Reset filter',
     loading: 'Loading...',
@@ -8977,14 +8969,14 @@ class Restricter {
       1: 'Added %{smart_count} files from %{folder}'
     },
     additionalRestrictionsFailed: '%{count} additional restrictions were not fulfilled',
-    unnamed: 'Unnamed'
+    unnamed: 'Unnamed',
+    pleaseWait: 'Please wait'
   }
 });
 ;// ./node_modules/@uppy/core/lib/Uppy.js
-let _Symbol$for, _Symbol$for2;
-function Uppy_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function Uppy_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var Uppy_id = 0;
-function Uppy_classPrivateFieldLooseKey(name) { return "__private_" + Uppy_id++ + "_" + name; }
+function Uppy_classPrivateFieldLooseKey(e) { return "__private_" + Uppy_id++ + "_" + e; }
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
@@ -8994,8 +8986,6 @@ function Uppy_classPrivateFieldLooseKey(name) { return "__private_" + Uppy_id++ 
 
 
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore store-default types not always available on that branch
 
 
 
@@ -9007,12 +8997,36 @@ function Uppy_classPrivateFieldLooseKey(name) { return "__private_" + Uppy_id++ 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const Uppy_packageJson = {
-  "version": "3.13.1"
+  "version": "4.4.0"
 };
 
 
+/**
+ * ids are always `string`s, except the root folder's id can be `null`
+ */
+
+/**
+ * PartialTree has the following structure.
+ *
+ *           FolderRoot
+ *         ┌─────┴─────┐
+ *     FolderNode     File
+ *   ┌─────┴────┐
+ *  File      File
+ *
+ * Root folder is called `PartialTreeFolderRoot`,
+ * all other folders are called `PartialTreeFolderNode`, because they are "internal nodes".
+ *
+ * It's possible for `PartialTreeFolderNode` to be a leaf node if it doesn't contain any files.
+ */
+
+/**
+ * This is a base for a provider that does not necessarily use the Companion-assisted OAuth2 flow
+ */
+
 /*
- * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
+ * UnknownProviderPlugin can be any Companion plugin (such as Google Drive)
+ * that uses the Companion-assisted OAuth flow.
  * As the plugins are passed around throughout Uppy we need a generic type for this.
  * It may seems like duplication, but this type safe. Changing the type of `storage`
  * will error in the `Provider` class of @uppy/companion-client and vice versa.
@@ -9036,7 +9050,7 @@ const Uppy_packageJson = {
 
 // The user facing type for UppyOptions used in uppy.setOptions()
 
-/** @deprecated */
+/** `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`. */
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -9064,6 +9078,10 @@ var _assertNewUploadAllowed = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("asser
 var _transformFile = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("transformFile");
 var _startIfAutoProceed = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("startIfAutoProceed");
 var _checkAndUpdateFileState = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("checkAndUpdateFileState");
+var _handleUploadProgress = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("handleUploadProgress");
+var _updateTotalProgress = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("updateTotalProgress");
+var _updateTotalProgressThrottled = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("updateTotalProgressThrottled");
+var _calculateTotalProgress = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("calculateTotalProgress");
 var _addListeners = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("addListeners");
 var _updateOnlineStatus = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("updateOnlineStatus");
 var _requestClientById = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("requestClientById");
@@ -9071,8 +9089,6 @@ var _createUpload = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("createUpload");
 var _getUpload = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("getUpload");
 var _removeUpload = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("removeUpload");
 var _runUpload = /*#__PURE__*/Uppy_classPrivateFieldLooseKey("runUpload");
-_Symbol$for = Symbol.for('uppy test: getPlugins');
-_Symbol$for2 = Symbol.for('uppy test: createUpload');
 class Uppy {
   /**
    * Instantiate Uppy
@@ -9107,6 +9123,12 @@ class Uppy {
      */
     Object.defineProperty(this, _addListeners, {
       value: _addListeners2
+    });
+    Object.defineProperty(this, _calculateTotalProgress, {
+      value: _calculateTotalProgress2
+    });
+    Object.defineProperty(this, _updateTotalProgress, {
+      value: _updateTotalProgress2
     });
     Object.defineProperty(this, _checkAndUpdateFileState, {
       value: _checkAndUpdateFileState2
@@ -9163,6 +9185,42 @@ class Uppy {
     });
     this.scheduledAutoProceed = null;
     this.wasOffline = false;
+    Object.defineProperty(this, _handleUploadProgress, {
+      writable: true,
+      value: (file, progress) => {
+        const fileInState = file ? this.getFile(file.id) : undefined;
+        if (file == null || !fileInState) {
+          this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
+          return;
+        }
+        if (fileInState.progress.percentage === 100) {
+          this.log(`Not setting progress for a file that has been already uploaded: ${file.id}`);
+          return;
+        }
+        const newProgress = {
+          bytesTotal: progress.bytesTotal,
+          // bytesTotal may be null or zero; in that case we can't divide by it
+          percentage: progress.bytesTotal != null && Number.isFinite(progress.bytesTotal) && progress.bytesTotal > 0 ? Math.round(progress.bytesUploaded / progress.bytesTotal * 100) : undefined
+        };
+        if (fileInState.progress.uploadStarted != null) {
+          this.setFileState(file.id, {
+            progress: {
+              ...fileInState.progress,
+              ...newProgress,
+              bytesUploaded: progress.bytesUploaded
+            }
+          });
+        } else {
+          this.setFileState(file.id, {
+            progress: {
+              ...fileInState.progress,
+              ...newProgress
+            }
+          });
+        }
+        Uppy_classPrivateFieldLooseBase(this, _updateTotalProgressThrottled)[_updateTotalProgressThrottled]();
+      }
+    });
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well
     //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -9170,33 +9228,12 @@ class Uppy {
     //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-    // todo when uploading multiple files, this will cause problems because they share the same throttle,
-    // meaning some files might never get their progress reported (eaten up by progress events from other files)
-    this.calculateProgress = throttle((file, data) => {
-      const fileInState = this.getFile(file == null ? void 0 : file.id);
-      if (file == null || !fileInState) {
-        this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
-        return;
-      }
-      if (fileInState.progress.percentage === 100) {
-        this.log(`Not setting progress for a file that has been already uploaded: ${file.id}`);
-        return;
-      }
-
-      // bytesTotal may be null or zero; in that case we can't divide by it
-      const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0;
-      this.setFileState(file.id, {
-        progress: {
-          ...fileInState.progress,
-          bytesUploaded: data.bytesUploaded,
-          bytesTotal: data.bytesTotal,
-          percentage: canHavePercentage ? Math.round(data.bytesUploaded / data.bytesTotal * 100) : 0
-        }
-      });
-      this.calculateTotalProgress();
-    }, 500, {
-      leading: true,
-      trailing: true
+    Object.defineProperty(this, _updateTotalProgressThrottled, {
+      writable: true,
+      value: throttle(() => Uppy_classPrivateFieldLooseBase(this, _updateTotalProgress)[_updateTotalProgress](), 500, {
+        leading: true,
+        trailing: true
+      })
     });
     Object.defineProperty(this, _updateOnlineStatus, {
       writable: true,
@@ -9270,12 +9307,7 @@ class Uppy {
       info: []
     });
     Uppy_classPrivateFieldLooseBase(this, _restricter)[_restricter] = new Restricter(() => this.opts, () => this.i18n);
-    Uppy_classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe] = this.store.subscribe(
-    // eslint-disable-next-line
-    // @ts-ignore Store is incorrectly typed
-    (prevState, nextState, patch) => {
-      // eslint-disable-next-line
-      // @ts-ignore Store is incorrectly typed
+    Uppy_classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe] = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch);
       this.updateAll(nextState);
     });
@@ -9322,8 +9354,6 @@ class Uppy {
    * Updates state with a patch
    */
   setState(patch) {
-    // eslint-disable-next-line
-    // @ts-ignore Store is incorrectly typed
     this.store.setState(patch);
   }
 
@@ -9331,8 +9361,6 @@ class Uppy {
    * Returns current state.
    */
   getState() {
-    // eslint-disable-next-line
-    // @ts-ignore Store is incorrectly typed
     return this.store.getState();
   }
   patchFilesState(filesWithNewState) {
@@ -9393,38 +9421,37 @@ class Uppy {
     // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState(undefined); // so that UI re-renders with new options
   }
-
-  // todo next major: remove
   resetProgress() {
     const defaultProgress = {
       percentage: 0,
-      bytesUploaded: 0,
+      bytesUploaded: false,
       uploadComplete: false,
       uploadStarted: null
     };
     const files = {
       ...this.getState().files
     };
-    const updatedFiles = {};
+    const updatedFiles = Object.create(null);
     Object.keys(files).forEach(fileID => {
       updatedFiles[fileID] = {
         ...files[fileID],
         progress: {
           ...files[fileID].progress,
           ...defaultProgress
-        }
+        },
+        // @ts-expect-error these typed are inserted
+        // into the namespace in their respective packages
+        // but core isn't ware of those
+        tus: undefined,
+        transloadit: undefined
       };
     });
     this.setState({
       files: updatedFiles,
       ...defaultUploadState
     });
-    this.emit('reset-progress');
   }
-
-  // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
-  // or throw and say you need to cancel manually
-  clearUploadedFiles() {
+  clear() {
     const {
       capabilities,
       currentUploads
@@ -9484,7 +9511,7 @@ class Uppy {
       ...this.getState().files
     };
     if (!updatedFiles[fileID]) {
-      this.log('Was trying to set metadata for a file that has been removed: ', fileID);
+      this.log(`Was trying to set metadata for a file that has been removed: ${fileID}`);
       return;
     }
     const newMeta = {
@@ -9596,6 +9623,23 @@ class Uppy {
     }
     return null;
   }
+  validateSingleFile(file) {
+    try {
+      Uppy_classPrivateFieldLooseBase(this, _restricter)[_restricter].validateSingleFile(file);
+    } catch (err) {
+      return err.message;
+    }
+    return null;
+  }
+  validateAggregateRestrictions(files) {
+    const existingFiles = this.getFiles();
+    try {
+      Uppy_classPrivateFieldLooseBase(this, _restricter)[_restricter].validateAggregateRestrictions(existingFiles, files);
+    } catch (err) {
+      return err.message;
+    }
+    return null;
+  }
   checkIfFileAlreadyExists(fileID) {
     const {
       files
@@ -9689,7 +9733,7 @@ class Uppy {
       Uppy_classPrivateFieldLooseBase(this, _startIfAutoProceed)[_startIfAutoProceed]();
     }
   }
-  removeFiles(fileIDs, reason) {
+  removeFiles(fileIDs) {
     const {
       files,
       currentUploads
@@ -9744,10 +9788,10 @@ class Uppy {
       stateUpdate.recoveredState = null;
     }
     this.setState(stateUpdate);
-    this.calculateTotalProgress();
+    Uppy_classPrivateFieldLooseBase(this, _updateTotalProgressThrottled)[_updateTotalProgressThrottled]();
     const removedFileIDs = Object.keys(removedFiles);
     removedFileIDs.forEach(fileID => {
-      this.emit('file-removed', removedFiles[fileID], reason);
+      this.emit('file-removed', removedFiles[fileID]);
     });
     if (removedFileIDs.length > 5) {
       this.log(`Removed ${removedFileIDs.length} files`);
@@ -9755,19 +9799,20 @@ class Uppy {
       this.log(`Removed files: ${removedFileIDs.join(', ')}`);
     }
   }
-  removeFile(fileID, reason) {
-    this.removeFiles([fileID], reason);
+  removeFile(fileID) {
+    this.removeFiles([fileID]);
   }
   pauseResume(fileID) {
     if (!this.getState().capabilities.resumableUploads || this.getFile(fileID).progress.uploadComplete) {
       return undefined;
     }
-    const wasPaused = this.getFile(fileID).isPaused || false;
+    const file = this.getFile(fileID);
+    const wasPaused = file.isPaused || false;
     const isPaused = !wasPaused;
     this.setFileState(fileID, {
       isPaused
     });
-    this.emit('upload-pause', fileID, isPaused);
+    this.emit('upload-pause', file, isPaused);
     return isPaused;
   }
   pauseAll() {
@@ -9828,7 +9873,7 @@ class Uppy {
       files: updatedFiles,
       error: null
     });
-    this.emit('retry-all', filesToRetry);
+    this.emit('retry-all', Object.values(updatedFiles));
     if (filesToRetry.length === 0) {
       return Promise.resolve({
         successful: [],
@@ -9840,33 +9885,23 @@ class Uppy {
     });
     return Uppy_classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
   }
-  cancelAll(_temp) {
-    let {
-      reason = 'user'
-    } = _temp === void 0 ? {} : _temp;
-    this.emit('cancel-all', {
-      reason
-    });
-
-    // Only remove existing uploads if user is canceling
-    if (reason === 'user') {
-      const {
-        files
-      } = this.getState();
-      const fileIDs = Object.keys(files);
-      if (fileIDs.length) {
-        this.removeFiles(fileIDs, 'cancel-all');
-      }
-      this.setState(defaultUploadState);
-      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+  cancelAll() {
+    this.emit('cancel-all');
+    const {
+      files
+    } = this.getState();
+    const fileIDs = Object.keys(files);
+    if (fileIDs.length) {
+      this.removeFiles(fileIDs);
     }
+    this.setState(defaultUploadState);
   }
   retryUpload(fileID) {
     this.setFileState(fileID, {
       error: null,
       isPaused: false
     });
-    this.emit('upload-retry', fileID);
+    this.emit('upload-retry', this.getFile(fileID));
     const uploadID = Uppy_classPrivateFieldLooseBase(this, _createUpload)[_createUpload]([fileID], {
       forceAllowNewUpload: true // create new upload even if allowNewUpload: false
     });
@@ -9879,57 +9914,9 @@ class Uppy {
       (_provider = plugin.provider) == null || _provider.logout == null || _provider.logout();
     });
   }
-  calculateTotalProgress() {
-    // calculate total progress, using the number of files currently uploading,
-    // multiplied by 100 and the summ of individual progress of each file
-    const files = this.getFiles();
-    const inProgress = files.filter(file => {
-      return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
-    });
-    if (inProgress.length === 0) {
-      this.emit('progress', 0);
-      this.setState({
-        totalProgress: 0
-      });
-      return;
-    }
-    const sizedFiles = inProgress.filter(file => file.progress.bytesTotal != null);
-    const unsizedFiles = inProgress.filter(file => file.progress.bytesTotal == null);
-    if (sizedFiles.length === 0) {
-      const progressMax = inProgress.length * 100;
-      const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + file.progress.percentage;
-      }, 0);
-      const totalProgress = Math.round(currentProgress / progressMax * 100);
-      this.setState({
-        totalProgress
-      });
-      return;
-    }
-    let totalSize = sizedFiles.reduce((acc, file) => {
-      var _file$progress$bytesT;
-      return acc + ((_file$progress$bytesT = file.progress.bytesTotal) != null ? _file$progress$bytesT : 0);
-    }, 0);
-    const averageSize = totalSize / sizedFiles.length;
-    totalSize += averageSize * unsizedFiles.length;
-    let uploadedSize = 0;
-    sizedFiles.forEach(file => {
-      uploadedSize += file.progress.bytesUploaded;
-    });
-    unsizedFiles.forEach(file => {
-      uploadedSize += averageSize * (file.progress.percentage || 0) / 100;
-    });
-    let totalProgress = totalSize === 0 ? 0 : Math.round(uploadedSize / totalSize * 100);
-
-    // hot fix, because:
-    // uploadedSize ended up larger than totalSize, resulting in 1325% total
-    if (totalProgress > 100) {
-      totalProgress = 100;
-    }
-    this.setState({
-      totalProgress
-    });
-    this.emit('progress', totalProgress);
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/explicit-module-boundary-types
+  [Symbol.for('uppy test: updateTotalProgress')]() {
+    return Uppy_classPrivateFieldLooseBase(this, _updateTotalProgress)[_updateTotalProgress]();
   }
   updateOnlineStatus() {
     var _window$navigator$onL;
@@ -9954,14 +9941,17 @@ class Uppy {
   /**
    * Registers a plugin with Core.
    */
-  use(Plugin, opts) {
+  use(Plugin) {
     if (typeof Plugin !== 'function') {
       const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` + ' Please verify that the plugin was imported and spelled correctly.';
       throw new TypeError(msg);
     }
 
     // Instantiate
-    const plugin = new Plugin(this, opts);
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+    const plugin = new Plugin(this, ...args);
     const pluginId = plugin.id;
     if (!pluginId) {
       throw new Error('Your plugin must have an id');
@@ -9971,7 +9961,7 @@ class Uppy {
     }
     const existsPluginAlready = this.getPlugin(pluginId);
     if (existsPluginAlready) {
-      const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` + `Tried to use: '${pluginId}'.\n` + 'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.';
+      const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` + `Tried to use: '${pluginId}'.\n` + 'Uppy plugins must have unique `id` options.';
       throw new Error(msg);
     }
 
@@ -10000,7 +9990,7 @@ class Uppy {
     }
     return undefined;
   }
-  [_Symbol$for](type) {
+  [Symbol.for('uppy test: getPlugins')](type) {
     return Uppy_classPrivateFieldLooseBase(this, _plugins)[_plugins][type];
   }
 
@@ -10044,18 +10034,9 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  // @todo next major: rename to `destroy`.
-  // Cancel local uploads, cancel remote uploads, DON'T cancel assemblies
-  // document that if you do want to cancel assemblies, you need to call smth manually.
-  // Potentially remove reason, as it’s confusing, just come up with a default behaviour.
-  close(_temp2) {
-    let {
-      reason
-    } = _temp2 === void 0 ? {} : _temp2;
+  destroy() {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`);
-    this.cancelAll({
-      reason
-    });
+    this.cancelAll();
     Uppy_classPrivateFieldLooseBase(this, _storeUnsubscribe)[_storeUnsubscribe]();
     this.iteratePlugins(plugin => {
       this.removePlugin(plugin);
@@ -10141,7 +10122,7 @@ class Uppy {
     }
     return Uppy_classPrivateFieldLooseBase(this, _runUpload)[_runUpload](uploadID);
   }
-  [_Symbol$for2]() {
+  [Symbol.for('uppy test: createUpload')]() {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return Uppy_classPrivateFieldLooseBase(this, _createUpload)[_createUpload](...arguments);
   }
@@ -10330,7 +10311,7 @@ function _transformFile2(fileDescriptorOrFile) {
     data: file.data,
     progress: {
       percentage: 0,
-      bytesUploaded: 0,
+      bytesUploaded: false,
       bytesTotal: size,
       uploadComplete: false,
       uploadStarted: null
@@ -10338,9 +10319,7 @@ function _transformFile2(fileDescriptorOrFile) {
     size,
     isGhost: false,
     isRemote: file.isRemote || false,
-    // TODO: this should not be a string
-    // @ts-expect-error wrong
-    remote: file.remote || '',
+    remote: file.remote,
     preview: file.preview
   };
 }
@@ -10388,8 +10367,9 @@ function _checkAndUpdateFileState2(filesToAdd) {
       }
       const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState);
       if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
+        var _newFile$name;
         throw new RestrictionError(this.i18n('noDuplicates', {
-          fileName: newFile.name
+          fileName: (_newFile$name = newFile.name) != null ? _newFile$name : this.i18n('unnamed')
         }), {
           file: fileToAdd
         });
@@ -10433,6 +10413,54 @@ function _checkAndUpdateFileState2(filesToAdd) {
     validFilesToAdd,
     errors
   };
+}
+function _updateTotalProgress2() {
+  var _totalProgressPercent, _totalProgressPercent2;
+  const totalProgress = Uppy_classPrivateFieldLooseBase(this, _calculateTotalProgress)[_calculateTotalProgress]();
+  let totalProgressPercent = null;
+  if (totalProgress != null) {
+    totalProgressPercent = Math.round(totalProgress * 100);
+    if (totalProgressPercent > 100) totalProgressPercent = 100;else if (totalProgressPercent < 0) totalProgressPercent = 0;
+  }
+  this.emit('progress', (_totalProgressPercent = totalProgressPercent) != null ? _totalProgressPercent : 0);
+  this.setState({
+    totalProgress: (_totalProgressPercent2 = totalProgressPercent) != null ? _totalProgressPercent2 : 0
+  });
+}
+function _calculateTotalProgress2() {
+  // calculate total progress, using the number of files currently uploading,
+  // between 0 and 1 and sum of individual progress of each file
+  const files = this.getFiles();
+
+  // note: also includes files that have completed uploading:
+  const filesInProgress = files.filter(file => {
+    return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
+  });
+  if (filesInProgress.length === 0) {
+    return 0;
+  }
+  if (filesInProgress.every(file => file.progress.uploadComplete)) {
+    // If every uploading file is complete, and we're still getting progress, it probably means
+    // there's a bug somewhere in some progress reporting code (maybe not even our code)
+    // and we're still getting progress, so let's just assume it means a 100% progress
+    return 1;
+  }
+  const isSizedFile = file => file.progress.bytesTotal != null && file.progress.bytesTotal !== 0;
+  const sizedFilesInProgress = filesInProgress.filter(isSizedFile);
+  const unsizedFilesInProgress = filesInProgress.filter(file => !isSizedFile(file));
+  if (sizedFilesInProgress.every(file => file.progress.uploadComplete) && unsizedFilesInProgress.length > 0 && !unsizedFilesInProgress.every(file => file.progress.uploadComplete)) {
+    // we are done with uploading all files of known size, however
+    // there is at least one file with unknown size still uploading,
+    // and we cannot say anything about their progress
+    // In any case, return null because it doesn't make any sense to show a progress
+    return null;
+  }
+  const totalFilesSize = sizedFilesInProgress.reduce((acc, file) => {
+    var _file$progress$bytesT;
+    return acc + ((_file$progress$bytesT = file.progress.bytesTotal) != null ? _file$progress$bytesT : 0);
+  }, 0);
+  const totalUploadedSize = sizedFilesInProgress.reduce((acc, file) => acc + (file.progress.bytesUploaded || 0), 0);
+  return totalFilesSize === 0 ? 0 : totalUploadedSize / totalFilesSize;
 }
 function _addListeners2() {
   // Type inference only works for inline functions so we have to type it again
@@ -10502,21 +10530,14 @@ function _addListeners2() {
       progress: {
         uploadStarted: Date.now(),
         uploadComplete: false,
-        percentage: 0,
         bytesUploaded: 0,
         bytesTotal: file.size
       }
     }]));
     this.patchFilesState(filesState);
   };
-  this.on('upload-start', files => {
-    files.forEach(file => {
-      // todo backward compat, remove this event in a next major
-      this.emit('upload-started', file);
-    });
-    onUploadStarted(files);
-  });
-  this.on('upload-progress', this.calculateProgress);
+  this.on('upload-start', onUploadStarted);
+  this.on('upload-progress', Uppy_classPrivateFieldLooseBase(this, _handleUploadProgress)[_handleUploadProgress]);
   this.on('upload-success', (file, uploadResp) => {
     if (file == null || !this.getFile(file.id)) {
       this.log(`Not setting progress for a file that has been removed: ${file == null ? void 0 : file.id}`);
@@ -10545,7 +10566,7 @@ function _addListeners2() {
         size: uploadResp.bytesUploaded || currentProgress.bytesTotal
       });
     }
-    this.calculateTotalProgress();
+    Uppy_classPrivateFieldLooseBase(this, _updateTotalProgressThrottled)[_updateTotalProgressThrottled]();
   });
   this.on('preprocess-progress', (file, progress) => {
     if (file == null || !this.getFile(file.id)) {
@@ -10611,7 +10632,7 @@ function _addListeners2() {
   });
   this.on('restored', () => {
     // Files may have changed--ensure progress is still accurate.
-    this.calculateTotalProgress();
+    Uppy_classPrivateFieldLooseBase(this, _updateTotalProgressThrottled)[_updateTotalProgressThrottled]();
   });
 
   // @ts-expect-error should fix itself when dashboard it typed (also this doesn't belong here)
@@ -10644,10 +10665,7 @@ function _createUpload2(fileIDs, opts) {
     throw new Error('Cannot create a new upload: already uploading.');
   }
   const uploadID = nanoid();
-  this.emit('upload', {
-    id: uploadID,
-    fileIDs
-  });
+  this.emit('upload', uploadID, this.getFilesByIds(fileIDs));
   this.setState({
     allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
     currentUploads: {
@@ -10764,7 +10782,7 @@ async function _runUpload2(uploadID) {
 Uppy.VERSION = Uppy_packageJson.version;
 /* harmony default export */ const lib_Uppy = (Uppy);
 ;// ./node_modules/preact/dist/preact.module.js
-var n,l,u,t,i,r,o,e,f,c,s,a,h,p={},v=[],y=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,d=Array.isArray;function w(n,l){for(var u in l)n[u]=l[u];return n}function _(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function g(l,u,t){var i,r,o,e={};for(o in u)"key"==o?i=u[o]:"ref"==o?r=u[o]:e[o]=u[o];if(arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(o in l.defaultProps)void 0===e[o]&&(e[o]=l.defaultProps[o]);return m(l,e,i,r,null)}function m(n,t,i,r,o){var e={type:n,props:t,key:i,ref:r,__k:null,__:null,__b:0,__e:null,__c:null,constructor:void 0,__v:null==o?++u:o,__i:-1,__u:0};return null==o&&null!=l.vnode&&l.vnode(e),e}function b(){return{current:null}}function k(n){return n.children}function x(n,l){this.props=n,this.context=l}function C(n,l){if(null==l)return n.__?C(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?C(n):null}function S(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return S(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!P.__r++||r!==l.debounceRendering)&&((r=l.debounceRendering)||o)(P)}function P(){var n,u,t,r,o,f,c,s;for(i.sort(e);n=i.shift();)n.__d&&(u=i.length,r=void 0,f=(o=(t=n).__v).__e,c=[],s=[],t.__P&&((r=w({},o)).__v=o.__v+1,l.vnode&&l.vnode(r),j(t.__P,r,o,t.__n,t.__P.namespaceURI,32&o.__u?[f]:null,c,null==f?C(o):f,!!(32&o.__u),s),r.__v=o.__v,r.__.__k[r.__i]=r,z(c,r,s),r.__e!=f&&S(r)),i.length>u&&i.sort(e));P.__r=0}function $(n,l,u,t,i,r,o,e,f,c,s){var a,h,y,d,w,_,g=t&&t.__k||v,m=l.length;for(f=I(u,l,g,f,m),a=0;a<m;a++)null!=(y=u.__k[a])&&(h=-1===y.__i?p:g[y.__i]||p,y.__i=a,_=j(n,y,h,i,r,o,e,f,c,s),d=y.__e,y.ref&&h.ref!=y.ref&&(h.ref&&V(h.ref,null,y),s.push(y.ref,y.__c||d,y)),null==w&&null!=d&&(w=d),4&y.__u||h.__k===y.__k?f=A(y,f,n):"function"==typeof y.type&&void 0!==_?f=_:d&&(f=d.nextSibling),y.__u&=-7);return u.__e=w,f}function I(n,l,u,t,i){var r,o,e,f,c,s=u.length,a=s,h=0;for(n.__k=new Array(i),r=0;r<i;r++)null!=(o=l[r])&&"boolean"!=typeof o&&"function"!=typeof o?(f=r+h,(o=n.__k[r]="string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?m(null,o,null,null,null):d(o)?m(k,{children:o},null,null,null):void 0===o.constructor&&o.__b>0?m(o.type,o.props,o.key,o.ref?o.ref:null,o.__v):o).__=n,o.__b=n.__b+1,e=null,-1!==(c=o.__i=L(o,u,f,a))&&(a--,(e=u[c])&&(e.__u|=2)),null==e||null===e.__v?(-1==c&&h--,"function"!=typeof o.type&&(o.__u|=4)):c!=f&&(c==f-1?h--:c==f+1?h++:(c>f?h--:h++,o.__u|=4))):n.__k[r]=null;if(a)for(r=0;r<s;r++)null!=(e=u[r])&&0==(2&e.__u)&&(e.__e==t&&(t=C(e)),q(e,e));return t}function A(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=A(t[i],l,u));return l}n.__e!=l&&(l&&n.type&&!u.contains(l)&&(l=C(n)),u.insertBefore(n.__e,l||null),l=n.__e);do{l=l&&l.nextSibling}while(null!=l&&8==l.nodeType);return l}function H(n,l){return l=l||[],null==n||"boolean"==typeof n||(d(n)?n.some(function(n){H(n,l)}):l.push(n)),l}function L(n,l,u,t){var i,r,o=n.key,e=n.type,f=l[u];if(null===f||f&&o==f.key&&e===f.type&&0==(2&f.__u))return u;if(t>(null!=f&&0==(2&f.__u)?1:0))for(i=u-1,r=u+1;i>=0||r<l.length;){if(i>=0){if((f=l[i])&&0==(2&f.__u)&&o==f.key&&e===f.type)return i;i--}if(r<l.length){if((f=l[r])&&0==(2&f.__u)&&o==f.key&&e===f.type)return r;r++}}return-1}function T(n,l,u){"-"==l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||y.test(l)?u:u+"px"}function F(n,l,u,t,i){var r;n:if("style"==l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||T(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||T(n.style,l,u[l])}else if("o"==l[0]&&"n"==l[1])r=l!=(l=l.replace(f,"$1")),l=l.toLowerCase()in n||"onFocusOut"==l||"onFocusIn"==l?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?t?u.u=t.u:(u.u=c,n.addEventListener(l,r?a:s,r)):n.removeEventListener(l,r?a:s,r);else{if("http://www.w3.org/2000/svg"==i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!=l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u))}}function O(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t)u.t=c++;else if(u.t<t.u)return;return t(l.event?l.event(u):u)}}}function j(n,u,t,i,r,o,e,f,c,s){var a,h,p,v,y,g,m,b,C,S,M,P,I,A,H,L,T,F=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),o=[f=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof F)try{if(b=u.props,C="prototype"in F&&F.prototype.render,S=(a=F.contextType)&&i[a.__c],M=a?S?S.props.value:a.__:i,t.__c?m=(h=u.__c=t.__c).__=h.__E:(C?u.__c=h=new F(b,M):(u.__c=h=new x(b,M),h.constructor=F,h.render=B),S&&S.sub(h),h.props=b,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),C&&null==h.__s&&(h.__s=h.state),C&&null!=F.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=w({},h.__s)),w(h.__s,F.getDerivedStateFromProps(b,h.__s))),v=h.props,y=h.state,h.__v=u,p)C&&null==F.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),C&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(C&&null==F.getDerivedStateFromProps&&b!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(b,M),!h.__e&&(null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(b,h.__s,M)||u.__v==t.__v)){for(u.__v!=t.__v&&(h.props=b,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.some(function(n){n&&(n.__=u)}),P=0;P<h._sb.length;P++)h.__h.push(h._sb[P]);h._sb=[],h.__h.length&&e.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(b,h.__s,M),C&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,y,g)})}if(h.context=M,h.props=b,h.__P=n,h.__e=!1,I=l.__r,A=0,C){for(h.state=h.__s,h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++)h.__h.push(h._sb[H]);h._sb=[]}else do{h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++A<25);h.state=h.__s,null!=h.getChildContext&&(i=w(w({},i),h.getChildContext())),C&&!p&&null!=h.getSnapshotBeforeUpdate&&(g=h.getSnapshotBeforeUpdate(v,y)),f=$(n,d(L=null!=a&&a.type===k&&null==a.key?a.props.children:a)?L:[L],u,t,i,r,o,e,f,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&e.push(h),m&&(h.__E=h.__=null)}catch(n){if(u.__v=null,c||null!=o)if(n.then){for(u.__u|=c?160:128;f&&8==f.nodeType&&f.nextSibling;)f=f.nextSibling;o[o.indexOf(f)]=null,u.__e=f}else for(T=o.length;T--;)_(o[T]);else u.__e=t.__e,u.__k=t.__k;l.__e(n,u,t)}else null==o&&u.__v==t.__v?(u.__k=t.__k,u.__e=t.__e):f=u.__e=N(t.__e,u,t,i,r,o,e,c,s);return(a=l.diffed)&&a(u),128&u.__u?void 0:f}function z(n,u,t){for(var i=0;i<t.length;i++)V(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function N(u,t,i,r,o,e,f,c,s){var a,h,v,y,w,g,m,b=i.props,k=t.props,x=t.type;if("svg"==x?o="http://www.w3.org/2000/svg":"math"==x?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=e)for(a=0;a<e.length;a++)if((w=e[a])&&"setAttribute"in w==!!x&&(x?w.localName==x:3==w.nodeType)){u=w,e[a]=null;break}if(null==u){if(null==x)return document.createTextNode(k);u=document.createElementNS(o,x,k.is&&k),c&&(l.__m&&l.__m(t,e),c=!1),e=null}if(null===x)b===k||c&&u.data===k||(u.data=k);else{if(e=e&&n.call(u.childNodes),b=i.props||p,!c&&null!=e)for(b={},a=0;a<u.attributes.length;a++)b[(w=u.attributes[a]).name]=w.value;for(a in b)if(w=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a)v=w;else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k)continue;F(u,a,null,w,o)}for(a in k)w=k[a],"children"==a?y=w:"dangerouslySetInnerHTML"==a?h=w:"value"==a?g=w:"checked"==a?m=w:c&&"function"!=typeof w||b[a]===w||F(u,a,w,b[a],o);if(h)c||v&&(h.__html===v.__html||h.__html===u.innerHTML)||(u.innerHTML=h.__html),t.__k=[];else if(v&&(u.innerHTML=""),$(u,d(y)?y:[y],t,i,r,"foreignObject"==x?"http://www.w3.org/1999/xhtml":o,e,f,e?e[0]:i.__k&&C(i,0),c,s),null!=e)for(a=e.length;a--;)_(e[a]);c||(a="value","progress"==x&&null==g?u.removeAttribute("value"):void 0!==g&&(g!==u[a]||"progress"==x&&!g||"option"==x&&g!==b[a])&&F(u,a,g,b[a],o),a="checked",void 0!==m&&m!==u[a]&&F(u,a,m,b[a],o))}return u}function V(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u))}else n.current=u}catch(n){l.__e(n,t)}}function q(n,u,t){var i,r;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||V(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null}if(i=n.__k)for(r=0;r<i.length;r++)i[r]&&q(i[r],u,t||"function"!=typeof n.type);t||_(n.__e),n.__c=n.__=n.__e=void 0}function B(n,l,u){return this.constructor(n,u)}function D(u,t,i){var r,o,e,f;t==document&&(t=document.documentElement),l.__&&l.__(u,t),o=(r="function"==typeof i)?null:i&&i.__k||t.__k,e=[],f=[],j(t,u=(!r&&i||t).__k=g(k,null,[u]),o||p,p,t.namespaceURI,!r&&i?[i]:o?null:t.firstChild?n.call(t.childNodes):null,e,!r&&i?i:o?o.__e:t.firstChild,r,f),z(e,u,f)}function E(n,l){D(n,l,E)}function G(l,u,t){var i,r,o,e,f=w({},l.props);for(o in l.type&&l.type.defaultProps&&(e=l.type.defaultProps),u)"key"==o?i=u[o]:"ref"==o?r=u[o]:f[o]=void 0===u[o]&&void 0!==e?e[o]:u[o];return arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),m(l.type,f,i||l.key,r||l.ref,null)}function J(n,l){var u={__c:l="__cC"+h++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=new Set,(t={})[l]=this,this.getChildContext=function(){return t},this.componentWillUnmount=function(){u=null},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.forEach(function(n){n.__e=!0,M(n)})},this.sub=function(n){u.add(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u&&u.delete(n),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=v.slice,l={__e:function(n,l,u,t){for(var i,r,o;l=l.__;)if((i=l.__c)&&!i.__)try{if((r=i.constructor)&&null!=r.getDerivedStateFromError&&(i.setState(r.getDerivedStateFromError(n)),o=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),o=i.__d),o)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},x.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=w({},this.state),"function"==typeof n&&(n=n(w({},u),this.props)),n&&w(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this))},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this))},x.prototype.render=k,i=[],o="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,e=function(n,l){return n.__v.__b-l.__v.__b},P.__r=0,f=/(PointerCapture)$|Capture$/i,c=0,s=O(!1),a=O(!0),h=0;
+var n,l,u,t,i,r,o,e,f,c,s,a,preact_module_h,p={},v=[],y=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,d=Array.isArray;function w(n,l){for(var u in l)n[u]=l[u];return n}function _(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function g(l,u,t){var i,r,o,e={};for(o in u)"key"==o?i=u[o]:"ref"==o?r=u[o]:e[o]=u[o];if(arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(o in l.defaultProps)void 0===e[o]&&(e[o]=l.defaultProps[o]);return m(l,e,i,r,null)}function m(n,t,i,r,o){var e={type:n,props:t,key:i,ref:r,__k:null,__:null,__b:0,__e:null,__c:null,constructor:void 0,__v:null==o?++u:o,__i:-1,__u:0};return null==o&&null!=l.vnode&&l.vnode(e),e}function b(){return{current:null}}function k(n){return n.children}function x(n,l){this.props=n,this.context=l}function C(n,l){if(null==l)return n.__?C(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?C(n):null}function S(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return S(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!P.__r++||r!==l.debounceRendering)&&((r=l.debounceRendering)||o)(P)}function P(){var n,u,t,r,o,f,c,s;for(i.sort(e);n=i.shift();)n.__d&&(u=i.length,r=void 0,f=(o=(t=n).__v).__e,c=[],s=[],t.__P&&((r=w({},o)).__v=o.__v+1,l.vnode&&l.vnode(r),j(t.__P,r,o,t.__n,t.__P.namespaceURI,32&o.__u?[f]:null,c,null==f?C(o):f,!!(32&o.__u),s),r.__v=o.__v,r.__.__k[r.__i]=r,z(c,r,s),r.__e!=f&&S(r)),i.length>u&&i.sort(e));P.__r=0}function $(n,l,u,t,i,r,o,e,f,c,s){var a,h,y,d,w,_,g=t&&t.__k||v,m=l.length;for(f=I(u,l,g,f,m),a=0;a<m;a++)null!=(y=u.__k[a])&&(h=-1===y.__i?p:g[y.__i]||p,y.__i=a,_=j(n,y,h,i,r,o,e,f,c,s),d=y.__e,y.ref&&h.ref!=y.ref&&(h.ref&&V(h.ref,null,y),s.push(y.ref,y.__c||d,y)),null==w&&null!=d&&(w=d),4&y.__u||h.__k===y.__k?f=A(y,f,n):"function"==typeof y.type&&void 0!==_?f=_:d&&(f=d.nextSibling),y.__u&=-7);return u.__e=w,f}function I(n,l,u,t,i){var r,o,e,f,c,s=u.length,a=s,h=0;for(n.__k=new Array(i),r=0;r<i;r++)null!=(o=l[r])&&"boolean"!=typeof o&&"function"!=typeof o?(f=r+h,(o=n.__k[r]="string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?m(null,o,null,null,null):d(o)?m(k,{children:o},null,null,null):void 0===o.constructor&&o.__b>0?m(o.type,o.props,o.key,o.ref?o.ref:null,o.__v):o).__=n,o.__b=n.__b+1,e=null,-1!==(c=o.__i=L(o,u,f,a))&&(a--,(e=u[c])&&(e.__u|=2)),null==e||null===e.__v?(-1==c&&h--,"function"!=typeof o.type&&(o.__u|=4)):c!=f&&(c==f-1?h--:c==f+1?h++:(c>f?h--:h++,o.__u|=4))):n.__k[r]=null;if(a)for(r=0;r<s;r++)null!=(e=u[r])&&0==(2&e.__u)&&(e.__e==t&&(t=C(e)),q(e,e));return t}function A(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=A(t[i],l,u));return l}n.__e!=l&&(l&&n.type&&!u.contains(l)&&(l=C(n)),u.insertBefore(n.__e,l||null),l=n.__e);do{l=l&&l.nextSibling}while(null!=l&&8==l.nodeType);return l}function H(n,l){return l=l||[],null==n||"boolean"==typeof n||(d(n)?n.some(function(n){H(n,l)}):l.push(n)),l}function L(n,l,u,t){var i,r,o=n.key,e=n.type,f=l[u];if(null===f||f&&o==f.key&&e===f.type&&0==(2&f.__u))return u;if(t>(null!=f&&0==(2&f.__u)?1:0))for(i=u-1,r=u+1;i>=0||r<l.length;){if(i>=0){if((f=l[i])&&0==(2&f.__u)&&o==f.key&&e===f.type)return i;i--}if(r<l.length){if((f=l[r])&&0==(2&f.__u)&&o==f.key&&e===f.type)return r;r++}}return-1}function T(n,l,u){"-"==l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||y.test(l)?u:u+"px"}function F(n,l,u,t,i){var r;n:if("style"==l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||T(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||T(n.style,l,u[l])}else if("o"==l[0]&&"n"==l[1])r=l!=(l=l.replace(f,"$1")),l=l.toLowerCase()in n||"onFocusOut"==l||"onFocusIn"==l?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?t?u.u=t.u:(u.u=c,n.addEventListener(l,r?a:s,r)):n.removeEventListener(l,r?a:s,r);else{if("http://www.w3.org/2000/svg"==i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!=l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u))}}function O(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t)u.t=c++;else if(u.t<t.u)return;return t(l.event?l.event(u):u)}}}function j(n,u,t,i,r,o,e,f,c,s){var a,h,p,v,y,g,m,b,C,S,M,P,I,A,H,L,T,F=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),o=[f=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof F)try{if(b=u.props,C="prototype"in F&&F.prototype.render,S=(a=F.contextType)&&i[a.__c],M=a?S?S.props.value:a.__:i,t.__c?m=(h=u.__c=t.__c).__=h.__E:(C?u.__c=h=new F(b,M):(u.__c=h=new x(b,M),h.constructor=F,h.render=B),S&&S.sub(h),h.props=b,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),C&&null==h.__s&&(h.__s=h.state),C&&null!=F.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=w({},h.__s)),w(h.__s,F.getDerivedStateFromProps(b,h.__s))),v=h.props,y=h.state,h.__v=u,p)C&&null==F.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),C&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(C&&null==F.getDerivedStateFromProps&&b!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(b,M),!h.__e&&(null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(b,h.__s,M)||u.__v==t.__v)){for(u.__v!=t.__v&&(h.props=b,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.some(function(n){n&&(n.__=u)}),P=0;P<h._sb.length;P++)h.__h.push(h._sb[P]);h._sb=[],h.__h.length&&e.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(b,h.__s,M),C&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,y,g)})}if(h.context=M,h.props=b,h.__P=n,h.__e=!1,I=l.__r,A=0,C){for(h.state=h.__s,h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++)h.__h.push(h._sb[H]);h._sb=[]}else do{h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++A<25);h.state=h.__s,null!=h.getChildContext&&(i=w(w({},i),h.getChildContext())),C&&!p&&null!=h.getSnapshotBeforeUpdate&&(g=h.getSnapshotBeforeUpdate(v,y)),f=$(n,d(L=null!=a&&a.type===k&&null==a.key?a.props.children:a)?L:[L],u,t,i,r,o,e,f,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&e.push(h),m&&(h.__E=h.__=null)}catch(n){if(u.__v=null,c||null!=o)if(n.then){for(u.__u|=c?160:128;f&&8==f.nodeType&&f.nextSibling;)f=f.nextSibling;o[o.indexOf(f)]=null,u.__e=f}else for(T=o.length;T--;)_(o[T]);else u.__e=t.__e,u.__k=t.__k;l.__e(n,u,t)}else null==o&&u.__v==t.__v?(u.__k=t.__k,u.__e=t.__e):f=u.__e=N(t.__e,u,t,i,r,o,e,c,s);return(a=l.diffed)&&a(u),128&u.__u?void 0:f}function z(n,u,t){for(var i=0;i<t.length;i++)V(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function N(u,t,i,r,o,e,f,c,s){var a,h,v,y,w,g,m,b=i.props,k=t.props,x=t.type;if("svg"==x?o="http://www.w3.org/2000/svg":"math"==x?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=e)for(a=0;a<e.length;a++)if((w=e[a])&&"setAttribute"in w==!!x&&(x?w.localName==x:3==w.nodeType)){u=w,e[a]=null;break}if(null==u){if(null==x)return document.createTextNode(k);u=document.createElementNS(o,x,k.is&&k),c&&(l.__m&&l.__m(t,e),c=!1),e=null}if(null===x)b===k||c&&u.data===k||(u.data=k);else{if(e=e&&n.call(u.childNodes),b=i.props||p,!c&&null!=e)for(b={},a=0;a<u.attributes.length;a++)b[(w=u.attributes[a]).name]=w.value;for(a in b)if(w=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a)v=w;else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k)continue;F(u,a,null,w,o)}for(a in k)w=k[a],"children"==a?y=w:"dangerouslySetInnerHTML"==a?h=w:"value"==a?g=w:"checked"==a?m=w:c&&"function"!=typeof w||b[a]===w||F(u,a,w,b[a],o);if(h)c||v&&(h.__html===v.__html||h.__html===u.innerHTML)||(u.innerHTML=h.__html),t.__k=[];else if(v&&(u.innerHTML=""),$(u,d(y)?y:[y],t,i,r,"foreignObject"==x?"http://www.w3.org/1999/xhtml":o,e,f,e?e[0]:i.__k&&C(i,0),c,s),null!=e)for(a=e.length;a--;)_(e[a]);c||(a="value","progress"==x&&null==g?u.removeAttribute("value"):void 0!==g&&(g!==u[a]||"progress"==x&&!g||"option"==x&&g!==b[a])&&F(u,a,g,b[a],o),a="checked",void 0!==m&&m!==u[a]&&F(u,a,m,b[a],o))}return u}function V(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u))}else n.current=u}catch(n){l.__e(n,t)}}function q(n,u,t){var i,r;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||V(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null}if(i=n.__k)for(r=0;r<i.length;r++)i[r]&&q(i[r],u,t||"function"!=typeof n.type);t||_(n.__e),n.__c=n.__=n.__e=void 0}function B(n,l,u){return this.constructor(n,u)}function D(u,t,i){var r,o,e,f;t==document&&(t=document.documentElement),l.__&&l.__(u,t),o=(r="function"==typeof i)?null:i&&i.__k||t.__k,e=[],f=[],j(t,u=(!r&&i||t).__k=g(k,null,[u]),o||p,p,t.namespaceURI,!r&&i?[i]:o?null:t.firstChild?n.call(t.childNodes):null,e,!r&&i?i:o?o.__e:t.firstChild,r,f),z(e,u,f)}function E(n,l){D(n,l,E)}function G(l,u,t){var i,r,o,e,f=w({},l.props);for(o in l.type&&l.type.defaultProps&&(e=l.type.defaultProps),u)"key"==o?i=u[o]:"ref"==o?r=u[o]:f[o]=void 0===u[o]&&void 0!==e?e[o]:u[o];return arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),m(l.type,f,i||l.key,r||l.ref,null)}function J(n,l){var u={__c:l="__cC"+preact_module_h++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=new Set,(t={})[l]=this,this.getChildContext=function(){return t},this.componentWillUnmount=function(){u=null},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.forEach(function(n){n.__e=!0,M(n)})},this.sub=function(n){u.add(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u&&u.delete(n),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=v.slice,l={__e:function(n,l,u,t){for(var i,r,o;l=l.__;)if((i=l.__c)&&!i.__)try{if((r=i.constructor)&&null!=r.getDerivedStateFromError&&(i.setState(r.getDerivedStateFromError(n)),o=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),o=i.__d),o)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},x.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=w({},this.state),"function"==typeof n&&(n=n(w({},u),this.props)),n&&w(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this))},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this))},x.prototype.render=k,i=[],o="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,e=function(n,l){return n.__v.__b-l.__v.__b},P.__r=0,f=/(PointerCapture)$|Capture$/i,c=0,s=O(!1),a=O(!0),preact_module_h=0;
 //# sourceMappingURL=preact.module.js.map
 
 ;// ./node_modules/@uppy/utils/lib/isDOMElement.js
@@ -10890,9 +10908,9 @@ class BasePlugin {
   afterUpdate() {}
 }
 ;// ./node_modules/@uppy/core/lib/UIPlugin.js
-function UIPlugin_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function UIPlugin_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var UIPlugin_id = 0;
-function UIPlugin_classPrivateFieldLooseKey(name) { return "__private_" + UIPlugin_id++ + "_" + name; }
+function UIPlugin_classPrivateFieldLooseKey(e) { return "__private_" + UIPlugin_id++ + "_" + e; }
 /* eslint-disable class-methods-use-this */
 
 
@@ -10987,10 +11005,10 @@ class UIPlugin extends BasePlugin {
       // API for plugins that require a synchronous rerender.
       UIPlugin_classPrivateFieldLooseBase(this, _updateUI)[_updateUI] = debounce(state => {
         // plugin could be removed, but this.rerender is debounced below,
-        // so it could still be called even after uppy.removePlugin or uppy.close
+        // so it could still be called even after uppy.removePlugin or uppy.destroy
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return;
-        D(this.render(state), uppyRootElement);
+        D(this.render(state, uppyRootElement), uppyRootElement);
         this.afterUpdate();
       });
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`);
@@ -11000,7 +11018,7 @@ class UIPlugin extends BasePlugin {
         // stopped working — Preact just adds null into target, not replacing
         targetElement.innerHTML = '';
       }
-      D(this.render(this.uppy.getState()), uppyRootElement);
+      D(this.render(this.uppy.getState(), uppyRootElement), uppyRootElement);
       this.el = uppyRootElement;
       targetElement.appendChild(uppyRootElement);
 
@@ -11033,8 +11051,11 @@ class UIPlugin extends BasePlugin {
    * so this.el and this.parent might not be available in `install`.
    * This is the case with @uppy/react plugins, for example.
    */
+  render(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render(state) {
+  state,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  container) {
     throw new Error('Extend the render method to add your plugin to a DOM element');
   }
   update(state) {
@@ -11333,6 +11354,7 @@ function ProgressDetails(props) {
     i18n
   } = props;
   const ifShowFilesUploadedOfTotal = numUploads > 1;
+  const totalUploadedSizeStr = prettierBytes(totalUploadedSize);
   return g("div", {
     className: "uppy-StatusBar-statusSecondary"
   }, ifShowFilesUploadedOfTotal && i18n('filesUploadedOfTotal', {
@@ -11340,10 +11362,12 @@ function ProgressDetails(props) {
     smart_count: numUploads
   }), g("span", {
     className: "uppy-StatusBar-additionalInfo"
-  }, ifShowFilesUploadedOfTotal && renderDot(), i18n('dataUploadedOfTotal', {
-    complete: prettierBytes(totalUploadedSize),
+  }, ifShowFilesUploadedOfTotal && renderDot(), totalSize != null ? i18n('dataUploadedOfTotal', {
+    complete: totalUploadedSizeStr,
     total: prettierBytes(totalSize)
-  }), renderDot(), i18n('xTimeLeft', {
+  }) : i18n('dataUploadedOfUnknown', {
+    complete: totalUploadedSizeStr
+  }), renderDot(), totalETA != null && i18n('xTimeLeft', {
     time: prettyETA(totalETA)
   })));
 }
@@ -11432,7 +11456,7 @@ function ProgressBarUploading(props) {
     className: "uppy-StatusBar-status"
   }, g("div", {
     className: "uppy-StatusBar-statusPrimary"
-  }, supportsUploadProgress ? `${title}: ${totalProgress}%` : title), renderProgressDetails(), showUploadNewlyAddedFiles ? g(UploadNewlyAddedFiles, {
+  }, supportsUploadProgress && totalProgress !== 0 ? `${title}: ${totalProgress}%` : title), renderProgressDetails(), showUploadNewlyAddedFiles ? g(UploadNewlyAddedFiles, {
     i18n: i18n,
     newFiles: newFiles,
     startUpload: startUpload
@@ -11517,39 +11541,38 @@ const {
   STATE_POSTPROCESSING,
   STATE_COMPLETE
 } = StatusBarStates;
-// TODO: rename the function to StatusBarUI on the next major.
-function StatusBarUI_StatusBar(props) {
-  const {
+function StatusBarUI(_ref) {
+  let {
     newFiles,
     allowNewUpload,
     isUploadInProgress,
     isAllPaused,
     resumableUploads,
     error,
-    hideUploadButton,
-    hidePauseResumeButton,
-    hideCancelButton,
-    hideRetryButton,
+    hideUploadButton = undefined,
+    hidePauseResumeButton = false,
+    hideCancelButton = false,
+    hideRetryButton = false,
     recoveredState,
     uploadState,
     totalProgress,
     files,
     supportsUploadProgress,
-    hideAfterFinish,
+    hideAfterFinish = false,
     isSomeGhost,
-    doneButtonHandler,
+    doneButtonHandler = undefined,
     isUploadStarted,
     i18n,
     startUpload,
     uppy,
     isAllComplete,
-    showProgressDetails,
+    showProgressDetails = undefined,
     numUploads,
     complete,
     totalSize,
     totalETA,
     totalUploadedSize
-  } = props;
+  } = _ref;
   function getProgressValue() {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
@@ -11597,23 +11620,9 @@ function StatusBarUI_StatusBar(props) {
         return false;
     }
   }
-  function getIsHidden() {
-    if (recoveredState) {
-      return false;
-    }
-    switch (uploadState) {
-      case STATE_WAITING:
-        return hideUploadButton || newFiles === 0;
-      case STATE_COMPLETE:
-        return hideAfterFinish;
-      default:
-        return false;
-    }
-  }
   const progressValue = getProgressValue();
-  const isHidden = getIsHidden();
   const width = progressValue != null ? progressValue : 100;
-  const showUploadBtn = !error && newFiles && !isUploadInProgress && !isAllPaused && allowNewUpload && !hideUploadButton;
+  const showUploadBtn = !error && newFiles && (!isUploadInProgress && !isAllPaused || recoveredState) && allowNewUpload && !hideUploadButton;
   const showCancelBtn = !hideCancelButton && uploadState !== STATE_WAITING && uploadState !== STATE_COMPLETE;
   const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton && uploadState === STATE_UPLOADING;
   const showRetryBtn = error && !isAllComplete && !hideRetryButton;
@@ -11624,21 +11633,7 @@ function StatusBarUI_StatusBar(props) {
   const statusBarClassNames = classnames('uppy-StatusBar', `is-${uploadState}`, {
     'has-ghosts': isSomeGhost
   });
-  return g("div", {
-    className: statusBarClassNames,
-    "aria-hidden": isHidden
-  }, g("div", {
-    className: progressClassNames,
-    style: {
-      width: `${width}%`
-    },
-    role: "progressbar",
-    "aria-label": `${width}%`,
-    "aria-valuetext": `${width}%`,
-    "aria-valuemin": 0,
-    "aria-valuemax": 100,
-    "aria-valuenow": progressValue
-  }), (() => {
+  const progressBarStateEl = (() => {
     switch (uploadState) {
       case STATE_PREPROCESSING:
       case STATE_POSTPROCESSING:
@@ -11676,9 +11671,27 @@ function StatusBarUI_StatusBar(props) {
       default:
         return null;
     }
-  })(), g("div", {
+  })();
+  const atLeastOneAction = showUploadBtn || showRetryBtn || showPauseResumeBtn || showCancelBtn || showDoneBtn;
+  const thereIsNothingInside = !atLeastOneAction && !progressBarStateEl;
+  const isHidden = thereIsNothingInside || uploadState === STATE_COMPLETE && hideAfterFinish;
+  return g("div", {
+    className: statusBarClassNames,
+    "aria-hidden": isHidden
+  }, g("div", {
+    className: progressClassNames,
+    style: {
+      width: `${width}%`
+    },
+    role: "progressbar",
+    "aria-label": `${width}%`,
+    "aria-valuetext": `${width}%`,
+    "aria-valuemin": 0,
+    "aria-valuemax": 100,
+    "aria-valuenow": progressValue
+  }), progressBarStateEl, g("div", {
     className: "uppy-StatusBar-actions"
-  }, recoveredState || showUploadBtn ? g(UploadBtn, {
+  }, showUploadBtn ? g(UploadBtn, {
     newFiles: newFiles,
     isUploadStarted: isUploadStarted,
     recoveredState: recoveredState,
@@ -11703,15 +11716,6 @@ function StatusBarUI_StatusBar(props) {
     doneButtonHandler: doneButtonHandler
   }) : null));
 }
-StatusBarUI_StatusBar.defaultProps = {
-  doneButtonHandler: undefined,
-  hideAfterFinish: false,
-  hideCancelButton: false,
-  hidePauseResumeButton: false,
-  hideRetryButton: false,
-  hideUploadButton: undefined,
-  showProgressDetails: undefined
-};
 ;// ./node_modules/@uppy/status-bar/lib/locale.js
 /* harmony default export */ const lib_locale = ({
   strings: {
@@ -11740,6 +11744,7 @@ StatusBarUI_StatusBar.defaultProps = {
     },
     // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
     dataUploadedOfTotal: '%{complete} of %{total}',
+    dataUploadedOfUnknown: '%{complete} of unknown',
     // When `showProgressDetails` is set, shows an estimation of how long the upload will take to complete.
     xTimeLeft: '%{time} left',
     // Used as the label for the button that starts an upload.
@@ -11763,9 +11768,9 @@ StatusBarUI_StatusBar.defaultProps = {
   }
 });
 ;// ./node_modules/@uppy/status-bar/lib/StatusBar.js
-function StatusBar_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function StatusBar_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var StatusBar_id = 0;
-function StatusBar_classPrivateFieldLooseKey(name) { return "__private_" + StatusBar_id++ + "_" + name; }
+function StatusBar_classPrivateFieldLooseKey(e) { return "__private_" + StatusBar_id++ + "_" + e; }
 
 
 
@@ -11774,7 +11779,7 @@ function StatusBar_classPrivateFieldLooseKey(name) { return "__private_" + Statu
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const StatusBar_packageJson = {
-  "version": "3.3.3"
+  "version": "4.1.0"
 };
 
 const speedFilterHalfLife = 2000;
@@ -11812,10 +11817,7 @@ function getUploadingState(error, isAllComplete, recoveredState, files) {
   }
   return state;
 }
-
-// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 const defaultOptions = {
-  target: 'body',
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
@@ -11914,7 +11916,6 @@ class StatusBar extends lib_UIPlugin {
       completeFiles,
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
       isUploadInProgress,
       isSomeGhost
@@ -11926,18 +11927,27 @@ class StatusBar extends lib_UIPlugin {
     const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles;
     const resumableUploads = !!capabilities.resumableUploads;
     const supportsUploadProgress = capabilities.uploadProgress !== false;
-    let totalSize = 0;
+    let totalSize = null;
     let totalUploadedSize = 0;
+
+    // Only if all files have a known size, does it make sense to display a total size
+    if (startedFiles.every(f => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0)) {
+      totalSize = 0;
+      startedFiles.forEach(file => {
+        totalSize += file.progress.bytesTotal || 0;
+        totalUploadedSize += file.progress.bytesUploaded || 0;
+      });
+    }
+
+    // however uploaded size we will always have
     startedFiles.forEach(file => {
-      totalSize += file.progress.bytesTotal || 0;
       totalUploadedSize += file.progress.bytesUploaded || 0;
     });
     const totalETA = StatusBar_classPrivateFieldLooseBase(this, _computeSmoothETA)[_computeSmoothETA]({
       uploaded: totalUploadedSize,
-      total: totalSize,
-      remaining: totalSize - totalUploadedSize
+      total: totalSize
     });
-    return StatusBarUI_StatusBar({
+    return StatusBarUI({
       error,
       uploadState: getUploadingState(error, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload,
@@ -11946,8 +11956,6 @@ class StatusBar extends lib_UIPlugin {
       totalUploadedSize,
       isAllComplete: false,
       isAllPaused,
-      // @ts-expect-error TODO: remove this in 4.x branch
-      isAllErrored,
       isUploadStarted,
       isUploadInProgress,
       isSomeGhost,
@@ -11968,9 +11976,7 @@ class StatusBar extends lib_UIPlugin {
       hideRetryButton: this.opts.hideRetryButton,
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
       hideCancelButton: this.opts.hideCancelButton,
-      hideAfterFinish: this.opts.hideAfterFinish,
-      // ts-expect-error TODO: remove this in 4.x branch
-      isTargetDOMEl: this.isTargetDOMEl
+      hideAfterFinish: this.opts.hideAfterFinish
     });
   }
   onMount() {
@@ -12002,8 +12008,12 @@ class StatusBar extends lib_UIPlugin {
 }
 function _computeSmoothETA2(totalBytes) {
   var _classPrivateFieldLoo, _classPrivateFieldLoo2;
-  if (totalBytes.total === 0 || totalBytes.remaining === 0) {
-    return 0;
+  if (totalBytes.total == null || totalBytes.total === 0) {
+    return null;
+  }
+  const remaining = totalBytes.total - totalBytes.uploaded;
+  if (remaining <= 0) {
+    return null;
   }
 
   // When state is restored, lastUpdateTime is still nullish at this point.
@@ -12025,7 +12035,7 @@ function _computeSmoothETA2(totalBytes) {
   const currentSpeed = uploadedBytesSinceLastTick / dt;
   const filteredSpeed = StatusBar_classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] == null ? currentSpeed : emaFilter(currentSpeed, StatusBar_classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed], speedFilterHalfLife, dt);
   StatusBar_classPrivateFieldLooseBase(this, _previousSpeed)[_previousSpeed] = filteredSpeed;
-  const instantETA = totalBytes.remaining / filteredSpeed;
+  const instantETA = remaining / filteredSpeed;
   const updatedPreviousETA = Math.max(StatusBar_classPrivateFieldLooseBase(this, _previousETA)[_previousETA] - dt, 0);
   const filteredETA = StatusBar_classPrivateFieldLooseBase(this, _previousETA)[_previousETA] == null ? instantETA : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt);
   StatusBar_classPrivateFieldLooseBase(this, _previousETA)[_previousETA] = filteredETA;
@@ -12337,7 +12347,7 @@ TransitionGroup.defaultProps = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const Informer_packageJson = {
-  "version": "3.1.0"
+  "version": "4.2.0"
 };
 /**
  * Informer
@@ -12448,7 +12458,7 @@ function mini_esm_e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enum
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const lib_packageJson = {
-  "version": "3.1.0"
+  "version": "4.1.0"
 };
 /**
  * Save a <canvas> element's content to a Blob object.
@@ -12991,522 +13001,20 @@ async function getDroppedFiles(dataTransfer, options) {
     return fallbackApi(dataTransfer);
   }
 }
-// EXTERNAL MODULE: ./node_modules/eventemitter3/index.js
-var eventemitter3 = __webpack_require__(228);
-;// ./node_modules/eventemitter3/index.mjs
+;// ./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js
 
-
-
-/* harmony default export */ const node_modules_eventemitter3 = ((/* unused pure expression or super */ null && (EventEmitter)));
-
-;// ./node_modules/p-timeout/index.js
-class TimeoutError extends Error {
-	constructor(message) {
-		super(message);
-		this.name = 'TimeoutError';
-	}
+function remoteFileObjToLocal(file) {
+  return {
+    ...file,
+    type: file.mimeType,
+    extension: file.name ? getFileNameAndExtension(file.name).extension : null
+  };
 }
-
-/**
-An error to be thrown when the request is aborted by AbortController.
-DOMException is thrown instead of this Error when DOMException is available.
-*/
-class AbortError extends Error {
-	constructor(message) {
-		super();
-		this.name = 'AbortError';
-		this.message = message;
-	}
-}
-
-/**
-TODO: Remove AbortError and just throw DOMException when targeting Node 18.
-*/
-const getDOMException = errorMessage => globalThis.DOMException === undefined ?
-	new AbortError(errorMessage) :
-	new DOMException(errorMessage);
-
-/**
-TODO: Remove below function and just 'reject(signal.reason)' when targeting Node 18.
-*/
-const getAbortedReason = signal => {
-	const reason = signal.reason === undefined ?
-		getDOMException('This operation was aborted.') :
-		signal.reason;
-
-	return reason instanceof Error ? reason : getDOMException(reason);
-};
-
-function pTimeout(promise, milliseconds, fallback, options) {
-	let timer;
-
-	const cancelablePromise = new Promise((resolve, reject) => {
-		if (typeof milliseconds !== 'number' || Math.sign(milliseconds) !== 1) {
-			throw new TypeError(`Expected \`milliseconds\` to be a positive number, got \`${milliseconds}\``);
-		}
-
-		if (milliseconds === Number.POSITIVE_INFINITY) {
-			resolve(promise);
-			return;
-		}
-
-		options = {
-			customTimers: {setTimeout, clearTimeout},
-			...options
-		};
-
-		if (options.signal) {
-			const {signal} = options;
-			if (signal.aborted) {
-				reject(getAbortedReason(signal));
-			}
-
-			signal.addEventListener('abort', () => {
-				reject(getAbortedReason(signal));
-			});
-		}
-
-		timer = options.customTimers.setTimeout.call(undefined, () => {
-			if (typeof fallback === 'function') {
-				try {
-					resolve(fallback());
-				} catch (error) {
-					reject(error);
-				}
-
-				return;
-			}
-
-			const message = typeof fallback === 'string' ? fallback : `Promise timed out after ${milliseconds} milliseconds`;
-			const timeoutError = fallback instanceof Error ? fallback : new TimeoutError(message);
-
-			if (typeof promise.cancel === 'function') {
-				promise.cancel();
-			}
-
-			reject(timeoutError);
-		}, milliseconds);
-
-		(async () => {
-			try {
-				resolve(await promise);
-			} catch (error) {
-				reject(error);
-			} finally {
-				options.customTimers.clearTimeout.call(undefined, timer);
-			}
-		})();
-	});
-
-	cancelablePromise.clear = () => {
-		clearTimeout(timer);
-		timer = undefined;
-	};
-
-	return cancelablePromise;
-}
-
-;// ./node_modules/p-queue/dist/lower-bound.js
-// Port of lower_bound from https://en.cppreference.com/w/cpp/algorithm/lower_bound
-// Used to compute insertion index to keep queue sorted after insertion
-function lowerBound(array, value, comparator) {
-    let first = 0;
-    let count = array.length;
-    while (count > 0) {
-        const step = Math.trunc(count / 2);
-        let it = first + step;
-        if (comparator(array[it], value) <= 0) {
-            first = ++it;
-            count -= step + 1;
-        }
-        else {
-            count = step;
-        }
-    }
-    return first;
-}
-
-;// ./node_modules/p-queue/dist/priority-queue.js
-var __classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _PriorityQueue_queue;
-
-class PriorityQueue {
-    constructor() {
-        _PriorityQueue_queue.set(this, []);
-    }
-    enqueue(run, options) {
-        options = {
-            priority: 0,
-            ...options,
-        };
-        const element = {
-            priority: options.priority,
-            run,
-        };
-        if (this.size && __classPrivateFieldGet(this, _PriorityQueue_queue, "f")[this.size - 1].priority >= options.priority) {
-            __classPrivateFieldGet(this, _PriorityQueue_queue, "f").push(element);
-            return;
-        }
-        const index = lowerBound(__classPrivateFieldGet(this, _PriorityQueue_queue, "f"), element, (a, b) => b.priority - a.priority);
-        __classPrivateFieldGet(this, _PriorityQueue_queue, "f").splice(index, 0, element);
-    }
-    dequeue() {
-        const item = __classPrivateFieldGet(this, _PriorityQueue_queue, "f").shift();
-        return item === null || item === void 0 ? void 0 : item.run;
-    }
-    filter(options) {
-        return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").filter((element) => element.priority === options.priority).map((element) => element.run);
-    }
-    get size() {
-        return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").length;
-    }
-}
-_PriorityQueue_queue = new WeakMap();
-/* harmony default export */ const priority_queue = (PriorityQueue);
-
-;// ./node_modules/p-queue/dist/index.js
-var __classPrivateFieldSet = (undefined && undefined.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
-};
-var dist_classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _PQueue_instances, _PQueue_carryoverConcurrencyCount, _PQueue_isIntervalIgnored, _PQueue_intervalCount, _PQueue_intervalCap, _PQueue_interval, _PQueue_intervalEnd, _PQueue_intervalId, _PQueue_timeoutId, _PQueue_queue, _PQueue_queueClass, _PQueue_pending, _PQueue_concurrency, _PQueue_isPaused, _PQueue_throwOnTimeout, _PQueue_doesIntervalAllowAnother_get, _PQueue_doesConcurrentAllowAnother_get, _PQueue_next, _PQueue_onResumeInterval, _PQueue_isIntervalPaused_get, _PQueue_tryToStartAnother, _PQueue_initializeIntervalIfNeeded, _PQueue_onInterval, _PQueue_processQueue, _PQueue_throwOnAbort, _PQueue_onEvent;
-
-
-
-/**
-The error thrown by `queue.add()` when a job is aborted before it is run. See `signal`.
-*/
-class dist_AbortError extends Error {
-}
-/**
-Promise queue with concurrency control.
-*/
-class PQueue extends eventemitter3 {
-    // TODO: The `throwOnTimeout` option should affect the return types of `add()` and `addAll()`
-    constructor(options) {
-        var _a, _b, _c, _d;
-        super();
-        _PQueue_instances.add(this);
-        _PQueue_carryoverConcurrencyCount.set(this, void 0);
-        _PQueue_isIntervalIgnored.set(this, void 0);
-        _PQueue_intervalCount.set(this, 0);
-        _PQueue_intervalCap.set(this, void 0);
-        _PQueue_interval.set(this, void 0);
-        _PQueue_intervalEnd.set(this, 0);
-        _PQueue_intervalId.set(this, void 0);
-        _PQueue_timeoutId.set(this, void 0);
-        _PQueue_queue.set(this, void 0);
-        _PQueue_queueClass.set(this, void 0);
-        _PQueue_pending.set(this, 0);
-        // The `!` is needed because of https://github.com/microsoft/TypeScript/issues/32194
-        _PQueue_concurrency.set(this, void 0);
-        _PQueue_isPaused.set(this, void 0);
-        _PQueue_throwOnTimeout.set(this, void 0);
-        /**
-        Per-operation timeout in milliseconds. Operations fulfill once `timeout` elapses if they haven't already.
-    
-        Applies to each future operation.
-        */
-        Object.defineProperty(this, "timeout", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        options = {
-            carryoverConcurrencyCount: false,
-            intervalCap: Number.POSITIVE_INFINITY,
-            interval: 0,
-            concurrency: Number.POSITIVE_INFINITY,
-            autoStart: true,
-            queueClass: priority_queue,
-            ...options,
-        };
-        if (!(typeof options.intervalCap === 'number' && options.intervalCap >= 1)) {
-            throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a = options.intervalCap) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : ''}\` (${typeof options.intervalCap})`);
-        }
-        if (options.interval === undefined || !(Number.isFinite(options.interval) && options.interval >= 0)) {
-            throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${(_d = (_c = options.interval) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : ''}\` (${typeof options.interval})`);
-        }
-        __classPrivateFieldSet(this, _PQueue_carryoverConcurrencyCount, options.carryoverConcurrencyCount, "f");
-        __classPrivateFieldSet(this, _PQueue_isIntervalIgnored, options.intervalCap === Number.POSITIVE_INFINITY || options.interval === 0, "f");
-        __classPrivateFieldSet(this, _PQueue_intervalCap, options.intervalCap, "f");
-        __classPrivateFieldSet(this, _PQueue_interval, options.interval, "f");
-        __classPrivateFieldSet(this, _PQueue_queue, new options.queueClass(), "f");
-        __classPrivateFieldSet(this, _PQueue_queueClass, options.queueClass, "f");
-        this.concurrency = options.concurrency;
-        this.timeout = options.timeout;
-        __classPrivateFieldSet(this, _PQueue_throwOnTimeout, options.throwOnTimeout === true, "f");
-        __classPrivateFieldSet(this, _PQueue_isPaused, options.autoStart === false, "f");
-    }
-    get concurrency() {
-        return dist_classPrivateFieldGet(this, _PQueue_concurrency, "f");
-    }
-    set concurrency(newConcurrency) {
-        if (!(typeof newConcurrency === 'number' && newConcurrency >= 1)) {
-            throw new TypeError(`Expected \`concurrency\` to be a number from 1 and up, got \`${newConcurrency}\` (${typeof newConcurrency})`);
-        }
-        __classPrivateFieldSet(this, _PQueue_concurrency, newConcurrency, "f");
-        dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
-    }
-    async add(function_, options = {}) {
-        options = {
-            timeout: this.timeout,
-            throwOnTimeout: dist_classPrivateFieldGet(this, _PQueue_throwOnTimeout, "f"),
-            ...options,
-        };
-        return new Promise((resolve, reject) => {
-            dist_classPrivateFieldGet(this, _PQueue_queue, "f").enqueue(async () => {
-                var _a;
-                var _b, _c;
-                __classPrivateFieldSet(this, _PQueue_pending, (_b = dist_classPrivateFieldGet(this, _PQueue_pending, "f"), _b++, _b), "f");
-                __classPrivateFieldSet(this, _PQueue_intervalCount, (_c = dist_classPrivateFieldGet(this, _PQueue_intervalCount, "f"), _c++, _c), "f");
-                try {
-                    // TODO: Use options.signal?.throwIfAborted() when targeting Node.js 18
-                    if ((_a = options.signal) === null || _a === void 0 ? void 0 : _a.aborted) {
-                        // TODO: Use ABORT_ERR code when targeting Node.js 16 (https://nodejs.org/docs/latest-v16.x/api/errors.html#abort_err)
-                        throw new dist_AbortError('The task was aborted.');
-                    }
-                    let operation = function_({ signal: options.signal });
-                    if (options.timeout) {
-                        operation = pTimeout(Promise.resolve(operation), options.timeout);
-                    }
-                    if (options.signal) {
-                        operation = Promise.race([operation, dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_throwOnAbort).call(this, options.signal)]);
-                    }
-                    const result = await operation;
-                    resolve(result);
-                    this.emit('completed', result);
-                }
-                catch (error) {
-                    if (error instanceof TimeoutError && !options.throwOnTimeout) {
-                        resolve();
-                        return;
-                    }
-                    reject(error);
-                    this.emit('error', error);
-                }
-                finally {
-                    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_next).call(this);
-                }
-            }, options);
-            this.emit('add');
-            dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this);
-        });
-    }
-    async addAll(functions, options) {
-        return Promise.all(functions.map(async (function_) => this.add(function_, options)));
-    }
-    /**
-    Start (or resume) executing enqueued tasks within concurrency limit. No need to call this if queue is not paused (via `options.autoStart = false` or by `.pause()` method.)
-    */
-    start() {
-        if (!dist_classPrivateFieldGet(this, _PQueue_isPaused, "f")) {
-            return this;
-        }
-        __classPrivateFieldSet(this, _PQueue_isPaused, false, "f");
-        dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
-        return this;
-    }
-    /**
-    Put queue execution on hold.
-    */
-    pause() {
-        __classPrivateFieldSet(this, _PQueue_isPaused, true, "f");
-    }
-    /**
-    Clear the queue.
-    */
-    clear() {
-        __classPrivateFieldSet(this, _PQueue_queue, new (dist_classPrivateFieldGet(this, _PQueue_queueClass, "f"))(), "f");
-    }
-    /**
-    Can be called multiple times. Useful if you for example add additional items at a later time.
-
-    @returns A promise that settles when the queue becomes empty.
-    */
-    async onEmpty() {
-        // Instantly resolve if the queue is empty
-        if (dist_classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
-            return;
-        }
-        await dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'empty');
-    }
-    /**
-    @returns A promise that settles when the queue size is less than the given limit: `queue.size < limit`.
-
-    If you want to avoid having the queue grow beyond a certain size you can `await queue.onSizeLessThan()` before adding a new item.
-
-    Note that this only limits the number of items waiting to start. There could still be up to `concurrency` jobs already running that this call does not include in its calculation.
-    */
-    async onSizeLessThan(limit) {
-        // Instantly resolve if the queue is empty.
-        if (dist_classPrivateFieldGet(this, _PQueue_queue, "f").size < limit) {
-            return;
-        }
-        await dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'next', () => dist_classPrivateFieldGet(this, _PQueue_queue, "f").size < limit);
-    }
-    /**
-    The difference with `.onEmpty` is that `.onIdle` guarantees that all work from the queue has finished. `.onEmpty` merely signals that the queue is empty, but it could mean that some promises haven't completed yet.
-
-    @returns A promise that settles when the queue becomes empty, and all promises have completed; `queue.size === 0 && queue.pending === 0`.
-    */
-    async onIdle() {
-        // Instantly resolve if none pending and if nothing else is queued
-        if (dist_classPrivateFieldGet(this, _PQueue_pending, "f") === 0 && dist_classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
-            return;
-        }
-        await dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onEvent).call(this, 'idle');
-    }
-    /**
-    Size of the queue, the number of queued items waiting to run.
-    */
-    get size() {
-        return dist_classPrivateFieldGet(this, _PQueue_queue, "f").size;
-    }
-    /**
-    Size of the queue, filtered by the given options.
-
-    For example, this can be used to find the number of items remaining in the queue with a specific priority level.
-    */
-    sizeBy(options) {
-        // eslint-disable-next-line unicorn/no-array-callback-reference
-        return dist_classPrivateFieldGet(this, _PQueue_queue, "f").filter(options).length;
-    }
-    /**
-    Number of running items (no longer in the queue).
-    */
-    get pending() {
-        return dist_classPrivateFieldGet(this, _PQueue_pending, "f");
-    }
-    /**
-    Whether the queue is currently paused.
-    */
-    get isPaused() {
-        return dist_classPrivateFieldGet(this, _PQueue_isPaused, "f");
-    }
-}
-_PQueue_carryoverConcurrencyCount = new WeakMap(), _PQueue_isIntervalIgnored = new WeakMap(), _PQueue_intervalCount = new WeakMap(), _PQueue_intervalCap = new WeakMap(), _PQueue_interval = new WeakMap(), _PQueue_intervalEnd = new WeakMap(), _PQueue_intervalId = new WeakMap(), _PQueue_timeoutId = new WeakMap(), _PQueue_queue = new WeakMap(), _PQueue_queueClass = new WeakMap(), _PQueue_pending = new WeakMap(), _PQueue_concurrency = new WeakMap(), _PQueue_isPaused = new WeakMap(), _PQueue_throwOnTimeout = new WeakMap(), _PQueue_instances = new WeakSet(), _PQueue_doesIntervalAllowAnother_get = function _PQueue_doesIntervalAllowAnother_get() {
-    return dist_classPrivateFieldGet(this, _PQueue_isIntervalIgnored, "f") || dist_classPrivateFieldGet(this, _PQueue_intervalCount, "f") < dist_classPrivateFieldGet(this, _PQueue_intervalCap, "f");
-}, _PQueue_doesConcurrentAllowAnother_get = function _PQueue_doesConcurrentAllowAnother_get() {
-    return dist_classPrivateFieldGet(this, _PQueue_pending, "f") < dist_classPrivateFieldGet(this, _PQueue_concurrency, "f");
-}, _PQueue_next = function _PQueue_next() {
-    var _a;
-    __classPrivateFieldSet(this, _PQueue_pending, (_a = dist_classPrivateFieldGet(this, _PQueue_pending, "f"), _a--, _a), "f");
-    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this);
-    this.emit('next');
-}, _PQueue_onResumeInterval = function _PQueue_onResumeInterval() {
-    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onInterval).call(this);
-    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_initializeIntervalIfNeeded).call(this);
-    __classPrivateFieldSet(this, _PQueue_timeoutId, undefined, "f");
-}, _PQueue_isIntervalPaused_get = function _PQueue_isIntervalPaused_get() {
-    const now = Date.now();
-    if (dist_classPrivateFieldGet(this, _PQueue_intervalId, "f") === undefined) {
-        const delay = dist_classPrivateFieldGet(this, _PQueue_intervalEnd, "f") - now;
-        if (delay < 0) {
-            // Act as the interval was done
-            // We don't need to resume it here because it will be resumed on line 160
-            __classPrivateFieldSet(this, _PQueue_intervalCount, (dist_classPrivateFieldGet(this, _PQueue_carryoverConcurrencyCount, "f")) ? dist_classPrivateFieldGet(this, _PQueue_pending, "f") : 0, "f");
-        }
-        else {
-            // Act as the interval is pending
-            if (dist_classPrivateFieldGet(this, _PQueue_timeoutId, "f") === undefined) {
-                __classPrivateFieldSet(this, _PQueue_timeoutId, setTimeout(() => {
-                    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onResumeInterval).call(this);
-                }, delay), "f");
-            }
-            return true;
-        }
-    }
-    return false;
-}, _PQueue_tryToStartAnother = function _PQueue_tryToStartAnother() {
-    if (dist_classPrivateFieldGet(this, _PQueue_queue, "f").size === 0) {
-        // We can clear the interval ("pause")
-        // Because we can redo it later ("resume")
-        if (dist_classPrivateFieldGet(this, _PQueue_intervalId, "f")) {
-            clearInterval(dist_classPrivateFieldGet(this, _PQueue_intervalId, "f"));
-        }
-        __classPrivateFieldSet(this, _PQueue_intervalId, undefined, "f");
-        this.emit('empty');
-        if (dist_classPrivateFieldGet(this, _PQueue_pending, "f") === 0) {
-            this.emit('idle');
-        }
-        return false;
-    }
-    if (!dist_classPrivateFieldGet(this, _PQueue_isPaused, "f")) {
-        const canInitializeInterval = !dist_classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_isIntervalPaused_get);
-        if (dist_classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_doesIntervalAllowAnother_get) && dist_classPrivateFieldGet(this, _PQueue_instances, "a", _PQueue_doesConcurrentAllowAnother_get)) {
-            const job = dist_classPrivateFieldGet(this, _PQueue_queue, "f").dequeue();
-            if (!job) {
-                return false;
-            }
-            this.emit('active');
-            job();
-            if (canInitializeInterval) {
-                dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_initializeIntervalIfNeeded).call(this);
-            }
-            return true;
-        }
-    }
-    return false;
-}, _PQueue_initializeIntervalIfNeeded = function _PQueue_initializeIntervalIfNeeded() {
-    if (dist_classPrivateFieldGet(this, _PQueue_isIntervalIgnored, "f") || dist_classPrivateFieldGet(this, _PQueue_intervalId, "f") !== undefined) {
-        return;
-    }
-    __classPrivateFieldSet(this, _PQueue_intervalId, setInterval(() => {
-        dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_onInterval).call(this);
-    }, dist_classPrivateFieldGet(this, _PQueue_interval, "f")), "f");
-    __classPrivateFieldSet(this, _PQueue_intervalEnd, Date.now() + dist_classPrivateFieldGet(this, _PQueue_interval, "f"), "f");
-}, _PQueue_onInterval = function _PQueue_onInterval() {
-    if (dist_classPrivateFieldGet(this, _PQueue_intervalCount, "f") === 0 && dist_classPrivateFieldGet(this, _PQueue_pending, "f") === 0 && dist_classPrivateFieldGet(this, _PQueue_intervalId, "f")) {
-        clearInterval(dist_classPrivateFieldGet(this, _PQueue_intervalId, "f"));
-        __classPrivateFieldSet(this, _PQueue_intervalId, undefined, "f");
-    }
-    __classPrivateFieldSet(this, _PQueue_intervalCount, dist_classPrivateFieldGet(this, _PQueue_carryoverConcurrencyCount, "f") ? dist_classPrivateFieldGet(this, _PQueue_pending, "f") : 0, "f");
-    dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
-}, _PQueue_processQueue = function _PQueue_processQueue() {
-    // eslint-disable-next-line no-empty
-    while (dist_classPrivateFieldGet(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this)) { }
-}, _PQueue_throwOnAbort = async function _PQueue_throwOnAbort(signal) {
-    return new Promise((_resolve, reject) => {
-        signal.addEventListener('abort', () => {
-            // TODO: Reject with signal.throwIfAborted() when targeting Node.js 18
-            // TODO: Use ABORT_ERR code when targeting Node.js 16 (https://nodejs.org/docs/latest-v16.x/api/errors.html#abort_err)
-            reject(new dist_AbortError('The task was aborted.'));
-        }, { once: true });
-    });
-}, _PQueue_onEvent = async function _PQueue_onEvent(event, filter) {
-    return new Promise(resolve => {
-        const listener = () => {
-            if (filter && !filter()) {
-                return;
-            }
-            this.off(event, listener);
-            resolve();
-        };
-        this.on(event, listener);
-    });
-};
-/* harmony default export */ const dist = (PQueue);
-
 ;// ./node_modules/preact/hooks/dist/hooks.module.js
 var hooks_module_t,hooks_module_r,hooks_module_u,hooks_module_i,hooks_module_o=0,hooks_module_f=[],hooks_module_c=l,hooks_module_e=hooks_module_c.__b,hooks_module_a=hooks_module_c.__r,hooks_module_v=hooks_module_c.diffed,hooks_module_l=hooks_module_c.__c,hooks_module_m=hooks_module_c.unmount,hooks_module_s=hooks_module_c.__;function hooks_module_d(n,t){hooks_module_c.__h&&hooks_module_c.__h(hooks_module_r,n,hooks_module_o||t),hooks_module_o=0;var u=hooks_module_r.__H||(hooks_module_r.__H={__:[],__h:[]});return n>=u.__.length&&u.__.push({}),u.__[n]}function hooks_module_h(n){return hooks_module_o=1,hooks_module_p(hooks_module_D,n)}function hooks_module_p(n,u,i){var o=hooks_module_d(hooks_module_t++,2);if(o.t=n,!o.__c&&(o.__=[i?i(u):hooks_module_D(void 0,u),function(n){var t=o.__N?o.__N[0]:o.__[0],r=o.t(t,n);t!==r&&(o.__N=[r,o.__[1]],o.__c.setState({}))}],o.__c=hooks_module_r,!hooks_module_r.u)){var f=function(n,t,r){if(!o.__c.__H)return!0;var u=o.__c.__H.__.filter(function(n){return!!n.__c});if(u.every(function(n){return!n.__N}))return!c||c.call(this,n,t,r);var i=o.__c.props!==n;return u.forEach(function(n){if(n.__N){var t=n.__[0];n.__=n.__N,n.__N=void 0,t!==n.__[0]&&(i=!0)}}),c&&c.call(this,n,t,r)||i};hooks_module_r.u=!0;var c=hooks_module_r.shouldComponentUpdate,e=hooks_module_r.componentWillUpdate;hooks_module_r.componentWillUpdate=function(n,t,r){if(this.__e){var u=c;c=void 0,f(n,t,r),c=u}e&&e.call(this,n,t,r)},hooks_module_r.shouldComponentUpdate=f}return o.__N||o.__}function hooks_module_y(n,u){var i=hooks_module_d(hooks_module_t++,3);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__H.__h.push(i))}function hooks_module_(n,u){var i=hooks_module_d(hooks_module_t++,4);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__h.push(i))}function hooks_module_A(n){return hooks_module_o=5,hooks_module_T(function(){return{current:n}},[])}function hooks_module_F(n,t,r){hooks_module_o=6,hooks_module_(function(){return"function"==typeof n?(n(t()),function(){return n(null)}):n?(n.current=t(),function(){return n.current=null}):void 0},null==r?r:r.concat(n))}function hooks_module_T(n,r){var u=hooks_module_d(hooks_module_t++,7);return hooks_module_C(u.__H,r)&&(u.__=n(),u.__H=r,u.__h=n),u.__}function hooks_module_q(n,t){return hooks_module_o=8,hooks_module_T(function(){return n},t)}function hooks_module_x(n){var u=hooks_module_r.context[n.__c],i=hooks_module_d(hooks_module_t++,9);return i.c=n,u?(null==i.__&&(i.__=!0,u.sub(hooks_module_r)),u.props.value):n.__}function hooks_module_P(n,t){hooks_module_c.useDebugValue&&hooks_module_c.useDebugValue(t?t(n):n)}function hooks_module_b(n){var u=hooks_module_d(hooks_module_t++,10),i=hooks_module_h();return u.__=n,hooks_module_r.componentDidCatch||(hooks_module_r.componentDidCatch=function(n,t){u.__&&u.__(n,t),i[1](n)}),[i[0],function(){i[1](void 0)}]}function hooks_module_g(){var n=hooks_module_d(hooks_module_t++,11);if(!n.__){for(var u=hooks_module_r.__v;null!==u&&!u.__m&&null!==u.__;)u=u.__;var i=u.__m||(u.__m=[0,0]);n.__="P"+i[0]+"-"+i[1]++}return n.__}function hooks_module_j(){for(var n;n=hooks_module_f.shift();)if(n.__P&&n.__H)try{n.__H.__h.forEach(hooks_module_z),n.__H.__h.forEach(hooks_module_B),n.__H.__h=[]}catch(t){n.__H.__h=[],hooks_module_c.__e(t,n.__v)}}hooks_module_c.__b=function(n){hooks_module_r=null,hooks_module_e&&hooks_module_e(n)},hooks_module_c.__=function(n,t){n&&t.__k&&t.__k.__m&&(n.__m=t.__k.__m),hooks_module_s&&hooks_module_s(n,t)},hooks_module_c.__r=function(n){hooks_module_a&&hooks_module_a(n),hooks_module_t=0;var i=(hooks_module_r=n.__c).__H;i&&(hooks_module_u===hooks_module_r?(i.__h=[],hooks_module_r.__h=[],i.__.forEach(function(n){n.__N&&(n.__=n.__N),n.i=n.__N=void 0})):(i.__h.forEach(hooks_module_z),i.__h.forEach(hooks_module_B),i.__h=[],hooks_module_t=0)),hooks_module_u=hooks_module_r},hooks_module_c.diffed=function(n){hooks_module_v&&hooks_module_v(n);var t=n.__c;t&&t.__H&&(t.__H.__h.length&&(1!==hooks_module_f.push(t)&&hooks_module_i===hooks_module_c.requestAnimationFrame||((hooks_module_i=hooks_module_c.requestAnimationFrame)||hooks_module_w)(hooks_module_j)),t.__H.__.forEach(function(n){n.i&&(n.__H=n.i),n.i=void 0})),hooks_module_u=hooks_module_r=null},hooks_module_c.__c=function(n,t){t.some(function(n){try{n.__h.forEach(hooks_module_z),n.__h=n.__h.filter(function(n){return!n.__||hooks_module_B(n)})}catch(r){t.some(function(n){n.__h&&(n.__h=[])}),t=[],hooks_module_c.__e(r,n.__v)}}),hooks_module_l&&hooks_module_l(n,t)},hooks_module_c.unmount=function(n){hooks_module_m&&hooks_module_m(n);var t,r=n.__c;r&&r.__H&&(r.__H.__.forEach(function(n){try{hooks_module_z(n)}catch(n){t=n}}),r.__H=void 0,t&&hooks_module_c.__e(t,r.__v))};var hooks_module_k="function"==typeof requestAnimationFrame;function hooks_module_w(n){var t,r=function(){clearTimeout(u),hooks_module_k&&cancelAnimationFrame(t),setTimeout(n)},u=setTimeout(r,100);hooks_module_k&&(t=requestAnimationFrame(r))}function hooks_module_z(n){var t=hooks_module_r,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),hooks_module_r=t}function hooks_module_B(n){var t=hooks_module_r;n.__c=n.__(),hooks_module_r=t}function hooks_module_C(n,t){return!n||n.length!==t.length||t.some(function(t,r){return t!==n[r]})}function hooks_module_D(n,t){return"function"==typeof t?t(n):t}
 //# sourceMappingURL=hooks.module.js.map
 
 ;// ./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js
-/* eslint-disable react/require-default-props */
 
 
 function GoogleIcon() {
@@ -13582,15 +13090,15 @@ const defaultRenderForm = _ref2 => {
     onAuth: onAuth
   });
 };
-function AuthView(props) {
-  const {
+function AuthView_AuthView(_ref3) {
+  let {
     loading,
     pluginName,
     pluginIcon,
     i18n,
     handleAuth,
     renderForm = defaultRenderForm
-  } = props;
+  } = _ref3;
   return g("div", {
     className: "uppy-Provider-auth"
   }, g("div", {
@@ -13599,14 +13107,12 @@ function AuthView(props) {
     className: "uppy-Provider-authTitle"
   }, i18n('authenticateWithTitle', {
     pluginName
-  })), g("div", {
-    className: "uppy-Provider-authForm"
-  }, renderForm({
+  })), renderForm({
     pluginName,
     i18n,
     loading,
     onAuth: handleAuth
-  })));
+  }));
 }
 ;// ./node_modules/@uppy/provider-views/lib/ProviderView/User.js
 
@@ -13616,7 +13122,7 @@ function User(_ref) {
     logout,
     username
   } = _ref;
-  return g(k, null, g("span", {
+  return g(k, null, username && g("span", {
     className: "uppy-ProviderBrowser-user",
     key: "username"
   }, username), g("button", {
@@ -13628,64 +13134,53 @@ function User(_ref) {
 }
 ;// ./node_modules/@uppy/provider-views/lib/Breadcrumbs.js
 
-const Breadcrumb = props => {
-  const {
-    getFolder,
-    title,
-    isLast
-  } = props;
-  return g(k, null, g("button", {
-    type: "button",
-    className: "uppy-u-reset uppy-c-btn",
-    onClick: getFolder
-  }, title), !isLast ? ' / ' : '');
-};
 function Breadcrumbs(props) {
   const {
-    getFolder,
+    openFolder,
     title,
     breadcrumbsIcon,
-    breadcrumbs
+    breadcrumbs,
+    i18n
   } = props;
   return g("div", {
     className: "uppy-Provider-breadcrumbs"
   }, g("div", {
     className: "uppy-Provider-breadcrumbsIcon"
-  }, breadcrumbsIcon), breadcrumbs.map((directory, i) => g(Breadcrumb, {
-    key: directory.id,
-    getFolder: () => getFolder(directory.requestPath, directory.name),
-    title: i === 0 ? title : directory.name,
-    isLast: i + 1 === breadcrumbs.length
-  })));
+  }, breadcrumbsIcon), breadcrumbs.map((folder, index) => {
+    var _folder$data$name;
+    return g(k, null, g("button", {
+      key: folder.id,
+      type: "button",
+      className: "uppy-u-reset uppy-c-btn",
+      onClick: () => openFolder(folder.id)
+    }, folder.type === 'root' ? title : (_folder$data$name = folder.data.name) != null ? _folder$data$name : i18n('unnamed')), breadcrumbs.length === index + 1 ? '' : ' / ');
+  }));
 }
 ;// ./node_modules/@uppy/provider-views/lib/ProviderView/Header.js
 /* eslint-disable react/destructuring-assignment */
 
 
 
+
 function Header(props) {
-  return g(k, null, props.showBreadcrumbs && g(Breadcrumbs, {
-    getFolder: props.getFolder,
+  return g("div", {
+    className: "uppy-ProviderBrowser-header"
+  }, g("div", {
+    className: classnames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')
+  }, props.showBreadcrumbs && g(Breadcrumbs, {
+    openFolder: props.openFolder,
     breadcrumbs: props.breadcrumbs,
     breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-    title: props.title
+    title: props.title,
+    i18n: props.i18n
   }), g(User, {
     logout: props.logout,
     username: props.username,
     i18n: props.i18n
-  }));
-}
-;// ./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js
-
-function remoteFileObjToLocal(file) {
-  return {
-    ...file,
-    type: file.mimeType,
-    extension: file.name ? getFileNameAndExtension(file.name).extension : null
-  };
+  })));
 }
 ;// ./node_modules/@uppy/utils/lib/VirtualList.js
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
  * Adapted from preact-virtual-list: https://github.com/developit/preact-virtual-list
  *
@@ -13845,138 +13340,7 @@ class VirtualList extends x {
   }
 }
 /* harmony default export */ const lib_VirtualList = (VirtualList);
-;// ./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js
-let non_secure_urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let non_secure_nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += non_secure_urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
-;// ./node_modules/@uppy/provider-views/lib/SearchFilterInput.js
-/* eslint-disable react/require-default-props */
-
-
-
-function SearchFilterInput(props) {
-  const {
-    search,
-    searchOnInput,
-    searchTerm,
-    showButton,
-    inputLabel,
-    clearSearchLabel,
-    buttonLabel,
-    clearSearch,
-    inputClassName,
-    buttonCSSClassName
-  } = props;
-  const [searchText, setSearchText] = hooks_module_h(searchTerm != null ? searchTerm : '');
-  // const debouncedSearch = debounce((q) => search(q), 1000)
-
-  const validateAndSearch = hooks_module_q(ev => {
-    ev.preventDefault();
-    search(searchText);
-  }, [search, searchText]);
-  const handleInput = hooks_module_q(ev => {
-    const inputValue = ev.target.value;
-    setSearchText(inputValue);
-    if (searchOnInput) search(inputValue);
-  }, [setSearchText, searchOnInput, search]);
-  const handleReset = () => {
-    setSearchText('');
-    if (clearSearch) clearSearch();
-  };
-  const [form] = hooks_module_h(() => {
-    const formEl = document.createElement('form');
-    formEl.setAttribute('tabindex', '-1');
-    formEl.id = non_secure_nanoid();
-    return formEl;
-  });
-  hooks_module_y(() => {
-    document.body.appendChild(form);
-    form.addEventListener('submit', validateAndSearch);
-    return () => {
-      form.removeEventListener('submit', validateAndSearch);
-      document.body.removeChild(form);
-    };
-  }, [form, validateAndSearch]);
-  return g(k, null, g("input", {
-    className: `uppy-u-reset ${inputClassName}`,
-    type: "search",
-    "aria-label": inputLabel,
-    placeholder: inputLabel,
-    value: searchText,
-    onInput: handleInput,
-    form: form.id,
-    "data-uppy-super-focusable": true
-  }), !showButton && g("svg", {
-    "aria-hidden": "true",
-    focusable: "false",
-    className: "uppy-c-icon uppy-ProviderBrowser-searchFilterIcon",
-    width: "12",
-    height: "12",
-    viewBox: "0 0 12 12"
-  }, g("path", {
-    d: "M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z"
-  })), !showButton && searchText && g("button", {
-    className: "uppy-u-reset uppy-ProviderBrowser-searchFilterReset",
-    type: "button",
-    "aria-label": clearSearchLabel,
-    title: clearSearchLabel,
-    onClick: handleReset
-  }, g("svg", {
-    "aria-hidden": "true",
-    focusable: "false",
-    className: "uppy-c-icon",
-    viewBox: "0 0 19 19"
-  }, g("path", {
-    d: "M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z"
-  }))), showButton && g("button", {
-    className: `uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`,
-    type: "submit",
-    form: form.id
-  }, buttonLabel));
-}
-;// ./node_modules/@uppy/provider-views/lib/FooterActions.js
-
-function FooterActions(_ref) {
-  let {
-    cancel,
-    done,
-    i18n,
-    selected
-  } = _ref;
-  return g("div", {
-    className: "uppy-ProviderBrowser-footer"
-  }, g("button", {
-    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary",
-    onClick: done,
-    type: "button"
-  }, i18n('selectX', {
-    smart_count: selected
-  })), g("button", {
-    className: "uppy-u-reset uppy-c-btn uppy-c-btn-link",
-    onClick: cancel,
-    type: "button"
-  }, i18n('cancel')));
-}
 ;// ./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js
-/* eslint-disable react/require-default-props */
 
 function FileIcon() {
   return g("svg", {
@@ -14019,10 +13383,11 @@ function VideoIcon() {
     d: "M57 6H1a1 1 0 0 0-1 1v44a1 1 0 0 0 1 1h56a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1zM10 28H2v-9h8v9zm-8 2h8v9H2v-9zm10 10V8h34v42H12V40zm44-12h-8v-9h8v9zm-8 2h8v9h-8v-9zm8-22v9h-8V8h8zM2 8h8v9H2V8zm0 42v-9h8v9H2zm54 0h-8v-9h8v9z"
   }));
 }
-function ItemIcon(props) {
-  const {
-    itemIconString
-  } = props;
+function ItemIcon(_ref) {
+  let {
+    itemIconString,
+    alt = undefined
+  } = _ref;
   if (itemIconString === null) return null;
   switch (itemIconString) {
     case 'file':
@@ -14033,9 +13398,6 @@ function ItemIcon(props) {
       return g(VideoIcon, null);
     default:
       {
-        const {
-          alt
-        } = props;
         return g("img", {
           src: itemIconString,
           alt: alt
@@ -14049,52 +13411,43 @@ function ItemIcon(props) {
       }
   }
 }
-;// ./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js
-/* eslint-disable react/require-default-props */
+;// ./node_modules/@uppy/provider-views/lib/Item/components/GridItem.js
 
 
-function GridListItem(props) {
-  const {
+function GridItem(_ref) {
+  var _file$data$name, _file$data$name2;
+  let {
+    file,
+    toggleCheckbox,
     className,
     isDisabled,
     restrictionError,
-    isChecked,
-    title,
-    itemIconEl,
     showTitles,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    id,
-    children
-  } = props;
-  const checkBoxClassName = classnames('uppy-u-reset', 'uppy-ProviderBrowserItem-checkbox', 'uppy-ProviderBrowserItem-checkbox--grid', {
-    'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked
-  });
+    children = null,
+    i18n
+  } = _ref;
   return g("li", {
     className: className,
-    title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : undefined
+    title: isDisabled && restrictionError ? restrictionError : undefined
   }, g("input", {
     type: "checkbox",
-    className: checkBoxClassName,
+    className: "uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid",
     onChange: toggleCheckbox,
-    onKeyDown: recordShiftKeyPress
-    // @ts-expect-error this is fine onMouseDown too
-    ,
-    onMouseDown: recordShiftKeyPress,
     name: "listitem",
-    id: id,
-    checked: isChecked,
+    id: file.id,
+    checked: file.status === 'checked',
     disabled: isDisabled,
     "data-uppy-super-focusable": true
   }), g("label", {
-    htmlFor: id,
-    "aria-label": title,
+    htmlFor: file.id,
+    "aria-label": (_file$data$name = file.data.name) != null ? _file$data$name : i18n('unnamed'),
     className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
-  }, itemIconEl, showTitles && title, children));
+  }, g(ItemIcon, {
+    itemIconString: file.data.thumbnail || file.data.icon
+  }), showTitles && ((_file$data$name2 = file.data.name) != null ? _file$data$name2 : i18n('unnamed')), children));
 }
-/* harmony default export */ const GridLi = (GridListItem);
-;// ./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js
-/* eslint-disable react/require-default-props */
+/* harmony default export */ const components_GridItem = (GridItem);
+;// ./node_modules/@uppy/provider-views/lib/Item/components/ListItem.js
 
 
 
@@ -14105,119 +13458,115 @@ function GridListItem(props) {
 //   + checkbox (selects file)
 //   + file name (selects file)
 
-function ListItem(props) {
-  const {
+function ListItem(_ref) {
+  var _file$data$name, _file$data$name2, _file$data$name3;
+  let {
+    file,
+    openFolder,
     className,
     isDisabled,
     restrictionError,
-    isCheckboxDisabled,
-    isChecked,
     toggleCheckbox,
-    recordShiftKeyPress,
-    type,
-    id,
-    itemIconEl,
-    title,
-    handleFolderClick,
     showTitles,
     i18n
-  } = props;
+  } = _ref;
   return g("li", {
     className: className,
-    title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : undefined
-  }, !isCheckboxDisabled ? g("input", {
+    title: file.status !== 'checked' && restrictionError ? restrictionError : undefined
+  }, g("input", {
     type: "checkbox",
-    className: `uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`,
-    onChange: toggleCheckbox,
-    onKeyDown: recordShiftKeyPress,
-    onMouseDown: recordShiftKeyPress
+    className: "uppy-u-reset uppy-ProviderBrowserItem-checkbox",
+    onChange: toggleCheckbox
     // for the <label/>
     ,
     name: "listitem",
-    id: id,
-    checked: isChecked,
-    "aria-label": type === 'file' ? null : i18n('allFilesFromFolderNamed', {
-      name: title
-    }),
+    id: file.id,
+    checked: file.status === 'checked',
+    "aria-label": file.data.isFolder ? i18n('allFilesFromFolderNamed', {
+      name: (_file$data$name = file.data.name) != null ? _file$data$name : i18n('unnamed')
+    }) : null,
     disabled: isDisabled,
     "data-uppy-super-focusable": true
-  }) : null, type === 'file' ?
-  // label for a checkbox
-  g("label", {
-    htmlFor: id,
-    className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
-  }, g("div", {
-    className: "uppy-ProviderBrowserItem-iconWrap"
-  }, itemIconEl), showTitles && title)
+  }), file.data.isFolder ?
   // button to open a folder
-  : g("button", {
+  g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner",
-    onClick: handleFolderClick,
+    onClick: () => openFolder(file.id),
     "aria-label": i18n('openFolderNamed', {
-      name: title
+      name: (_file$data$name2 = file.data.name) != null ? _file$data$name2 : i18n('unnamed')
     })
   }, g("div", {
     className: "uppy-ProviderBrowserItem-iconWrap"
-  }, itemIconEl), showTitles && title ? g("span", null, title) : i18n('unnamed')));
+  }, g(ItemIcon, {
+    itemIconString: file.data.icon
+  })), showTitles && file.data.name ? g("span", null, file.data.name) : i18n('unnamed'))
+  // label for a checkbox
+  : g("label", {
+    htmlFor: file.id,
+    className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
+  }, g("div", {
+    className: "uppy-ProviderBrowserItem-iconWrap"
+  }, g(ItemIcon, {
+    itemIconString: file.data.icon
+  })), showTitles && ((_file$data$name3 = file.data.name) != null ? _file$data$name3 : i18n('unnamed'))));
 }
 ;// ./node_modules/@uppy/provider-views/lib/Item/index.js
-function Item_extends() { Item_extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return Item_extends.apply(this, arguments); }
-/* eslint-disable react/require-default-props */
-
+/* eslint-disable react/jsx-props-no-spreading */
 
 
 
 
 function Item(props) {
   const {
-    author,
-    getItemIcon,
-    isChecked,
-    isDisabled,
-    viewType
+    viewType,
+    toggleCheckbox,
+    showTitles,
+    i18n,
+    openFolder,
+    file,
+    utmSource
   } = props;
-  const itemIconString = getItemIcon();
-  const className = classnames('uppy-ProviderBrowserItem', {
-    'uppy-ProviderBrowserItem--selected': isChecked
-  }, {
-    'uppy-ProviderBrowserItem--disabled': isDisabled
-  }, {
-    'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video'
-  });
-  const itemIconEl = g(ItemIcon, {
-    itemIconString: itemIconString
-  });
+  const restrictionError = file.type === 'folder' ? null : file.restrictionError;
+  const isDisabled = !!restrictionError && file.status !== 'checked';
+  const ourProps = {
+    file,
+    openFolder,
+    toggleCheckbox,
+    utmSource,
+    i18n,
+    viewType,
+    showTitles,
+    className: classnames('uppy-ProviderBrowserItem', {
+      'uppy-ProviderBrowserItem--disabled': isDisabled
+    }, {
+      'uppy-ProviderBrowserItem--noPreview': file.data.icon === 'video'
+    }, {
+      'uppy-ProviderBrowserItem--is-checked': file.status === 'checked'
+    }, {
+      'uppy-ProviderBrowserItem--is-partial': file.status === 'partial'
+    }),
+    isDisabled,
+    restrictionError
+  };
   switch (viewType) {
     case 'grid':
-      return g(GridLi, Item_extends({}, props, {
-        className: className,
-        itemIconEl: itemIconEl
-      }));
+      return g(components_GridItem, ourProps);
     case 'list':
-      return g(ListItem, Item_extends({}, props, {
-        className: className,
-        itemIconEl: itemIconEl
-      }));
+      return g(ListItem, ourProps);
     case 'unsplash':
-      return g(GridLi, Item_extends({}, props, {
-        className: className,
-        itemIconEl: itemIconEl
-      }), g("a", {
-        href: `${author.url}?utm_source=Companion&utm_medium=referral`,
+      return g(components_GridItem, ourProps, g("a", {
+        href: `${file.data.author.url}?utm_source=${utmSource}&utm_medium=referral`,
         target: "_blank",
         rel: "noopener noreferrer",
         className: "uppy-ProviderBrowserItem-author",
         tabIndex: -1
-      }, author.name));
+      }, file.data.author.name));
     default:
       throw new Error(`There is no such type ${viewType}`);
   }
 }
 ;// ./node_modules/@uppy/provider-views/lib/Browser.js
-/* eslint-disable react/require-default-props */
-
-
 
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -14225,390 +13574,1145 @@ function Item(props) {
 
 
 
-
-const VIRTUAL_SHARED_DIR = 'shared-with-me';
-function Browser_ListItem(props) {
-  const {
-    currentSelection,
-    uppyFiles,
-    viewType,
-    isChecked,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    showTitles,
-    i18n,
-    validateRestrictions,
-    getNextFolder,
-    f
-  } = props;
-  if (f.isFolder) {
-    return Item({
-      showTitles,
-      viewType,
-      i18n,
-      id: f.id,
-      title: f.name,
-      getItemIcon: () => f.icon,
-      isChecked: isChecked(f),
-      toggleCheckbox: event => toggleCheckbox(event, f),
-      recordShiftKeyPress,
-      type: 'folder',
-      // TODO: when was this supposed to be true?
-      isDisabled: false,
-      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
-      // getNextFolder always exists when f.isFolder is true
-      handleFolderClick: () => getNextFolder(f)
-    });
-  }
-  const restrictionError = validateRestrictions(remoteFileObjToLocal(f), [...uppyFiles, ...currentSelection]);
-  return Item({
-    id: f.id,
-    title: f.name,
-    author: f.author,
-    getItemIcon: () => viewType === 'grid' && f.thumbnail ? f.thumbnail : f.icon,
-    isChecked: isChecked(f),
-    toggleCheckbox: event => toggleCheckbox(event, f),
-    isCheckboxDisabled: false,
-    recordShiftKeyPress,
-    showTitles,
-    viewType,
-    i18n,
-    type: 'file',
-    isDisabled: Boolean(restrictionError) && !isChecked(f),
-    restrictionError
-  });
-}
 function Browser(props) {
   const {
-    currentSelection,
-    folders,
-    files,
-    uppyFiles,
+    displayedPartialTree,
     viewType,
-    headerComponent,
-    showBreadcrumbs,
-    isChecked,
     toggleCheckbox,
-    recordShiftKeyPress,
     handleScroll,
     showTitles,
     i18n,
-    validateRestrictions,
     isLoading,
-    showSearchFilter,
-    search,
-    searchTerm,
-    clearSearch,
-    searchOnInput,
-    searchInputLabel,
-    clearSearchLabel,
-    getNextFolder,
-    cancel,
-    done,
+    openFolder,
     noResultsLabel,
-    virtualList
+    virtualList,
+    utmSource
   } = props;
-  const selected = currentSelection.length;
-  const rows = hooks_module_T(() => [...folders, ...files], [folders, files]);
-  return g("div", {
-    className: classnames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${viewType}`)
-  }, headerComponent && g("div", {
-    className: "uppy-ProviderBrowser-header"
-  }, g("div", {
-    className: classnames('uppy-ProviderBrowser-headerBar', !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')
-  }, headerComponent)), showSearchFilter && g("div", {
-    class: "uppy-ProviderBrowser-searchFilter"
-  }, g(SearchFilterInput, {
-    search: search,
-    searchTerm: searchTerm,
-    clearSearch: clearSearch,
-    inputLabel: searchInputLabel,
-    clearSearchLabel: clearSearchLabel,
-    inputClassName: "uppy-ProviderBrowser-searchFilterInput",
-    searchOnInput: searchOnInput
-  })), (() => {
-    if (isLoading) {
-      return g("div", {
-        className: "uppy-Provider-loading"
-      }, g("span", null, typeof isLoading === 'string' ? isLoading : i18n('loading')));
-    }
-    if (!folders.length && !files.length) {
-      return g("div", {
-        className: "uppy-Provider-empty"
-      }, noResultsLabel);
-    }
-    if (virtualList) {
-      return g("div", {
-        className: "uppy-ProviderBrowser-body"
-      }, g("ul", {
-        className: "uppy-ProviderBrowser-list"
-      }, g(lib_VirtualList, {
-        data: rows,
-        renderRow: f => g(Browser_ListItem, {
-          currentSelection: currentSelection,
-          uppyFiles: uppyFiles,
-          viewType: viewType,
-          isChecked: isChecked,
-          toggleCheckbox: toggleCheckbox,
-          recordShiftKeyPress: recordShiftKeyPress,
-          showTitles: showTitles,
-          i18n: i18n,
-          validateRestrictions: validateRestrictions,
-          getNextFolder: getNextFolder,
-          f: f
-        }),
-        rowHeight: 31
-      })));
-    }
+  const [isShiftKeyPressed, setIsShiftKeyPressed] = hooks_module_h(false);
+
+  // This records whether the user is holding the SHIFT key this very moment.
+  // Typically, this is implemented using `onClick((e) => e.shiftKey)` -
+  // however we can't use that, because for accessibility reasons
+  // we're using html tags that don't support `e.shiftKey` property (see #3768).
+  hooks_module_y(() => {
+    const handleKeyUp = e => {
+      if (e.key === 'Shift') setIsShiftKeyPressed(false);
+    };
+    const handleKeyDown = e => {
+      if (e.key === 'Shift') setIsShiftKeyPressed(true);
+    };
+    document.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+  if (isLoading) {
+    return g("div", {
+      className: "uppy-Provider-loading"
+    }, typeof isLoading === 'string' ? isLoading : i18n('loading'));
+  }
+  if (displayedPartialTree.length === 0) {
+    return g("div", {
+      className: "uppy-Provider-empty"
+    }, noResultsLabel);
+  }
+  const renderItem = item => g(Item, {
+    viewType: viewType,
+    toggleCheckbox: event => {
+      var _document$getSelectio;
+      event.stopPropagation();
+      event.preventDefault();
+      // Prevent shift-clicking from highlighting file names
+      // (https://stackoverflow.com/a/1527797/3192470)
+      (_document$getSelectio = document.getSelection()) == null || _document$getSelectio.removeAllRanges();
+      toggleCheckbox(item, isShiftKeyPressed);
+    },
+    showTitles: showTitles,
+    i18n: i18n,
+    openFolder: openFolder,
+    file: item,
+    utmSource: utmSource
+  });
+  if (virtualList) {
     return g("div", {
       className: "uppy-ProviderBrowser-body"
     }, g("ul", {
-      className: "uppy-ProviderBrowser-list",
-      onScroll: handleScroll,
-      role: "listbox"
-      // making <ul> not focusable for firefox
-      ,
-      tabIndex: -1
-    }, rows.map(f => g(Browser_ListItem, {
-      currentSelection: currentSelection,
-      uppyFiles: uppyFiles,
-      viewType: viewType,
-      isChecked: isChecked,
-      toggleCheckbox: toggleCheckbox,
-      recordShiftKeyPress: recordShiftKeyPress,
-      showTitles: showTitles,
-      i18n: i18n,
-      validateRestrictions: validateRestrictions,
-      getNextFolder: getNextFolder,
-      f: f
-    }))));
-  })(), selected > 0 && g(FooterActions, {
-    selected: selected,
-    done: done,
-    cancel: cancel,
-    i18n: i18n
-  }));
+      className: "uppy-ProviderBrowser-list"
+    }, g(lib_VirtualList, {
+      data: displayedPartialTree,
+      renderRow: renderItem,
+      rowHeight: 31
+    })));
+  }
+  return g("div", {
+    className: "uppy-ProviderBrowser-body"
+  }, g("ul", {
+    className: "uppy-ProviderBrowser-list",
+    onScroll: handleScroll,
+    role: "listbox"
+    // making <ul> not focusable for firefox
+    ,
+    tabIndex: -1
+  }, displayedPartialTree.map(renderItem)));
 }
 /* harmony default export */ const lib_Browser = (Browser);
-;// ./node_modules/@uppy/provider-views/lib/CloseWrapper.js
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/afterOpenFolder.js
+const afterOpenFolder = (oldPartialTree, discoveredItems, clickedFolder, currentPagePath, validateSingleFile) => {
+  const discoveredFolders = discoveredItems.filter(i => i.isFolder === true);
+  const discoveredFiles = discoveredItems.filter(i => i.isFolder === false);
+  const isParentFolderChecked = clickedFolder.type === 'folder' && clickedFolder.status === 'checked';
+  const folders = discoveredFolders.map(folder => ({
+    type: 'folder',
+    id: folder.requestPath,
+    cached: false,
+    nextPagePath: null,
+    status: isParentFolderChecked ? 'checked' : 'unchecked',
+    parentId: clickedFolder.id,
+    data: folder
+  }));
+  const files = discoveredFiles.map(file => {
+    const restrictionError = validateSingleFile(file);
+    return {
+      type: 'file',
+      id: file.requestPath,
+      restrictionError,
+      status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+      parentId: clickedFolder.id,
+      data: file
+    };
+  });
 
-class CloseWrapper extends x {
-  componentWillUnmount() {
-    const {
-      onUnmount
-    } = this.props;
-    onUnmount();
+  // just doing `clickedFolder.cached = true` in a non-mutating way
+  const updatedClickedFolder = {
+    ...clickedFolder,
+    cached: true,
+    nextPagePath: currentPagePath
+  };
+  const partialTreeWithUpdatedClickedFolder = oldPartialTree.map(folder => folder.id === updatedClickedFolder.id ? updatedClickedFolder : folder);
+  const newPartialTree = [...partialTreeWithUpdatedClickedFolder, ...folders, ...files];
+  return newPartialTree;
+};
+/* harmony default export */ const PartialTreeUtils_afterOpenFolder = (afterOpenFolder);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/afterScrollFolder.js
+const afterScrollFolder = (oldPartialTree, currentFolderId, items, nextPagePath, validateSingleFile) => {
+  const currentFolder = oldPartialTree.find(i => i.id === currentFolderId);
+  const newFolders = items.filter(i => i.isFolder === true);
+  const newFiles = items.filter(i => i.isFolder === false);
+
+  // just doing `scrolledFolder.nextPagePath = ...` in a non-mutating way
+  const scrolledFolder = {
+    ...currentFolder,
+    nextPagePath
+  };
+  const partialTreeWithUpdatedScrolledFolder = oldPartialTree.map(folder => folder.id === scrolledFolder.id ? scrolledFolder : folder);
+  const isParentFolderChecked = scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked';
+  const folders = newFolders.map(folder => ({
+    type: 'folder',
+    id: folder.requestPath,
+    cached: false,
+    nextPagePath: null,
+    status: isParentFolderChecked ? 'checked' : 'unchecked',
+    parentId: scrolledFolder.id,
+    data: folder
+  }));
+  const files = newFiles.map(file => {
+    const restrictionError = validateSingleFile(file);
+    return {
+      type: 'file',
+      id: file.requestPath,
+      restrictionError,
+      status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+      parentId: scrolledFolder.id,
+      data: file
+    };
+  });
+  const newPartialTree = [...partialTreeWithUpdatedScrolledFolder, ...folders, ...files];
+  return newPartialTree;
+};
+/* harmony default export */ const PartialTreeUtils_afterScrollFolder = (afterScrollFolder);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/shallowClone.js
+/**
+ * One-level copying is sufficient as mutations within our `partialTree` are limited to properties
+ * such as `.status`, `.cached`, `.nextPagePath`, and not `.data = { THIS }`.
+ */
+const shallowClone = partialTree => {
+  return partialTree.map(item => ({
+    ...item
+  }));
+};
+/* harmony default export */ const PartialTreeUtils_shallowClone = (shallowClone);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/afterToggleCheckbox.js
+/* eslint-disable no-param-reassign */
+
+
+
+/*
+  FROM        | TO
+
+  root        |  root
+    folder    |    folder
+    folder ✅︎  |    folder ✅︎
+      file    |      file ✅︎
+      file    |      file ✅︎
+      folder  |      folder ✅︎
+        file  |        file ✅︎
+    file      |    file
+    file      |    file
+*/
+const percolateDown = (tree, id, shouldMarkAsChecked) => {
+  const children = tree.filter(item => item.type !== 'root' && item.parentId === id);
+  children.forEach(item => {
+    item.status = shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError) ? 'checked' : 'unchecked';
+    percolateDown(tree, item.id, shouldMarkAsChecked);
+  });
+};
+
+/*
+  FROM         | TO
+
+  root         |  root
+    folder     |    folder
+    folder     |    folder [▬] ('partial' status)
+      file     |      file
+      folder   |      folder ✅︎
+        file ✅︎ |       file ✅︎
+    file       |    file
+    file       |    file
+*/
+const percolateUp = (tree, id) => {
+  const folder = tree.find(item => item.id === id);
+  if (folder.type === 'root') return;
+  const validChildren = tree.filter(item =>
+  // is a child
+  item.type !== 'root' && item.parentId === folder.id &&
+  // does pass validations
+  !(item.type === 'file' && item.restrictionError));
+  const areAllChildrenChecked = validChildren.every(item => item.status === 'checked');
+  const areAllChildrenUnchecked = validChildren.every(item => item.status === 'unchecked');
+  if (areAllChildrenChecked) {
+    folder.status = 'checked';
+  } else if (areAllChildrenUnchecked) {
+    folder.status = 'unchecked';
+  } else {
+    folder.status = 'partial';
   }
-  render() {
-    const {
-      children
-    } = this.props;
-    return H(children)[0];
-  }
-}
-;// ./node_modules/@uppy/provider-views/lib/View.js
-
-
-// Conditional type for selecting the plugin
-
-// Conditional type for selecting the provider from the selected plugin
-
-class View {
-  constructor(plugin, opts) {
-    this.filterItems = items => {
-      const state = this.plugin.getPluginState();
-      if (!state.filterInput || state.filterInput === '') {
-        return items;
+  percolateUp(tree, folder.parentId);
+};
+const afterToggleCheckbox = (oldTree, clickedRange) => {
+  const tree = PartialTreeUtils_shallowClone(oldTree);
+  if (clickedRange.length >= 2) {
+    // We checked two or more items
+    const newlyCheckedItems = tree.filter(item => item.type !== 'root' && clickedRange.includes(item.id));
+    newlyCheckedItems.forEach(item => {
+      if (item.type === 'file') {
+        item.status = item.restrictionError ? 'unchecked' : 'checked';
+      } else {
+        item.status = 'checked';
       }
-      return items.filter(folder => {
-        return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1;
-      });
-    };
-    this.recordShiftKeyPress = e => {
-      this.isShiftKeyPressed = e.shiftKey;
-    };
-    this.isChecked = file => {
-      const {
-        currentSelection
-      } = this.plugin.getPluginState();
-      // comparing id instead of the file object, because the reference to the object
-      // changes when we switch folders, and the file list is updated
-      return currentSelection.some(item => item.id === file.id);
-    };
-    this.plugin = plugin;
-    this.provider = opts.provider;
-    this.opts = opts;
-    this.isHandlingScroll = false;
-    this.preFirstRender = this.preFirstRender.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.clearSelection = this.clearSelection.bind(this);
-    this.cancelPicking = this.cancelPicking.bind(this);
-  }
-  preFirstRender() {
-    this.plugin.setPluginState({
-      didFirstRender: true
     });
-    this.plugin.onFirstRender();
-  }
-  shouldHandleScroll(event) {
-    const {
-      scrollHeight,
-      scrollTop,
-      offsetHeight
-    } = event.target;
-    const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
-    return scrollPosition < 50 && !this.isHandlingScroll;
-  }
-  clearSelection() {
-    this.plugin.setPluginState({
-      currentSelection: [],
-      filterInput: ''
+    newlyCheckedItems.forEach(item => {
+      percolateDown(tree, item.id, true);
     });
+    percolateUp(tree, newlyCheckedItems[0].parentId);
+  } else {
+    // We checked exactly one item
+    const clickedItem = tree.find(item => item.id === clickedRange[0]);
+    clickedItem.status = clickedItem.status === 'checked' ? 'unchecked' : 'checked';
+    percolateDown(tree, clickedItem.id, clickedItem.status === 'checked');
+    percolateUp(tree, clickedItem.parentId);
   }
-  cancelPicking() {
-    this.clearSelection();
-    const dashboard = this.plugin.uppy.getPlugin('Dashboard');
-    if (dashboard) {
-      // @ts-expect-error impossible to type this correctly without adding dashboard
-      // as a dependency to this package.
-      dashboard.hideAllPanels();
-    }
-  }
-  handleError(error) {
-    var _error$cause;
-    const {
-      uppy
-    } = this.plugin;
-    const message = uppy.i18n('companionError');
-    uppy.log(error.toString());
-    if (error.isAuthError || ((_error$cause = error.cause) == null ? void 0 : _error$cause.name) === 'AbortError') {
-      // authError just means we're not authenticated, don't show to user
-      // AbortError means the user has clicked "cancel" on an operation
-      return;
-    }
-    uppy.info({
-      message,
-      details: error.toString()
-    }, 'error', 5000);
-  }
-  registerRequestClient() {
-    this.requestClientId = this.provider.provider;
-    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider);
-  }
+  return tree;
+};
+/* harmony default export */ const PartialTreeUtils_afterToggleCheckbox = (afterToggleCheckbox);
+// EXTERNAL MODULE: ./node_modules/eventemitter3/index.js
+var eventemitter3 = __webpack_require__(228);
+;// ./node_modules/eventemitter3/index.mjs
 
-  // TODO: document what is a "tagFile" or get rid of this concept
-  getTagFile(file) {
-    const tagFile = {
-      id: file.id,
-      source: this.plugin.id,
-      name: file.name || file.id,
-      type: file.mimeType,
-      isRemote: true,
-      data: file,
-      // @ts-expect-error meta is filled conditionally below
-      meta: {},
+
+
+/* harmony default export */ const node_modules_eventemitter3 = ((/* unused pure expression or super */ null && (EventEmitter)));
+
+;// ./node_modules/p-timeout/index.js
+class TimeoutError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = 'TimeoutError';
+	}
+}
+
+/**
+An error to be thrown when the request is aborted by AbortController.
+DOMException is thrown instead of this Error when DOMException is available.
+*/
+class AbortError extends Error {
+	constructor(message) {
+		super();
+		this.name = 'AbortError';
+		this.message = message;
+	}
+}
+
+/**
+TODO: Remove AbortError and just throw DOMException when targeting Node 18.
+*/
+const getDOMException = errorMessage => globalThis.DOMException === undefined
+	? new AbortError(errorMessage)
+	: new DOMException(errorMessage);
+
+/**
+TODO: Remove below function and just 'reject(signal.reason)' when targeting Node 18.
+*/
+const getAbortedReason = signal => {
+	const reason = signal.reason === undefined
+		? getDOMException('This operation was aborted.')
+		: signal.reason;
+
+	return reason instanceof Error ? reason : getDOMException(reason);
+};
+
+function pTimeout(promise, options) {
+	const {
+		milliseconds,
+		fallback,
+		message,
+		customTimers = {setTimeout, clearTimeout},
+	} = options;
+
+	let timer;
+	let abortHandler;
+
+	const wrappedPromise = new Promise((resolve, reject) => {
+		if (typeof milliseconds !== 'number' || Math.sign(milliseconds) !== 1) {
+			throw new TypeError(`Expected \`milliseconds\` to be a positive number, got \`${milliseconds}\``);
+		}
+
+		if (options.signal) {
+			const {signal} = options;
+			if (signal.aborted) {
+				reject(getAbortedReason(signal));
+			}
+
+			abortHandler = () => {
+				reject(getAbortedReason(signal));
+			};
+
+			signal.addEventListener('abort', abortHandler, {once: true});
+		}
+
+		if (milliseconds === Number.POSITIVE_INFINITY) {
+			promise.then(resolve, reject);
+			return;
+		}
+
+		// We create the error outside of `setTimeout` to preserve the stack trace.
+		const timeoutError = new TimeoutError();
+
+		timer = customTimers.setTimeout.call(undefined, () => {
+			if (fallback) {
+				try {
+					resolve(fallback());
+				} catch (error) {
+					reject(error);
+				}
+
+				return;
+			}
+
+			if (typeof promise.cancel === 'function') {
+				promise.cancel();
+			}
+
+			if (message === false) {
+				resolve();
+			} else if (message instanceof Error) {
+				reject(message);
+			} else {
+				timeoutError.message = message ?? `Promise timed out after ${milliseconds} milliseconds`;
+				reject(timeoutError);
+			}
+		}, milliseconds);
+
+		(async () => {
+			try {
+				resolve(await promise);
+			} catch (error) {
+				reject(error);
+			}
+		})();
+	});
+
+	const cancelablePromise = wrappedPromise.finally(() => {
+		cancelablePromise.clear();
+		if (abortHandler && options.signal) {
+			options.signal.removeEventListener('abort', abortHandler);
+		}
+	});
+
+	cancelablePromise.clear = () => {
+		customTimers.clearTimeout.call(undefined, timer);
+		timer = undefined;
+	};
+
+	return cancelablePromise;
+}
+
+;// ./node_modules/p-queue/dist/lower-bound.js
+// Port of lower_bound from https://en.cppreference.com/w/cpp/algorithm/lower_bound
+// Used to compute insertion index to keep queue sorted after insertion
+function lowerBound(array, value, comparator) {
+    let first = 0;
+    let count = array.length;
+    while (count > 0) {
+        const step = Math.trunc(count / 2);
+        let it = first + step;
+        if (comparator(array[it], value) <= 0) {
+            first = ++it;
+            count -= step + 1;
+        }
+        else {
+            count = step;
+        }
+    }
+    return first;
+}
+
+;// ./node_modules/p-queue/dist/priority-queue.js
+
+class PriorityQueue {
+    #queue = [];
+    enqueue(run, options) {
+        options = {
+            priority: 0,
+            ...options,
+        };
+        const element = {
+            priority: options.priority,
+            run,
+        };
+        if (this.size && this.#queue[this.size - 1].priority >= options.priority) {
+            this.#queue.push(element);
+            return;
+        }
+        const index = lowerBound(this.#queue, element, (a, b) => b.priority - a.priority);
+        this.#queue.splice(index, 0, element);
+    }
+    dequeue() {
+        const item = this.#queue.shift();
+        return item?.run;
+    }
+    filter(options) {
+        return this.#queue.filter((element) => element.priority === options.priority).map((element) => element.run);
+    }
+    get size() {
+        return this.#queue.length;
+    }
+}
+
+;// ./node_modules/p-queue/dist/index.js
+
+
+
+/**
+Promise queue with concurrency control.
+*/
+class PQueue extends eventemitter3 {
+    #carryoverConcurrencyCount;
+    #isIntervalIgnored;
+    #intervalCount = 0;
+    #intervalCap;
+    #interval;
+    #intervalEnd = 0;
+    #intervalId;
+    #timeoutId;
+    #queue;
+    #queueClass;
+    #pending = 0;
+    // The `!` is needed because of https://github.com/microsoft/TypeScript/issues/32194
+    #concurrency;
+    #isPaused;
+    #throwOnTimeout;
+    /**
+    Per-operation timeout in milliseconds. Operations fulfill once `timeout` elapses if they haven't already.
+
+    Applies to each future operation.
+    */
+    timeout;
+    // TODO: The `throwOnTimeout` option should affect the return types of `add()` and `addAll()`
+    constructor(options) {
+        super();
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        options = {
+            carryoverConcurrencyCount: false,
+            intervalCap: Number.POSITIVE_INFINITY,
+            interval: 0,
+            concurrency: Number.POSITIVE_INFINITY,
+            autoStart: true,
+            queueClass: PriorityQueue,
+            ...options,
+        };
+        if (!(typeof options.intervalCap === 'number' && options.intervalCap >= 1)) {
+            throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${options.intervalCap?.toString() ?? ''}\` (${typeof options.intervalCap})`);
+        }
+        if (options.interval === undefined || !(Number.isFinite(options.interval) && options.interval >= 0)) {
+            throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${options.interval?.toString() ?? ''}\` (${typeof options.interval})`);
+        }
+        this.#carryoverConcurrencyCount = options.carryoverConcurrencyCount;
+        this.#isIntervalIgnored = options.intervalCap === Number.POSITIVE_INFINITY || options.interval === 0;
+        this.#intervalCap = options.intervalCap;
+        this.#interval = options.interval;
+        this.#queue = new options.queueClass();
+        this.#queueClass = options.queueClass;
+        this.concurrency = options.concurrency;
+        this.timeout = options.timeout;
+        this.#throwOnTimeout = options.throwOnTimeout === true;
+        this.#isPaused = options.autoStart === false;
+    }
+    get #doesIntervalAllowAnother() {
+        return this.#isIntervalIgnored || this.#intervalCount < this.#intervalCap;
+    }
+    get #doesConcurrentAllowAnother() {
+        return this.#pending < this.#concurrency;
+    }
+    #next() {
+        this.#pending--;
+        this.#tryToStartAnother();
+        this.emit('next');
+    }
+    #onResumeInterval() {
+        this.#onInterval();
+        this.#initializeIntervalIfNeeded();
+        this.#timeoutId = undefined;
+    }
+    get #isIntervalPaused() {
+        const now = Date.now();
+        if (this.#intervalId === undefined) {
+            const delay = this.#intervalEnd - now;
+            if (delay < 0) {
+                // Act as the interval was done
+                // We don't need to resume it here because it will be resumed on line 160
+                this.#intervalCount = (this.#carryoverConcurrencyCount) ? this.#pending : 0;
+            }
+            else {
+                // Act as the interval is pending
+                if (this.#timeoutId === undefined) {
+                    this.#timeoutId = setTimeout(() => {
+                        this.#onResumeInterval();
+                    }, delay);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    #tryToStartAnother() {
+        if (this.#queue.size === 0) {
+            // We can clear the interval ("pause")
+            // Because we can redo it later ("resume")
+            if (this.#intervalId) {
+                clearInterval(this.#intervalId);
+            }
+            this.#intervalId = undefined;
+            this.emit('empty');
+            if (this.#pending === 0) {
+                this.emit('idle');
+            }
+            return false;
+        }
+        if (!this.#isPaused) {
+            const canInitializeInterval = !this.#isIntervalPaused;
+            if (this.#doesIntervalAllowAnother && this.#doesConcurrentAllowAnother) {
+                const job = this.#queue.dequeue();
+                if (!job) {
+                    return false;
+                }
+                this.emit('active');
+                job();
+                if (canInitializeInterval) {
+                    this.#initializeIntervalIfNeeded();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    #initializeIntervalIfNeeded() {
+        if (this.#isIntervalIgnored || this.#intervalId !== undefined) {
+            return;
+        }
+        this.#intervalId = setInterval(() => {
+            this.#onInterval();
+        }, this.#interval);
+        this.#intervalEnd = Date.now() + this.#interval;
+    }
+    #onInterval() {
+        if (this.#intervalCount === 0 && this.#pending === 0 && this.#intervalId) {
+            clearInterval(this.#intervalId);
+            this.#intervalId = undefined;
+        }
+        this.#intervalCount = this.#carryoverConcurrencyCount ? this.#pending : 0;
+        this.#processQueue();
+    }
+    /**
+    Executes all queued functions until it reaches the limit.
+    */
+    #processQueue() {
+        // eslint-disable-next-line no-empty
+        while (this.#tryToStartAnother()) { }
+    }
+    get concurrency() {
+        return this.#concurrency;
+    }
+    set concurrency(newConcurrency) {
+        if (!(typeof newConcurrency === 'number' && newConcurrency >= 1)) {
+            throw new TypeError(`Expected \`concurrency\` to be a number from 1 and up, got \`${newConcurrency}\` (${typeof newConcurrency})`);
+        }
+        this.#concurrency = newConcurrency;
+        this.#processQueue();
+    }
+    async #throwOnAbort(signal) {
+        return new Promise((_resolve, reject) => {
+            signal.addEventListener('abort', () => {
+                reject(signal.reason);
+            }, { once: true });
+        });
+    }
+    async add(function_, options = {}) {
+        options = {
+            timeout: this.timeout,
+            throwOnTimeout: this.#throwOnTimeout,
+            ...options,
+        };
+        return new Promise((resolve, reject) => {
+            this.#queue.enqueue(async () => {
+                this.#pending++;
+                this.#intervalCount++;
+                try {
+                    options.signal?.throwIfAborted();
+                    let operation = function_({ signal: options.signal });
+                    if (options.timeout) {
+                        operation = pTimeout(Promise.resolve(operation), { milliseconds: options.timeout });
+                    }
+                    if (options.signal) {
+                        operation = Promise.race([operation, this.#throwOnAbort(options.signal)]);
+                    }
+                    const result = await operation;
+                    resolve(result);
+                    this.emit('completed', result);
+                }
+                catch (error) {
+                    if (error instanceof TimeoutError && !options.throwOnTimeout) {
+                        resolve();
+                        return;
+                    }
+                    reject(error);
+                    this.emit('error', error);
+                }
+                finally {
+                    this.#next();
+                }
+            }, options);
+            this.emit('add');
+            this.#tryToStartAnother();
+        });
+    }
+    async addAll(functions, options) {
+        return Promise.all(functions.map(async (function_) => this.add(function_, options)));
+    }
+    /**
+    Start (or resume) executing enqueued tasks within concurrency limit. No need to call this if queue is not paused (via `options.autoStart = false` or by `.pause()` method.)
+    */
+    start() {
+        if (!this.#isPaused) {
+            return this;
+        }
+        this.#isPaused = false;
+        this.#processQueue();
+        return this;
+    }
+    /**
+    Put queue execution on hold.
+    */
+    pause() {
+        this.#isPaused = true;
+    }
+    /**
+    Clear the queue.
+    */
+    clear() {
+        this.#queue = new this.#queueClass();
+    }
+    /**
+    Can be called multiple times. Useful if you for example add additional items at a later time.
+
+    @returns A promise that settles when the queue becomes empty.
+    */
+    async onEmpty() {
+        // Instantly resolve if the queue is empty
+        if (this.#queue.size === 0) {
+            return;
+        }
+        await this.#onEvent('empty');
+    }
+    /**
+    @returns A promise that settles when the queue size is less than the given limit: `queue.size < limit`.
+
+    If you want to avoid having the queue grow beyond a certain size you can `await queue.onSizeLessThan()` before adding a new item.
+
+    Note that this only limits the number of items waiting to start. There could still be up to `concurrency` jobs already running that this call does not include in its calculation.
+    */
+    async onSizeLessThan(limit) {
+        // Instantly resolve if the queue is empty.
+        if (this.#queue.size < limit) {
+            return;
+        }
+        await this.#onEvent('next', () => this.#queue.size < limit);
+    }
+    /**
+    The difference with `.onEmpty` is that `.onIdle` guarantees that all work from the queue has finished. `.onEmpty` merely signals that the queue is empty, but it could mean that some promises haven't completed yet.
+
+    @returns A promise that settles when the queue becomes empty, and all promises have completed; `queue.size === 0 && queue.pending === 0`.
+    */
+    async onIdle() {
+        // Instantly resolve if none pending and if nothing else is queued
+        if (this.#pending === 0 && this.#queue.size === 0) {
+            return;
+        }
+        await this.#onEvent('idle');
+    }
+    async #onEvent(event, filter) {
+        return new Promise(resolve => {
+            const listener = () => {
+                if (filter && !filter()) {
+                    return;
+                }
+                this.off(event, listener);
+                resolve();
+            };
+            this.on(event, listener);
+        });
+    }
+    /**
+    Size of the queue, the number of queued items waiting to run.
+    */
+    get size() {
+        return this.#queue.size;
+    }
+    /**
+    Size of the queue, filtered by the given options.
+
+    For example, this can be used to find the number of items remaining in the queue with a specific priority level.
+    */
+    sizeBy(options) {
+        // eslint-disable-next-line unicorn/no-array-callback-reference
+        return this.#queue.filter(options).length;
+    }
+    /**
+    Number of running items (no longer in the queue).
+    */
+    get pending() {
+        return this.#pending;
+    }
+    /**
+    Whether the queue is currently paused.
+    */
+    get isPaused() {
+        return this.#isPaused;
+    }
+}
+
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/afterFill.js
+/* eslint-disable no-param-reassign */
+
+// p-queue does not have a `"main"` field in its `package.json`, and that makes `import/no-unresolved` freak out.
+// We can safely ignore it because bundlers will happily use the `"exports"` field instead.
+// eslint-disable-next-line import/no-unresolved
+
+
+const recursivelyFetch = async (queue, poorTree, poorFolder, apiList, validateSingleFile) => {
+  let items = [];
+  let currentPath = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id;
+  while (currentPath) {
+    const response = await apiList(currentPath);
+    items = items.concat(response.items);
+    currentPath = response.nextPagePath;
+  }
+  const newFolders = items.filter(i => i.isFolder === true);
+  const newFiles = items.filter(i => i.isFolder === false);
+  const folders = newFolders.map(folder => ({
+    type: 'folder',
+    id: folder.requestPath,
+    cached: false,
+    nextPagePath: null,
+    status: 'checked',
+    parentId: poorFolder.id,
+    data: folder
+  }));
+  const files = newFiles.map(file => {
+    const restrictionError = validateSingleFile(file);
+    return {
+      type: 'file',
+      id: file.requestPath,
+      restrictionError,
+      status: restrictionError ? 'unchecked' : 'checked',
+      parentId: poorFolder.id,
+      data: file
+    };
+  });
+  poorFolder.cached = true;
+  poorFolder.nextPagePath = null;
+  poorTree.push(...files, ...folders);
+  folders.forEach(async folder => {
+    queue.add(() => recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile));
+  });
+};
+const afterFill = async (partialTree, apiList, validateSingleFile, reportProgress) => {
+  const queue = new PQueue({
+    concurrency: 6
+  });
+
+  // fill up the missing parts of a partialTree!
+  const poorTree = PartialTreeUtils_shallowClone(partialTree);
+  const poorFolders = poorTree.filter(item => item.type === 'folder' && item.status === 'checked' && (
+  // either "not yet cached at all" or "some pages are left to fetch"
+  item.cached === false || item.nextPagePath));
+  // per each poor folder, recursively fetch all files and make them .checked!
+  poorFolders.forEach(poorFolder => {
+    queue.add(() => recursivelyFetch(queue, poorTree, poorFolder, apiList, validateSingleFile));
+  });
+  queue.on('completed', () => {
+    const nOfFilesChecked = poorTree.filter(i => i.type === 'file' && i.status === 'checked').length;
+    reportProgress(nOfFilesChecked);
+  });
+  await queue.onIdle();
+  return poorTree;
+};
+/* harmony default export */ const PartialTreeUtils_afterFill = (afterFill);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/index.js
+
+
+
+
+/* harmony default export */ const PartialTreeUtils = ({
+  afterOpenFolder: PartialTreeUtils_afterOpenFolder,
+  afterScrollFolder: PartialTreeUtils_afterScrollFolder,
+  afterToggleCheckbox: PartialTreeUtils_afterToggleCheckbox,
+  afterFill: PartialTreeUtils_afterFill
+});
+;// ./node_modules/@uppy/provider-views/lib/utils/shouldHandleScroll.js
+const shouldHandleScroll = event => {
+  const {
+    scrollHeight,
+    scrollTop,
+    offsetHeight
+  } = event.target;
+  const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
+  return scrollPosition < 50;
+};
+/* harmony default export */ const utils_shouldHandleScroll = (shouldHandleScroll);
+;// ./node_modules/@uppy/provider-views/lib/utils/handleError.js
+const handleError = uppy => error => {
+  // authError just means we're not authenticated, don't report it
+  if (error.isAuthError) {
+    return;
+  }
+  // AbortError means the user has clicked "cancel" on an operation
+  if (error.name === 'AbortError') {
+    uppy.log('Aborting request', 'warning');
+    return;
+  }
+  uppy.log(error, 'error');
+  if (error.name === 'UserFacingApiError') {
+    uppy.info({
+      message: uppy.i18n('companionError'),
+      details: uppy.i18n(error.message)
+    }, 'warning', 5000);
+  }
+};
+/* harmony default export */ const utils_handleError = (handleError);
+;// ./node_modules/@uppy/provider-views/lib/utils/getClickedRange.js
+// Shift-clicking selects a single consecutive list of items
+// starting at the previous click.
+const getClickedRange = (clickedId, displayedPartialTree, isShiftKeyPressed, lastCheckbox) => {
+  const lastCheckboxIndex = displayedPartialTree.findIndex(item => item.id === lastCheckbox);
+  if (lastCheckboxIndex !== -1 && isShiftKeyPressed) {
+    const newCheckboxIndex = displayedPartialTree.findIndex(item => item.id === clickedId);
+    const clickedRange = displayedPartialTree.slice(Math.min(lastCheckboxIndex, newCheckboxIndex), Math.max(lastCheckboxIndex, newCheckboxIndex) + 1);
+    return clickedRange.map(item => item.id);
+  }
+  return [clickedId];
+};
+/* harmony default export */ const utils_getClickedRange = (getClickedRange);
+;// ./node_modules/@uppy/provider-views/lib/SearchInput.js
+
+
+
+function SearchInput(_ref) {
+  let {
+    searchString,
+    setSearchString,
+    submitSearchString,
+    wrapperClassName,
+    inputClassName,
+    inputLabel,
+    clearSearchLabel = '',
+    showButton = false,
+    buttonLabel = '',
+    buttonCSSClassName = ''
+  } = _ref;
+  const onInput = e => {
+    setSearchString(e.target.value);
+  };
+  const submit = hooks_module_q(ev => {
+    ev.preventDefault();
+    submitSearchString();
+  }, [submitSearchString]);
+
+  // We do this to avoid nested <form>s
+  // (See https://github.com/transloadit/uppy/pull/5050#discussion_r1640392516)
+  const [form] = hooks_module_h(() => {
+    const formEl = document.createElement('form');
+    formEl.setAttribute('tabindex', '-1');
+    formEl.id = nanoid();
+    return formEl;
+  });
+  hooks_module_y(() => {
+    document.body.appendChild(form);
+    form.addEventListener('submit', submit);
+    return () => {
+      form.removeEventListener('submit', submit);
+      document.body.removeChild(form);
+    };
+  }, [form, submit]);
+  return g("section", {
+    className: wrapperClassName
+  }, g("input", {
+    className: `uppy-u-reset ${inputClassName}`,
+    type: "search",
+    "aria-label": inputLabel,
+    placeholder: inputLabel,
+    value: searchString,
+    onInput: onInput,
+    form: form.id,
+    "data-uppy-super-focusable": true
+  }), !showButton &&
+  // 🔍
+  g("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    className: "uppy-c-icon uppy-ProviderBrowser-searchFilterIcon",
+    width: "12",
+    height: "12",
+    viewBox: "0 0 12 12"
+  }, g("path", {
+    d: "M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z"
+  })), !showButton && searchString &&
+  // ❌
+  g("button", {
+    className: "uppy-u-reset uppy-ProviderBrowser-searchFilterReset",
+    type: "button",
+    "aria-label": clearSearchLabel,
+    title: clearSearchLabel,
+    onClick: () => setSearchString('')
+  }, g("svg", {
+    "aria-hidden": "true",
+    focusable: "false",
+    className: "uppy-c-icon",
+    viewBox: "0 0 19 19"
+  }, g("path", {
+    d: "M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z"
+  }))), showButton && g("button", {
+    className: `uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`,
+    type: "submit",
+    form: form.id
+  }, buttonLabel));
+}
+/* harmony default export */ const lib_SearchInput = (SearchInput);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/getNumberOfSelectedFiles.js
+/**
+ * We're interested in all 'checked' leaves of this tree,
+ * but we don't yet know how many files there are inside of each checked folder.
+ * `getNumberOfSelectedFiles()` returns the most intuitive number we can show to the user
+ * in this situation.
+ */
+const getNumberOfSelectedFiles = partialTree => {
+  const checkedLeaves = partialTree.filter(item => {
+    if (item.type === 'file' && item.status === 'checked') {
+      return true;
+    }
+    if (item.type === 'folder' && item.status === 'checked') {
+      const doesItHaveChildren = partialTree.some(i => i.type !== 'root' && i.parentId === item.id);
+      return !doesItHaveChildren;
+    }
+    return false;
+  });
+  return checkedLeaves.length;
+};
+/* harmony default export */ const PartialTreeUtils_getNumberOfSelectedFiles = (getNumberOfSelectedFiles);
+;// ./node_modules/@uppy/provider-views/lib/FooterActions.js
+
+
+
+
+function FooterActions(_ref) {
+  let {
+    cancelSelection,
+    donePicking,
+    i18n,
+    partialTree,
+    validateAggregateRestrictions
+  } = _ref;
+  const aggregateRestrictionError = hooks_module_T(() => {
+    return validateAggregateRestrictions(partialTree);
+  }, [partialTree, validateAggregateRestrictions]);
+  const nOfSelectedFiles = hooks_module_T(() => {
+    return PartialTreeUtils_getNumberOfSelectedFiles(partialTree);
+  }, [partialTree]);
+  if (nOfSelectedFiles === 0) {
+    return null;
+  }
+  return g("div", {
+    className: "uppy-ProviderBrowser-footer"
+  }, g("div", {
+    className: "uppy-ProviderBrowser-footer-buttons"
+  }, g("button", {
+    className: classnames('uppy-u-reset uppy-c-btn uppy-c-btn-primary', {
+      'uppy-c-btn--disabled': aggregateRestrictionError
+    }),
+    disabled: !!aggregateRestrictionError,
+    onClick: donePicking,
+    type: "button"
+  }, i18n('selectX', {
+    smart_count: nOfSelectedFiles
+  })), g("button", {
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-link",
+    onClick: cancelSelection,
+    type: "button"
+  }, i18n('cancel'))), aggregateRestrictionError && g("div", {
+    className: "uppy-ProviderBrowser-footer-error"
+  }, aggregateRestrictionError));
+}
+;// ./node_modules/@uppy/provider-views/lib/utils/getTagFile.js
+// TODO: document what is a "tagFile" or get rid of this concept
+const getTagFile = (file, plugin, provider) => {
+  var _file$author, _file$author2;
+  const tagFile = {
+    id: file.id,
+    source: plugin.id,
+    name: file.name || file.id,
+    type: file.mimeType,
+    isRemote: true,
+    data: file,
+    preview: file.thumbnail || undefined,
+    meta: {
+      authorName: (_file$author = file.author) == null ? void 0 : _file$author.name,
+      authorUrl: (_file$author2 = file.author) == null ? void 0 : _file$author2.url,
+      // We need to do this `|| null` check, because null value
+      // for .relDirPath is `undefined` and for .relativePath is `null`.
+      // I do think we should just use `null` everywhere.
+      relativePath: file.relDirPath || null,
+      absolutePath: file.absDirPath
+    },
+    body: {
+      fileId: file.id
+    },
+    remote: {
+      companionUrl: plugin.opts.companionUrl,
+      url: `${provider.fileUrl(file.requestPath)}`,
       body: {
         fileId: file.id
       },
-      remote: {
-        companionUrl: this.plugin.opts.companionUrl,
-        // @ts-expect-error untyped for now
-        url: `${this.provider.fileUrl(file.requestPath)}`,
-        body: {
-          fileId: file.id
-        },
-        providerName: this.provider.name,
-        provider: this.provider.provider,
-        requestClientId: this.requestClientId
-      }
-    };
-    if (file.thumbnail) {
-      tagFile.preview = file.thumbnail;
+      providerName: provider.name,
+      provider: provider.provider,
+      requestClientId: provider.provider
     }
-    if (file.author) {
-      if (file.author.name != null) tagFile.meta.authorName = String(file.author.name);
-      if (file.author.url) tagFile.meta.authorUrl = file.author.url;
-    }
+  };
+  return tagFile;
+};
+/* harmony default export */ const utils_getTagFile = (getTagFile);
+;// ./node_modules/@uppy/provider-views/lib/utils/addFiles.js
 
-    // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
-    if (file.relDirPath != null) tagFile.meta.relativePath = file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null;
-    // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-    if (file.absDirPath != null) tagFile.meta.absolutePath = file.absDirPath ? `/${file.absDirPath}/${tagFile.name}` : `/${tagFile.name}`;
-    return tagFile;
-  }
-  /**
-   * Toggles file/folder checkbox to on/off state while updating files list.
-   *
-   * Note that some extra complexity comes from supporting shift+click to
-   * toggle multiple checkboxes at once, which is done by getting all files
-   * in between last checked file and current one.
-   */
-  toggleCheckbox(e, file) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.currentTarget.focus();
-    const {
-      folders,
-      files
-    } = this.plugin.getPluginState();
-    const items = this.filterItems(folders.concat(files));
-    // Shift-clicking selects a single consecutive list of items
-    // starting at the previous click.
-    if (this.lastCheckbox && this.isShiftKeyPressed) {
-      const {
-        currentSelection
-      } = this.plugin.getPluginState();
-      const prevIndex = items.indexOf(this.lastCheckbox);
-      const currentIndex = items.indexOf(file);
-      const newSelection = prevIndex < currentIndex ? items.slice(prevIndex, currentIndex + 1) : items.slice(currentIndex, prevIndex + 1);
-      const reducedNewSelection = [];
 
-      // Check restrictions on each file in currentSelection,
-      // reduce it to only contain files that pass restrictions
-      for (const item of newSelection) {
-        const {
-          uppy
-        } = this.plugin;
-        const restrictionError = uppy.validateRestrictions(remoteFileObjToLocal(item), [...uppy.getFiles(), ...reducedNewSelection]);
-        if (!restrictionError) {
-          reducedNewSelection.push(item);
-        } else {
-          uppy.info({
-            message: restrictionError.message
-          }, 'error', uppy.opts.infoTimeout);
-        }
-      }
-      this.plugin.setPluginState({
-        currentSelection: [...new Set([...currentSelection, ...reducedNewSelection])]
-      });
-      return;
-    }
-    this.lastCheckbox = file;
-    const {
-      currentSelection
-    } = this.plugin.getPluginState();
-    if (this.isChecked(file)) {
-      this.plugin.setPluginState({
-        currentSelection: currentSelection.filter(item => item.id !== file.id)
-      });
+const addFiles = (companionFiles, plugin, provider) => {
+  const tagFiles = companionFiles.map(f => utils_getTagFile(f, plugin, provider));
+  const filesToAdd = [];
+  const filesAlreadyAdded = [];
+  tagFiles.forEach(tagFile => {
+    if (plugin.uppy.checkIfFileAlreadyExists(getSafeFileId(tagFile, plugin.uppy.getID()))) {
+      filesAlreadyAdded.push(tagFile);
     } else {
-      this.plugin.setPluginState({
-        currentSelection: currentSelection.concat([file])
-      });
+      filesToAdd.push(tagFile);
     }
+  });
+  if (filesToAdd.length > 0) {
+    plugin.uppy.info(plugin.uppy.i18n('addedNumFiles', {
+      numFiles: filesToAdd.length
+    }));
   }
-  setLoading(loading) {
-    this.plugin.setPluginState({
-      loading
-    });
+  if (filesAlreadyAdded.length > 0) {
+    plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`);
   }
-}
+  plugin.uppy.addFiles(filesToAdd);
+};
+/* harmony default export */ const utils_addFiles = (addFiles);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/getCheckedFilesWithPaths.js
+/* eslint-disable no-param-reassign */
+
+const getPath = (partialTree, id, cache) => {
+  const sId = id === null ? 'null' : id;
+  if (cache[sId]) return cache[sId];
+  const file = partialTree.find(f => f.id === id);
+  if (file.type === 'root') return [];
+  const meAndParentPath = [...getPath(partialTree, file.parentId, cache), file];
+  cache[sId] = meAndParentPath;
+  return meAndParentPath;
+};
+
+// See "Uppy file properties" documentation for `.absolutePath` and `.relativePath`
+// (https://uppy.io/docs/uppy/#working-with-uppy-files)
+const getCheckedFilesWithPaths = partialTree => {
+  // Equivalent to `const cache = {}`, but makes keys such as 'hasOwnProperty' safe too
+  const cache = Object.create(null);
+
+  // We're only interested in injecting paths into 'checked' files
+  const checkedFiles = partialTree.filter(item => item.type === 'file' && item.status === 'checked');
+  const companionFilesWithInjectedPaths = checkedFiles.map(file => {
+    const absFolders = getPath(partialTree, file.id, cache);
+    const firstCheckedFolderIndex = absFolders.findIndex(i => i.type === 'folder' && i.status === 'checked');
+    const relFolders = absFolders.slice(firstCheckedFolderIndex);
+    const absDirPath = `/${absFolders.map(i => i.data.name).join('/')}`;
+    const relDirPath = relFolders.length === 1 ?
+    // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
+    // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
+    undefined : relFolders.map(i => i.data.name).join('/');
+    return {
+      ...file.data,
+      absDirPath,
+      relDirPath
+    };
+  });
+  return companionFilesWithInjectedPaths;
+};
+/* harmony default export */ const PartialTreeUtils_getCheckedFilesWithPaths = (getCheckedFilesWithPaths);
+;// ./node_modules/@uppy/provider-views/lib/utils/PartialTreeUtils/getBreadcrumbs.js
+const getBreadcrumbs = (partialTree, currentFolderId) => {
+  let folder = partialTree.find(f => f.id === currentFolderId);
+  let breadcrumbs = [];
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    breadcrumbs = [folder, ...breadcrumbs];
+    if (folder.type === 'root') break;
+    const currentParentId = folder.parentId;
+    folder = partialTree.find(f => f.id === currentParentId);
+  }
+  return breadcrumbs;
+};
+/* harmony default export */ const PartialTreeUtils_getBreadcrumbs = (getBreadcrumbs);
 ;// ./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js
-function ProviderView_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function ProviderView_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var ProviderView_id = 0;
-function ProviderView_classPrivateFieldLooseKey(name) { return "__private_" + ProviderView_id++ + "_" + name; }
-
-
+function ProviderView_classPrivateFieldLooseKey(e) { return "__private_" + ProviderView_id++ + "_" + e; }
 
 
 
@@ -14619,15 +14723,17 @@ function ProviderView_classPrivateFieldLooseKey(name) { return "__private_" + Pr
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const ProviderView_packageJson = {
-  "version": "3.13.0"
+  "version": "4.4.0"
 };
-function formatBreadcrumbs(breadcrumbs) {
-  return breadcrumbs.slice(1).map(directory => directory.name).join('/');
-}
-function prependPath(path, component) {
-  if (!path) return component;
-  return `${path}/${component}`;
-}
+
+
+
+
+
+
+
+
+
 function defaultPickerIcon() {
   return g("svg", {
     "aria-hidden": "true",
@@ -14639,438 +14745,353 @@ function defaultPickerIcon() {
     d: "M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z"
   }));
 }
-const ProviderView_defaultOptions = {
-  viewType: 'list',
-  showTitles: true,
-  showFilter: true,
-  showBreadcrumbs: true,
-  loadAllFiles: false,
-  virtualList: false
-};
+const getDefaultState = rootFolderId => ({
+  authenticated: undefined,
+  // we don't know yet
+  partialTree: [{
+    type: 'root',
+    id: rootFolderId,
+    cached: false,
+    nextPagePath: null
+  }],
+  currentFolderId: rootFolderId,
+  searchString: '',
+  didFirstRender: false,
+  username: null,
+  loading: false
+});
 var _abortController = /*#__PURE__*/ProviderView_classPrivateFieldLooseKey("abortController");
 var _withAbort = /*#__PURE__*/ProviderView_classPrivateFieldLooseKey("withAbort");
-var _list = /*#__PURE__*/ProviderView_classPrivateFieldLooseKey("list");
-var _listFilesAndFolders = /*#__PURE__*/ProviderView_classPrivateFieldLooseKey("listFilesAndFolders");
-var _recursivelyListAllFiles = /*#__PURE__*/ProviderView_classPrivateFieldLooseKey("recursivelyListAllFiles");
 /**
  * Class to easily generate generic views for Provider plugins
  */
-class ProviderView extends View {
+class ProviderView {
   constructor(plugin, opts) {
-    super(plugin, {
-      ...ProviderView_defaultOptions,
-      ...opts
-    });
-
-    // Logic
-    Object.defineProperty(this, _recursivelyListAllFiles, {
-      value: _recursivelyListAllFiles2
-    });
-    Object.defineProperty(this, _listFilesAndFolders, {
-      value: _listFilesAndFolders2
-    });
-    Object.defineProperty(this, _list, {
-      value: _list2
-    });
     Object.defineProperty(this, _withAbort, {
       value: _withAbort2
     });
+    this.isHandlingScroll = false;
+    this.lastCheckbox = null;
     Object.defineProperty(this, _abortController, {
       writable: true,
       value: void 0
     });
-    this.filterQuery = this.filterQuery.bind(this);
-    this.clearFilter = this.clearFilter.bind(this);
-    this.getFolder = this.getFolder.bind(this);
-    this.getNextFolder = this.getNextFolder.bind(this);
+    this.validateSingleFile = file => {
+      const companionFile = remoteFileObjToLocal(file);
+      const result = this.plugin.uppy.validateSingleFile(companionFile);
+      return result;
+    };
+    this.getDisplayedPartialTree = () => {
+      const {
+        partialTree,
+        currentFolderId,
+        searchString
+      } = this.plugin.getPluginState();
+      const inThisFolder = partialTree.filter(item => item.type !== 'root' && item.parentId === currentFolderId);
+      const filtered = searchString === '' ? inThisFolder : inThisFolder.filter(item => {
+        var _item$data$name;
+        return ((_item$data$name = item.data.name) != null ? _item$data$name : this.plugin.uppy.i18n('unnamed')).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
+      });
+      return filtered;
+    };
+    this.validateAggregateRestrictions = partialTree => {
+      const checkedFiles = partialTree.filter(item => item.type === 'file' && item.status === 'checked');
+      const uppyFiles = checkedFiles.map(file => file.data);
+      return this.plugin.uppy.validateAggregateRestrictions(uppyFiles);
+    };
+    this.plugin = plugin;
+    this.provider = opts.provider;
+    const defaultOptions = {
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true,
+      loadAllFiles: false,
+      virtualList: false
+    };
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    };
+    this.openFolder = this.openFolder.bind(this);
     this.logout = this.logout.bind(this);
     this.handleAuth = this.handleAuth.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
+    this.resetPluginState = this.resetPluginState.bind(this);
     this.donePicking = this.donePicking.bind(this);
-
-    // Visual
     this.render = this.render.bind(this);
+    this.cancelSelection = this.cancelSelection.bind(this);
+    this.toggleCheckbox = this.toggleCheckbox.bind(this);
 
     // Set default state for the plugin
-    this.plugin.setPluginState({
-      authenticated: undefined,
-      // we don't know yet
-      files: [],
-      folders: [],
-      breadcrumbs: [],
-      filterInput: '',
-      isSearchVisible: false,
-      currentSelection: []
-    });
-    this.registerRequestClient();
+    this.resetPluginState();
+
+    // todo
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState);
+    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider);
+  }
+  resetPluginState() {
+    this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId));
   }
 
   // eslint-disable-next-line class-methods-use-this
   tearDown() {
     // Nothing.
   }
-  /**
-   * Select a folder based on its id: fetches the folder and then updates state with its contents
-   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
-   *
-   */
-  async getFolder(requestPath, name) {
-    this.setLoading(true);
-    try {
-      await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
-        this.lastCheckbox = undefined;
-        let {
-          breadcrumbs
-        } = this.plugin.getPluginState();
-        const index = breadcrumbs.findIndex(dir => requestPath === dir.requestPath);
-        if (index !== -1) {
-          // means we navigated back to a known directory (already in the stack), so cut the stack off there
-          breadcrumbs = breadcrumbs.slice(0, index + 1);
-        } else {
-          // we have navigated into a new (unknown) folder, add it to the stack
-          breadcrumbs = [...breadcrumbs, {
-            requestPath,
-            name
-          }];
-        }
-        this.nextPagePath = requestPath;
-        let files = [];
-        let folders = [];
-        do {
-          const {
-            files: newFiles,
-            folders: newFolders
-          } = await ProviderView_classPrivateFieldLooseBase(this, _listFilesAndFolders)[_listFilesAndFolders]({
-            breadcrumbs,
-            signal
-          });
-          files = files.concat(newFiles);
-          folders = folders.concat(newFolders);
-          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', {
-            numFiles: files.length + folders.length
-          }));
-        } while (this.opts.loadAllFiles && this.nextPagePath);
-        this.plugin.setPluginState({
-          folders,
-          files,
-          breadcrumbs,
-          filterInput: ''
-        });
-      });
-    } catch (err) {
-      // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
-      // error occurring here to the user.
-      if ((err == null ? void 0 : err.name) === 'UserFacingApiError') {
-        this.plugin.uppy.info({
-          message: this.plugin.uppy.i18n(err.message)
-        }, 'warning', 5000);
-        return;
-      }
-      this.handleError(err);
-    } finally {
-      this.setLoading(false);
-    }
+  setLoading(loading) {
+    this.plugin.setPluginState({
+      loading
+    });
   }
-
-  /**
-   * Fetches new folder
-   */
-  getNextFolder(folder) {
-    this.getFolder(folder.requestPath, folder.name);
-    this.lastCheckbox = undefined;
+  cancelSelection() {
+    const {
+      partialTree
+    } = this.plugin.getPluginState();
+    const newPartialTree = partialTree.map(item => item.type === 'root' ? item : {
+      ...item,
+      status: 'unchecked'
+    });
+    this.plugin.setPluginState({
+      partialTree: newPartialTree
+    });
+  }
+  async openFolder(folderId) {
+    this.lastCheckbox = null;
+    // Returning cached folder
+    const {
+      partialTree
+    } = this.plugin.getPluginState();
+    const clickedFolder = partialTree.find(folder => folder.id === folderId);
+    if (clickedFolder.cached) {
+      this.plugin.setPluginState({
+        currentFolderId: folderId,
+        searchString: ''
+      });
+      return;
+    }
+    this.setLoading(true);
+    await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+      let currentPagePath = folderId;
+      let currentItems = [];
+      do {
+        const {
+          username,
+          nextPagePath,
+          items
+        } = await this.provider.list(currentPagePath, {
+          signal
+        });
+        // It's important to set the username during one of our first fetches
+        this.plugin.setPluginState({
+          username
+        });
+        currentPagePath = nextPagePath;
+        currentItems = currentItems.concat(items);
+        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', {
+          numFiles: currentItems.length
+        }));
+      } while (this.opts.loadAllFiles && currentPagePath);
+      const newPartialTree = PartialTreeUtils.afterOpenFolder(partialTree, currentItems, clickedFolder, currentPagePath, this.validateSingleFile);
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        currentFolderId: folderId,
+        searchString: ''
+      });
+    }).catch(utils_handleError(this.plugin.uppy));
+    this.setLoading(false);
   }
 
   /**
    * Removes session token on client side.
    */
   async logout() {
-    try {
-      await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
-        const res = await this.provider.logout({
-          signal
-        });
-        // res.ok is from the JSON body, not to be confused with Response.ok
-        if (res.ok) {
-          if (!res.revoked) {
-            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
-              provider: this.plugin.title,
-              url: res.manual_revoke_url
-            });
-            this.plugin.uppy.info(message, 'info', 7000);
-          }
-          const newState = {
-            authenticated: false,
-            files: [],
-            folders: [],
-            breadcrumbs: [],
-            filterInput: ''
-          };
-          this.plugin.setPluginState(newState);
-        }
+    await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+      const res = await this.provider.logout({
+        signal
       });
-    } catch (err) {
-      this.handleError(err);
-    }
-  }
-  filterQuery(input) {
-    this.plugin.setPluginState({
-      filterInput: input
-    });
-  }
-  clearFilter() {
-    this.plugin.setPluginState({
-      filterInput: ''
-    });
+      // res.ok is from the JSON body, not to be confused with Response.ok
+      if (res.ok) {
+        if (!res.revoked) {
+          const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+            provider: this.plugin.title,
+            url: res.manual_revoke_url
+          });
+          this.plugin.uppy.info(message, 'info', 7000);
+        }
+        this.plugin.setPluginState({
+          ...getDefaultState(this.plugin.rootFolderId),
+          authenticated: false
+        });
+      }
+    }).catch(utils_handleError(this.plugin.uppy));
   }
   async handleAuth(authFormData) {
-    try {
-      await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
-        this.setLoading(true);
-        await this.provider.login({
-          authFormData,
-          signal
-        });
-        this.plugin.setPluginState({
-          authenticated: true
-        });
-        this.preFirstRender();
+    await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+      this.setLoading(true);
+      await this.provider.login({
+        authFormData,
+        signal
       });
-    } catch (err) {
-      if (err.name === 'UserFacingApiError') {
-        this.plugin.uppy.info({
-          message: this.plugin.uppy.i18n(err.message)
-        }, 'warning', 5000);
-        return;
-      }
-      this.plugin.uppy.log(`login failed: ${err.message}`);
-    } finally {
-      this.setLoading(false);
-    }
+      this.plugin.setPluginState({
+        authenticated: true
+      });
+      await Promise.all([this.provider.fetchPreAuthToken(), this.openFolder(this.plugin.rootFolderId)]);
+    }).catch(utils_handleError(this.plugin.uppy));
+    this.setLoading(false);
   }
   async handleScroll(event) {
-    if (this.shouldHandleScroll(event) && this.nextPagePath) {
+    const {
+      partialTree,
+      currentFolderId
+    } = this.plugin.getPluginState();
+    const currentFolder = partialTree.find(i => i.id === currentFolderId);
+    if (utils_shouldHandleScroll(event) && !this.isHandlingScroll && currentFolder.nextPagePath) {
       this.isHandlingScroll = true;
-      try {
-        await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
-          const {
-            files,
-            folders,
-            breadcrumbs
-          } = this.plugin.getPluginState();
-          const {
-            files: newFiles,
-            folders: newFolders
-          } = await ProviderView_classPrivateFieldLooseBase(this, _listFilesAndFolders)[_listFilesAndFolders]({
-            breadcrumbs,
-            signal
-          });
-          const combinedFiles = files.concat(newFiles);
-          const combinedFolders = folders.concat(newFolders);
-          this.plugin.setPluginState({
-            folders: combinedFolders,
-            files: combinedFiles
-          });
+      await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+        const {
+          nextPagePath,
+          items
+        } = await this.provider.list(currentFolder.nextPagePath, {
+          signal
         });
-      } catch (error) {
-        this.handleError(error);
-      } finally {
-        this.isHandlingScroll = false;
-      }
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(partialTree, currentFolderId, items, nextPagePath, this.validateSingleFile);
+        this.plugin.setPluginState({
+          partialTree: newPartialTree
+        });
+      }).catch(utils_handleError(this.plugin.uppy));
+      this.isHandlingScroll = false;
     }
   }
   async donePicking() {
+    const {
+      partialTree
+    } = this.plugin.getPluginState();
     this.setLoading(true);
-    try {
-      await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
-        const {
-          currentSelection
-        } = this.plugin.getPluginState();
-        const messages = [];
-        const newFiles = [];
-        for (const selectedItem of currentSelection) {
-          const {
-            requestPath
-          } = selectedItem;
-          const withRelDirPath = newItem => ({
-            ...newItem,
-            // calculate the file's path relative to the user's selected item's path
-            // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-            relDirPath: newItem.absDirPath.replace(selectedItem.absDirPath, '').replace(/^\//, '')
-          });
-          if (selectedItem.isFolder) {
-            let isEmpty = true;
-            let numNewFiles = 0;
-            const queue = new dist({
-              concurrency: 6
-            });
-            const onFiles = files => {
-              for (const newFile of files) {
-                const tagFile = this.getTagFile(newFile);
-                const id = getSafeFileId(tagFile, this.plugin.uppy.getID());
-                // If the same folder is added again, we don't want to send
-                // X amount of duplicate file notifications, we want to say
-                // the folder was already added. This checks if all files are duplicate,
-                // if that's the case, we don't add the files.
-                if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-                  newFiles.push(withRelDirPath(newFile));
-                  numNewFiles++;
-                  this.setLoading(this.plugin.uppy.i18n('addedNumFiles', {
-                    numFiles: numNewFiles
-                  }));
-                }
-                isEmpty = false;
-              }
-            };
-            await ProviderView_classPrivateFieldLooseBase(this, _recursivelyListAllFiles)[_recursivelyListAllFiles]({
-              requestPath,
-              absDirPath: prependPath(selectedItem.absDirPath, selectedItem.name),
-              relDirPath: selectedItem.name,
-              queue,
-              onFiles,
-              signal
-            });
-            await queue.onIdle();
-            let message;
-            if (isEmpty) {
-              message = this.plugin.uppy.i18n('emptyFolderAdded');
-            } else if (numNewFiles === 0) {
-              message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-                folder: selectedItem.name
-              });
-            } else {
-              // TODO we don't really know at this point whether any files were actually added
-              // (only later after addFiles has been called) so we should probably rewrite this.
-              // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
-              message = this.plugin.uppy.i18n('folderAdded', {
-                smart_count: numNewFiles,
-                folder: selectedItem.name
-              });
-            }
-            messages.push(message);
-          } else {
-            newFiles.push(withRelDirPath(selectedItem));
-          }
-        }
-
-        // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
-        // because it will cause the loading screen to disappear,
-        // and that will allow the user to start the upload, so we need to make sure we have
-        // finished all async operations before we add any file
-        // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding files from a remote provider');
-        this.plugin.uppy.addFiles(
-        // @ts-expect-error `addFiles` expects `body` to be `File` or `Blob`,
-        // but as the todo comment in `View.ts` indicates, we strangly pass `CompanionFile` as `body`.
-        // For now it's better to ignore than to have a potential breaking change.
-        newFiles.map(file => this.getTagFile(file, this.requestClientId)));
-        this.plugin.setPluginState({
-          filterInput: ''
-        });
-        messages.forEach(message => this.plugin.uppy.info(message));
-        this.clearSelection();
+    await ProviderView_classPrivateFieldLooseBase(this, _withAbort)[_withAbort](async signal => {
+      // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
+      const enrichedTree = await PartialTreeUtils.afterFill(partialTree, path => this.provider.list(path, {
+        signal
+      }), this.validateSingleFile, n => {
+        this.setLoading(this.plugin.uppy.i18n('addedNumFiles', {
+          numFiles: n
+        }));
       });
-    } catch (err) {
-      this.handleError(err);
-    } finally {
-      this.setLoading(false);
-    }
+
+      // 2. Now that we know how many files there are - recheck aggregateRestrictions!
+      const aggregateRestrictionError = this.validateAggregateRestrictions(enrichedTree);
+      if (aggregateRestrictionError) {
+        this.plugin.setPluginState({
+          partialTree: enrichedTree
+        });
+        return;
+      }
+
+      // 3. Add files
+      const companionFiles = PartialTreeUtils_getCheckedFilesWithPaths(enrichedTree);
+      utils_addFiles(companionFiles, this.plugin, this.provider);
+
+      // 4. Reset state
+      this.resetPluginState();
+    }).catch(utils_handleError(this.plugin.uppy));
+    this.setLoading(false);
+  }
+  toggleCheckbox(ourItem, isShiftKeyPressed) {
+    const {
+      partialTree
+    } = this.plugin.getPluginState();
+    const clickedRange = utils_getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox);
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange);
+    this.plugin.setPluginState({
+      partialTree: newPartialTree
+    });
+    this.lastCheckbox = ourItem.id;
   }
   render(state, viewOptions) {
-    var _this = this;
     if (viewOptions === void 0) {
       viewOptions = {};
     }
     const {
-      authenticated,
       didFirstRender
     } = this.plugin.getPluginState();
     const {
       i18n
     } = this.plugin.uppy;
     if (!didFirstRender) {
-      this.preFirstRender();
+      this.plugin.setPluginState({
+        didFirstRender: true
+      });
+      this.provider.fetchPreAuthToken();
+      this.openFolder(this.plugin.rootFolderId);
     }
-    const targetViewOptions = {
+    const opts = {
       ...this.opts,
       ...viewOptions
     };
     const {
-      files,
-      folders,
-      filterInput,
-      loading,
-      currentSelection
+      authenticated,
+      loading
     } = this.plugin.getPluginState();
-    const {
-      isChecked,
-      recordShiftKeyPress,
-      filterItems
-    } = this;
-    const hasInput = filterInput !== '';
     const pluginIcon = this.plugin.icon || defaultPickerIcon;
-    const headerProps = {
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
-      breadcrumbs: this.plugin.getPluginState().breadcrumbs,
-      pluginIcon,
-      title: this.plugin.title,
-      logout: this.logout,
-      username: this.username,
-      i18n
-    };
-    const browserProps = {
-      isChecked,
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
-      getNextFolder: this.getNextFolder,
-      getFolder: this.getFolder,
-      loadAllFiles: this.opts.loadAllFiles,
-      virtualList: this.opts.virtualList,
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: this.filterQuery,
-      clearSearch: this.clearFilter,
-      searchTerm: filterInput,
-      searchOnInput: true,
-      searchInputLabel: i18n('filter'),
-      clearSearchLabel: i18n('resetFilter'),
-      noResultsLabel: i18n('noFilesFound'),
-      logout: this.logout,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      headerComponent: g(Header, headerProps),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon,
-      i18n: this.plugin.uppy.i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: function () {
-        return _this.plugin.uppy.validateRestrictions(...arguments);
-      },
-      isLoading: loading
-    };
     if (authenticated === false) {
-      return g(CloseWrapper, {
-        onUnmount: this.clearSelection
-      }, g(AuthView, {
+      return g(AuthView_AuthView, {
         pluginName: this.plugin.title,
         pluginIcon: pluginIcon,
         handleAuth: this.handleAuth,
-        i18n: this.plugin.uppy.i18nArray,
-        renderForm: this.opts.renderAuthForm,
+        i18n: this.plugin.uppy.i18n,
+        renderForm: opts.renderAuthForm,
         loading: loading
-      }));
+      });
     }
-    return g(CloseWrapper, {
-      onUnmount: this.clearSelection
-    }, g(lib_Browser, browserProps));
+    const {
+      partialTree,
+      currentFolderId,
+      username,
+      searchString
+    } = this.plugin.getPluginState();
+    const breadcrumbs = PartialTreeUtils_getBreadcrumbs(partialTree, currentFolderId);
+    return g("div", {
+      className: classnames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${opts.viewType}`)
+    }, g(Header, {
+      showBreadcrumbs: opts.showBreadcrumbs,
+      openFolder: this.openFolder,
+      breadcrumbs: breadcrumbs,
+      pluginIcon: pluginIcon,
+      title: this.plugin.title,
+      logout: this.logout,
+      username: username,
+      i18n: i18n
+    }), opts.showFilter && g(lib_SearchInput, {
+      searchString: searchString,
+      setSearchString: s => {
+        this.plugin.setPluginState({
+          searchString: s
+        });
+      },
+      submitSearchString: () => {},
+      inputLabel: i18n('filter'),
+      clearSearchLabel: i18n('resetFilter'),
+      wrapperClassName: "uppy-ProviderBrowser-searchFilter",
+      inputClassName: "uppy-ProviderBrowser-searchFilterInput"
+    }), g(lib_Browser, {
+      toggleCheckbox: this.toggleCheckbox,
+      displayedPartialTree: this.getDisplayedPartialTree(),
+      openFolder: this.openFolder,
+      virtualList: opts.virtualList,
+      noResultsLabel: i18n('noFilesFound'),
+      handleScroll: this.handleScroll,
+      viewType: opts.viewType,
+      showTitles: opts.showTitles,
+      i18n: this.plugin.uppy.i18n,
+      isLoading: loading,
+      utmSource: "Companion"
+    }), g(FooterActions, {
+      partialTree: partialTree,
+      donePicking: this.donePicking,
+      cancelSelection: this.cancelSelection,
+      i18n: i18n,
+      validateAggregateRestrictions: this.validateAggregateRestrictions
+    }));
   }
 }
 async function _withAbort2(op) {
@@ -15081,7 +15102,6 @@ async function _withAbort2(op) {
   ProviderView_classPrivateFieldLooseBase(this, _abortController)[_abortController] = abortController;
   const cancelRequest = () => {
     abortController.abort();
-    this.clearSelection();
   };
   try {
     // @ts-expect-error this should be typed in @uppy/dashboard.
@@ -15099,97 +15119,10 @@ async function _withAbort2(op) {
     ProviderView_classPrivateFieldLooseBase(this, _abortController)[_abortController] = undefined;
   }
 }
-async function _list2(_ref) {
-  let {
-    requestPath,
-    absDirPath,
-    signal
-  } = _ref;
-  const {
-    username,
-    nextPagePath,
-    items
-  } = await this.provider.list(requestPath, {
-    signal
-  });
-  this.username = username || this.username;
-  return {
-    items: items.map(item => ({
-      ...item,
-      absDirPath
-    })),
-    nextPagePath
-  };
-}
-async function _listFilesAndFolders2(_ref2) {
-  let {
-    breadcrumbs,
-    signal
-  } = _ref2;
-  const absDirPath = formatBreadcrumbs(breadcrumbs);
-  const {
-    items,
-    nextPagePath
-  } = await ProviderView_classPrivateFieldLooseBase(this, _list)[_list]({
-    requestPath: this.nextPagePath,
-    absDirPath,
-    signal
-  });
-  this.nextPagePath = nextPagePath;
-  const files = [];
-  const folders = [];
-  items.forEach(item => {
-    if (item.isFolder) {
-      folders.push(item);
-    } else {
-      files.push(item);
-    }
-  });
-  return {
-    files,
-    folders
-  };
-}
-async function _recursivelyListAllFiles2(_ref3) {
-  let {
-    requestPath,
-    absDirPath,
-    relDirPath,
-    queue,
-    onFiles,
-    signal
-  } = _ref3;
-  let curPath = requestPath;
-  while (curPath) {
-    const res = await ProviderView_classPrivateFieldLooseBase(this, _list)[_list]({
-      requestPath: curPath,
-      absDirPath,
-      signal
-    });
-    curPath = res.nextPagePath;
-    const files = res.items.filter(item => !item.isFolder);
-    const folders = res.items.filter(item => item.isFolder);
-    onFiles(files);
-
-    // recursively queue call to self for each folder
-    const promises = folders.map(async folder => queue.add(async () => ProviderView_classPrivateFieldLooseBase(this, _recursivelyListAllFiles)[_recursivelyListAllFiles]({
-      requestPath: folder.requestPath,
-      absDirPath: prependPath(absDirPath, folder.name),
-      relDirPath: prependPath(relDirPath, folder.name),
-      queue,
-      onFiles,
-      signal
-    })));
-    await Promise.all(promises); // in case we get an error
-  }
-}
 ProviderView.VERSION = ProviderView_packageJson.version;
 ;// ./node_modules/@uppy/provider-views/lib/ProviderView/index.js
 
 ;// ./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js
-function SearchProviderView_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
-var SearchProviderView_id = 0;
-function SearchProviderView_classPrivateFieldLooseKey(name) { return "__private_" + SearchProviderView_id++ + "_" + name; }
 
 
 
@@ -15199,229 +15132,762 @@ function SearchProviderView_classPrivateFieldLooseKey(name) { return "__private_
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const SearchProviderView_packageJson = {
-  "version": "3.13.0"
+  "version": "4.4.0"
 };
+
+
+
+
+
+
+
 const defaultState = {
-  isInputMode: true,
-  files: [],
-  folders: [],
-  breadcrumbs: [],
-  filterInput: '',
-  currentSelection: [],
-  searchTerm: null
+  loading: false,
+  searchString: '',
+  partialTree: [{
+    type: 'root',
+    id: null,
+    cached: false,
+    nextPagePath: null
+  }],
+  currentFolderId: null,
+  isInputMode: true
 };
 const SearchProviderView_defaultOptions = {
   viewType: 'grid',
   showTitles: true,
   showFilter: true,
-  showBreadcrumbs: true
+  utmSource: 'Companion'
 };
-var _updateFilesAndInputMode = /*#__PURE__*/SearchProviderView_classPrivateFieldLooseKey("updateFilesAndInputMode");
+
 /**
  * SearchProviderView, used for Unsplash and future image search providers.
  * Extends generic View, shared with regular providers like Google Drive and Instagram.
  */
-class SearchProviderView extends View {
+class SearchProviderView {
   constructor(plugin, opts) {
-    super(plugin, {
+    this.isHandlingScroll = false;
+    this.lastCheckbox = null;
+    this.validateSingleFile = file => {
+      const companionFile = remoteFileObjToLocal(file);
+      const result = this.plugin.uppy.validateSingleFile(companionFile);
+      return result;
+    };
+    this.getDisplayedPartialTree = () => {
+      const {
+        partialTree
+      } = this.plugin.getPluginState();
+      return partialTree.filter(item => item.type !== 'root');
+    };
+    this.setSearchString = searchString => {
+      this.plugin.setPluginState({
+        searchString
+      });
+      if (searchString === '') {
+        this.plugin.setPluginState({
+          partialTree: []
+        });
+      }
+    };
+    this.validateAggregateRestrictions = partialTree => {
+      const checkedFiles = partialTree.filter(item => item.type === 'file' && item.status === 'checked');
+      const uppyFiles = checkedFiles.map(file => file.data);
+      return this.plugin.uppy.validateAggregateRestrictions(uppyFiles);
+    };
+    this.plugin = plugin;
+    this.provider = opts.provider;
+    this.opts = {
       ...SearchProviderView_defaultOptions,
       ...opts
-    });
-    Object.defineProperty(this, _updateFilesAndInputMode, {
-      value: _updateFilesAndInputMode2
-    });
-    this.nextPageQuery = null;
+    };
+    this.setSearchString = this.setSearchString.bind(this);
     this.search = this.search.bind(this);
-    this.clearSearch = this.clearSearch.bind(this);
     this.resetPluginState = this.resetPluginState.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.donePicking = this.donePicking.bind(this);
+    this.cancelSelection = this.cancelSelection.bind(this);
+    this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.render = this.render.bind(this);
-    this.plugin.setPluginState(defaultState);
-    this.registerRequestClient();
+
+    // Set default state for the plugin
+    this.resetPluginState();
+
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState);
+    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider);
   }
 
   // eslint-disable-next-line class-methods-use-this
   tearDown() {
     // Nothing.
   }
+  setLoading(loading) {
+    this.plugin.setPluginState({
+      loading
+    });
+  }
   resetPluginState() {
     this.plugin.setPluginState(defaultState);
   }
-  async search(query) {
+  cancelSelection() {
     const {
-      searchTerm
+      partialTree
     } = this.plugin.getPluginState();
-    if (query && query === searchTerm) {
-      // no need to search again as this is the same as the previous search
-      return;
-    }
-    this.setLoading(true);
-    try {
-      const res = await this.provider.search(query);
-      SearchProviderView_classPrivateFieldLooseBase(this, _updateFilesAndInputMode)[_updateFilesAndInputMode](res, []);
-    } catch (err) {
-      this.handleError(err);
-    } finally {
-      this.setLoading(false);
-    }
-  }
-  clearSearch() {
+    const newPartialTree = partialTree.map(item => item.type === 'root' ? item : {
+      ...item,
+      status: 'unchecked'
+    });
     this.plugin.setPluginState({
-      currentSelection: [],
-      files: [],
-      searchTerm: null
+      partialTree: newPartialTree
     });
   }
+  async search() {
+    const {
+      searchString
+    } = this.plugin.getPluginState();
+    if (searchString === '') return;
+    this.setLoading(true);
+    try {
+      const response = await this.provider.search(searchString);
+      const newPartialTree = [{
+        type: 'root',
+        id: null,
+        cached: false,
+        nextPagePath: response.nextPageQuery
+      }, ...response.items.map(item => ({
+        type: 'file',
+        id: item.requestPath,
+        status: 'unchecked',
+        parentId: null,
+        data: item
+      }))];
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        isInputMode: false
+      });
+    } catch (error) {
+      utils_handleError(this.plugin.uppy)(error);
+    }
+    this.setLoading(false);
+  }
   async handleScroll(event) {
-    const query = this.nextPageQuery || null;
-    if (this.shouldHandleScroll(event) && query) {
+    const {
+      partialTree,
+      searchString
+    } = this.plugin.getPluginState();
+    const root = partialTree.find(i => i.type === 'root');
+    if (utils_shouldHandleScroll(event) && !this.isHandlingScroll && root.nextPagePath) {
       this.isHandlingScroll = true;
       try {
-        const {
-          files,
-          searchTerm
-        } = this.plugin.getPluginState();
-        const response = await this.provider.search(searchTerm, query);
-        SearchProviderView_classPrivateFieldLooseBase(this, _updateFilesAndInputMode)[_updateFilesAndInputMode](response, files);
+        const response = await this.provider.search(searchString, root.nextPagePath);
+        const newRoot = {
+          ...root,
+          nextPagePath: response.nextPageQuery
+        };
+        const oldItems = partialTree.filter(i => i.type !== 'root');
+        const newPartialTree = [newRoot, ...oldItems, ...response.items.map(item => ({
+          type: 'file',
+          id: item.requestPath,
+          status: 'unchecked',
+          parentId: null,
+          data: item
+        }))];
+        this.plugin.setPluginState({
+          partialTree: newPartialTree
+        });
       } catch (error) {
-        this.handleError(error);
-      } finally {
-        this.isHandlingScroll = false;
+        utils_handleError(this.plugin.uppy)(error);
       }
+      this.isHandlingScroll = false;
     }
   }
-  donePicking() {
+  async donePicking() {
     const {
-      currentSelection
+      partialTree
     } = this.plugin.getPluginState();
-    this.plugin.uppy.log('Adding remote search provider files');
-    this.plugin.uppy.addFiles(currentSelection.map(file => this.getTagFile(file)));
+
+    // 1. Add files
+    const companionFiles = PartialTreeUtils_getCheckedFilesWithPaths(partialTree);
+    utils_addFiles(companionFiles, this.plugin, this.provider);
+
+    // 2. Reset state
     this.resetPluginState();
   }
+  toggleCheckbox(ourItem, isShiftKeyPressed) {
+    const {
+      partialTree
+    } = this.plugin.getPluginState();
+    const clickedRange = utils_getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox);
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange);
+    this.plugin.setPluginState({
+      partialTree: newPartialTree
+    });
+    this.lastCheckbox = ourItem.id;
+  }
   render(state, viewOptions) {
-    var _this = this;
     if (viewOptions === void 0) {
       viewOptions = {};
     }
     const {
-      didFirstRender,
       isInputMode,
-      searchTerm
+      searchString,
+      loading,
+      partialTree
     } = this.plugin.getPluginState();
     const {
       i18n
     } = this.plugin.uppy;
-    if (!didFirstRender) {
-      this.preFirstRender();
-    }
-    const targetViewOptions = {
+    const opts = {
       ...this.opts,
       ...viewOptions
     };
-    const {
-      files,
-      folders,
-      filterInput,
-      loading,
-      currentSelection
-    } = this.plugin.getPluginState();
-    const {
-      isChecked,
-      filterItems,
-      recordShiftKeyPress
-    } = this;
-    const hasInput = filterInput !== '';
-    const browserProps = {
-      isChecked,
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: this.search,
-      clearSearch: this.clearSearch,
-      searchTerm,
-      searchOnInput: false,
-      searchInputLabel: i18n('search'),
-      clearSearchLabel: i18n('resetSearch'),
-      noResultsLabel: i18n('noSearchResults'),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
-      isLoading: loading,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
-      i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: function () {
-        return _this.plugin.uppy.validateRestrictions(...arguments);
-      }
-    };
     if (isInputMode) {
-      return g(CloseWrapper, {
-        onUnmount: this.resetPluginState
-      }, g("div", {
-        className: "uppy-SearchProvider"
-      }, g(SearchFilterInput, {
-        search: this.search,
+      return g(lib_SearchInput, {
+        searchString: searchString,
+        setSearchString: this.setSearchString,
+        submitSearchString: this.search,
         inputLabel: i18n('enterTextToSearch'),
         buttonLabel: i18n('searchImages'),
+        wrapperClassName: "uppy-SearchProvider",
         inputClassName: "uppy-c-textInput uppy-SearchProvider-input",
-        buttonCSSClassName: "uppy-SearchProvider-searchButton",
-        showButton: true
-      })));
+        showButton: true,
+        buttonCSSClassName: "uppy-SearchProvider-searchButton"
+      });
     }
-    return g(CloseWrapper, {
-      onUnmount: this.resetPluginState
-    }, g(lib_Browser, browserProps));
+    return g("div", {
+      className: classnames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${opts.viewType}`)
+    }, opts.showFilter && g(lib_SearchInput, {
+      searchString: searchString,
+      setSearchString: this.setSearchString,
+      submitSearchString: this.search,
+      inputLabel: i18n('search'),
+      clearSearchLabel: i18n('resetSearch'),
+      wrapperClassName: "uppy-ProviderBrowser-searchFilter",
+      inputClassName: "uppy-ProviderBrowser-searchFilterInput"
+    }), g(lib_Browser, {
+      toggleCheckbox: this.toggleCheckbox,
+      displayedPartialTree: this.getDisplayedPartialTree(),
+      handleScroll: this.handleScroll,
+      openFolder: async () => {},
+      noResultsLabel: i18n('noSearchResults'),
+      viewType: opts.viewType,
+      showTitles: opts.showTitles,
+      isLoading: loading,
+      i18n: i18n,
+      virtualList: false,
+      utmSource: this.opts.utmSource
+    }), g(FooterActions, {
+      partialTree: partialTree,
+      donePicking: this.donePicking,
+      cancelSelection: this.cancelSelection,
+      i18n: i18n,
+      validateAggregateRestrictions: this.validateAggregateRestrictions
+    }));
   }
-}
-function _updateFilesAndInputMode2(res, files) {
-  this.nextPageQuery = res.nextPageQuery;
-  res.items.forEach(item => {
-    files.push(item);
-  });
-  this.plugin.setPluginState({
-    currentSelection: [],
-    isInputMode: false,
-    files,
-    searchTerm: res.searchedFor
-  });
 }
 SearchProviderView.VERSION = SearchProviderView_packageJson.version;
 ;// ./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js
 
+;// ./node_modules/@uppy/provider-views/lib/GooglePicker/googlePicker.js
+// https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
+
+// https://developers.google.com/photos/picker/reference/rest/v1/sessions
+
+const getAuthHeader = token => ({
+  authorization: `Bearer ${token}`
+});
+const injectedScripts = new Set();
+let driveApiLoaded = false;
+
+// https://stackoverflow.com/a/39008859/6519037
+async function injectScript(src) {
+  if (injectedScripts.has(src)) return;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.addEventListener('load', () => resolve());
+    script.addEventListener('error', e => reject(e.error));
+    document.head.appendChild(script);
+  });
+  injectedScripts.add(src);
+}
+async function googlePicker_ensureScriptsInjected(pickerType) {
+  await Promise.all([injectScript('https://accounts.google.com/gsi/client'),
+  // Google Identity Services
+  (async () => {
+    await injectScript('https://apis.google.com/js/api.js');
+    if (pickerType === 'drive' && !driveApiLoaded) {
+      await new Promise(resolve => gapi.load('client:picker', () => resolve()));
+      await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
+      driveApiLoaded = true;
+    }
+  })()]);
+}
+async function isTokenValid(accessToken, signal) {
+  const response = await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${encodeURIComponent(accessToken)}`, {
+    signal
+  });
+  if (response.ok) {
+    return true;
+  }
+  // console.warn('Token is invalid or expired:', response.status, await response.text());
+  // Token is invalid or expired
+  return false;
+}
+async function googlePicker_authorize(_ref) {
+  let {
+    pickerType,
+    clientId,
+    accessToken
+  } = _ref;
+  const response = await new Promise((resolve, reject) => {
+    const scopes = pickerType === 'drive' ? ['https://www.googleapis.com/auth/drive.file'] : ['https://www.googleapis.com/auth/photospicker.mediaitems.readonly'];
+    const tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      // Authorization scopes required by the API; multiple scopes can be included, separated by spaces.
+      scope: scopes.join(' '),
+      callback: resolve,
+      error_callback: reject
+    });
+    if (accessToken === null) {
+      // Prompt the user to select a Google Account and ask for consent to share their data
+      // when establishing a new session.
+      tokenClient.requestAccessToken({
+        prompt: 'consent'
+      });
+    } else {
+      // Skip display of account chooser and consent dialog for an existing session.
+      tokenClient.requestAccessToken({
+        prompt: ''
+      });
+    }
+  });
+  if (response.error) {
+    throw new Error(`OAuth2 error: ${response.error}`);
+  }
+  return response.access_token;
+}
+async function googlePicker_logout(accessToken) {
+  await new Promise(resolve => google.accounts.oauth2.revoke(accessToken, resolve));
+}
+class googlePicker_InvalidTokenError extends Error {
+  constructor() {
+    super('Invalid or expired token');
+    this.name = 'InvalidTokenError';
+  }
+}
+async function googlePicker_showDrivePicker(_ref2) {
+  let {
+    token,
+    apiKey,
+    appId,
+    onFilesPicked,
+    signal
+  } = _ref2;
+  // google drive picker will crash hard if given an invalid token, so we need to check it first
+  // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
+  if (!(await isTokenValid(token, signal))) {
+    throw new googlePicker_InvalidTokenError();
+  }
+  const onPicked = picked => {
+    if (picked.action === google.picker.Action.PICKED) {
+      // console.log('Picker response', JSON.stringify(picked, null, 2));
+      onFilesPicked(picked['docs'].map(doc => ({
+        platform: 'drive',
+        id: doc['id'],
+        name: doc['name'],
+        mimeType: doc['mimeType']
+      })), token);
+    }
+  };
+  const picker = new google.picker.PickerBuilder().enableFeature(google.picker.Feature.NAV_HIDDEN).enableFeature(google.picker.Feature.MULTISELECT_ENABLED).setDeveloperKey(apiKey).setAppId(appId).setOAuthToken(token).addView(new google.picker.DocsView(google.picker.ViewId.DOCS).setIncludeFolders(true)
+  // Note: setEnableDrives doesn't seem to work
+  // .setEnableDrives(true)
+  .setSelectFolderEnabled(false).setMode(google.picker.DocsViewMode.LIST))
+  // NOTE: photos is broken and results in an error being returned from Google
+  // I think it's the old Picasa photos
+  // .addView(google.picker.ViewId.PHOTOS)
+  .setCallback(onPicked).build();
+  picker.setVisible(true);
+  signal == null || signal.addEventListener('abort', () => picker.dispose());
+}
+async function googlePicker_showPhotosPicker(_ref3) {
+  let {
+    token,
+    pickingSession,
+    onPickingSessionChange,
+    signal
+  } = _ref3;
+  // https://developers.google.com/photos/picker/guides/get-started-picker
+  const headers = getAuthHeader(token);
+  let newPickingSession = pickingSession;
+  if (newPickingSession == null) {
+    const createSessionResponse = await fetch('https://photospicker.googleapis.com/v1/sessions', {
+      method: 'post',
+      headers,
+      signal
+    });
+    if (createSessionResponse.status === 401) {
+      var _resp$error;
+      const resp = await createSessionResponse.json();
+      if (((_resp$error = resp.error) == null ? void 0 : _resp$error.status) === 'UNAUTHENTICATED') {
+        throw new googlePicker_InvalidTokenError();
+      }
+    }
+    if (!createSessionResponse.ok) {
+      throw new Error('Failed to create a session');
+    }
+    newPickingSession = await createSessionResponse.json();
+    onPickingSessionChange(newPickingSession);
+  }
+  const w = window.open(newPickingSession.pickerUri);
+  signal == null || signal.addEventListener('abort', () => w == null ? void 0 : w.close());
+}
+async function resolvePickedPhotos(_ref4) {
+  let {
+    accessToken,
+    pickingSession,
+    signal
+  } = _ref4;
+  const headers = getAuthHeader(accessToken);
+  let pageToken;
+  let mediaItems = [];
+  do {
+    const pageSize = 100;
+    const response = await fetch(`https://photospicker.googleapis.com/v1/mediaItems?${new URLSearchParams({
+      sessionId: pickingSession.id,
+      pageSize: String(pageSize)
+    }).toString()}`, {
+      headers,
+      signal
+    });
+    if (!response.ok) throw new Error('Failed to get a media items');
+    const {
+      mediaItems: batchMediaItems,
+      nextPageToken
+    } = await response.json();
+    pageToken = nextPageToken;
+    mediaItems.push(...batchMediaItems);
+  } while (pageToken);
+
+  // todo show alert instead about invalid picked files?
+  mediaItems = mediaItems.flatMap(i => i.type === 'PHOTO' || i.type === 'VIDEO' && i.mediaFile.mediaFileMetadata.videoMetadata.processingStatus === 'READY' ? [i] : []);
+  return mediaItems.map(_ref5 => {
+    let {
+      id,
+      // we want the original resolution, so we don't append any parameter to the baseUrl
+      // https://developers.google.com/photos/library/guides/access-media-items#base-urls
+      mediaFile: {
+        mimeType,
+        filename,
+        baseUrl
+      }
+    } = _ref5;
+    return {
+      platform: 'photos',
+      id,
+      mimeType,
+      url: baseUrl,
+      name: filename
+    };
+  });
+}
+async function googlePicker_pollPickingSession(_ref6) {
+  let {
+    pickingSessionRef,
+    accessTokenRef,
+    signal,
+    onFilesPicked,
+    onError
+  } = _ref6;
+  // if we have an active session, poll it until it either times out, or the user selects some photos.
+  // Note that the user can also just close the page, but we get no indication of that from Google when polling,
+  // so we just have to continue polling in the background, so we can react to it
+  // in case the user opens the photo selector again. Hence the infinite for loop
+  for (let interval = 1;;) {
+    try {
+      if (pickingSessionRef.current != null) {
+        interval = parseFloat(pickingSessionRef.current.pollingConfig.pollInterval);
+      } else {
+        interval = 1;
+      }
+      await Promise.race([new Promise(resolve => setTimeout(resolve, interval * 1000)), new Promise((_resolve, reject) => {
+        signal.addEventListener('abort', reject);
+      })]);
+      signal.throwIfAborted();
+      const accessToken = accessTokenRef.current;
+      const pickingSession = pickingSessionRef.current;
+      if (pickingSession != null && accessToken != null) {
+        const headers = getAuthHeader(accessToken);
+
+        // https://developers.google.com/photos/picker/reference/rest/v1/sessions
+        const response = await fetch(`https://photospicker.googleapis.com/v1/sessions/${encodeURIComponent(pickingSession.id)}`, {
+          headers,
+          signal
+        });
+        if (!response.ok) throw new Error('Failed to get session');
+        const json = await response.json();
+        if (json.mediaItemsSet) {
+          // console.log('User picked!', json)
+          const resolvedPhotos = await resolvePickedPhotos({
+            accessToken,
+            pickingSession,
+            signal
+          });
+          // eslint-disable-next-line no-param-reassign
+          pickingSessionRef.current = undefined;
+          onFilesPicked(resolvedPhotos, accessToken);
+        }
+        if (pickingSession.pollingConfig.timeoutIn === '0s') {
+          // eslint-disable-next-line no-param-reassign
+          pickingSessionRef.current = undefined;
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
+      // just report the error and continue polling
+      onError(err);
+    }
+  }
+}
+;// ./node_modules/@uppy/provider-views/lib/GooglePicker/icons.js
+
+const icons_GooglePhotosIcon = () => h("svg", {
+  "aria-hidden": "true",
+  focusable: "false",
+  width: "32",
+  height: "32",
+  viewBox: "-7 -7 73 73"
+}, h("g", {
+  fill: "none",
+  "fill-rule": "evenodd"
+}, h("path", {
+  d: "M-3-3h64v64H-3z"
+}), h("g", {
+  "fill-rule": "nonzero"
+}, h("path", {
+  fill: "#FBBC04",
+  d: "M14.8 13.4c8.1 0 14.7 6.6 14.7 14.8v1.3H1.3c-.7 0-1.3-.6-1.3-1.3C0 20 6.6 13.4 14.8 13.4z"
+}), h("path", {
+  fill: "#EA4335",
+  d: "M45.6 14.8c0 8.1-6.6 14.7-14.8 14.7h-1.3V1.3c0-.7.6-1.3 1.3-1.3C39 0 45.6 6.6 45.6 14.8z"
+}), h("path", {
+  fill: "#4285F4",
+  d: "M44.3 45.6c-8.2 0-14.8-6.6-14.8-14.8v-1.3h28.2c.7 0 1.3.6 1.3 1.3 0 8.2-6.6 14.8-14.8 14.8z"
+}), h("path", {
+  fill: "#34A853",
+  d: "M13.4 44.3c0-8.2 6.6-14.8 14.8-14.8h1.3v28.2c0 .7-.6 1.3-1.3 1.3-8.2 0-14.8-6.6-14.8-14.8z"
+}))));
+const icons_GoogleDriveIcon = () => h("svg", {
+  "aria-hidden": "true",
+  focusable: "false",
+  width: "32",
+  height: "32",
+  viewBox: "0 0 32 32"
+}, h("g", {
+  fillRule: "nonzero",
+  fill: "none"
+}, h("path", {
+  d: "M6.663 22.284l.97 1.62c.202.34.492.609.832.804l3.465-5.798H5c0 .378.1.755.302 1.096l1.361 2.278z",
+  fill: "#0066DA"
+}), h("path", {
+  d: "M16 12.09l-3.465-5.798c-.34.195-.63.463-.832.804l-6.4 10.718A2.15 2.15 0 005 18.91h6.93L16 12.09z",
+  fill: "#00AC47"
+}), h("path", {
+  d: "M23.535 24.708c.34-.195.63-.463.832-.804l.403-.67 1.928-3.228c.201-.34.302-.718.302-1.096h-6.93l1.474 2.802 1.991 2.996z",
+  fill: "#EA4335"
+}), h("path", {
+  d: "M16 12.09l3.465-5.798A2.274 2.274 0 0018.331 6h-4.662c-.403 0-.794.11-1.134.292L16 12.09z",
+  fill: "#00832D"
+}), h("path", {
+  d: "M20.07 18.91h-8.14l-3.465 5.798c.34.195.73.292 1.134.292h12.802c.403 0 .794-.11 1.134-.292L20.07 18.91z",
+  fill: "#2684FC"
+}), h("path", {
+  d: "M23.497 12.455l-3.2-5.359a2.252 2.252 0 00-.832-.804L16 12.09l4.07 6.82h6.917c0-.377-.1-.755-.302-1.096l-3.188-5.359z",
+  fill: "#FFBA00"
+})));
+;// ./node_modules/@uppy/provider-views/lib/GooglePicker/GooglePickerView.js
+
+
+
+
+
+function useStore(store, key) {
+  const [value, setValueState] = useState();
+  useEffect(() => {
+    ;
+    (async () => {
+      setValueState(await store.getItem(key));
+    })();
+  }, [key, store]);
+  const setValue = useCallback(async v => {
+    setValueState(v);
+    if (v == null) {
+      return store.removeItem(key);
+    }
+    return store.setItem(key, v);
+  }, [key, store]);
+  return [value, setValue];
+}
+function GooglePickerView(_ref) {
+  let {
+    uppy,
+    clientId,
+    onFilesPicked,
+    pickerType,
+    apiKey,
+    appId,
+    storage
+  } = _ref;
+  const [loading, setLoading] = useState(false);
+  const [accessToken, setAccessTokenStored] = useStore(storage, `uppy:google-${pickerType}-picker:accessToken`);
+  const pickingSessionRef = useRef();
+  const accessTokenRef = useRef(accessToken);
+  const shownPickerRef = useRef(false);
+  const setAccessToken = useCallback(t => {
+    uppy.log('Access token updated');
+    setAccessTokenStored(t);
+    accessTokenRef.current = t;
+  }, [setAccessTokenStored, uppy]);
+
+  // keep access token in sync with the ref
+  useEffect(() => {
+    accessTokenRef.current = accessToken;
+  }, [accessToken]);
+  const showPicker = useCallback(async signal => {
+    let newAccessToken = accessToken;
+    const doShowPicker = async token => {
+      if (pickerType === 'drive') {
+        await showDrivePicker({
+          token,
+          apiKey,
+          appId,
+          onFilesPicked,
+          signal
+        });
+      } else {
+        // photos
+        const onPickingSessionChange = newPickingSession => {
+          pickingSessionRef.current = newPickingSession;
+        };
+        await showPhotosPicker({
+          token,
+          pickingSession: pickingSessionRef.current,
+          onPickingSessionChange,
+          signal
+        });
+      }
+    };
+    setLoading(true);
+    try {
+      try {
+        await ensureScriptsInjected(pickerType);
+        if (newAccessToken == null) {
+          newAccessToken = await authorize({
+            clientId,
+            pickerType
+          });
+        }
+        if (newAccessToken == null) throw new Error();
+        await doShowPicker(newAccessToken);
+        shownPickerRef.current = true;
+        setAccessToken(newAccessToken);
+      } catch (err) {
+        if (err instanceof InvalidTokenError) {
+          uppy.log('Token is invalid or expired, reauthenticating');
+          newAccessToken = await authorize({
+            pickerType,
+            accessToken: newAccessToken,
+            clientId
+          });
+          // now try again:
+          await doShowPicker(newAccessToken);
+          shownPickerRef.current = true;
+          setAccessToken(newAccessToken);
+        } else {
+          throw err;
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error && 'type' in err && err.type === 'popup_closed') {
+        // user closed the auth popup, ignore
+      } else {
+        setAccessToken(null);
+        uppy.log(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [accessToken, apiKey, appId, clientId, onFilesPicked, pickerType, setAccessToken, uppy]);
+  useEffect(() => {
+    const abortController = new AbortController();
+    pollPickingSession({
+      pickingSessionRef,
+      accessTokenRef,
+      signal: abortController.signal,
+      onFilesPicked,
+      onError: err => uppy.log(err)
+    });
+    return () => abortController.abort();
+  }, [onFilesPicked, uppy]);
+  useEffect(() => {
+    // when mounting, once we have a token, be nice to the user and automatically show the picker
+    // accessToken === undefined means not yet loaded from storage, so wait for that first
+    if (accessToken === undefined || shownPickerRef.current) {
+      return undefined;
+    }
+    const abortController = new AbortController();
+    showPicker(abortController.signal);
+    return () => {
+      // only abort the picker if it's not yet shown
+      if (!shownPickerRef.current) abortController.abort();
+    };
+  }, [accessToken, showPicker]);
+  const handleLogoutClick = useCallback(async () => {
+    if (accessToken) {
+      await logout(accessToken);
+      setAccessToken(null);
+      pickingSessionRef.current = undefined;
+    }
+  }, [accessToken, setAccessToken]);
+  if (loading) {
+    return h("div", null, uppy.i18n('pleaseWait'), "...");
+  }
+  if (accessToken == null) {
+    return h(AuthView, {
+      pluginName: pickerType === 'drive' ? uppy.i18n('pluginNameGoogleDrive') : uppy.i18n('pluginNameGooglePhotos'),
+      pluginIcon: pickerType === 'drive' ? GoogleDriveIcon : GooglePhotosIcon,
+      handleAuth: showPicker,
+      i18n: uppy.i18n,
+      loading: loading
+    });
+  }
+  return h("div", {
+    style: {
+      textAlign: 'center'
+    }
+  }, h("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary",
+    style: {
+      display: 'block',
+      marginBottom: '1em'
+    },
+    disabled: loading,
+    onClick: () => showPicker()
+  }, pickerType === 'drive' ? uppy.i18n('pickFiles') : uppy.i18n('pickPhotos')), h("button", {
+    type: "button",
+    className: "uppy-u-reset uppy-c-btn",
+    disabled: loading,
+    onClick: handleLogoutClick
+  }, uppy.i18n('logOut')));
+}
 ;// ./node_modules/@uppy/provider-views/lib/index.js
 
 
-;// ./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js
-let nanoid_non_secure_urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-let nanoid_non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
-  return (size = defaultSize) => {
-    let id = ''
-    let i = size
-    while (i--) {
-      id += alphabet[(Math.random() * alphabet.length) | 0]
-    }
-    return id
-  }
-}
-let nanoid_non_secure_nanoid = (size = 21) => {
-  let id = ''
-  let i = size
-  while (i--) {
-    id += nanoid_non_secure_urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
+
 
 ;// ./node_modules/memoize-one/dist/memoize-one.esm.js
 var safeIsNaN = Number.isNaN ||
@@ -15627,8 +16093,63 @@ function isDragDropSupported() {
   }
   return true;
 }
-// EXTERNAL MODULE: ./node_modules/is-shallow-equal/index.js
-var is_shallow_equal = __webpack_require__(6993);
+;// ./node_modules/shallow-equal/dist/index.modern.mjs
+function shallowEqualArrays(arrA, arrB) {
+  if (arrA === arrB) {
+    return true;
+  }
+  if (!arrA || !arrB) {
+    return false;
+  }
+  const len = arrA.length;
+  if (arrB.length !== len) {
+    return false;
+  }
+  for (let i = 0; i < len; i++) {
+    if (arrA[i] !== arrB[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function shallowEqualObjects(objA, objB) {
+  if (objA === objB) {
+    return true;
+  }
+  if (!objA || !objB) {
+    return false;
+  }
+  const aKeys = Object.keys(objA);
+  const bKeys = Object.keys(objB);
+  const len = aKeys.length;
+  if (bKeys.length !== len) {
+    return false;
+  }
+  for (let i = 0; i < len; i++) {
+    const key = aKeys[i];
+    if (objA[key] !== objB[key] || !Object.prototype.hasOwnProperty.call(objB, key)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function shallowEqual(a, b) {
+  const aIsArr = Array.isArray(a);
+  const bIsArr = Array.isArray(b);
+  if (aIsArr !== bIsArr) {
+    return false;
+  }
+  if (aIsArr && bIsArr) {
+    return shallowEqualArrays(a, b);
+  }
+  return shallowEqualObjects(a, b);
+}
+
+
+//# sourceMappingURL=index.modern.mjs.map
+
 ;// ./node_modules/@uppy/dashboard/lib/utils/getFileTypeIcon.js
 
 function iconImage() {
@@ -15908,7 +16429,9 @@ function FilePreviewAndLink(props) {
   }));
 }
 ;// ./node_modules/@uppy/dashboard/lib/components/FileItem/FileProgress/index.js
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/destructuring-assignment */
+
 
 function onPauseResumeCancelRetry(props) {
   if (props.isUploaded) return;
@@ -15994,6 +16517,9 @@ function FileProgress(props) {
   if (!props.file.progress.uploadStarted) {
     return null;
   }
+  if (props.file.progress.percentage === undefined) {
+    return null;
+  }
 
   // Green checkmark when complete
   if (props.isUploaded) {
@@ -16013,7 +16539,7 @@ function FileProgress(props) {
     }))));
   }
   if (props.recoveredState) {
-    return undefined;
+    return null;
   }
 
   // Retry button for error
@@ -16156,7 +16682,7 @@ const renderAuthor = props => {
     href: `${author.url}?utm_source=Companion&utm_medium=referral`,
     target: "_blank",
     rel: "noopener noreferrer"
-  }, truncateString(author.name, 13)), providerName ? g(k, null, ` ${dot} `, providerName, ` ${dot} `) : null);
+  }, truncateString(author.name, 13)), providerName ? g(Fragment, null, ` ${dot} `, providerName, ` ${dot} `) : null);
 };
 const renderFileSize = props => props.file.size && g("div", {
   className: "uppy-Dashboard-Item-statusSize"
@@ -16164,7 +16690,7 @@ const renderFileSize = props => props.file.size && g("div", {
 const ReSelectButton = props => props.file.isGhost && g("span", null, ' \u2022 ', g("button", {
   className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect",
   type: "button",
-  onClick: props.toggleAddFilesPanel
+  onClick: () => props.toggleAddFilesPanel(true)
 }, props.i18n('reSelect')));
 const ErrorButton = _ref => {
   let {
@@ -16185,25 +16711,43 @@ const ErrorButton = _ref => {
 };
 function FileInfo(props) {
   const {
-    file
+    file,
+    i18n,
+    toggleFileCard,
+    metaFields,
+    toggleAddFilesPanel,
+    isSingleFile,
+    containerHeight,
+    containerWidth
   } = props;
   return g("div", {
     className: "uppy-Dashboard-Item-fileInfo",
     "data-uppy-file-source": file.source
   }, g("div", {
     className: "uppy-Dashboard-Item-fileName"
-  }, renderFileName(props), g(ErrorButton, {
-    file: props.file
-    // eslint-disable-next-line no-alert
-    ,
-    onClick: () => alert(props.file.error) // TODO: move to a custom alert implementation
+  }, renderFileName({
+    file,
+    isSingleFile,
+    containerHeight,
+    containerWidth
+  }), g(ErrorButton, {
+    file: file,
+    onClick: () => alert(file.error)
   })), g("div", {
     className: "uppy-Dashboard-Item-status"
-  }, renderAuthor(props), renderFileSize(props), ReSelectButton(props)), g(MetaErrorMessage, {
-    file: props.file,
-    i18n: props.i18n,
-    toggleFileCard: props.toggleFileCard,
-    metaFields: props.metaFields
+  }, renderAuthor({
+    file
+  }), renderFileSize({
+    file
+  }), ReSelectButton({
+    file,
+    toggleAddFilesPanel,
+    i18n
+  })), g(MetaErrorMessage, {
+    file: file,
+    i18n: i18n,
+    toggleFileCard: toggleFileCard,
+    metaFields: metaFields
   }));
 }
 ;// ./node_modules/@uppy/dashboard/lib/utils/copyToClipboard.js
@@ -16336,26 +16880,28 @@ function RemoveButton(_ref2) {
     d: "M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z"
   })));
 }
-const copyLinkToClipboard = (event, props) => {
-  copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback')).then(() => {
-    props.uppy.log('Link copied to clipboard.');
-    props.uppy.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000);
-  }).catch(props.uppy.log)
-  // avoid losing focus
-  .then(() => event.target.focus({
-    preventScroll: true
-  }));
-};
-function CopyLinkButton(props) {
-  const {
+function CopyLinkButton(_ref3) {
+  let {
+    file,
+    uppy,
     i18n
-  } = props;
+  } = _ref3;
+  const copyLinkToClipboard = event => {
+    copyToClipboard(file.uploadURL, i18n('copyLinkToClipboardFallback')).then(() => {
+      uppy.log('Link copied to clipboard.');
+      uppy.info(i18n('copyLinkToClipboardSuccess'), 'info', 3000);
+    }).catch(uppy.log)
+    // avoid losing focus
+    .then(() => event.target.focus({
+      preventScroll: true
+    }));
+  };
   return g("button", {
     className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink",
     type: "button",
     "aria-label": i18n('copyLink'),
     title: i18n('copyLink'),
-    onClick: event => copyLinkToClipboard(event, props)
+    onClick: event => copyLinkToClipboard(event)
   }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
@@ -16403,14 +16949,10 @@ function Buttons(props) {
   }) : null, showRemoveButton ? g(RemoveButton, {
     i18n: i18n,
     file: file,
-    uppy: uppy,
-    onClick: () => uppy.removeFile(file.id, 'removed-by-user')
+    onClick: () => uppy.removeFile(file.id)
   }) : null);
 }
 ;// ./node_modules/@uppy/dashboard/lib/components/FileItem/index.js
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
 /* eslint-disable react/destructuring-assignment */
 
 
@@ -16429,7 +16971,7 @@ class FileItem extends x {
     }
   }
   shouldComponentUpdate(nextProps) {
-    return !is_shallow_equal(this.props, nextProps);
+    return !shallowEqualObjects(this.props, nextProps);
   }
 
   // VirtualList mounts FileItems again and they emit `thumbnail:request`
@@ -16455,8 +16997,8 @@ class FileItem extends x {
       file
     } = this.props;
     const isProcessing = file.progress.preprocess || file.progress.postprocess;
-    const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error;
-    const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing;
+    const isUploaded = !!file.progress.uploadComplete && !isProcessing && !file.error;
+    const uploadInProgressOrComplete = !!file.progress.uploadStarted || !!isProcessing;
     const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete || isProcessing;
     const error = file.error || false;
 
@@ -16500,7 +17042,6 @@ class FileItem extends x {
       hideCancelButton: this.props.hideCancelButton,
       hidePauseResumeButton: this.props.hidePauseResumeButton,
       recoveredState: this.props.recoveredState,
-      showRemoveButtonAfterComplete: this.props.showRemoveButtonAfterComplete,
       resumableUploads: this.props.resumableUploads,
       individualCancellation: this.props.individualCancellation,
       i18n: this.props.i18n
@@ -16508,8 +17049,6 @@ class FileItem extends x {
       className: "uppy-Dashboard-Item-fileInfoAndButtons"
     }, g(FileInfo, {
       file: file,
-      id: this.props.id,
-      acquirers: this.props.acquirers,
       containerWidth: this.props.containerWidth,
       containerHeight: this.props.containerHeight,
       i18n: this.props.i18n,
@@ -16555,18 +17094,15 @@ function chunks(list, size) {
 function FileList(_ref) {
   let {
     id,
-    error,
     i18n,
     uppy,
     files,
-    acquirers,
     resumableUploads,
     hideRetryButton,
     hidePauseResumeButton,
     hideCancelButton,
     showLinkToFileUploadResult,
     showRemoveButtonAfterComplete,
-    isWide,
     metaFields,
     isSingleFile,
     toggleFileCard,
@@ -16591,34 +17127,31 @@ function FileList(_ref) {
 
   // Sort files by file.isGhost, ghost files first, only if recoveredState is present
   const rows = hooks_module_T(() => {
-    const sortByGhostComesFirst = (file1, file2) => files[file2].isGhost - files[file1].isGhost;
+    const sortByGhostComesFirst = (file1, file2) => Number(files[file2].isGhost) - Number(files[file1].isGhost);
     const fileIds = Object.keys(files);
     if (recoveredState) fileIds.sort(sortByGhostComesFirst);
     return chunks(fileIds, itemsPerRow);
   }, [files, itemsPerRow, recoveredState]);
-  const renderRow = (row // The `role="presentation` attribute ensures that the list items are properly
-  ) =>
-  // associated with the `VirtualList` element.
-  // We use the first file ID as the key—this should not change across scroll rerenders
-  g("div", {
-    class: "uppy-Dashboard-filesInner",
-    role: "presentation",
+  const renderRow = row => g("div", {
+    class: "uppy-Dashboard-filesInner"
+    // The `role="presentation` attribute ensures that the list items are properly
+    // associated with the `VirtualList` element.
+    ,
+    role: "presentation"
+    // We use the first file ID as the key — this should not change across scroll rerenders.
+    ,
     key: row[0]
   }, row.map(fileID => g(FileItem, {
-    key: fileID
-    // @ts-expect-error it's fine
-    ,
+    key: fileID,
     uppy: uppy
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
     ,
-    id: id,
-    error: error
+    id: id
     // TODO move this to context
     ,
     i18n: i18n
     // features
     ,
-    acquirers: acquirers,
     resumableUploads: resumableUploads,
     individualCancellation: individualCancellation
     // visual options
@@ -16628,7 +17161,6 @@ function FileList(_ref) {
     hideCancelButton: hideCancelButton,
     showLinkToFileUploadResult: showLinkToFileUploadResult,
     showRemoveButtonAfterComplete: showRemoveButtonAfterComplete,
-    isWide: isWide,
     metaFields: metaFields,
     recoveredState: recoveredState,
     isSingleFile: isSingleFile,
@@ -16659,51 +17191,54 @@ function FileList(_ref) {
   });
 }
 ;// ./node_modules/@uppy/dashboard/lib/components/AddFiles.js
-let AddFiles_Symbol$for;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
 /* eslint-disable react/destructuring-assignment */
 
-AddFiles_Symbol$for = Symbol.for('uppy test: disable unused locale key warning');
 class AddFiles extends x {
   constructor() {
     super(...arguments);
+    this.fileInput = null;
+    this.folderInput = null;
+    this.mobilePhotoFileInput = null;
+    this.mobileVideoFileInput = null;
     this.triggerFileInputClick = () => {
-      this.fileInput.click();
+      var _this$fileInput;
+      (_this$fileInput = this.fileInput) == null || _this$fileInput.click();
     };
     this.triggerFolderInputClick = () => {
-      this.folderInput.click();
+      var _this$folderInput;
+      (_this$folderInput = this.folderInput) == null || _this$folderInput.click();
     };
     this.triggerVideoCameraInputClick = () => {
-      this.mobileVideoFileInput.click();
+      var _this$mobileVideoFile;
+      (_this$mobileVideoFile = this.mobileVideoFileInput) == null || _this$mobileVideoFile.click();
     };
     this.triggerPhotoCameraInputClick = () => {
-      this.mobilePhotoFileInput.click();
+      var _this$mobilePhotoFile;
+      (_this$mobilePhotoFile = this.mobilePhotoFileInput) == null || _this$mobilePhotoFile.click();
     };
     this.onFileInputChange = event => {
       this.props.handleInputChange(event);
 
-      // We clear the input after a file is selected, because otherwise
-      // change event is not fired in Chrome and Safari when a file
-      // with the same name is selected.
-      // ___Why not use value="" on <input/> instead?
-      //    Because if we use that method of clearing the input,
-      //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-      event.target.value = null; // eslint-disable-line no-param-reassign
+      // Clear the input so that Chrome/Safari/etc. can detect file section when the same file is repeatedly selected
+      // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
+      // eslint-disable-next-line no-param-reassign
+      event.currentTarget.value = '';
     };
     this.renderHiddenInput = (isFolder, refCallback) => {
+      var _this$props$allowedFi;
       return g("input", {
         className: "uppy-Dashboard-input",
         hidden: true,
         "aria-hidden": "true",
-        tabIndex: -1,
+        tabIndex: -1
+        // @ts-expect-error default types don't yet know about the `webkitdirectory` property
+        ,
         webkitdirectory: isFolder,
         type: "file",
         name: "files[]",
         multiple: this.props.maxNumberOfFiles !== 1,
         onChange: this.onFileInputChange,
-        accept: this.props.allowedFileTypes,
+        accept: (_this$props$allowedFi = this.props.allowedFileTypes) == null ? void 0 : _this$props$allowedFi.join(', '),
         ref: refCallback
       });
     };
@@ -16907,7 +17442,10 @@ class AddFiles extends x {
       // just one button on a new line
       const listWithoutLastTwo = [...list];
       const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length);
-      const renderList = l => l.map(_ref => {
+      return g(k, null, this.renderDropPasteBrowseTagline(list.length), g("div", {
+        className: "uppy-Dashboard-AddFiles-list",
+        role: "tablist"
+      }, listWithoutLastTwo.map(_ref => {
         let {
           key,
           elements
@@ -16915,19 +17453,23 @@ class AddFiles extends x {
         return g(k, {
           key: key
         }, elements);
-      });
-      return g(k, null, this.renderDropPasteBrowseTagline(list.length), g("div", {
-        className: "uppy-Dashboard-AddFiles-list",
-        role: "tablist"
-      }, renderList(listWithoutLastTwo), g("span", {
+      }), g("span", {
         role: "presentation",
         style: {
           'white-space': 'nowrap'
         }
-      }, renderList(lastTwo))));
+      }, lastTwo.map(_ref2 => {
+        let {
+          key,
+          elements
+        } = _ref2;
+        return g(k, {
+          key: key
+        }, elements);
+      }))));
     };
   }
-  [AddFiles_Symbol$for]() {
+  [Symbol.for('uppy test: disable unused locale key warning')]() {
     // Those are actually used in `renderDropPasteBrowseTagline` method.
     this.props.i18nArray('dropPasteBoth');
     this.props.i18nArray('dropPasteFiles');
@@ -16984,7 +17526,7 @@ class AddFiles extends x {
       className: "uppy-Dashboard-AddFiles-info"
     }, this.props.note && g("div", {
       className: "uppy-Dashboard-note"
-    }, this.props.note), this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)));
+    }, this.props.note), this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy()));
   }
 }
 /* harmony default export */ const components_AddFiles = (AddFiles);
@@ -17033,6 +17575,7 @@ function ignoreEvent(ev) {
 
 
 
+
 function PickerPanelContent(_ref) {
   let {
     activePickerPanel,
@@ -17042,6 +17585,7 @@ function PickerPanelContent(_ref) {
     state,
     uppy
   } = _ref;
+  const ref = hooks_module_A(null);
   return g("div", {
     className: classnames('uppy-DashboardContent-panel', className),
     role: "tabpanel",
@@ -17064,8 +17608,9 @@ function PickerPanelContent(_ref) {
     type: "button",
     onClick: hideAllPanels
   }, i18n('cancel'))), g("div", {
+    ref: ref,
     className: "uppy-DashboardContent-panelBody"
-  }, uppy.getPlugin(activePickerPanel.id).render(state)));
+  }, uppy.getPlugin(activePickerPanel.id).render(state, ref.current)));
 }
 /* harmony default export */ const components_PickerPanelContent = (PickerPanelContent);
 ;// ./node_modules/@uppy/dashboard/lib/components/EditorPanel.js
@@ -17330,7 +17875,7 @@ function FileCard(props) {
   const [form] = hooks_module_h(() => {
     const formEl = document.createElement('form');
     formEl.setAttribute('tabindex', '-1');
-    formEl.id = nanoid_non_secure_nanoid();
+    formEl.id = nanoid();
     return formEl;
   });
   hooks_module_y(() => {
@@ -17484,9 +18029,8 @@ function Slide(_ref) {
 }
 /* harmony default export */ const components_Slide = (Slide);
 ;// ./node_modules/@uppy/dashboard/lib/components/Dashboard.js
-function Dashboard_extends() { Dashboard_extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return Dashboard_extends.apply(this, arguments); }
+function Dashboard_extends() { return Dashboard_extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, Dashboard_extends.apply(null, arguments); }
 /* eslint-disable react/destructuring-assignment, react/jsx-props-no-spreading */
-
 
 
 
@@ -17545,7 +18089,7 @@ function Dashboard_Dashboard(props) {
   }
   const showFileList = props.showSelectedFiles && !isNoFiles;
   const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null;
-  const numberOfGhosts = props.files ? Object.keys(props.files).filter(fileID => props.files[fileID].isGhost).length : null;
+  const numberOfGhosts = props.files ? Object.keys(props.files).filter(fileID => props.files[fileID].isGhost).length : 0;
   const renderRestoredText = () => {
     if (numberOfGhosts > 0) {
       return props.i18n('recoveredXFiles', {
@@ -17621,18 +18165,15 @@ function Dashboard_Dashboard(props) {
     className: "uppy-Dashboard-serviceMsg-text"
   }, renderRestoredText())), showFileList ? g(FileList, {
     id: props.id,
-    error: props.error,
     i18n: props.i18n,
     uppy: props.uppy,
     files: props.files,
-    acquirers: props.acquirers,
     resumableUploads: props.resumableUploads,
     hideRetryButton: props.hideRetryButton,
     hidePauseResumeButton: props.hidePauseResumeButton,
     hideCancelButton: props.hideCancelButton,
     showLinkToFileUploadResult: props.showLinkToFileUploadResult,
     showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
-    isWide: props.isWide,
     metaFields: props.metaFields,
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
@@ -17643,12 +18184,26 @@ function Dashboard_Dashboard(props) {
     canEditFile: props.canEditFile,
     toggleAddFilesPanel: props.toggleAddFilesPanel,
     isSingleFile: isSingleFile,
-    itemsPerRow: itemsPerRow
-  })
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  : g(components_AddFiles, Dashboard_extends({}, props, {
-    isSizeMD: isSizeMD
-  })), g(components_Slide, null, props.showAddFilesPanel ? g(components_AddFilesPanel, Dashboard_extends({
+    itemsPerRow: itemsPerRow,
+    containerWidth: props.containerWidth,
+    containerHeight: props.containerHeight
+  }) : g(components_AddFiles, {
+    i18n: props.i18n,
+    i18nArray: props.i18nArray,
+    acquirers: props.acquirers,
+    handleInputChange: props.handleInputChange,
+    maxNumberOfFiles: props.maxNumberOfFiles,
+    allowedFileTypes: props.allowedFileTypes,
+    showNativePhotoCameraButton: props.showNativePhotoCameraButton,
+    showNativeVideoCameraButton: props.showNativeVideoCameraButton,
+    nativeCameraFacingMode: props.nativeCameraFacingMode,
+    showPanel: props.showPanel,
+    activePickerPanel: props.activePickerPanel,
+    disableLocalFiles: props.disableLocalFiles,
+    fileManagerSelectionType: props.fileManagerSelectionType,
+    note: props.note,
+    proudlyDisplayPoweredByUppy: props.proudlyDisplayPoweredByUppy
+  }), g(components_Slide, null, props.showAddFilesPanel ? g(components_AddFilesPanel, Dashboard_extends({
     key: "AddFiles"
   }, props, {
     isSizeMD: isSizeMD
@@ -17661,6 +18216,9 @@ function Dashboard_Dashboard(props) {
   }, props)) : null), g("div", {
     className: "uppy-Dashboard-progressindicators"
   }, props.progressindicators.map(target => {
+    // TODO
+    // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`
+    // This is factually true in Uppy right now, but maybe it doesn't have to be
     return props.uppy.getPlugin(target.id).render(props.state);
   })))));
   return dashboard;
@@ -17760,9 +18318,9 @@ function Dashboard_Dashboard(props) {
   }
 });
 ;// ./node_modules/@uppy/dashboard/lib/Dashboard.js
-function Dashboard_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function Dashboard_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var Dashboard_id = 0;
-function Dashboard_classPrivateFieldLooseKey(name) { return "__private_" + Dashboard_id++ + "_" + name; }
+function Dashboard_classPrivateFieldLooseKey(e) { return "__private_" + Dashboard_id++ + "_" + e; }
 
 
 
@@ -17780,7 +18338,7 @@ function Dashboard_classPrivateFieldLooseKey(name) { return "__private_" + Dashb
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const Dashboard_packageJson = {
-  "version": "3.9.1"
+  "version": "4.3.0"
 };
 
 const memoize = memoizeOne["default"] || memoizeOne;
@@ -17794,13 +18352,9 @@ function createPromise() {
   });
   return o;
 }
-// set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 const Dashboard_defaultOptions = {
   target: 'body',
   metaFields: [],
-  inline: false,
-  width: 750,
-  height: 550,
   thumbnailWidth: 280,
   thumbnailType: 'image/jpeg',
   waitForThumbnailsBeforeUpload: false,
@@ -17813,31 +18367,41 @@ const Dashboard_defaultOptions = {
   hidePauseResumeButton: false,
   hideProgressAfterFinish: false,
   note: null,
-  closeModalOnClickOutside: false,
-  closeAfterFinish: false,
   singleFileFullScreen: true,
   disableStatusBar: false,
   disableInformer: false,
   disableThumbnailGenerator: false,
-  disablePageScrollWhenModalOpen: true,
-  animateOpenClose: true,
   fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
-  browserBackButtonClose: false,
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
   theme: 'light',
   autoOpen: null,
-  autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
+  nativeCameraFacingMode: '',
+  onDragLeave: () => {},
+  onDragOver: () => {},
+  onDrop: () => {},
+  plugins: [],
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to
   // appear in the default options so TS knows they'll be defined.
   doneButtonHandler: undefined,
-  onRequestCloseModal: null
+  onRequestCloseModal: null,
+  // defaultModalOptions
+  inline: false,
+  animateOpenClose: true,
+  browserBackButtonClose: false,
+  closeAfterFinish: false,
+  closeModalOnClickOutside: false,
+  disablePageScrollWhenModalOpen: true,
+  trigger: null,
+  // defaultInlineOptions
+  width: 750,
+  height: 550
 };
 
 /**
@@ -17854,31 +18418,47 @@ var _getEditors = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getEditors")
 var _addSpecifiedPluginsFromOptions = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("addSpecifiedPluginsFromOptions");
 var _autoDiscoverPlugins = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("autoDiscoverPlugins");
 var _addSupportedPluginIfNoTarget = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("addSupportedPluginIfNoTarget");
+var _getStatusBarOpts = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getStatusBarOpts");
+var _getThumbnailGeneratorOpts = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getThumbnailGeneratorOpts");
+var _getInformerOpts = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getInformerOpts");
+var _getStatusBarId = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getStatusBarId");
+var _getThumbnailGeneratorId = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getThumbnailGeneratorId");
+var _getInformerId = /*#__PURE__*/Dashboard_classPrivateFieldLooseKey("getInformerId");
 class Dashboard extends lib_UIPlugin {
   // Timeouts
 
   constructor(uppy, _opts) {
-    var _this$opts4, _this$opts4$onRequest;
-    // support for the legacy `autoOpenFileEditor` option,
-    // TODO: we can remove this code when we update the Uppy major version
-    let autoOpen;
-    if (!_opts) {
-      autoOpen = null;
-    } else if (_opts.autoOpen === undefined) {
-      autoOpen = _opts.autoOpenFileEditor ? 'imageEditor' : null;
-    } else {
-      autoOpen = _opts.autoOpen;
-    }
+    var _opts$autoOpen, _this$opts, _this$opts$onRequestC;
+    const autoOpen = (_opts$autoOpen = _opts == null ? void 0 : _opts.autoOpen) != null ? _opts$autoOpen : null;
     super(uppy, {
       ...Dashboard_defaultOptions,
       ..._opts,
       autoOpen
     });
+    Object.defineProperty(this, _getInformerId, {
+      value: _getInformerId2
+    });
+    Object.defineProperty(this, _getThumbnailGeneratorId, {
+      value: _getThumbnailGeneratorId2
+    });
+    Object.defineProperty(this, _getStatusBarId, {
+      value: _getStatusBarId2
+    });
+    // eslint-disable-next-line class-methods-use-this
+    Object.defineProperty(this, _getInformerOpts, {
+      value: _getInformerOpts2
+    });
+    Object.defineProperty(this, _getThumbnailGeneratorOpts, {
+      value: _getThumbnailGeneratorOpts2
+    });
+    Object.defineProperty(this, _getStatusBarOpts, {
+      value: _getStatusBarOpts2
+    });
     Object.defineProperty(this, _disabledNodes, {
       writable: true,
       value: void 0
     });
-    this.modalName = `uppy-Dashboard-${nanoid_non_secure_nanoid()}`;
+    this.modalName = `uppy-Dashboard-${nanoid()}`;
     this.superFocus = createSuperFocus();
     this.ifFocusedOnUppyRecently = false;
     this.removeTarget = plugin => {
@@ -18292,14 +18872,13 @@ class Dashboard extends lib_UIPlugin {
     };
     this.handleInputChange = event => {
       event.preventDefault();
-      const files = toArray(event.target.files);
+      const files = toArray(event.currentTarget.files || []);
       if (files.length > 0) {
         this.uppy.log('[Dashboard] Files selected through input');
         this.addFiles(files);
       }
     };
     this.handleDragOver = event => {
-      var _this$opts$onDragOver, _this$opts;
       event.preventDefault();
       event.stopPropagation();
 
@@ -18332,7 +18911,6 @@ class Dashboard extends lib_UIPlugin {
       // can handle the datatransfer
       this.opts.disableLocalFiles && (hasFiles || !somePluginCanHandleRootDrop) || !this.uppy.getState().allowNewUpload) {
         event.dataTransfer.dropEffect = 'none'; // eslint-disable-line no-param-reassign
-        clearTimeout(this.removeDragOverClassTimeout);
         return;
       }
 
@@ -18341,31 +18919,22 @@ class Dashboard extends lib_UIPlugin {
       // browser, https://github.com/transloadit/uppy/issues/1978).
       event.dataTransfer.dropEffect = 'copy'; // eslint-disable-line no-param-reassign
 
-      clearTimeout(this.removeDragOverClassTimeout);
       this.setPluginState({
         isDraggingOver: true
       });
-      (_this$opts$onDragOver = (_this$opts = this.opts).onDragOver) == null || _this$opts$onDragOver.call(_this$opts, event);
+      this.opts.onDragOver(event);
     };
     this.handleDragLeave = event => {
-      var _this$opts$onDragLeav, _this$opts2;
       event.preventDefault();
       event.stopPropagation();
-      clearTimeout(this.removeDragOverClassTimeout);
-      // Timeout against flickering, this solution is taken from drag-drop library.
-      // Solution with 'pointer-events: none' didn't work across browsers.
-      this.removeDragOverClassTimeout = setTimeout(() => {
-        this.setPluginState({
-          isDraggingOver: false
-        });
-      }, 50);
-      (_this$opts$onDragLeav = (_this$opts2 = this.opts).onDragLeave) == null || _this$opts$onDragLeav.call(_this$opts2, event);
+      this.setPluginState({
+        isDraggingOver: false
+      });
+      this.opts.onDragLeave(event);
     };
     this.handleDrop = async event => {
-      var _this$opts$onDrop, _this$opts3;
       event.preventDefault();
       event.stopPropagation();
-      clearTimeout(this.removeDragOverClassTimeout);
       this.setPluginState({
         isDraggingOver: false
       });
@@ -18401,7 +18970,7 @@ class Dashboard extends lib_UIPlugin {
         this.uppy.log('[Dashboard] Files dropped');
         this.addFiles(files);
       }
-      (_this$opts$onDrop = (_this$opts3 = this.opts).onDrop) == null || _this$opts$onDrop.call(_this$opts3, event);
+      this.opts.onDrop(event);
     };
     this.handleRequestThumbnail = file => {
       if (!this.opts.waitForThumbnailsBeforeUpload) {
@@ -18644,7 +19213,6 @@ class Dashboard extends lib_UIPlugin {
         processingFiles,
         isUploadStarted,
         isAllComplete,
-        isAllErrored,
         isAllPaused
       } = this.uppy.getObjectOfFilesPerState();
       const acquirers = Dashboard_classPrivateFieldLooseBase(this, _getAcquirers)[_getAcquirers](pluginState.targets);
@@ -18674,7 +19242,6 @@ class Dashboard extends lib_UIPlugin {
         processingFiles,
         isUploadStarted,
         isAllComplete,
-        isAllErrored,
         isAllPaused,
         totalFileCount: Object.keys(files).length,
         totalProgress: state.totalProgress,
@@ -18730,7 +19297,6 @@ class Dashboard extends lib_UIPlugin {
         containerWidth: pluginState.containerWidth,
         containerHeight: pluginState.containerHeight,
         areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
-        isTargetDOMEl: this.isTargetDOMEl,
         parentElement: this.el,
         allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
         maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
@@ -18753,7 +19319,9 @@ class Dashboard extends lib_UIPlugin {
     Object.defineProperty(this, _addSpecifiedPluginsFromOptions, {
       writable: true,
       value: () => {
-        const plugins = this.opts.plugins || [];
+        const {
+          plugins
+        } = this.opts;
         plugins.forEach(pluginID => {
           const plugin = this.uppy.getPlugin(pluginID);
           if (plugin) {
@@ -18824,33 +19392,22 @@ class Dashboard extends lib_UIPlugin {
       }
       if (!this.opts.disableStatusBar) {
         this.uppy.use(StatusBar, {
-          id: `${this.id}:StatusBar`,
+          id: Dashboard_classPrivateFieldLooseBase(this, _getStatusBarId)[_getStatusBarId](),
           target: this,
-          hideUploadButton: this.opts.hideUploadButton,
-          hideRetryButton: this.opts.hideRetryButton,
-          hidePauseResumeButton: this.opts.hidePauseResumeButton,
-          hideCancelButton: this.opts.hideCancelButton,
-          showProgressDetails: this.opts.showProgressDetails,
-          hideAfterFinish: this.opts.hideProgressAfterFinish,
-          locale: this.opts.locale,
-          doneButtonHandler: this.opts.doneButtonHandler
+          ...Dashboard_classPrivateFieldLooseBase(this, _getStatusBarOpts)[_getStatusBarOpts]()
         });
       }
       if (!this.opts.disableInformer) {
         this.uppy.use(Informer, {
-          id: `${this.id}:Informer`,
-          target: this
+          id: Dashboard_classPrivateFieldLooseBase(this, _getInformerId)[_getInformerId](),
+          target: this,
+          ...Dashboard_classPrivateFieldLooseBase(this, _getInformerOpts)[_getInformerOpts]()
         });
       }
       if (!this.opts.disableThumbnailGenerator) {
         this.uppy.use(ThumbnailGenerator, {
-          id: `${this.id}:ThumbnailGenerator`,
-          thumbnailWidth: this.opts.thumbnailWidth,
-          thumbnailHeight: this.opts.thumbnailHeight,
-          thumbnailType: this.opts.thumbnailType,
-          waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
-          // If we don't block on thumbnails, we can lazily generate them
-          lazy: !this.opts.waitForThumbnailsBeforeUpload
+          id: Dashboard_classPrivateFieldLooseBase(this, _getThumbnailGeneratorId)[_getThumbnailGeneratorId](),
+          ...Dashboard_classPrivateFieldLooseBase(this, _getThumbnailGeneratorOpts)[_getThumbnailGeneratorOpts]()
         });
       }
 
@@ -18882,7 +19439,9 @@ class Dashboard extends lib_UIPlugin {
         const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`);
         if (thumbnail) this.uppy.removePlugin(thumbnail);
       }
-      const plugins = this.opts.plugins || [];
+      const {
+        plugins
+      } = this.opts;
       plugins.forEach(pluginID => {
         const plugin = this.uppy.getPlugin(pluginID);
         if (plugin) plugin.unmount();
@@ -18907,21 +19466,79 @@ class Dashboard extends lib_UIPlugin {
       // `null` means "do not display a Done button", while `undefined` means
       // "I want the default behavior". For this reason, we need to differentiate `null` and `undefined`.
       this.opts.doneButtonHandler = () => {
-        this.uppy.clearUploadedFiles();
+        this.uppy.clear();
         this.requestCloseModal();
       };
     }
-    (_this$opts4$onRequest = (_this$opts4 = this.opts).onRequestCloseModal) != null ? _this$opts4$onRequest : _this$opts4.onRequestCloseModal = () => this.closeModal();
+    (_this$opts$onRequestC = (_this$opts = this.opts).onRequestCloseModal) != null ? _this$opts$onRequestC : _this$opts.onRequestCloseModal = () => this.closeModal();
     this.i18nInit();
   }
+  setOptions(opts) {
+    var _this$uppy$getPlugin, _this$uppy$getPlugin2;
+    super.setOptions(opts);
+    (_this$uppy$getPlugin = this.uppy.getPlugin(Dashboard_classPrivateFieldLooseBase(this, _getStatusBarId)[_getStatusBarId]())) == null || _this$uppy$getPlugin.setOptions(Dashboard_classPrivateFieldLooseBase(this, _getStatusBarOpts)[_getStatusBarOpts]());
+    (_this$uppy$getPlugin2 = this.uppy.getPlugin(Dashboard_classPrivateFieldLooseBase(this, _getThumbnailGeneratorId)[_getThumbnailGeneratorId]())) == null || _this$uppy$getPlugin2.setOptions(Dashboard_classPrivateFieldLooseBase(this, _getThumbnailGeneratorOpts)[_getThumbnailGeneratorOpts]());
+  }
+}
+function _getStatusBarOpts2() {
+  const {
+    hideUploadButton,
+    hideRetryButton,
+    hidePauseResumeButton,
+    hideCancelButton,
+    showProgressDetails,
+    hideProgressAfterFinish,
+    locale: l,
+    doneButtonHandler
+  } = this.opts;
+  return {
+    hideUploadButton,
+    hideRetryButton,
+    hidePauseResumeButton,
+    hideCancelButton,
+    showProgressDetails,
+    hideAfterFinish: hideProgressAfterFinish,
+    locale: l,
+    doneButtonHandler
+  };
+}
+function _getThumbnailGeneratorOpts2() {
+  const {
+    thumbnailWidth,
+    thumbnailHeight,
+    thumbnailType,
+    waitForThumbnailsBeforeUpload
+  } = this.opts;
+  return {
+    thumbnailWidth,
+    thumbnailHeight,
+    thumbnailType,
+    waitForThumbnailsBeforeUpload,
+    // If we don't block on thumbnails, we can lazily generate them
+    lazy: !waitForThumbnailsBeforeUpload
+  };
+}
+function _getInformerOpts2() {
+  return {
+    // currently no options
+  };
+}
+function _getStatusBarId2() {
+  return `${this.id}:StatusBar`;
+}
+function _getThumbnailGeneratorId2() {
+  return `${this.id}:ThumbnailGenerator`;
+}
+function _getInformerId2() {
+  return `${this.id}:Informer`;
 }
 Dashboard.VERSION = Dashboard_packageJson.version;
 ;// ./node_modules/@uppy/dashboard/lib/index.js
 
 ;// ./node_modules/@uppy/core/lib/EventManager.js
-function EventManager_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function EventManager_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var EventManager_id = 0;
-function EventManager_classPrivateFieldLooseKey(name) { return "__private_" + EventManager_id++ + "_" + name; }
+function EventManager_classPrivateFieldLooseKey(e) { return "__private_" + EventManager_id++ + "_" + e; }
 var _uppy = /*#__PURE__*/EventManager_classPrivateFieldLooseKey("uppy");
 var _events = /*#__PURE__*/EventManager_classPrivateFieldLooseKey("events");
 /**
@@ -18940,9 +19557,6 @@ class EventManager {
     });
     EventManager_classPrivateFieldLooseBase(this, _uppy)[_uppy] = uppy;
   }
-
-  /** @deprecated */
-
   on(event, fn) {
     EventManager_classPrivateFieldLooseBase(this, _events)[_events].push([event, fn]);
     return EventManager_classPrivateFieldLooseBase(this, _uppy)[_uppy].on(event, fn);
@@ -18953,8 +19567,8 @@ class EventManager {
     }
   }
   onFilePause(fileID, cb) {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === (file == null ? void 0 : file.id)) {
         cb(isPaused);
       }
     });
@@ -18965,16 +19579,16 @@ class EventManager {
     });
   }
   onPause(fileID, cb) {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === (file == null ? void 0 : file.id)) {
         // const isPaused = this.#uppy.pauseResume(fileID)
         cb(isPaused);
       }
     });
   }
   onRetry(fileID, cb) {
-    this.on('upload-retry', targetFileID => {
-      if (fileID === targetFileID) {
+    this.on('upload-retry', file => {
+      if (fileID === (file == null ? void 0 : file.id)) {
         cb();
       }
     });
@@ -19006,9 +19620,9 @@ class EventManager {
   }
 }
 ;// ./node_modules/@uppy/utils/lib/RateLimitedQueue.js
-function RateLimitedQueue_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function RateLimitedQueue_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var RateLimitedQueue_id = 0;
-function RateLimitedQueue_classPrivateFieldLooseKey(name) { return "__private_" + RateLimitedQueue_id++ + "_" + name; }
+function RateLimitedQueue_classPrivateFieldLooseKey(e) { return "__private_" + RateLimitedQueue_id++ + "_" + e; }
 function createCancelError(cause) {
   return new Error('Cancelled', {
     cause
@@ -19332,9 +19946,9 @@ function isNetworkError(xhr) {
 }
 /* harmony default export */ const lib_isNetworkError = (isNetworkError);
 ;// ./node_modules/@uppy/utils/lib/ProgressTimeout.js
-function ProgressTimeout_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function ProgressTimeout_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var ProgressTimeout_id = 0;
-function ProgressTimeout_classPrivateFieldLooseKey(name) { return "__private_" + ProgressTimeout_id++ + "_" + name; }
+function ProgressTimeout_classPrivateFieldLooseKey(e) { return "__private_" + ProgressTimeout_id++ + "_" + e; }
 var _aliveTimer = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("aliveTimer");
 var _isDone = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("isDone");
 var _onTimedOut = /*#__PURE__*/ProgressTimeout_classPrivateFieldLooseKey("onTimedOut");
@@ -19408,7 +20022,7 @@ function fetcher(url, options) {
     onBeforeRequest = noop,
     onUploadProgress = noop,
     shouldRetry = () => true,
-    onAfterRequest = noop,
+    onAfterResponse = noop,
     onTimeout = noop,
     responseType,
     retries = 3,
@@ -19427,6 +20041,16 @@ function fetcher(url, options) {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       const xhr = new XMLHttpRequest();
+      const onError = error => {
+        if (shouldRetry(xhr) && retryCount < retries) {
+          setTimeout(() => {
+            requestWithRetry(retryCount + 1).then(resolve, reject);
+          }, delay(retryCount));
+        } else {
+          timer.done();
+          reject(error);
+        }
+      };
       xhr.open(method, url, true);
       xhr.withCredentials = withCredentials;
       if (responseType) {
@@ -19439,7 +20063,15 @@ function fetcher(url, options) {
         reject(new DOMException('Aborted', 'AbortError'));
       });
       xhr.onload = async () => {
-        await onAfterRequest(xhr, retryCount);
+        try {
+          await onAfterResponse(xhr, retryCount);
+        } catch (err) {
+          // This is important as we need to emit the xhr
+          // over the upload-error event.
+          err.request = xhr;
+          onError(err);
+          return;
+        }
         if (xhr.status >= 200 && xhr.status < 300) {
           timer.done();
           resolve(xhr);
@@ -19452,16 +20084,7 @@ function fetcher(url, options) {
           reject(new lib_NetworkError(xhr.statusText, xhr));
         }
       };
-      xhr.onerror = () => {
-        if (shouldRetry(xhr) && retryCount < retries) {
-          setTimeout(() => {
-            requestWithRetry(retryCount + 1).then(resolve, reject);
-          }, delay(retryCount));
-        } else {
-          timer.done();
-          reject(new lib_NetworkError(xhr.statusText, xhr));
-        }
-      };
+      xhr.onerror = () => onError(new lib_NetworkError(xhr.statusText, xhr));
       xhr.upload.onprogress = event => {
         timer.progress();
         onUploadProgress(event);
@@ -19490,6 +20113,16 @@ function filterFilesToEmitUploadStarted(files) {
     return !((_file$progress = file.progress) != null && _file$progress.uploadStarted) || !file.isRestored;
   });
 }
+;// ./node_modules/@uppy/utils/lib/getAllowedMetaFields.js
+function getAllowedMetaFields(fields, meta) {
+  if (fields === true) {
+    return Object.keys(meta);
+  }
+  if (Array.isArray(fields)) {
+    return fields;
+  }
+  return [];
+}
 ;// ./node_modules/@uppy/xhr-upload/lib/locale.js
 /* harmony default export */ const xhr_upload_lib_locale = ({
   strings: {
@@ -19498,9 +20131,9 @@ function filterFilesToEmitUploadStarted(files) {
   }
 });
 ;// ./node_modules/@uppy/xhr-upload/lib/index.js
-function xhr_upload_lib_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
+function xhr_upload_lib_classPrivateFieldLooseBase(e, t) { if (!{}.hasOwnProperty.call(e, t)) throw new TypeError("attempted to use private field on non-instance"); return e; }
 var xhr_upload_lib_id = 0;
-function xhr_upload_lib_classPrivateFieldLooseKey(name) { return "__private_" + xhr_upload_lib_id++ + "_" + name; }
+function xhr_upload_lib_classPrivateFieldLooseKey(e) { return "__private_" + xhr_upload_lib_id++ + "_" + e; }
 
 
 
@@ -19510,10 +20143,12 @@ function xhr_upload_lib_classPrivateFieldLooseKey(name) { return "__private_" + 
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
+
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 const xhr_upload_lib_packageJson = {
-  "version": "3.6.8"
+  "version": "4.3.1"
 };
 
 function buildResponseError(xhr, err) {
@@ -19552,36 +20187,13 @@ const xhr_upload_lib_defaultOptions = {
   formData: true,
   fieldName: 'file',
   method: 'post',
-  allowedMetaFields: null,
-  responseUrlFieldName: 'url',
+  allowedMetaFields: true,
   bundle: false,
   headers: {},
   timeout: 30 * 1000,
   limit: 5,
   withCredentials: false,
-  responseType: '',
-  getResponseData(responseText) {
-    let parsedResponse = {};
-    try {
-      parsedResponse = JSON.parse(responseText);
-    } catch {
-      // ignore
-    }
-    // We don't have access to the B (Body) generic here
-    // so we have to cast it to any. The user facing types
-    // remain correct, this is only to please the merging of default options.
-    return parsedResponse;
-  },
-  getResponseError(_, response) {
-    let error = new Error('Upload error');
-    if (lib_isNetworkError(response)) {
-      error = new lib_NetworkError(error, response);
-    }
-    return error;
-  },
-  validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
+  responseType: ''
 };
 var _getFetcher = /*#__PURE__*/xhr_upload_lib_classPrivateFieldLooseKey("getFetcher");
 var _uploadLocalFile = /*#__PURE__*/xhr_upload_lib_classPrivateFieldLooseKey("uploadLocalFile");
@@ -19678,10 +20290,15 @@ class XHRUpload extends BasePlugin {
     xhr_upload_lib_classPrivateFieldLooseBase(this, _getFetcher)[_getFetcher] = files => {
       return async (url, options) => {
         try {
-          var _options$method;
+          var _this$opts$getRespons, _this$opts2, _body2;
           const res = await fetcher(url, {
             ...options,
-            method: options == null || (_options$method = options.method) == null ? void 0 : _options$method.toUpperCase(),
+            onBeforeRequest: (xhr, retryCount) => {
+              var _this$opts$onBeforeRe, _this$opts;
+              return (_this$opts$onBeforeRe = (_this$opts = this.opts).onBeforeRequest) == null ? void 0 : _this$opts$onBeforeRe.call(_this$opts, xhr, retryCount, files);
+            },
+            shouldRetry: this.opts.shouldRetry,
+            onAfterResponse: this.opts.onAfterResponse,
             onTimeout: timeout => {
               const seconds = Math.ceil(timeout / 1000);
               const error = new Error(this.i18n('uploadStalled', {
@@ -19691,11 +20308,13 @@ class XHRUpload extends BasePlugin {
             },
             onUploadProgress: event => {
               if (event.lengthComputable) {
-                for (const file of files) {
+                for (const {
+                  id
+                } of files) {
+                  var _file$progress$upload;
+                  const file = this.uppy.getFile(id);
                   this.uppy.emit('upload-progress', file, {
-                    // TODO: do not send `uploader` in next major
-                    // @ts-expect-error we can't type this and we should remove it
-                    uploader: this,
+                    uploadStarted: (_file$progress$upload = file.progress.uploadStarted) != null ? _file$progress$upload : 0,
                     bytesUploaded: event.loaded / event.total * file.size,
                     bytesTotal: file.size
                   });
@@ -19703,13 +20322,20 @@ class XHRUpload extends BasePlugin {
               }
             }
           });
-          if (!this.opts.validateStatus(res.status, res.responseText, res)) {
-            throw new lib_NetworkError(res.statusText, res);
+          let body = await ((_this$opts$getRespons = (_this$opts2 = this.opts).getResponseData) == null ? void 0 : _this$opts$getRespons.call(_this$opts2, res));
+          try {
+            var _body;
+            (_body = body) != null ? _body : body = JSON.parse(res.responseText);
+          } catch (cause) {
+            throw new Error('@uppy/xhr-upload expects a JSON response (with a `url` property). To parse non-JSON responses, use `getResponseData` to turn your response into JSON.', {
+              cause
+            });
           }
-          const body = this.opts.getResponseData(res.responseText, res);
-          const uploadURL = body == null ? void 0 : body[this.opts.responseUrlFieldName];
-          for (const file of files) {
-            this.uppy.emit('upload-success', file, {
+          const uploadURL = typeof ((_body2 = body) == null ? void 0 : _body2.url) === 'string' ? body.url : undefined;
+          for (const {
+            id
+          } of files) {
+            this.uppy.emit('upload-success', this.uppy.getFile(id), {
               status: res.status,
               body,
               uploadURL
@@ -19720,12 +20346,9 @@ class XHRUpload extends BasePlugin {
           if (error.name === 'AbortError') {
             return undefined;
           }
-          if (error instanceof lib_NetworkError) {
-            const request = error.request;
-            const customError = buildResponseError(request, this.opts.getResponseError(request.responseText, request));
-            for (const file of files) {
-              this.uppy.emit('upload-error', file, customError);
-            }
+          const request = error.request;
+          for (const file of files) {
+            this.uppy.emit('upload-error', this.uppy.getFile(file.id), buildResponseError(request, error), request);
           }
           throw error;
         }
@@ -19765,8 +20388,7 @@ class XHRUpload extends BasePlugin {
 
   // eslint-disable-next-line class-methods-use-this
   addMetadata(formData, meta, opts) {
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields : Object.keys(meta); // Send along all fields by default.
-
+    const allowedMetaFields = getAllowedMetaFields(opts.allowedMetaFields, meta);
     allowedMetaFields.forEach(item => {
       const value = meta[item];
       if (Array.isArray(value)) {
@@ -19849,13 +20471,8 @@ async function _uploadLocalFile2(file) {
     });
   });
   events.onFileRemove(file.id, () => controller.abort());
-  events.onCancelAll(file.id, _ref => {
-    let {
-      reason
-    } = _ref;
-    if (reason === 'user') {
-      controller.abort();
-    }
+  events.onCancelAll(file.id, () => {
+    controller.abort();
   });
   try {
     await uppyFetch().abortOn(controller.signal);
@@ -19906,9 +20523,7 @@ async function _uploadBundle2(files) {
 function _getCompanionClientArgs2(file) {
   var _file$remote;
   const opts = this.getOptions(file);
-  const allowedMetaFields = Array.isArray(opts.allowedMetaFields) ? opts.allowedMetaFields
-  // Send along all fields by default.
-  : Object.keys(file.meta);
+  const allowedMetaFields = getAllowedMetaFields(opts.allowedMetaFields, file.meta);
   return {
     ...((_file$remote = file.remote) == null ? void 0 : _file$remote.body),
     protocol: 'multipart',
