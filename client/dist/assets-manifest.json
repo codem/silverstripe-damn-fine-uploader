@@ -1,11 +1,11 @@
 {
   "js/uppy.js.map": {
     "src": "js/uppy.js.map",
-    "integrity": "sha384-8yKGjM8MuFLvknNKzrr9srrtplgU8YJf0DXFi9PjLWw63CLw8sFOOjDlmWH6c1LL"
+    "integrity": "sha384-bRgjCZJcyvv5bstIIGsmoLEe3XIRiC8Cx7xC+wziL37eYh/h9s3os9/CmmsryieX"
   },
   "js/uppy.min.js.map": {
     "src": "js/uppy.min.js.map",
-    "integrity": "sha384-vJCh6t44sA9DmEk6/9wo+gS2hOwgdj0jkrDlgxEhShl7NGEcS67KgrOHjdBZPz8r"
+    "integrity": "sha384-6hGa9rTb4rwrEvVtKO+BXGISv5uoOxsY6KAaMVX/NT/BtTHzutvlo8mMtuZ630VL"
   },
   "styles/uppy.css.map": {
     "src": "styles/uppy.css.map",
@@ -21,7 +21,7 @@
   },
   "uppy.js": {
     "src": "js/uppy.js",
-    "integrity": "sha384-OoeRg1bxLi65NQ6onpmMCm0g6XHJFWQv1KOFtDFrUYowNG05WF0bTffYo3ZA0xYd"
+    "integrity": "sha384-DGNhW03SKdD9yCCsyD2yhUeiikZePEcYYfpNWbTpPpgOoxB7ZKsA+N2OHeS6g/6H"
   },
   "uppy.min.css": {
     "src": "styles/uppy.min.css",
@@ -29,6 +29,6 @@
   },
   "uppy.min.js": {
     "src": "js/uppy.min.js",
-    "integrity": "sha384-owXV+KZpF8yjiPJBwJz8lrqnyw+1Sb26U4zWnmWwrsZGzirHOQJ+eDfux75CQ+lT"
+    "integrity": "sha384-f9Zljg4PD4iQx4wjqXEKRVS0Qv50X9CLnX0iYv74IB748HN/uh8RwzxSwCtdNrd2"
   }
 }

@@ -6,25 +6,23 @@
 
 "use strict";
 
-module.exports = function prettierBytes(num) {
-    if (typeof num !== 'number' || Number.isNaN(num)) {
-        throw new TypeError(`Expected a number, got ${typeof num}`);
+module.exports = function prettierBytes(input) {
+    if (typeof input !== 'number' || Number.isNaN(input)) {
+        throw new TypeError(`Expected a number, got ${typeof input}`);
     }
-    const neg = num < 0;
-    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const neg = input < 0;
+    let num = Math.abs(input);
     if (neg) {
         num = -num;
     }
-    if (num < 1) {
-        return `${(neg ? '-' : '') + num} B`;
+    if (num === 0) {
+        return '0 B';
     }
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const exponent = Math.min(Math.floor(Math.log(num) / Math.log(1024)), units.length - 1);
-    num = Number(num / 1024 ** exponent);
+    const value = Number(num / 1024 ** exponent);
     const unit = units[exponent];
-    if (num >= 10 || num % 1 === 0) {
-        return `${(neg ? '-' : '') + num.toFixed(0)} ${unit}`;
-    }
-    return `${(neg ? '-' : '') + num.toFixed(1)} ${unit}`;
+    return `${value >= 10 || value % 1 === 0 ? Math.round(value) : value.toFixed(1)} ${unit}`;
 };
 //# sourceMappingURL=prettierBytes.js.map
 
@@ -1762,7 +1760,7 @@ module.exports = {
 
 var fails = __webpack_require__(9039);
 var wellKnownSymbol = __webpack_require__(8227);
-var V8_VERSION = __webpack_require__(7388);
+var V8_VERSION = __webpack_require__(9519);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -1979,7 +1977,7 @@ module.exports = function (exec, SKIP_CLOSING) {
 
 /***/ }),
 
-/***/ 4576:
+/***/ 2195:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2003,7 +2001,7 @@ module.exports = function (it) {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(2140);
 var isCallable = __webpack_require__(4901);
-var classofRaw = __webpack_require__(4576);
+var classofRaw = __webpack_require__(2195);
 var wellKnownSymbol = __webpack_require__(8227);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
@@ -2238,16 +2236,16 @@ module.exports = function (target, src, options) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 module.exports = function (key, value) {
   try {
-    defineProperty(global, key, { value: value, configurable: true, writable: true });
+    defineProperty(globalThis, key, { value: value, configurable: true, writable: true });
   } catch (error) {
-    global[key] = value;
+    globalThis[key] = value;
   } return value;
 };
 
@@ -2275,10 +2273,10 @@ module.exports = !fails(function () {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isObject = __webpack_require__(34);
 
-var document = global.document;
+var document = globalThis.document;
 // typeof document.createElement is 'object' in old IE
 var EXISTS = isObject(document) && isObject(document.createElement);
 
@@ -2349,26 +2347,50 @@ module.exports = DOMTokenListPrototype === Object.prototype ? undefined : DOMTok
 
 /***/ }),
 
-/***/ 9392:
+/***/ 8727:
 /***/ ((module) => {
 
 "use strict";
 
-module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
+// IE8- don't enum bug keys
+module.exports = [
+  'constructor',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+  'toString',
+  'valueOf'
+];
 
 
 /***/ }),
 
-/***/ 7388:
+/***/ 2839:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var global = __webpack_require__(4475);
-var userAgent = __webpack_require__(9392);
+var globalThis = __webpack_require__(4576);
 
-var process = global.process;
-var Deno = global.Deno;
+var navigator = globalThis.navigator;
+var userAgent = navigator && navigator.userAgent;
+
+module.exports = userAgent ? String(userAgent) : '';
+
+
+/***/ }),
+
+/***/ 9519:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var userAgent = __webpack_require__(2839);
+
+var process = globalThis.process;
+var Deno = globalThis.Deno;
 var versions = process && process.versions || Deno && Deno.version;
 var v8 = versions && versions.v8;
 var match, version;
@@ -2395,31 +2417,12 @@ module.exports = version;
 
 /***/ }),
 
-/***/ 8727:
-/***/ ((module) => {
-
-"use strict";
-
-// IE8- don't enum bug keys
-module.exports = [
-  'constructor',
-  'hasOwnProperty',
-  'isPrototypeOf',
-  'propertyIsEnumerable',
-  'toLocaleString',
-  'toString',
-  'valueOf'
-];
-
-
-/***/ }),
-
 /***/ 6518:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var getOwnPropertyDescriptor = (__webpack_require__(7347).f);
 var createNonEnumerableProperty = __webpack_require__(6699);
 var defineBuiltIn = __webpack_require__(6840);
@@ -2448,11 +2451,11 @@ module.exports = function (options, source) {
   var STATIC = options.stat;
   var FORCED, target, key, targetProperty, sourceProperty, descriptor;
   if (GLOBAL) {
-    target = global;
+    target = globalThis;
   } else if (STATIC) {
-    target = global[TARGET] || defineGlobalProperty(TARGET, {});
+    target = globalThis[TARGET] || defineGlobalProperty(TARGET, {});
   } else {
-    target = global[TARGET] && global[TARGET].prototype;
+    target = globalThis[TARGET] && globalThis[TARGET].prototype;
   }
   if (target) for (key in source) {
     sourceProperty = source[key];
@@ -2588,7 +2591,7 @@ var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
 var call = FunctionPrototype.call;
 
-// eslint-disable-next-line es/no-reflect -- safe
+// eslint-disable-next-line es/no-function-prototype-bind, es/no-reflect -- safe
 module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
   return call.apply(apply, arguments);
 });
@@ -2643,7 +2646,7 @@ module.exports = !fails(function () {
 var NATIVE_BIND = __webpack_require__(616);
 
 var call = Function.prototype.call;
-
+// eslint-disable-next-line es/no-function-prototype-bind -- safe
 module.exports = NATIVE_BIND ? call.bind(call) : function () {
   return call.apply(call, arguments);
 };
@@ -2700,7 +2703,7 @@ module.exports = function (object, key, method) {
 
 "use strict";
 
-var classofRaw = __webpack_require__(4576);
+var classofRaw = __webpack_require__(2195);
 var uncurryThis = __webpack_require__(9504);
 
 module.exports = function (fn) {
@@ -2722,6 +2725,7 @@ var NATIVE_BIND = __webpack_require__(616);
 
 var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
+// eslint-disable-next-line es/no-function-prototype-bind -- safe
 var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
 
 module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
@@ -2738,7 +2742,7 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isCallable = __webpack_require__(4901);
 
 var aFunction = function (argument) {
@@ -2746,7 +2750,7 @@ var aFunction = function (argument) {
 };
 
 module.exports = function (namespace, method) {
-  return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
+  return arguments.length < 2 ? aFunction(globalThis[namespace]) : globalThis[namespace] && globalThis[namespace][method];
 };
 
 
@@ -2804,7 +2808,7 @@ module.exports = function (argument, usingIterator) {
 var uncurryThis = __webpack_require__(9504);
 var isArray = __webpack_require__(4376);
 var isCallable = __webpack_require__(4901);
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 var toString = __webpack_require__(655);
 
 var push = uncurryThis([].push);
@@ -2852,7 +2856,7 @@ module.exports = function (V, P) {
 
 /***/ }),
 
-/***/ 4475:
+/***/ 4576:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -2945,7 +2949,7 @@ module.exports = !DESCRIPTORS && !fails(function () {
 
 var uncurryThis = __webpack_require__(9504);
 var fails = __webpack_require__(9039);
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 
 var $Object = Object;
 var split = uncurryThis(''.split);
@@ -3018,7 +3022,7 @@ module.exports = store.inspectSource;
 "use strict";
 
 var NATIVE_WEAK_MAP = __webpack_require__(8622);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isObject = __webpack_require__(34);
 var createNonEnumerableProperty = __webpack_require__(6699);
 var hasOwn = __webpack_require__(9297);
@@ -3027,8 +3031,8 @@ var sharedKey = __webpack_require__(6119);
 var hiddenKeys = __webpack_require__(421);
 
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-var TypeError = global.TypeError;
-var WeakMap = global.WeakMap;
+var TypeError = globalThis.TypeError;
+var WeakMap = globalThis.WeakMap;
 var set, get, has;
 
 var enforce = function (it) {
@@ -3115,7 +3119,7 @@ module.exports = function (it) {
 
 "use strict";
 
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
@@ -3684,6 +3688,7 @@ module.exports = !$assign || fails(function () {
   var symbol = Symbol('assign detection');
   var alphabet = 'abcdefghijklmnopqrst';
   A[symbol] = 7;
+  // eslint-disable-next-line es/no-array-prototype-foreach -- safe
   alphabet.split('').forEach(function (chr) { B[chr] = chr; });
   return $assign({}, A)[symbol] !== 7 || objectKeys($assign({}, B)).join('') !== alphabet;
 }) ? function assign(target, source) { // eslint-disable-line no-unused-vars -- required for `.length`
@@ -3739,7 +3744,8 @@ var NullProtoObjectViaActiveX = function (activeXDocument) {
   activeXDocument.write(scriptTag(''));
   activeXDocument.close();
   var temp = activeXDocument.parentWindow.Object;
-  activeXDocument = null; // avoid memory leak
+  // eslint-disable-next-line no-useless-assignment -- avoid memory leak
+  activeXDocument = null;
   return temp;
 };
 
@@ -3918,7 +3924,7 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 "use strict";
 
 /* eslint-disable es/no-object-getownpropertynames -- safe */
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 var toIndexedObject = __webpack_require__(5397);
 var $getOwnPropertyNames = (__webpack_require__(8480).f);
 var arraySlice = __webpack_require__(7680);
@@ -4192,9 +4198,9 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
-module.exports = global;
+module.exports = globalThis;
 
 
 /***/ }),
@@ -4207,7 +4213,7 @@ module.exports = global;
 var call = __webpack_require__(9565);
 var anObject = __webpack_require__(8551);
 var isCallable = __webpack_require__(4901);
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 var regexpExec = __webpack_require__(7323);
 
 var $TypeError = TypeError;
@@ -4406,10 +4412,10 @@ module.exports = function (R) {
 "use strict";
 
 var fails = __webpack_require__(9039);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
 // babel-minify and Closure Compiler transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError
-var $RegExp = global.RegExp;
+var $RegExp = globalThis.RegExp;
 
 var UNSUPPORTED_Y = fails(function () {
   var re = $RegExp('a', 'y');
@@ -4445,10 +4451,10 @@ module.exports = {
 "use strict";
 
 var fails = __webpack_require__(9039);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
 // babel-minify and Closure Compiler transpiles RegExp('.', 's') -> /./s and it causes SyntaxError
-var $RegExp = global.RegExp;
+var $RegExp = globalThis.RegExp;
 
 module.exports = fails(function () {
   var re = $RegExp('.', 's');
@@ -4464,10 +4470,10 @@ module.exports = fails(function () {
 "use strict";
 
 var fails = __webpack_require__(9039);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
 // babel-minify and Closure Compiler transpiles RegExp('(?<a>b)', 'g') -> /(?<a>b)/g and it causes SyntaxError
-var $RegExp = global.RegExp;
+var $RegExp = globalThis.RegExp;
 
 module.exports = fails(function () {
   var re = $RegExp('(?<a>b)', 'g');
@@ -4502,7 +4508,7 @@ module.exports = function (it) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var DESCRIPTORS = __webpack_require__(3724);
 
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -4510,8 +4516,8 @@ var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Avoid NodeJS experimental warning
 module.exports = function (name) {
-  if (!DESCRIPTORS) return global[name];
-  var descriptor = getOwnPropertyDescriptor(global, name);
+  if (!DESCRIPTORS) return globalThis[name];
+  var descriptor = getOwnPropertyDescriptor(globalThis, name);
   return descriptor && descriptor.value;
 };
 
@@ -4562,17 +4568,17 @@ module.exports = function (key) {
 "use strict";
 
 var IS_PURE = __webpack_require__(6395);
-var globalThis = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var defineGlobalProperty = __webpack_require__(9433);
 
 var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.37.1',
+  version: '3.40.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.37.1/LICENSE',
+  copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.40.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -4872,11 +4878,11 @@ module.exports = {
 "use strict";
 
 /* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(7388);
+var V8_VERSION = __webpack_require__(9519);
 var fails = __webpack_require__(9039);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
-var $String = global.String;
+var $String = globalThis.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
@@ -5177,7 +5183,7 @@ var ITERATOR = wellKnownSymbol('iterator');
 
 module.exports = !fails(function () {
   // eslint-disable-next-line unicorn/relative-url-style -- required for testing
-  var url = new URL('b?a=1&b=2&c=3', 'http://a');
+  var url = new URL('b?a=1&b=2&c=3', 'https://a');
   var params = url.searchParams;
   var params2 = new URLSearchParams('a=1&a=2&b=3');
   var result = '';
@@ -5193,7 +5199,7 @@ module.exports = !fails(function () {
   return (IS_PURE && (!url.toJSON || !params2.has('a', 1) || params2.has('a', 2) || !params2.has('a', undefined) || params2.has('b')))
     || (!params.size && (IS_PURE || !DESCRIPTORS))
     || !params.sort
-    || url.href !== 'http://a/c%20d?a=1&c=3'
+    || url.href !== 'https://a/c%20d?a=1&c=3'
     || params.get('c') !== '3'
     || String(new URLSearchParams('?a=1')) !== 'a=1'
     || !params[ITERATOR]
@@ -5201,13 +5207,13 @@ module.exports = !fails(function () {
     || new URL('https://a@b').username !== 'a'
     || new URLSearchParams(new URLSearchParams('a=b')).get('a') !== 'b'
     // not punycoded in Edge
-    || new URL('http://тест').host !== 'xn--e1aybc'
+    || new URL('https://тест').host !== 'xn--e1aybc'
     // not escaped in Chrome 62-
-    || new URL('http://a#б').hash !== '#%D0%B1'
+    || new URL('https://a#б').hash !== '#%D0%B1'
     // fails in Chrome 66-
     || result !== 'a1c3'
     // throws in Safari
-    || new URL('http://x', undefined).host !== 'x';
+    || new URL('https://x', undefined).host !== 'x';
 });
 
 
@@ -5221,9 +5227,9 @@ module.exports = !fails(function () {
 /* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(4495);
 
-module.exports = NATIVE_SYMBOL
-  && !Symbol.sham
-  && typeof Symbol.iterator == 'symbol';
+module.exports = NATIVE_SYMBOL &&
+  !Symbol.sham &&
+  typeof Symbol.iterator == 'symbol';
 
 
 /***/ }),
@@ -5269,10 +5275,10 @@ module.exports = function (passed, required) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isCallable = __webpack_require__(4901);
 
-var WeakMap = global.WeakMap;
+var WeakMap = globalThis.WeakMap;
 
 module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
@@ -5316,14 +5322,14 @@ exports.f = wellKnownSymbol;
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var shared = __webpack_require__(5745);
 var hasOwn = __webpack_require__(9297);
 var uid = __webpack_require__(3392);
 var NATIVE_SYMBOL = __webpack_require__(4495);
 var USE_SYMBOL_AS_UID = __webpack_require__(7040);
 
-var Symbol = global.Symbol;
+var Symbol = globalThis.Symbol;
 var WellKnownSymbolsStore = shared('wks');
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
@@ -5439,7 +5445,7 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
   var target = state.target;
   var index = state.index++;
   if (!target || index >= target.length) {
-    state.target = undefined;
+    state.target = null;
     return createIterResultObject(undefined, true);
   }
   switch (state.kind) {
@@ -5611,7 +5617,7 @@ if ($stringify) {
 var $ = __webpack_require__(6518);
 var IS_PURE = __webpack_require__(6395);
 var DESCRIPTORS = __webpack_require__(3724);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var path = __webpack_require__(9167);
 var uncurryThis = __webpack_require__(9504);
 var isForced = __webpack_require__(2796);
@@ -5628,10 +5634,10 @@ var thisNumberValue = __webpack_require__(1240);
 var trim = (__webpack_require__(3802).trim);
 
 var NUMBER = 'Number';
-var NativeNumber = global[NUMBER];
+var NativeNumber = globalThis[NUMBER];
 var PureNumberNamespace = path[NUMBER];
 var NumberPrototype = NativeNumber.prototype;
-var TypeError = global.TypeError;
+var TypeError = globalThis.TypeError;
 var stringSlice = uncurryThis(''.slice);
 var charCodeAt = uncurryThis(''.charCodeAt);
 
@@ -5902,6 +5908,46 @@ if (NOT_GENERIC || INCORRECT_NAME) {
 
 /***/ }),
 
+/***/ 7337:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var uncurryThis = __webpack_require__(9504);
+var toAbsoluteIndex = __webpack_require__(5610);
+
+var $RangeError = RangeError;
+var fromCharCode = String.fromCharCode;
+// eslint-disable-next-line es/no-string-fromcodepoint -- required for testing
+var $fromCodePoint = String.fromCodePoint;
+var join = uncurryThis([].join);
+
+// length should be 1, old FF problem
+var INCORRECT_LENGTH = !!$fromCodePoint && $fromCodePoint.length !== 1;
+
+// `String.fromCodePoint` method
+// https://tc39.es/ecma262/#sec-string.fromcodepoint
+$({ target: 'String', stat: true, arity: 1, forced: INCORRECT_LENGTH }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  fromCodePoint: function fromCodePoint(x) {
+    var elements = [];
+    var length = arguments.length;
+    var i = 0;
+    var code;
+    while (length > i) {
+      code = +arguments[i++];
+      if (toAbsoluteIndex(code, 0x10FFFF) !== code) throw new $RangeError(code + ' is not a valid code point');
+      elements[i] = code < 0x10000
+        ? fromCharCode(code)
+        : fromCharCode(((code -= 0x10000) >> 10) + 0xD800, code % 0x400 + 0xDC00);
+    } return join(elements, '');
+  }
+});
+
+
+/***/ }),
+
 /***/ 7764:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6003,7 +6049,7 @@ fixRegExpWellKnownSymbolLogic('match', function (MATCH, nativeMatch, maybeCallNa
 "use strict";
 
 var $ = __webpack_require__(6518);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var call = __webpack_require__(9565);
 var uncurryThis = __webpack_require__(9504);
 var IS_PURE = __webpack_require__(6395);
@@ -6048,11 +6094,11 @@ var setInternalState = InternalStateModule.set;
 var getInternalState = InternalStateModule.getterFor(SYMBOL);
 
 var ObjectPrototype = Object[PROTOTYPE];
-var $Symbol = global.Symbol;
+var $Symbol = globalThis.Symbol;
 var SymbolPrototype = $Symbol && $Symbol[PROTOTYPE];
-var RangeError = global.RangeError;
-var TypeError = global.TypeError;
-var QObject = global.QObject;
+var RangeError = globalThis.RangeError;
+var TypeError = globalThis.TypeError;
+var QObject = globalThis.QObject;
 var nativeGetOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
 var nativeDefineProperty = definePropertyModule.f;
 var nativeGetOwnPropertyNames = getOwnPropertyNamesExternal.f;
@@ -6171,7 +6217,7 @@ if (!NATIVE_SYMBOL) {
     var description = !arguments.length || arguments[0] === undefined ? undefined : $toString(arguments[0]);
     var tag = uid(description);
     var setter = function (value) {
-      var $this = this === undefined ? global : this;
+      var $this = this === undefined ? globalThis : this;
       if ($this === ObjectPrototype) call(setter, ObjectPrototypeSymbols, value);
       if (hasOwn($this, HIDDEN) && hasOwn($this[HIDDEN], tag)) $this[HIDDEN][tag] = false;
       var descriptor = createPropertyDescriptor(1, value);
@@ -6277,7 +6323,7 @@ hiddenKeys[HIDDEN] = true;
 
 var $ = __webpack_require__(6518);
 var DESCRIPTORS = __webpack_require__(3724);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var uncurryThis = __webpack_require__(9504);
 var hasOwn = __webpack_require__(9297);
 var isCallable = __webpack_require__(4901);
@@ -6286,7 +6332,7 @@ var toString = __webpack_require__(655);
 var defineBuiltInAccessor = __webpack_require__(2106);
 var copyConstructorProperties = __webpack_require__(7740);
 
-var NativeSymbol = global.Symbol;
+var NativeSymbol = globalThis.Symbol;
 var SymbolPrototype = NativeSymbol && NativeSymbol.prototype;
 
 if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototype) ||
@@ -6298,6 +6344,7 @@ if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototy
   var SymbolWrapper = function Symbol() {
     var description = arguments.length < 1 || arguments[0] === undefined ? undefined : toString(arguments[0]);
     var result = isPrototypeOf(SymbolPrototype, this)
+      // eslint-disable-next-line sonarjs/inconsistent-function-call -- ok
       ? new NativeSymbol(description)
       // in Edge 13, String(Symbol(undefined)) === 'Symbol(undefined)'
       : description === undefined ? NativeSymbol() : NativeSymbol(description);
@@ -6445,7 +6492,7 @@ defineSymbolToPrimitive();
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var DOMIterables = __webpack_require__(7400);
 var DOMTokenListPrototype = __webpack_require__(9296);
 var forEach = __webpack_require__(235);
@@ -6462,7 +6509,7 @@ var handlePrototype = function (CollectionPrototype) {
 
 for (var COLLECTION_NAME in DOMIterables) {
   if (DOMIterables[COLLECTION_NAME]) {
-    handlePrototype(global[COLLECTION_NAME] && global[COLLECTION_NAME].prototype);
+    handlePrototype(globalThis[COLLECTION_NAME] && globalThis[COLLECTION_NAME].prototype);
   }
 }
 
@@ -6476,7 +6523,7 @@ handlePrototype(DOMTokenListPrototype);
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var DOMIterables = __webpack_require__(7400);
 var DOMTokenListPrototype = __webpack_require__(9296);
 var ArrayIteratorMethods = __webpack_require__(3792);
@@ -6508,7 +6555,7 @@ var handlePrototype = function (CollectionPrototype, COLLECTION_NAME) {
 };
 
 for (var COLLECTION_NAME in DOMIterables) {
-  handlePrototype(global[COLLECTION_NAME] && global[COLLECTION_NAME].prototype, COLLECTION_NAME);
+  handlePrototype(globalThis[COLLECTION_NAME] && globalThis[COLLECTION_NAME].prototype, COLLECTION_NAME);
 }
 
 handlePrototype(DOMTokenListPrototype, 'DOMTokenList');
@@ -6523,9 +6570,11 @@ handlePrototype(DOMTokenListPrototype, 'DOMTokenList');
 
 // TODO: in core-js@4, move /modules/ dependencies to public entries for better optimization by tools like `preset-env`
 __webpack_require__(3792);
+__webpack_require__(7337);
 var $ = __webpack_require__(6518);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var safeGetBuiltIn = __webpack_require__(3389);
+var getBuiltIn = __webpack_require__(7751);
 var call = __webpack_require__(9565);
 var uncurryThis = __webpack_require__(9504);
 var DESCRIPTORS = __webpack_require__(3724);
@@ -6565,10 +6614,11 @@ var NativeRequest = safeGetBuiltIn('Request');
 var Headers = safeGetBuiltIn('Headers');
 var RequestPrototype = NativeRequest && NativeRequest.prototype;
 var HeadersPrototype = Headers && Headers.prototype;
-var RegExp = global.RegExp;
-var TypeError = global.TypeError;
-var decodeURIComponent = global.decodeURIComponent;
-var encodeURIComponent = global.encodeURIComponent;
+var TypeError = globalThis.TypeError;
+var encodeURIComponent = globalThis.encodeURIComponent;
+var fromCharCode = String.fromCharCode;
+var fromCodePoint = getBuiltIn('String', 'fromCodePoint');
+var $parseInt = parseInt;
 var charAt = uncurryThis(''.charAt);
 var join = uncurryThis([].join);
 var push = uncurryThis([].push);
@@ -6577,33 +6627,125 @@ var shift = uncurryThis([].shift);
 var splice = uncurryThis([].splice);
 var split = uncurryThis(''.split);
 var stringSlice = uncurryThis(''.slice);
+var exec = uncurryThis(/./.exec);
 
 var plus = /\+/g;
-var sequences = Array(4);
+var FALLBACK_REPLACER = '\uFFFD';
+var VALID_HEX = /^[0-9a-f]+$/i;
 
-var percentSequence = function (bytes) {
-  return sequences[bytes - 1] || (sequences[bytes - 1] = RegExp('((?:%[\\da-f]{2}){' + bytes + '})', 'gi'));
+var parseHexOctet = function (string, start) {
+  var substr = stringSlice(string, start, start + 2);
+  if (!exec(VALID_HEX, substr)) return NaN;
+
+  return $parseInt(substr, 16);
 };
 
-var percentDecode = function (sequence) {
-  try {
-    return decodeURIComponent(sequence);
-  } catch (error) {
-    return sequence;
+var getLeadingOnes = function (octet) {
+  var count = 0;
+  for (var mask = 0x80; mask > 0 && (octet & mask) !== 0; mask >>= 1) {
+    count++;
   }
+  return count;
 };
 
-var deserialize = function (it) {
-  var result = replace(it, plus, ' ');
-  var bytes = 4;
-  try {
-    return decodeURIComponent(result);
-  } catch (error) {
-    while (bytes) {
-      result = replace(result, percentSequence(bytes--), percentDecode);
+var utf8Decode = function (octets) {
+  var codePoint = null;
+
+  switch (octets.length) {
+    case 1:
+      codePoint = octets[0];
+      break;
+    case 2:
+      codePoint = (octets[0] & 0x1F) << 6 | (octets[1] & 0x3F);
+      break;
+    case 3:
+      codePoint = (octets[0] & 0x0F) << 12 | (octets[1] & 0x3F) << 6 | (octets[2] & 0x3F);
+      break;
+    case 4:
+      codePoint = (octets[0] & 0x07) << 18 | (octets[1] & 0x3F) << 12 | (octets[2] & 0x3F) << 6 | (octets[3] & 0x3F);
+      break;
+  }
+
+  return codePoint > 0x10FFFF ? null : codePoint;
+};
+
+var decode = function (input) {
+  input = replace(input, plus, ' ');
+  var length = input.length;
+  var result = '';
+  var i = 0;
+
+  while (i < length) {
+    var decodedChar = charAt(input, i);
+
+    if (decodedChar === '%') {
+      if (charAt(input, i + 1) === '%' || i + 3 > length) {
+        result += '%';
+        i++;
+        continue;
+      }
+
+      var octet = parseHexOctet(input, i + 1);
+
+      // eslint-disable-next-line no-self-compare -- NaN check
+      if (octet !== octet) {
+        result += decodedChar;
+        i++;
+        continue;
+      }
+
+      i += 2;
+      var byteSequenceLength = getLeadingOnes(octet);
+
+      if (byteSequenceLength === 0) {
+        decodedChar = fromCharCode(octet);
+      } else {
+        if (byteSequenceLength === 1 || byteSequenceLength > 4) {
+          result += FALLBACK_REPLACER;
+          i++;
+          continue;
+        }
+
+        var octets = [octet];
+        var sequenceIndex = 1;
+
+        while (sequenceIndex < byteSequenceLength) {
+          i++;
+          if (i + 3 > length || charAt(input, i) !== '%') break;
+
+          var nextByte = parseHexOctet(input, i + 1);
+
+          // eslint-disable-next-line no-self-compare -- NaN check
+          if (nextByte !== nextByte) {
+            i += 3;
+            break;
+          }
+          if (nextByte > 191 || nextByte < 128) break;
+
+          push(octets, nextByte);
+          i += 2;
+          sequenceIndex++;
+        }
+
+        if (octets.length !== byteSequenceLength) {
+          result += FALLBACK_REPLACER;
+          continue;
+        }
+
+        var codePoint = utf8Decode(octets);
+        if (codePoint === null) {
+          result += FALLBACK_REPLACER;
+        } else {
+          decodedChar = fromCodePoint(codePoint);
+        }
+      }
     }
-    return result;
+
+    result += decodedChar;
+    i++;
   }
+
+  return result;
 };
 
 var find = /[!'()~]|%20/g;
@@ -6637,7 +6779,7 @@ var URLSearchParamsIterator = createIteratorConstructor(function Iterator(params
   var target = state.target;
   var index = state.index++;
   if (!target || index >= target.length) {
-    state.target = undefined;
+    state.target = null;
     return createIterResultObject(undefined, true);
   }
   var entry = target[index];
@@ -6696,8 +6838,8 @@ URLSearchParamsState.prototype = {
         if (attribute.length) {
           entry = split(attribute, '=');
           push(entries, {
-            key: deserialize(shift(entry)),
-            value: deserialize(join(entry, '='))
+            key: decode(shift(entry)),
+            value: decode(join(entry, '='))
           });
         }
       }
@@ -6961,7 +7103,7 @@ __webpack_require__(7764);
 var $ = __webpack_require__(6518);
 var DESCRIPTORS = __webpack_require__(3724);
 var USE_NATIVE_URL = __webpack_require__(7416);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var bind = __webpack_require__(6080);
 var uncurryThis = __webpack_require__(9504);
 var defineBuiltIn = __webpack_require__(6840);
@@ -6984,9 +7126,9 @@ var getInternalURLState = InternalStateModule.getterFor('URL');
 var URLSearchParams = URLSearchParamsModule.URLSearchParams;
 var getInternalSearchParamsState = URLSearchParamsModule.getState;
 
-var NativeURL = global.URL;
-var TypeError = global.TypeError;
-var parseInt = global.parseInt;
+var NativeURL = globalThis.URL;
+var TypeError = globalThis.TypeError;
+var parseInt = globalThis.parseInt;
 var floor = Math.floor;
 var pow = Math.pow;
 var charAt = uncurryThis(''.charAt);
@@ -7160,25 +7302,25 @@ var findLongestZeroSequence = function (ipv6) {
       ++currLength;
     }
   }
-  if (currLength > maxLength) {
-    maxIndex = currStart;
-    maxLength = currLength;
-  }
-  return maxIndex;
+  return currLength > maxLength ? currStart : maxIndex;
 };
 
 // https://url.spec.whatwg.org/#host-serializing
 var serializeHost = function (host) {
   var result, index, compress, ignore0;
+
   // ipv4
   if (typeof host == 'number') {
     result = [];
     for (index = 0; index < 4; index++) {
       unshift(result, host % 256);
       host = floor(host / 256);
-    } return join(result, '.');
+    }
+    return join(result, '.');
+  }
+
   // ipv6
-  } else if (typeof host == 'object') {
+  if (typeof host == 'object') {
     result = '';
     compress = findLongestZeroSequence(host);
     for (index = 0; index < 8; index++) {
@@ -7193,7 +7335,9 @@ var serializeHost = function (host) {
       }
     }
     return '[' + result + ']';
-  } return host;
+  }
+
+  return host;
 };
 
 var C0ControlPercentEncodeSet = {};
@@ -8078,7 +8222,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
 
@@ -8086,7 +8230,7 @@ var __webpack_exports__ = {};
 var es_object_to_string = __webpack_require__(6099);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
 var web_dom_collections_for_each = __webpack_require__(3500);
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/dist/style.css
+;// ./node_modules/@uppy/core/dist/style.css
 // extracted by mini-css-extract-plugin
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.js
@@ -8123,7 +8267,7 @@ var web_url = __webpack_require__(3296);
 var web_url_to_json = __webpack_require__(7208);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.js
 var web_url_search_params = __webpack_require__(8408);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/Translator.js
+;// ./node_modules/@uppy/utils/lib/Translator.js
 function _classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var id = 0;
 function _classPrivateFieldLooseKey(name) { return "__private_" + id++ + "_" + name; }
@@ -8283,7 +8427,7 @@ function _apply2(locale) {
 }
 // EXTERNAL MODULE: ./node_modules/namespace-emitter/index.js
 var namespace_emitter = __webpack_require__(3835);
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js
+;// ./node_modules/@uppy/core/node_modules/nanoid/non-secure/index.js
 let urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 let customAlphabet = (alphabet, defaultSize = 21) => {
@@ -8307,7 +8451,7 @@ let nanoid = (size = 21) => {
 
 // EXTERNAL MODULE: ./node_modules/lodash/throttle.js
 var throttle = __webpack_require__(7350);
-;// CONCATENATED MODULE: ./node_modules/@uppy/store-default/lib/index.js
+;// ./node_modules/@uppy/store-default/lib/index.js
 function lib_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var lib_id = 0;
 function lib_classPrivateFieldLooseKey(name) { return "__private_" + lib_id++ + "_" + name; }
@@ -8363,7 +8507,7 @@ function _publish2() {
 }
 DefaultStore.VERSION = packageJson.version;
 /* harmony default export */ const lib = (DefaultStore);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getFileNameAndExtension.js
+;// ./node_modules/@uppy/utils/lib/getFileNameAndExtension.js
 /**
  * Takes a full filename string and returns an object {name, extension}
  */
@@ -8381,7 +8525,7 @@ function getFileNameAndExtension(fullFileName) {
     extension: fullFileName.slice(lastDot + 1)
   };
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/mimeTypes.js
+;// ./node_modules/@uppy/utils/lib/mimeTypes.js
 // ___Why not add the mime-types package?
 //    It's 19.7kB gzipped, and we only need mime types for well-known extensions (for file previews).
 // ___Where to take new extensions from?
@@ -8441,7 +8585,7 @@ function getFileNameAndExtension(fullFileName) {
   gz: 'application/gzip',
   dmg: 'application/x-apple-diskimage'
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getFileType.js
+;// ./node_modules/@uppy/utils/lib/getFileType.js
 
 
 function getFileType(file) {
@@ -8455,7 +8599,7 @@ function getFileType(file) {
   // if all fails, fall back to a generic byte stream type
   return 'application/octet-stream';
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/generateFileID.js
+;// ./node_modules/@uppy/utils/lib/generateFileID.js
 
 function encodeCharacter(character) {
   return character.charCodeAt(0).toString(32);
@@ -8511,7 +8655,7 @@ function getSafeFileId(file, instanceId) {
     type: fileType
   }, instanceId);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/supportsUploadProgress.js
+;// ./node_modules/@uppy/core/lib/supportsUploadProgress.js
 // Edge 15.x does not fire 'progress' events on uploads.
 // See https://github.com/transloadit/uppy/issues/945
 // And https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12224510/
@@ -8546,7 +8690,7 @@ function supportsUploadProgress(userAgent) {
   // other versions don't work.
   return false;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/getFileName.js
+;// ./node_modules/@uppy/core/lib/getFileName.js
 function getFileName(fileType, fileDescriptor) {
   if (fileDescriptor.name) {
     return fileDescriptor.name;
@@ -8556,7 +8700,7 @@ function getFileName(fileType, fileDescriptor) {
   }
   return 'noname';
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getTimeStamp.js
+;// ./node_modules/@uppy/utils/lib/getTimeStamp.js
 /**
  * Adds zero to strings shorter than two characters.
  */
@@ -8574,7 +8718,7 @@ function getTimeStamp() {
   const seconds = pad(date.getSeconds());
   return `${hours}:${minutes}:${seconds}`;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/loggers.js
+;// ./node_modules/@uppy/core/lib/loggers.js
 /* eslint-disable no-console */
 
 
@@ -8618,7 +8762,7 @@ const debugLogger = {
 var prettierBytes = __webpack_require__(8505);
 // EXTERNAL MODULE: ./node_modules/mime-match/index.js
 var mime_match = __webpack_require__(7057);
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/Restricter.js
+;// ./node_modules/@uppy/core/lib/Restricter.js
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 
@@ -8774,7 +8918,7 @@ class Restricter {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/locale.js
+;// ./node_modules/@uppy/core/lib/locale.js
 /* harmony default export */ const locale = ({
   strings: {
     addBulkFilesFailed: {
@@ -8836,7 +8980,7 @@ class Restricter {
     unnamed: 'Unnamed'
   }
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/Uppy.js
+;// ./node_modules/@uppy/core/lib/Uppy.js
 let _Symbol$for, _Symbol$for2;
 function Uppy_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var Uppy_id = 0;
@@ -10619,11 +10763,11 @@ async function _runUpload2(uploadID) {
 }
 Uppy.VERSION = Uppy_packageJson.version;
 /* harmony default export */ const lib_Uppy = (Uppy);
-;// CONCATENATED MODULE: ./node_modules/preact/dist/preact.module.js
-var n,l,u,t,i,o,r,f,e,c,s,a,h={},p=[],v=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,y=Array.isArray;function d(n,l){for(var u in l)n[u]=l[u];return n}function w(n){var l=n.parentNode;l&&l.removeChild(n)}function _(l,u,t){var i,o,r,f={};for(r in u)"key"==r?i=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&&(f[r]=l.defaultProps[r]);return g(l,f,i,o,null)}function g(n,t,i,o,r){var f={type:n,props:t,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,constructor:void 0,__v:null==r?++u:r,__i:-1,__u:0};return null==r&&null!=l.vnode&&l.vnode(f),f}function m(){return{current:null}}function k(n){return n.children}function b(n,l){this.props=n,this.context=l}function x(n,l){if(null==l)return n.__?x(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?x(n):null}function C(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return C(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!P.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||r)(P)}function P(){var n,u,t,o,r,e,c,s;for(i.sort(f);n=i.shift();)n.__d&&(u=i.length,o=void 0,e=(r=(t=n).__v).__e,c=[],s=[],t.__P&&((o=d({},r)).__v=r.__v+1,l.vnode&&l.vnode(o),O(t.__P,o,r,t.__n,t.__P.namespaceURI,32&r.__u?[e]:null,c,null==e?x(r):e,!!(32&r.__u),s),o.__v=r.__v,o.__.__k[o.__i]=o,j(c,o,s),o.__e!=e&&C(o)),i.length>u&&i.sort(f));P.__r=0}function S(n,l,u,t,i,o,r,f,e,c,s){var a,v,y,d,w,_=t&&t.__k||p,g=l.length;for(u.__d=e,$(u,l,_),e=u.__d,a=0;a<g;a++)null!=(y=u.__k[a])&&"boolean"!=typeof y&&"function"!=typeof y&&(v=-1===y.__i?h:_[y.__i]||h,y.__i=a,O(n,y,v,i,o,r,f,e,c,s),d=y.__e,y.ref&&v.ref!=y.ref&&(v.ref&&N(v.ref,null,y),s.push(y.ref,y.__c||d,y)),null==w&&null!=d&&(w=d),65536&y.__u||v.__k===y.__k?e=I(y,e,n):"function"==typeof y.type&&void 0!==y.__d?e=y.__d:d&&(e=d.nextSibling),y.__d=void 0,y.__u&=-196609);u.__d=e,u.__e=w}function $(n,l,u){var t,i,o,r,f,e=l.length,c=u.length,s=c,a=0;for(n.__k=[],t=0;t<e;t++)r=t+a,null!=(i=n.__k[t]=null==(i=l[t])||"boolean"==typeof i||"function"==typeof i?null:"string"==typeof i||"number"==typeof i||"bigint"==typeof i||i.constructor==String?g(null,i,null,null,null):y(i)?g(k,{children:i},null,null,null):void 0===i.constructor&&i.__b>0?g(i.type,i.props,i.key,i.ref?i.ref:null,i.__v):i)?(i.__=n,i.__b=n.__b+1,f=L(i,u,r,s),i.__i=f,o=null,-1!==f&&(s--,(o=u[f])&&(o.__u|=131072)),null==o||null===o.__v?(-1==f&&a--,"function"!=typeof i.type&&(i.__u|=65536)):f!==r&&(f==r-1?a=f-r:f==r+1?a++:f>r?s>e-r?a+=f-r:a--:f<r&&a++,f!==t+a&&(i.__u|=65536))):(o=u[r])&&null==o.key&&o.__e&&0==(131072&o.__u)&&(o.__e==n.__d&&(n.__d=x(o)),V(o,o,!1),u[r]=null,s--);if(s)for(t=0;t<c;t++)null!=(o=u[t])&&0==(131072&o.__u)&&(o.__e==n.__d&&(n.__d=x(o)),V(o,o))}function I(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=I(t[i],l,u));return l}n.__e!=l&&(l&&n.type&&!u.contains(l)&&(l=x(n)),u.insertBefore(n.__e,l||null),l=n.__e);do{l=l&&l.nextSibling}while(null!=l&&8===l.nodeType);return l}function H(n,l){return l=l||[],null==n||"boolean"==typeof n||(y(n)?n.some(function(n){H(n,l)}):l.push(n)),l}function L(n,l,u,t){var i=n.key,o=n.type,r=u-1,f=u+1,e=l[u];if(null===e||e&&i==e.key&&o===e.type&&0==(131072&e.__u))return u;if(t>(null!=e&&0==(131072&e.__u)?1:0))for(;r>=0||f<l.length;){if(r>=0){if((e=l[r])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return r;r--}if(f<l.length){if((e=l[f])&&0==(131072&e.__u)&&i==e.key&&o===e.type)return f;f++}}return-1}function T(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||v.test(l)?u:u+"px"}function A(n,l,u,t,i){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||T(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||T(n.style,l,u[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/i,"$1")),l=l.toLowerCase()in n||"onFocusOut"===l||"onFocusIn"===l?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?t?u.u=t.u:(u.u=e,n.addEventListener(l,o?s:c,o)):n.removeEventListener(l,o?s:c,o);else{if("http://www.w3.org/2000/svg"==i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u))}}function F(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t)u.t=e++;else if(u.t<t.u)return;return t(l.event?l.event(u):u)}}}function O(n,u,t,i,o,r,f,e,c,s){var a,h,p,v,w,_,g,m,x,C,M,P,$,I,H,L,T=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),r=[e=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof T)try{if(m=u.props,x="prototype"in T&&T.prototype.render,C=(a=T.contextType)&&i[a.__c],M=a?C?C.props.value:a.__:i,t.__c?g=(h=u.__c=t.__c).__=h.__E:(x?u.__c=h=new T(m,M):(u.__c=h=new b(m,M),h.constructor=T,h.render=q),C&&C.sub(h),h.props=m,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),x&&null==h.__s&&(h.__s=h.state),x&&null!=T.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=d({},h.__s)),d(h.__s,T.getDerivedStateFromProps(m,h.__s))),v=h.props,w=h.state,h.__v=u,p)x&&null==T.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),x&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(x&&null==T.getDerivedStateFromProps&&m!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(m,M),!h.__e&&(null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(m,h.__s,M)||u.__v===t.__v)){for(u.__v!==t.__v&&(h.props=m,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.forEach(function(n){n&&(n.__=u)}),P=0;P<h._sb.length;P++)h.__h.push(h._sb[P]);h._sb=[],h.__h.length&&f.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(m,h.__s,M),x&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,w,_)})}if(h.context=M,h.props=m,h.__P=n,h.__e=!1,$=l.__r,I=0,x){for(h.state=h.__s,h.__d=!1,$&&$(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++)h.__h.push(h._sb[H]);h._sb=[]}else do{h.__d=!1,$&&$(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++I<25);h.state=h.__s,null!=h.getChildContext&&(i=d(d({},i),h.getChildContext())),x&&!p&&null!=h.getSnapshotBeforeUpdate&&(_=h.getSnapshotBeforeUpdate(v,w)),S(n,y(L=null!=a&&a.type===k&&null==a.key?a.props.children:a)?L:[L],u,t,i,o,r,f,e,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&f.push(h),g&&(h.__E=h.__=null)}catch(n){if(u.__v=null,c||null!=r){for(u.__u|=c?160:32;e&&8===e.nodeType&&e.nextSibling;)e=e.nextSibling;r[r.indexOf(e)]=null,u.__e=e}else u.__e=t.__e,u.__k=t.__k;l.__e(n,u,t)}else null==r&&u.__v===t.__v?(u.__k=t.__k,u.__e=t.__e):u.__e=z(t.__e,u,t,i,o,r,f,c,s);(a=l.diffed)&&a(u)}function j(n,u,t){u.__d=void 0;for(var i=0;i<t.length;i++)N(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function z(l,u,t,i,o,r,f,e,c){var s,a,p,v,d,_,g,m=t.props,k=u.props,b=u.type;if("svg"===b?o="http://www.w3.org/2000/svg":"math"===b?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=r)for(s=0;s<r.length;s++)if((d=r[s])&&"setAttribute"in d==!!b&&(b?d.localName===b:3===d.nodeType)){l=d,r[s]=null;break}if(null==l){if(null===b)return document.createTextNode(k);l=document.createElementNS(o,b,k.is&&k),r=null,e=!1}if(null===b)m===k||e&&l.data===k||(l.data=k);else{if(r=r&&n.call(l.childNodes),m=t.props||h,!e&&null!=r)for(m={},s=0;s<l.attributes.length;s++)m[(d=l.attributes[s]).name]=d.value;for(s in m)if(d=m[s],"children"==s);else if("dangerouslySetInnerHTML"==s)p=d;else if("key"!==s&&!(s in k)){if("value"==s&&"defaultValue"in k||"checked"==s&&"defaultChecked"in k)continue;A(l,s,null,d,o)}for(s in k)d=k[s],"children"==s?v=d:"dangerouslySetInnerHTML"==s?a=d:"value"==s?_=d:"checked"==s?g=d:"key"===s||e&&"function"!=typeof d||m[s]===d||A(l,s,d,m[s],o);if(a)e||p&&(a.__html===p.__html||a.__html===l.innerHTML)||(l.innerHTML=a.__html),u.__k=[];else if(p&&(l.innerHTML=""),S(l,y(v)?v:[v],u,t,i,"foreignObject"===b?"http://www.w3.org/1999/xhtml":o,r,f,r?r[0]:t.__k&&x(t,0),e,c),null!=r)for(s=r.length;s--;)null!=r[s]&&w(r[s]);e||(s="value",void 0!==_&&(_!==l[s]||"progress"===b&&!_||"option"===b&&_!==m[s])&&A(l,s,_,m[s],o),s="checked",void 0!==g&&g!==l[s]&&A(l,s,g,m[s],o))}return l}function N(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u))}else n.current=u}catch(n){l.__e(n,t)}}function V(n,u,t){var i,o;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||N(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null}if(i=n.__k)for(o=0;o<i.length;o++)i[o]&&V(i[o],u,t||"function"!=typeof n.type);t||null==n.__e||w(n.__e),n.__c=n.__=n.__e=n.__d=void 0}function q(n,l,u){return this.constructor(n,u)}function B(u,t,i){var o,r,f,e;l.__&&l.__(u,t),r=(o="function"==typeof i)?null:i&&i.__k||t.__k,f=[],e=[],O(t,u=(!o&&i||t).__k=_(k,null,[u]),r||h,h,t.namespaceURI,!o&&i?[i]:r?null:t.firstChild?n.call(t.childNodes):null,f,!o&&i?i:r?r.__e:t.firstChild,o,e),j(f,u,e)}function D(n,l){B(n,l,D)}function E(l,u,t){var i,o,r,f,e=d({},l.props);for(r in l.type&&l.type.defaultProps&&(f=l.type.defaultProps),u)"key"==r?i=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&&void 0!==f?f[r]:u[r];return arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),g(l.type,e,i||l.key,o||l.ref,null)}function G(n,l){var u={__c:l="__cC"+a++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=[],(t={})[l]=this,this.getChildContext=function(){return t},this.componentWillUnmount=function(){u=null},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.some(function(n){n.__e=!0,M(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u&&u.splice(u.indexOf(n),1),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=p.slice,l={__e:function(n,l,u,t){for(var i,o,r;l=l.__;)if((i=l.__c)&&!i.__)try{if((o=i.constructor)&&null!=o.getDerivedStateFromError&&(i.setState(o.getDerivedStateFromError(n)),r=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),r=i.__d),r)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=d({},this.state),"function"==typeof n&&(n=n(d({},u),this.props)),n&&d(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this))},b.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this))},b.prototype.render=k,i=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},P.__r=0,e=0,c=F(!1),s=F(!0),a=0;
+;// ./node_modules/preact/dist/preact.module.js
+var n,l,u,t,i,r,o,e,f,c,s,a,h,p={},v=[],y=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,d=Array.isArray;function w(n,l){for(var u in l)n[u]=l[u];return n}function _(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function g(l,u,t){var i,r,o,e={};for(o in u)"key"==o?i=u[o]:"ref"==o?r=u[o]:e[o]=u[o];if(arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps)for(o in l.defaultProps)void 0===e[o]&&(e[o]=l.defaultProps[o]);return m(l,e,i,r,null)}function m(n,t,i,r,o){var e={type:n,props:t,key:i,ref:r,__k:null,__:null,__b:0,__e:null,__c:null,constructor:void 0,__v:null==o?++u:o,__i:-1,__u:0};return null==o&&null!=l.vnode&&l.vnode(e),e}function b(){return{current:null}}function k(n){return n.children}function x(n,l){this.props=n,this.context=l}function C(n,l){if(null==l)return n.__?C(n.__,n.__i+1):null;for(var u;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e)return u.__e;return"function"==typeof n.type?C(n):null}function S(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break}return S(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!P.__r++||r!==l.debounceRendering)&&((r=l.debounceRendering)||o)(P)}function P(){var n,u,t,r,o,f,c,s;for(i.sort(e);n=i.shift();)n.__d&&(u=i.length,r=void 0,f=(o=(t=n).__v).__e,c=[],s=[],t.__P&&((r=w({},o)).__v=o.__v+1,l.vnode&&l.vnode(r),j(t.__P,r,o,t.__n,t.__P.namespaceURI,32&o.__u?[f]:null,c,null==f?C(o):f,!!(32&o.__u),s),r.__v=o.__v,r.__.__k[r.__i]=r,z(c,r,s),r.__e!=f&&S(r)),i.length>u&&i.sort(e));P.__r=0}function $(n,l,u,t,i,r,o,e,f,c,s){var a,h,y,d,w,_,g=t&&t.__k||v,m=l.length;for(f=I(u,l,g,f,m),a=0;a<m;a++)null!=(y=u.__k[a])&&(h=-1===y.__i?p:g[y.__i]||p,y.__i=a,_=j(n,y,h,i,r,o,e,f,c,s),d=y.__e,y.ref&&h.ref!=y.ref&&(h.ref&&V(h.ref,null,y),s.push(y.ref,y.__c||d,y)),null==w&&null!=d&&(w=d),4&y.__u||h.__k===y.__k?f=A(y,f,n):"function"==typeof y.type&&void 0!==_?f=_:d&&(f=d.nextSibling),y.__u&=-7);return u.__e=w,f}function I(n,l,u,t,i){var r,o,e,f,c,s=u.length,a=s,h=0;for(n.__k=new Array(i),r=0;r<i;r++)null!=(o=l[r])&&"boolean"!=typeof o&&"function"!=typeof o?(f=r+h,(o=n.__k[r]="string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?m(null,o,null,null,null):d(o)?m(k,{children:o},null,null,null):void 0===o.constructor&&o.__b>0?m(o.type,o.props,o.key,o.ref?o.ref:null,o.__v):o).__=n,o.__b=n.__b+1,e=null,-1!==(c=o.__i=L(o,u,f,a))&&(a--,(e=u[c])&&(e.__u|=2)),null==e||null===e.__v?(-1==c&&h--,"function"!=typeof o.type&&(o.__u|=4)):c!=f&&(c==f-1?h--:c==f+1?h++:(c>f?h--:h++,o.__u|=4))):n.__k[r]=null;if(a)for(r=0;r<s;r++)null!=(e=u[r])&&0==(2&e.__u)&&(e.__e==t&&(t=C(e)),q(e,e));return t}function A(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&&i<t.length;i++)t[i]&&(t[i].__=n,l=A(t[i],l,u));return l}n.__e!=l&&(l&&n.type&&!u.contains(l)&&(l=C(n)),u.insertBefore(n.__e,l||null),l=n.__e);do{l=l&&l.nextSibling}while(null!=l&&8==l.nodeType);return l}function H(n,l){return l=l||[],null==n||"boolean"==typeof n||(d(n)?n.some(function(n){H(n,l)}):l.push(n)),l}function L(n,l,u,t){var i,r,o=n.key,e=n.type,f=l[u];if(null===f||f&&o==f.key&&e===f.type&&0==(2&f.__u))return u;if(t>(null!=f&&0==(2&f.__u)?1:0))for(i=u-1,r=u+1;i>=0||r<l.length;){if(i>=0){if((f=l[i])&&0==(2&f.__u)&&o==f.key&&e===f.type)return i;i--}if(r<l.length){if((f=l[r])&&0==(2&f.__u)&&o==f.key&&e===f.type)return r;r++}}return-1}function T(n,l,u){"-"==l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||y.test(l)?u:u+"px"}function F(n,l,u,t,i){var r;n:if("style"==l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&&(n.style.cssText=t=""),t)for(l in t)u&&l in u||T(n.style,l,"");if(u)for(l in u)t&&u[l]===t[l]||T(n.style,l,u[l])}else if("o"==l[0]&&"n"==l[1])r=l!=(l=l.replace(f,"$1")),l=l.toLowerCase()in n||"onFocusOut"==l||"onFocusIn"==l?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?t?u.u=t.u:(u.u=c,n.addEventListener(l,r?a:s,r)):n.removeEventListener(l,r?a:s,r);else{if("http://www.w3.org/2000/svg"==i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&&"-"!=l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u))}}function O(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t)u.t=c++;else if(u.t<t.u)return;return t(l.event?l.event(u):u)}}}function j(n,u,t,i,r,o,e,f,c,s){var a,h,p,v,y,g,m,b,C,S,M,P,I,A,H,L,T,F=u.type;if(void 0!==u.constructor)return null;128&t.__u&&(c=!!(32&t.__u),o=[f=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof F)try{if(b=u.props,C="prototype"in F&&F.prototype.render,S=(a=F.contextType)&&i[a.__c],M=a?S?S.props.value:a.__:i,t.__c?m=(h=u.__c=t.__c).__=h.__E:(C?u.__c=h=new F(b,M):(u.__c=h=new x(b,M),h.constructor=F,h.render=B),S&&S.sub(h),h.props=b,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),C&&null==h.__s&&(h.__s=h.state),C&&null!=F.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=w({},h.__s)),w(h.__s,F.getDerivedStateFromProps(b,h.__s))),v=h.props,y=h.state,h.__v=u,p)C&&null==F.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),C&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(C&&null==F.getDerivedStateFromProps&&b!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(b,M),!h.__e&&(null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(b,h.__s,M)||u.__v==t.__v)){for(u.__v!=t.__v&&(h.props=b,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.some(function(n){n&&(n.__=u)}),P=0;P<h._sb.length;P++)h.__h.push(h._sb[P]);h._sb=[],h.__h.length&&e.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(b,h.__s,M),C&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,y,g)})}if(h.context=M,h.props=b,h.__P=n,h.__e=!1,I=l.__r,A=0,C){for(h.state=h.__s,h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++)h.__h.push(h._sb[H]);h._sb=[]}else do{h.__d=!1,I&&I(u),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++A<25);h.state=h.__s,null!=h.getChildContext&&(i=w(w({},i),h.getChildContext())),C&&!p&&null!=h.getSnapshotBeforeUpdate&&(g=h.getSnapshotBeforeUpdate(v,y)),f=$(n,d(L=null!=a&&a.type===k&&null==a.key?a.props.children:a)?L:[L],u,t,i,r,o,e,f,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&e.push(h),m&&(h.__E=h.__=null)}catch(n){if(u.__v=null,c||null!=o)if(n.then){for(u.__u|=c?160:128;f&&8==f.nodeType&&f.nextSibling;)f=f.nextSibling;o[o.indexOf(f)]=null,u.__e=f}else for(T=o.length;T--;)_(o[T]);else u.__e=t.__e,u.__k=t.__k;l.__e(n,u,t)}else null==o&&u.__v==t.__v?(u.__k=t.__k,u.__e=t.__e):f=u.__e=N(t.__e,u,t,i,r,o,e,c,s);return(a=l.diffed)&&a(u),128&u.__u?void 0:f}function z(n,u,t){for(var i=0;i<t.length;i++)V(t[i],t[++i],t[++i]);l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function N(u,t,i,r,o,e,f,c,s){var a,h,v,y,w,g,m,b=i.props,k=t.props,x=t.type;if("svg"==x?o="http://www.w3.org/2000/svg":"math"==x?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=e)for(a=0;a<e.length;a++)if((w=e[a])&&"setAttribute"in w==!!x&&(x?w.localName==x:3==w.nodeType)){u=w,e[a]=null;break}if(null==u){if(null==x)return document.createTextNode(k);u=document.createElementNS(o,x,k.is&&k),c&&(l.__m&&l.__m(t,e),c=!1),e=null}if(null===x)b===k||c&&u.data===k||(u.data=k);else{if(e=e&&n.call(u.childNodes),b=i.props||p,!c&&null!=e)for(b={},a=0;a<u.attributes.length;a++)b[(w=u.attributes[a]).name]=w.value;for(a in b)if(w=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a)v=w;else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k)continue;F(u,a,null,w,o)}for(a in k)w=k[a],"children"==a?y=w:"dangerouslySetInnerHTML"==a?h=w:"value"==a?g=w:"checked"==a?m=w:c&&"function"!=typeof w||b[a]===w||F(u,a,w,b[a],o);if(h)c||v&&(h.__html===v.__html||h.__html===u.innerHTML)||(u.innerHTML=h.__html),t.__k=[];else if(v&&(u.innerHTML=""),$(u,d(y)?y:[y],t,i,r,"foreignObject"==x?"http://www.w3.org/1999/xhtml":o,e,f,e?e[0]:i.__k&&C(i,0),c,s),null!=e)for(a=e.length;a--;)_(e[a]);c||(a="value","progress"==x&&null==g?u.removeAttribute("value"):void 0!==g&&(g!==u[a]||"progress"==x&&!g||"option"==x&&g!==b[a])&&F(u,a,g,b[a],o),a="checked",void 0!==m&&m!==u[a]&&F(u,a,m,b[a],o))}return u}function V(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u))}else n.current=u}catch(n){l.__e(n,t)}}function q(n,u,t){var i,r;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||V(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null}if(i=n.__k)for(r=0;r<i.length;r++)i[r]&&q(i[r],u,t||"function"!=typeof n.type);t||_(n.__e),n.__c=n.__=n.__e=void 0}function B(n,l,u){return this.constructor(n,u)}function D(u,t,i){var r,o,e,f;t==document&&(t=document.documentElement),l.__&&l.__(u,t),o=(r="function"==typeof i)?null:i&&i.__k||t.__k,e=[],f=[],j(t,u=(!r&&i||t).__k=g(k,null,[u]),o||p,p,t.namespaceURI,!r&&i?[i]:o?null:t.firstChild?n.call(t.childNodes):null,e,!r&&i?i:o?o.__e:t.firstChild,r,f),z(e,u,f)}function E(n,l){D(n,l,E)}function G(l,u,t){var i,r,o,e,f=w({},l.props);for(o in l.type&&l.type.defaultProps&&(e=l.type.defaultProps),u)"key"==o?i=u[o]:"ref"==o?r=u[o]:f[o]=void 0===u[o]&&void 0!==e?e[o]:u[o];return arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):t),m(l.type,f,i||l.key,r||l.ref,null)}function J(n,l){var u={__c:l="__cC"+h++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=new Set,(t={})[l]=this,this.getChildContext=function(){return t},this.componentWillUnmount=function(){u=null},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&u.forEach(function(n){n.__e=!0,M(n)})},this.sub=function(n){u.add(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u&&u.delete(n),l&&l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=v.slice,l={__e:function(n,l,u,t){for(var i,r,o;l=l.__;)if((i=l.__c)&&!i.__)try{if((r=i.constructor)&&null!=r.getDerivedStateFromError&&(i.setState(r.getDerivedStateFromError(n)),o=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),o=i.__d),o)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&&null==n.constructor},x.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=w({},this.state),"function"==typeof n&&(n=n(w({},u),this.props)),n&&w(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this))},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this))},x.prototype.render=k,i=[],o="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,e=function(n,l){return n.__v.__b-l.__v.__b},P.__r=0,f=/(PointerCapture)$|Capture$/i,c=0,s=O(!1),a=O(!0),h=0;
 //# sourceMappingURL=preact.module.js.map
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isDOMElement.js
+;// ./node_modules/@uppy/utils/lib/isDOMElement.js
 /**
  * Check if an object is a DOM element. Duck-typing based on `nodeType`.
  */
@@ -10632,7 +10776,7 @@ function isDOMElement(obj) {
   if (!('nodeType' in obj)) return false;
   return obj.nodeType === Node.ELEMENT_NODE;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/findDOMElement.js
+;// ./node_modules/@uppy/utils/lib/findDOMElement.js
 
 function findDOMElement(element, context) {
   if (context === void 0) {
@@ -10647,7 +10791,7 @@ function findDOMElement(element, context) {
   return null;
 }
 /* harmony default export */ const lib_findDOMElement = (findDOMElement);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getTextDirection.js
+;// ./node_modules/@uppy/utils/lib/getTextDirection.js
 /**
  * Get the declared text direction for an element.
  */
@@ -10667,7 +10811,7 @@ function getTextDirection(element) {
   return (_element = element) == null ? void 0 : _element.dir;
 }
 /* harmony default export */ const lib_getTextDirection = (getTextDirection);
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/BasePlugin.js
+;// ./node_modules/@uppy/core/lib/BasePlugin.js
 /* eslint-disable class-methods-use-this */
 
 /**
@@ -10745,7 +10889,7 @@ class BasePlugin {
   // Called after every state update, after everything's mounted. Debounced.
   afterUpdate() {}
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/UIPlugin.js
+;// ./node_modules/@uppy/core/lib/UIPlugin.js
 function UIPlugin_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var UIPlugin_id = 0;
 function UIPlugin_classPrivateFieldLooseKey(name) { return "__private_" + UIPlugin_id++ + "_" + name; }
@@ -10846,7 +10990,7 @@ class UIPlugin extends BasePlugin {
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return;
-        B(this.render(state), uppyRootElement);
+        D(this.render(state), uppyRootElement);
         this.afterUpdate();
       });
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`);
@@ -10856,7 +11000,7 @@ class UIPlugin extends BasePlugin {
         // stopped working — Preact just adds null into target, not replacing
         targetElement.innerHTML = '';
       }
-      B(this.render(this.uppy.getState()), uppyRootElement);
+      D(this.render(this.uppy.getState()), uppyRootElement);
       this.el = uppyRootElement;
       targetElement.appendChild(uppyRootElement);
 
@@ -10910,7 +11054,7 @@ class UIPlugin extends BasePlugin {
   onUnmount() {}
 }
 /* harmony default export */ const lib_UIPlugin = (UIPlugin);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/emaFilter.js
+;// ./node_modules/@uppy/utils/lib/emaFilter.js
 /**
  * Low-pass filter using Exponential Moving Averages (aka exponential smoothing)
  * Filters a sequence of values by updating the mixing the previous output value
@@ -10927,7 +11071,7 @@ function emaFilter(newValue, previousSmoothedValue, halfLife, dt) {
   if (dt === 0) return previousSmoothedValue;
   return newValue + (previousSmoothedValue - newValue) * 2 ** (-dt / halfLife);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/StatusBarStates.js
+;// ./node_modules/@uppy/status-bar/lib/StatusBarStates.js
 /* harmony default export */ const StatusBarStates = ({
   STATE_ERROR: 'error',
   STATE_WAITING: 'waiting',
@@ -10938,7 +11082,7 @@ function emaFilter(newValue, previousSmoothedValue, halfLife, dt) {
 });
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(6942);
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/calculateProcessingProgress.js
+;// ./node_modules/@uppy/status-bar/lib/calculateProcessingProgress.js
 function calculateProcessingProgress(files) {
   const values = [];
   let mode = 'indeterminate';
@@ -10971,7 +11115,7 @@ function calculateProcessingProgress(files) {
     value
   };
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/secondsToTime.js
+;// ./node_modules/@uppy/utils/lib/secondsToTime.js
 function secondsToTime(rawSeconds) {
   const hours = Math.floor(rawSeconds / 3600) % 24;
   const minutes = Math.floor(rawSeconds / 60) % 60;
@@ -10982,7 +11126,7 @@ function secondsToTime(rawSeconds) {
     seconds
   };
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/prettyETA.js
+;// ./node_modules/@uppy/utils/lib/prettyETA.js
 
 function prettyETA(seconds) {
   const time = secondsToTime(seconds);
@@ -10995,7 +11139,7 @@ function prettyETA(seconds) {
   const secondsStr = time.hours !== 0 ? '' : `${time.minutes === 0 ? time.seconds : ` ${time.seconds.toString(10).padStart(2, '0')}`}s`;
   return `${hoursStr}${minutesStr}${secondsStr}`;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/Components.js
+;// ./node_modules/@uppy/status-bar/lib/Components.js
 
 
 
@@ -11023,7 +11167,7 @@ function UploadBtn(props) {
   }) : i18n('uploadXFiles', {
     smart_count: newFiles
   });
-  return _("button", {
+  return g("button", {
     type: "button",
     className: uploadBtnClassNames,
     "aria-label": i18n('uploadXFiles', {
@@ -11039,7 +11183,7 @@ function RetryBtn(props) {
     i18n,
     uppy
   } = props;
-  return _("button", {
+  return g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry",
     "aria-label": i18n('retryUpload'),
@@ -11048,14 +11192,14 @@ function RetryBtn(props) {
     }),
     "data-uppy-super-focusable": true,
     "data-cy": "retry"
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "8",
     height: "10",
     viewBox: "0 0 8 10"
-  }, _("path", {
+  }, g("path", {
     d: "M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z"
   })), i18n('retry'));
 }
@@ -11064,7 +11208,7 @@ function CancelBtn(props) {
     i18n,
     uppy
   } = props;
-  return _("button", {
+  return g("button", {
     type: "button",
     className: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
     title: i18n('cancel'),
@@ -11072,22 +11216,22 @@ function CancelBtn(props) {
     onClick: () => uppy.cancelAll(),
     "data-cy": "cancel",
     "data-uppy-super-focusable": true
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "16",
     height: "16",
     viewBox: "0 0 16 16"
-  }, _("g", {
+  }, g("g", {
     fill: "none",
     fillRule: "evenodd"
-  }, _("circle", {
+  }, g("circle", {
     fill: "#888",
     cx: "8",
     cy: "8",
     r: "8"
-  }), _("path", {
+  }), g("path", {
     fill: "#FFF",
     d: "M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z"
   }))));
@@ -11113,7 +11257,7 @@ function PauseResumeButton(props) {
     }
     uppy.pauseAll();
   }
-  return _("button", {
+  return g("button", {
     title: title,
     "aria-label": title,
     className: "uppy-u-reset uppy-StatusBar-actionCircleBtn",
@@ -11121,22 +11265,22 @@ function PauseResumeButton(props) {
     onClick: togglePauseResume,
     "data-cy": "togglePauseResume",
     "data-uppy-super-focusable": true
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "16",
     height: "16",
     viewBox: "0 0 16 16"
-  }, _("g", {
+  }, g("g", {
     fill: "none",
     fillRule: "evenodd"
-  }, _("circle", {
+  }, g("circle", {
     fill: "#888",
     cx: "8",
     cy: "8",
     r: "8"
-  }), _("path", {
+  }), g("path", {
     fill: "#FFF",
     d: isAllPaused ? 'M6 4.25L11.5 8 6 11.75z' : 'M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z'
   }))));
@@ -11146,7 +11290,7 @@ function DoneBtn(props) {
     i18n,
     doneButtonHandler
   } = props;
-  return _("button", {
+  return g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done",
     onClick: doneButtonHandler,
@@ -11154,13 +11298,13 @@ function DoneBtn(props) {
   }, i18n('done'));
 }
 function LoadingSpinner() {
-  return _("svg", {
+  return g("svg", {
     className: "uppy-StatusBar-spinner",
     "aria-hidden": "true",
     focusable: "false",
     width: "14",
     height: "14"
-  }, _("path", {
+  }, g("path", {
     d: "M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0",
     fillRule: "evenodd"
   }));
@@ -11175,9 +11319,9 @@ function ProgressBarProcessing(props) {
     message
   } = progress;
   const dot = `\u00B7`;
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-content"
-  }, _(LoadingSpinner, null), mode === 'determinate' ? `${Math.round(value * 100)}% ${dot} ` : '', message);
+  }, g(LoadingSpinner, null), mode === 'determinate' ? `${Math.round(value * 100)}% ${dot} ` : '', message);
 }
 function ProgressDetails(props) {
   const {
@@ -11189,12 +11333,12 @@ function ProgressDetails(props) {
     i18n
   } = props;
   const ifShowFilesUploadedOfTotal = numUploads > 1;
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-statusSecondary"
   }, ifShowFilesUploadedOfTotal && i18n('filesUploadedOfTotal', {
     complete,
     smart_count: numUploads
-  }), _("span", {
+  }), g("span", {
     className: "uppy-StatusBar-additionalInfo"
   }, ifShowFilesUploadedOfTotal && renderDot(), i18n('dataUploadedOfTotal', {
     complete: prettierBytes(totalUploadedSize),
@@ -11209,7 +11353,7 @@ function FileUploadCount(props) {
     complete,
     numUploads
   } = props;
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-statusSecondary"
   }, i18n('filesUploadedOfTotal', {
     complete,
@@ -11223,13 +11367,13 @@ function UploadNewlyAddedFiles(props) {
     startUpload
   } = props;
   const uploadBtnClassNames = classnames('uppy-u-reset', 'uppy-c-btn', 'uppy-StatusBar-actionBtn', 'uppy-StatusBar-actionBtn--uploadNewlyAdded');
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-statusSecondary"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-StatusBar-statusSecondaryHint"
   }, i18n('xMoreFilesAdded', {
     smart_count: newFiles
-  })), _("button", {
+  })), g("button", {
     type: "button",
     className: uploadBtnClassNames,
     "aria-label": i18n('uploadXFiles', {
@@ -11263,7 +11407,7 @@ function ProgressBarUploading(props) {
   function renderProgressDetails() {
     if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
       if (supportsUploadProgress) {
-        return _(ProgressDetails, {
+        return g(ProgressDetails, {
           numUploads: numUploads,
           complete: complete,
           totalUploadedSize: totalUploadedSize,
@@ -11272,7 +11416,7 @@ function ProgressBarUploading(props) {
           i18n: i18n
         });
       }
-      return _(FileUploadCount, {
+      return g(FileUploadCount, {
         i18n: i18n,
         complete: complete,
         numUploads: numUploads
@@ -11280,15 +11424,15 @@ function ProgressBarUploading(props) {
     }
     return null;
   }
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-content",
     "aria-label": title,
     title: title
-  }, !isAllPaused ? _(LoadingSpinner, null) : null, _("div", {
+  }, !isAllPaused ? g(LoadingSpinner, null) : null, g("div", {
     className: "uppy-StatusBar-status"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-StatusBar-statusPrimary"
-  }, supportsUploadProgress ? `${title}: ${totalProgress}%` : title), renderProgressDetails(), showUploadNewlyAddedFiles ? _(UploadNewlyAddedFiles, {
+  }, supportsUploadProgress ? `${title}: ${totalProgress}%` : title), renderProgressDetails(), showUploadNewlyAddedFiles ? g(UploadNewlyAddedFiles, {
     i18n: i18n,
     newFiles: newFiles,
     startUpload: startUpload
@@ -11298,22 +11442,22 @@ function ProgressBarComplete(props) {
   const {
     i18n
   } = props;
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-content",
     role: "status",
     title: i18n('complete')
-  }, _("div", {
+  }, g("div", {
     className: "uppy-StatusBar-status"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-StatusBar-statusPrimary"
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-StatusBar-statusIndicator uppy-c-icon",
     width: "15",
     height: "11",
     viewBox: "0 0 15 11"
-  }, _("path", {
+  }, g("path", {
     d: "M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z"
   })), i18n('complete'))));
 }
@@ -11329,37 +11473,37 @@ function ProgressBarError(props) {
     // eslint-disable-next-line no-alert
     alert(errorMessage); // TODO: move to custom alert implementation
   }
-  return _("div", {
+  return g("div", {
     className: "uppy-StatusBar-content",
     title: i18n('uploadFailed')
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-StatusBar-statusIndicator uppy-c-icon",
     width: "11",
     height: "11",
     viewBox: "0 0 11 11"
-  }, _("path", {
+  }, g("path", {
     d: "M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z"
-  })), _("div", {
+  })), g("div", {
     className: "uppy-StatusBar-status"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-StatusBar-statusPrimary"
-  }, i18n('uploadFailed'), _("button", {
+  }, i18n('uploadFailed'), g("button", {
     className: "uppy-u-reset uppy-StatusBar-details",
     "aria-label": i18n('showErrorDetails'),
     "data-microtip-position": "top-right",
     "data-microtip-size": "medium",
     onClick: displayErrorAlert,
     type: "button"
-  }, "?")), _(FileUploadCount, {
+  }, "?")), g(FileUploadCount, {
     i18n: i18n,
     complete: complete,
     numUploads: numUploads
   })));
 }
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/StatusBarUI.js
+;// ./node_modules/@uppy/status-bar/lib/StatusBarUI.js
 
 
 
@@ -11480,10 +11624,10 @@ function StatusBarUI_StatusBar(props) {
   const statusBarClassNames = classnames('uppy-StatusBar', `is-${uploadState}`, {
     'has-ghosts': isSomeGhost
   });
-  return _("div", {
+  return g("div", {
     className: statusBarClassNames,
     "aria-hidden": isHidden
-  }, _("div", {
+  }, g("div", {
     className: progressClassNames,
     style: {
       width: `${width}%`
@@ -11498,22 +11642,22 @@ function StatusBarUI_StatusBar(props) {
     switch (uploadState) {
       case STATE_PREPROCESSING:
       case STATE_POSTPROCESSING:
-        return _(ProgressBarProcessing, {
+        return g(ProgressBarProcessing, {
           progress: calculateProcessingProgress(files)
         });
       case STATE_COMPLETE:
-        return _(ProgressBarComplete, {
+        return g(ProgressBarComplete, {
           i18n: i18n
         });
       case STATE_ERROR:
-        return _(ProgressBarError, {
+        return g(ProgressBarError, {
           error: error,
           i18n: i18n,
           numUploads: numUploads,
           complete: complete
         });
       case STATE_UPLOADING:
-        return _(ProgressBarUploading, {
+        return g(ProgressBarUploading, {
           i18n: i18n,
           supportsUploadProgress: supportsUploadProgress,
           totalProgress: totalProgress,
@@ -11532,9 +11676,9 @@ function StatusBarUI_StatusBar(props) {
       default:
         return null;
     }
-  })(), _("div", {
+  })(), g("div", {
     className: "uppy-StatusBar-actions"
-  }, recoveredState || showUploadBtn ? _(UploadBtn, {
+  }, recoveredState || showUploadBtn ? g(UploadBtn, {
     newFiles: newFiles,
     isUploadStarted: isUploadStarted,
     recoveredState: recoveredState,
@@ -11542,19 +11686,19 @@ function StatusBarUI_StatusBar(props) {
     isSomeGhost: isSomeGhost,
     startUpload: startUpload,
     uploadState: uploadState
-  }) : null, showRetryBtn ? _(RetryBtn, {
+  }) : null, showRetryBtn ? g(RetryBtn, {
     i18n: i18n,
     uppy: uppy
-  }) : null, showPauseResumeBtn ? _(PauseResumeButton, {
+  }) : null, showPauseResumeBtn ? g(PauseResumeButton, {
     isAllPaused: isAllPaused,
     i18n: i18n,
     isAllComplete: isAllComplete,
     resumableUploads: resumableUploads,
     uppy: uppy
-  }) : null, showCancelBtn ? _(CancelBtn, {
+  }) : null, showCancelBtn ? g(CancelBtn, {
     i18n: i18n,
     uppy: uppy
-  }) : null, showDoneBtn ? _(DoneBtn, {
+  }) : null, showDoneBtn ? g(DoneBtn, {
     i18n: i18n,
     doneButtonHandler: doneButtonHandler
   }) : null));
@@ -11568,7 +11712,7 @@ StatusBarUI_StatusBar.defaultProps = {
   hideUploadButton: undefined,
   showProgressDetails: undefined
 };
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/locale.js
+;// ./node_modules/@uppy/status-bar/lib/locale.js
 /* harmony default export */ const lib_locale = ({
   strings: {
     // Shown in the status bar while files are being uploaded.
@@ -11618,7 +11762,7 @@ StatusBarUI_StatusBar.defaultProps = {
     showErrorDetails: 'Show error details'
   }
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/StatusBar.js
+;// ./node_modules/@uppy/status-bar/lib/StatusBar.js
 function StatusBar_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var StatusBar_id = 0;
 function StatusBar_classPrivateFieldLooseKey(name) { return "__private_" + StatusBar_id++ + "_" + name; }
@@ -11889,15 +12033,15 @@ function _computeSmoothETA2(totalBytes) {
   return Math.round(filteredETA / 100) / 10;
 }
 StatusBar.VERSION = StatusBar_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/status-bar/lib/index.js
+;// ./node_modules/@uppy/status-bar/lib/index.js
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/informer/lib/FadeIn.js
+;// ./node_modules/@uppy/informer/lib/FadeIn.js
 
 const TRANSITION_MS = 300;
-class FadeIn extends b {
+class FadeIn extends x {
   constructor() {
     super(...arguments);
-    this.ref = m();
+    this.ref = b();
   }
   componentWillEnter(callback) {
     this.ref.current.style.opacity = '1';
@@ -11913,13 +12057,13 @@ class FadeIn extends b {
     const {
       children
     } = this.props;
-    return _("div", {
+    return g("div", {
       className: "uppy-Informer-animated",
       ref: this.ref
     }, children);
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/informer/lib/TransitionGroup.js
+;// ./node_modules/@uppy/informer/lib/TransitionGroup.js
 // INFO: not typing copy pasted libarary code
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
@@ -11989,7 +12133,7 @@ function mergeChildMappings(prev, next) {
   return childMapping;
 }
 const identity = i => i;
-class TransitionGroup extends b {
+class TransitionGroup extends x {
   constructor(props, context) {
     super(props, context);
     this.refs = {};
@@ -12169,12 +12313,12 @@ class TransitionGroup extends b {
       let [key, child] = _ref3;
       if (!child) return undefined;
       const ref = linkRef(this, key);
-      return E(childFactory(child), {
+      return G(childFactory(child), {
         ref,
         key
       });
     }).filter(Boolean);
-    return _(component, props, childrenToRender);
+    return g(component, props, childrenToRender);
   }
 }
 TransitionGroup.defaultProps = {
@@ -12182,7 +12326,7 @@ TransitionGroup.defaultProps = {
   childFactory: identity
 };
 /* harmony default export */ const lib_TransitionGroup = (TransitionGroup);
-;// CONCATENATED MODULE: ./node_modules/@uppy/informer/lib/Informer.js
+;// ./node_modules/@uppy/informer/lib/Informer.js
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -12206,13 +12350,13 @@ class Informer extends lib_UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     this.render = state => {
-      return _("div", {
+      return g("div", {
         className: "uppy uppy-Informer"
-      }, _(lib_TransitionGroup, null, state.info.map(info => _(FadeIn, {
+      }, g(lib_TransitionGroup, null, state.info.map(info => g(FadeIn, {
         key: info.message
-      }, _("p", {
+      }, g("p", {
         role: "alert"
-      }, info.message, ' ', info.details && _("span", {
+      }, info.message, ' ', info.details && g("span", {
         "aria-label": info.details,
         "data-microtip-position": "top-left",
         "data-microtip-size": "medium",
@@ -12236,9 +12380,9 @@ class Informer extends lib_UIPlugin {
   }
 }
 Informer.VERSION = Informer_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/informer/lib/index.js
+;// ./node_modules/@uppy/informer/lib/index.js
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/dataURItoBlob.js
+;// ./node_modules/@uppy/utils/lib/dataURItoBlob.js
 const DATA_URL_PATTERN = /^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/;
 function dataURItoBlob(dataURI, opts, toFile) {
   var _ref, _opts$mimeType;
@@ -12270,29 +12414,29 @@ function dataURItoBlob(dataURI, opts, toFile) {
   });
 }
 /* harmony default export */ const lib_dataURItoBlob = (dataURItoBlob);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isObjectURL.js
+;// ./node_modules/@uppy/utils/lib/isObjectURL.js
 /**
  * Check if a URL string is an object URL from `URL.createObjectURL`.
  */
 function isObjectURL(url) {
   return url.startsWith('blob:');
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isPreviewSupported.js
+;// ./node_modules/@uppy/utils/lib/isPreviewSupported.js
 function isPreviewSupported(fileType) {
   if (!fileType) return false;
   // list of images that browsers can preview
   return /^[^/]+\/(jpe?g|gif|png|svg|svg\+xml|bmp|webp|avif)$/.test(fileType);
 }
-;// CONCATENATED MODULE: ./node_modules/exifr/dist/mini.esm.mjs
-function mini_esm_e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var mini_esm_t="undefined"!=typeof self?self:global;const mini_esm_s="undefined"!=typeof navigator,mini_esm_i=mini_esm_s&&"undefined"==typeof HTMLImageElement,mini_esm_n=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),mini_esm_r=mini_esm_t.Buffer,mini_esm_a=!!mini_esm_r,mini_esm_h=e=>void 0!==e;function mini_esm_f(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(mini_esm_h).length)}function mini_esm_l(e){let t=new Error(e);throw delete t.stack,t}function mini_esm_o(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const mini_esm_u=e=>String.fromCharCode.apply(null,e),mini_esm_d="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class mini_esm_c{static from(e,t){return e instanceof this&&e.le===t?e:new mini_esm_c(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof mini_esm_c){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&mini_esm_l("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else mini_esm_l("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=mini_esm_c){return e instanceof DataView||e instanceof mini_esm_c?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||mini_esm_l("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new mini_esm_c(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,mini_esm_d?mini_esm_d.decode(i):mini_esm_a?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(mini_esm_u(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return mini_esm_u(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return mini_esm_u(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function mini_esm_p(e,t){mini_esm_l(`${e} '${t}' was not loaded, try using full build of exifr.`)}class mini_esm_g extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||mini_esm_p(this.kind,e),t&&(e in t||function(e,t){mini_esm_l(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||mini_esm_p(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var mini_esm_m=new mini_esm_g("file parser"),mini_esm_y=new mini_esm_g("segment parser"),mini_esm_b=new mini_esm_g("file reader");let mini_esm_w=mini_esm_t.fetch;function mini_esm_k(e,t){return(i=e).startsWith("data:")||i.length>1e4?mini_esm_v(e,t,"base64"):mini_esm_n&&e.includes("://")?mini_esm_O(e,t,"url",mini_esm_S):mini_esm_n?mini_esm_v(e,t,"fs"):mini_esm_s?mini_esm_O(e,t,"url",mini_esm_S):void mini_esm_l("Invalid input argument");var i}async function mini_esm_O(e,t,s,i){return mini_esm_b.has(s)?mini_esm_v(e,t,s):i?async function(e,t){let s=await t(e);return new mini_esm_c(s)}(e,i):void mini_esm_l(`Parser ${s} is not loaded`)}async function mini_esm_v(e,t,s){let i=new(mini_esm_b.get(s))(e,t);return await i.read(),i}const mini_esm_S=e=>mini_esm_w(e).then((e=>e.arrayBuffer())),mini_esm_A=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class U extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function mini_esm_x(e,t,s){let i=new U;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function mini_esm_C(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const mini_esm_B=new Map,mini_esm_V=new Map,mini_esm_I=new Map,mini_esm_L=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],mini_esm_T=["jfif","xmp","icc","iptc","ihdr"],mini_esm_z=["tiff",...mini_esm_T],mini_esm_P=["ifd0","ifd1","exif","gps","interop"],mini_esm_F=[...mini_esm_z,...mini_esm_P],mini_esm_j=["makerNote","userComment"],mini_esm_E=["translateKeys","translateValues","reviveValues","multiSegment"],mini_esm_M=[...mini_esm_E,"sanitize","mergeOutput","silentErrors"];class mini_esm_{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class mini_esm_D extends mini_esm_{get needed(){return this.enabled||this.deps.size>0}constructor(t,s,i,n){if(super(),mini_esm_e(this,"enabled",!1),mini_esm_e(this,"skip",new Set),mini_esm_e(this,"pick",new Set),mini_esm_e(this,"deps",new Set),mini_esm_e(this,"translateKeys",!1),mini_esm_e(this,"translateValues",!1),mini_esm_e(this,"reviveValues",!1),this.key=t,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=mini_esm_P.includes(t),this.canBeFiltered&&(this.dict=mini_esm_B.get(t)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:mini_esm_l(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of mini_esm_E)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,X(this.pick,this.deps)):this.enabled&&this.pick.size>0&&X(this.pick,this.deps)}}var mini_esm_N={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},mini_esm_$=new Map;class R extends mini_esm_{static useCached(e){let t=mini_esm_$.get(e);return void 0!==t||(t=new this(e),mini_esm_$.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):mini_esm_l(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=mini_esm_s?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=mini_esm_N[e];for(e of mini_esm_F)this[e]=new mini_esm_D(e,mini_esm_N[e],void 0,this)}setupFromTrue(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=!0;for(e of mini_esm_F)this[e]=new mini_esm_D(e,!0,void 0,this)}setupFromArray(e){let t;for(t of mini_esm_L)this[t]=mini_esm_N[t];for(t of mini_esm_M)this[t]=mini_esm_N[t];for(t of mini_esm_j)this[t]=mini_esm_N[t];for(t of mini_esm_F)this[t]=new mini_esm_D(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,mini_esm_P)}setupFromObject(e){let t;for(t of(mini_esm_P.ifd0=mini_esm_P.ifd0||mini_esm_P.image,mini_esm_P.ifd1=mini_esm_P.ifd1||mini_esm_P.thumbnail,Object.assign(this,e),mini_esm_L))this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_M)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_j)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_z)this[t]=new mini_esm_D(t,mini_esm_N[t],e[t],this);for(t of mini_esm_P)this[t]=new mini_esm_D(t,mini_esm_N[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,mini_esm_P,mini_esm_F),!0===e.tiff?this.batchEnableWithBool(mini_esm_P,!0):!1===e.tiff?this.batchEnableWithUserValue(mini_esm_P,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,mini_esm_P):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,mini_esm_P)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=K(e,s);for(let[e,s]of t)X(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=K(t,s);for(let[t,s]of e)X(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),s.enabled||e.skip.add(700),i.enabled||e.skip.add(33723),n.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),s.needed&&e.deps.add(34853),this.tiff.enabled=mini_esm_P.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of mini_esm_P)this[e].finalizeFilters()}get onlyTiff(){return!mini_esm_T.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of mini_esm_z)this[e].enabled&&!mini_esm_y.has(e)&&mini_esm_p("segment parser",e)}}function K(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=mini_esm_B.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function W(e,t){return void 0!==e?e:void 0!==t?t:void 0}function X(e,t){for(let s of t)e.add(s)}mini_esm_e(R,"default",mini_esm_N);class mini_esm_H{constructor(t){mini_esm_e(this,"parsers",{}),mini_esm_e(this,"output",{}),mini_esm_e(this,"errors",[]),mini_esm_e(this,"pushToErrors",(e=>this.errors.push(e))),this.options=R.useCached(t)}async read(e){this.file=await function(e,t){return"string"==typeof e?mini_esm_k(e,t):mini_esm_s&&!mini_esm_i&&e instanceof HTMLImageElement?mini_esm_k(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new mini_esm_c(e):mini_esm_s&&e instanceof Blob?mini_esm_O(e,t,"blob",mini_esm_A):void mini_esm_l("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of mini_esm_m)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),mini_esm_l("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),mini_esm_f(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=mini_esm_y.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function Y(e,t){let s=new mini_esm_H(t);return await s.read(e),s.parse()}var mini_esm_G=Object.freeze({__proto__:null,parse:Y,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:mini_esm_V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:mini_esm_F,tiffExtractables:mini_esm_j,inheritables:mini_esm_E,allFormatters:mini_esm_M,Options:R});class J{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new R({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof mini_esm_c?e:new mini_esm_c(e)}constructor(t,s={},i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"raw",new Map),mini_esm_e(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(t),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=mini_esm_I.get(t),i=mini_esm_V.get(t),n=mini_esm_B.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}mini_esm_e(J,"headerLength",4),mini_esm_e(J,"type",void 0),mini_esm_e(J,"multiSegment",!1),mini_esm_e(J,"canHandle",(()=>!1));function mini_esm_q(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Q(e){return e>=224&&e<=239}function Z(e,t,s){for(let[i,n]of mini_esm_y)if(n.canHandle(e,t,s))return i}class ee extends class{constructor(t,s,i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){mini_esm_l(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):mini_esm_l("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(t),this.options=t,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(mini_esm_y.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...t){super(...t),mini_esm_e(this,"appSegments",[]),mini_esm_e(this,"jpegSegments",[]),mini_esm_e(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(mini_esm_y.keyList())):(e=void 0===e?mini_esm_y.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&mini_esm_y.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=mini_esm_y.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),Q(s)){if(i=f.getUint16(e+2),n=Z(f,e,i),n&&o.has(n)&&(r=mini_esm_y.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=J.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(mini_esm_q(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=mini_esm_y.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}mini_esm_e(ee,"type","jpeg"),mini_esm_m.set("jpeg",ee);const te=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class se extends J{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=te[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&mini_esm_l(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&mini_esm_l(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:mini_esm_l(`Invalid tiff type ${e}`)}}}class ie extends se{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&mini_esm_l("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&mini_esm_l(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,mini_esm_o(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,mini_esm_o(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ne(...e.get(2),e.get(1))),e.set("longitude",ne(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of mini_esm_P)if(e=this[t],!mini_esm_f(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ne(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}mini_esm_e(ie,"type","tiff"),mini_esm_e(ie,"headerLength",10),mini_esm_y.set("tiff",ie);var re=Object.freeze({__proto__:null,default:mini_esm_G,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:mini_esm_V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:mini_esm_F,tiffExtractables:mini_esm_j,inheritables:mini_esm_E,allFormatters:mini_esm_M,Options:R,parse:Y});const ae={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},he=Object.assign({},ae,{firstChunkSize:4e4,gps:[1,2,3,4]});async function fe(e){let t=new mini_esm_H(he);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}}const le=Object.assign({},ae,{tiff:!1,ifd1:!0,mergeOutput:!1});async function oe(e){let t=new mini_esm_H(le);await t.read(e);let s=await t.extractThumbnail();return s&&mini_esm_a?mini_esm_r.from(s):s}async function ue(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}}const de=Object.assign({},ae,{firstChunkSize:4e4,ifd0:[274]});async function ce(e){let t=new mini_esm_H(de);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const pe=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let ge=!0,me=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,s]=t,i=Number(e)+.1*Number(s);ge=i<13.4,me=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);ge=me=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);ge=me=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);ge=me=Number(t)<77}}async function ye(e){let t=await ce(e);return Object.assign({canvas:ge,css:me},pe[t])}class be extends mini_esm_c{constructor(...t){super(...t),mini_esm_e(this,"ranges",new we),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=mini_esm_a?mini_esm_r.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class we{constructor(){mini_esm_e(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>ke(e,t.offset,i)||ke(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function ke(e,t,s){return e<=t&&t<=s}class Oe extends be{constructor(t,s){super(0),mini_esm_e(this,"chunksRead",0),this.input=t,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}mini_esm_b.set("blob",class extends Oe{async readWhole(){this.chunked=!1;let e=await mini_esm_A(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await mini_esm_A(i);return this.set(n,e,!0)}});/* harmony default export */ const mini_esm = ((/* unused pure expression or super */ null && (re)));
+;// ./node_modules/exifr/dist/mini.esm.mjs
+function mini_esm_e(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var mini_esm_t="undefined"!=typeof self?self:global;const mini_esm_s="undefined"!=typeof navigator,mini_esm_i=mini_esm_s&&"undefined"==typeof HTMLImageElement,mini_esm_n=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),mini_esm_r=mini_esm_t.Buffer,mini_esm_a=!!mini_esm_r,mini_esm_h=e=>void 0!==e;function mini_esm_f(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(mini_esm_h).length)}function mini_esm_l(e){let t=new Error(e);throw delete t.stack,t}function mini_esm_o(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const mini_esm_u=e=>String.fromCharCode.apply(null,e),mini_esm_d="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class mini_esm_c{static from(e,t){return e instanceof this&&e.le===t?e:new mini_esm_c(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof mini_esm_c){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&mini_esm_l("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else mini_esm_l("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=mini_esm_c){return e instanceof DataView||e instanceof mini_esm_c?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||mini_esm_l("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new mini_esm_c(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,mini_esm_d?mini_esm_d.decode(i):mini_esm_a?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(mini_esm_u(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return mini_esm_u(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return mini_esm_u(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function mini_esm_p(e,t){mini_esm_l(`${e} '${t}' was not loaded, try using full build of exifr.`)}class mini_esm_g extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||mini_esm_p(this.kind,e),t&&(e in t||function(e,t){mini_esm_l(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||mini_esm_p(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var mini_esm_m=new mini_esm_g("file parser"),mini_esm_y=new mini_esm_g("segment parser"),mini_esm_b=new mini_esm_g("file reader");let mini_esm_w=mini_esm_t.fetch;function mini_esm_k(e,t){return(i=e).startsWith("data:")||i.length>1e4?mini_esm_v(e,t,"base64"):mini_esm_n&&e.includes("://")?mini_esm_O(e,t,"url",mini_esm_S):mini_esm_n?mini_esm_v(e,t,"fs"):mini_esm_s?mini_esm_O(e,t,"url",mini_esm_S):void mini_esm_l("Invalid input argument");var i}async function mini_esm_O(e,t,s,i){return mini_esm_b.has(s)?mini_esm_v(e,t,s):i?async function(e,t){let s=await t(e);return new mini_esm_c(s)}(e,i):void mini_esm_l(`Parser ${s} is not loaded`)}async function mini_esm_v(e,t,s){let i=new(mini_esm_b.get(s))(e,t);return await i.read(),i}const mini_esm_S=e=>mini_esm_w(e).then((e=>e.arrayBuffer())),mini_esm_A=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class U extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function mini_esm_x(e,t,s){let i=new U;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function mini_esm_C(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const mini_esm_B=new Map,mini_esm_V=new Map,mini_esm_I=new Map,mini_esm_L=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],mini_esm_T=["jfif","xmp","icc","iptc","ihdr"],mini_esm_z=["tiff",...mini_esm_T],mini_esm_P=["ifd0","ifd1","exif","gps","interop"],mini_esm_F=[...mini_esm_z,...mini_esm_P],mini_esm_j=["makerNote","userComment"],mini_esm_E=["translateKeys","translateValues","reviveValues","multiSegment"],mini_esm_M=[...mini_esm_E,"sanitize","mergeOutput","silentErrors"];class mini_esm_{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class mini_esm_D extends mini_esm_{get needed(){return this.enabled||this.deps.size>0}constructor(t,s,i,n){if(super(),mini_esm_e(this,"enabled",!1),mini_esm_e(this,"skip",new Set),mini_esm_e(this,"pick",new Set),mini_esm_e(this,"deps",new Set),mini_esm_e(this,"translateKeys",!1),mini_esm_e(this,"translateValues",!1),mini_esm_e(this,"reviveValues",!1),this.key=t,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=mini_esm_P.includes(t),this.canBeFiltered&&(this.dict=mini_esm_B.get(t)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:mini_esm_l(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of mini_esm_E)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,X(this.pick,this.deps)):this.enabled&&this.pick.size>0&&X(this.pick,this.deps)}}var mini_esm_N={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},mini_esm_$=new Map;class R extends mini_esm_{static useCached(e){let t=mini_esm_$.get(e);return void 0!==t||(t=new this(e),mini_esm_$.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):mini_esm_l(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=mini_esm_s?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=mini_esm_N[e];for(e of mini_esm_F)this[e]=new mini_esm_D(e,mini_esm_N[e],void 0,this)}setupFromTrue(){let e;for(e of mini_esm_L)this[e]=mini_esm_N[e];for(e of mini_esm_M)this[e]=mini_esm_N[e];for(e of mini_esm_j)this[e]=!0;for(e of mini_esm_F)this[e]=new mini_esm_D(e,!0,void 0,this)}setupFromArray(e){let t;for(t of mini_esm_L)this[t]=mini_esm_N[t];for(t of mini_esm_M)this[t]=mini_esm_N[t];for(t of mini_esm_j)this[t]=mini_esm_N[t];for(t of mini_esm_F)this[t]=new mini_esm_D(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,mini_esm_P)}setupFromObject(e){let t;for(t of(mini_esm_P.ifd0=mini_esm_P.ifd0||mini_esm_P.image,mini_esm_P.ifd1=mini_esm_P.ifd1||mini_esm_P.thumbnail,Object.assign(this,e),mini_esm_L))this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_M)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_j)this[t]=W(e[t],mini_esm_N[t]);for(t of mini_esm_z)this[t]=new mini_esm_D(t,mini_esm_N[t],e[t],this);for(t of mini_esm_P)this[t]=new mini_esm_D(t,mini_esm_N[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,mini_esm_P,mini_esm_F),!0===e.tiff?this.batchEnableWithBool(mini_esm_P,!0):!1===e.tiff?this.batchEnableWithUserValue(mini_esm_P,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,mini_esm_P):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,mini_esm_P)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=K(e,s);for(let[e,s]of t)X(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=K(t,s);for(let[t,s]of e)X(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(37500):t.skip.add(37500),this.userComment?t.deps.add(37510):t.skip.add(37510),s.enabled||e.skip.add(700),i.enabled||e.skip.add(33723),n.enabled||e.skip.add(34675)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(40965),e.deps.add(40965)),t.needed&&e.deps.add(34665),s.needed&&e.deps.add(34853),this.tiff.enabled=mini_esm_P.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of mini_esm_P)this[e].finalizeFilters()}get onlyTiff(){return!mini_esm_T.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of mini_esm_z)this[e].enabled&&!mini_esm_y.has(e)&&mini_esm_p("segment parser",e)}}function K(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=mini_esm_B.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function W(e,t){return void 0!==e?e:void 0!==t?t:void 0}function X(e,t){for(let s of t)e.add(s)}mini_esm_e(R,"default",mini_esm_N);class mini_esm_H{constructor(t){mini_esm_e(this,"parsers",{}),mini_esm_e(this,"output",{}),mini_esm_e(this,"errors",[]),mini_esm_e(this,"pushToErrors",(e=>this.errors.push(e))),this.options=R.useCached(t)}async read(e){this.file=await function(e,t){return"string"==typeof e?mini_esm_k(e,t):mini_esm_s&&!mini_esm_i&&e instanceof HTMLImageElement?mini_esm_k(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new mini_esm_c(e):mini_esm_s&&e instanceof Blob?mini_esm_O(e,t,"blob",mini_esm_A):void mini_esm_l("Invalid input argument")}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of mini_esm_m)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),mini_esm_l("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),mini_esm_f(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=mini_esm_y.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function Y(e,t){let s=new mini_esm_H(t);return await s.read(e),s.parse()}var mini_esm_G=Object.freeze({__proto__:null,parse:Y,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:mini_esm_V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:mini_esm_F,tiffExtractables:mini_esm_j,inheritables:mini_esm_E,allFormatters:mini_esm_M,Options:R});class mini_esm_J{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new R({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof mini_esm_c?e:new mini_esm_c(e)}constructor(t,s={},i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"raw",new Map),mini_esm_e(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(t),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=mini_esm_I.get(t),i=mini_esm_V.get(t),n=mini_esm_B.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}mini_esm_e(mini_esm_J,"headerLength",4),mini_esm_e(mini_esm_J,"type",void 0),mini_esm_e(mini_esm_J,"multiSegment",!1),mini_esm_e(mini_esm_J,"canHandle",(()=>!1));function mini_esm_q(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function Q(e){return e>=224&&e<=239}function Z(e,t,s){for(let[i,n]of mini_esm_y)if(n.canHandle(e,t,s))return i}class ee extends class{constructor(t,s,i){mini_esm_e(this,"errors",[]),mini_esm_e(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){mini_esm_l(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):mini_esm_l("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(t),this.options=t,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(mini_esm_y.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...t){super(...t),mini_esm_e(this,"appSegments",[]),mini_esm_e(this,"jpegSegments",[]),mini_esm_e(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(mini_esm_y.keyList())):(e=void 0===e?mini_esm_y.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&mini_esm_y.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=mini_esm_y.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),Q(s)){if(i=f.getUint16(e+2),n=Z(f,e,i),n&&o.has(n)&&(r=mini_esm_y.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=mini_esm_J.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(mini_esm_q(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=mini_esm_y.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}mini_esm_e(ee,"type","jpeg"),mini_esm_m.set("jpeg",ee);const te=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class se extends mini_esm_J{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=te[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&mini_esm_l(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&mini_esm_l(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:mini_esm_l(`Invalid tiff type ${e}`)}}}class ie extends se{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&mini_esm_l("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&mini_esm_l(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,mini_esm_o(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(34665),this.interopOffset=t.get(40965),this.gpsOffset=t.get(34853),this.xmp=t.get(700),this.iptc=t.get(33723),this.icc=t.get(34675),this.options.sanitize&&(t.delete(34665),t.delete(40965),t.delete(34853),t.delete(700),t.delete(33723),t.delete(34675)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,mini_esm_o(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(40965)),this.makerNote=e.get(37500),this.userComment=e.get(37510),this.options.sanitize&&(e.delete(40965),e.delete(37500),e.delete(37510)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ne(...e.get(2),e.get(1))),e.set("longitude",ne(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of mini_esm_P)if(e=this[t],!mini_esm_f(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ne(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}mini_esm_e(ie,"type","tiff"),mini_esm_e(ie,"headerLength",10),mini_esm_y.set("tiff",ie);var re=Object.freeze({__proto__:null,default:mini_esm_G,Exifr:mini_esm_H,fileParsers:mini_esm_m,segmentParsers:mini_esm_y,fileReaders:mini_esm_b,tagKeys:mini_esm_B,tagValues:mini_esm_V,tagRevivers:mini_esm_I,createDictionary:mini_esm_x,extendDictionary:mini_esm_C,fetchUrlAsArrayBuffer:mini_esm_S,readBlobAsArrayBuffer:mini_esm_A,chunkedProps:mini_esm_L,otherSegments:mini_esm_T,segments:mini_esm_z,tiffBlocks:mini_esm_P,segmentsAndBlocks:mini_esm_F,tiffExtractables:mini_esm_j,inheritables:mini_esm_E,allFormatters:mini_esm_M,Options:R,parse:Y});const ae={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},he=Object.assign({},ae,{firstChunkSize:4e4,gps:[1,2,3,4]});async function fe(e){let t=new mini_esm_H(he);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}}const le=Object.assign({},ae,{tiff:!1,ifd1:!0,mergeOutput:!1});async function oe(e){let t=new mini_esm_H(le);await t.read(e);let s=await t.extractThumbnail();return s&&mini_esm_a?mini_esm_r.from(s):s}async function ue(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}}const de=Object.assign({},ae,{firstChunkSize:4e4,ifd0:[274]});async function ce(e){let t=new mini_esm_H(de);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const pe=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});let ge=!0,me=!0;if("object"==typeof navigator){let e=navigator.userAgent;if(e.includes("iPad")||e.includes("iPhone")){let t=e.match(/OS (\d+)_(\d+)/);if(t){let[,e,s]=t,i=Number(e)+.1*Number(s);ge=i<13.4,me=!1}}else if(e.includes("OS X 10")){let[,t]=e.match(/OS X 10[_.](\d+)/);ge=me=Number(t)<15}if(e.includes("Chrome/")){let[,t]=e.match(/Chrome\/(\d+)/);ge=me=Number(t)<81}else if(e.includes("Firefox/")){let[,t]=e.match(/Firefox\/(\d+)/);ge=me=Number(t)<77}}async function ye(e){let t=await ce(e);return Object.assign({canvas:ge,css:me},pe[t])}class be extends mini_esm_c{constructor(...t){super(...t),mini_esm_e(this,"ranges",new we),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=mini_esm_a?mini_esm_r.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class we{constructor(){mini_esm_e(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>ke(e,t.offset,i)||ke(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function ke(e,t,s){return e<=t&&t<=s}class Oe extends be{constructor(t,s){super(0),mini_esm_e(this,"chunksRead",0),this.input=t,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}mini_esm_b.set("blob",class extends Oe{async readWhole(){this.chunked=!1;let e=await mini_esm_A(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await mini_esm_A(i);return this.set(n,e,!0)}});/* harmony default export */ const mini_esm = ((/* unused pure expression or super */ null && (re)));
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/thumbnail-generator/lib/locale.js
+;// ./node_modules/@uppy/thumbnail-generator/lib/locale.js
 /* harmony default export */ const thumbnail_generator_lib_locale = ({
   strings: {
     generatingThumbnails: 'Generating thumbnails...'
   }
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/thumbnail-generator/lib/index.js
+;// ./node_modules/@uppy/thumbnail-generator/lib/index.js
 
 
 
@@ -12645,7 +12789,7 @@ class ThumbnailGenerator extends lib_UIPlugin {
   }
 }
 ThumbnailGenerator.VERSION = lib_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/findAllDOMElements.js
+;// ./node_modules/@uppy/utils/lib/findAllDOMElements.js
 
 /**
  * Find one or more DOM elements.
@@ -12661,12 +12805,12 @@ function findAllDOMElements(element) {
   return null;
 }
 /* harmony default export */ const lib_findAllDOMElements = (findAllDOMElements);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/toArray.js
+;// ./node_modules/@uppy/utils/lib/toArray.js
 /**
  * Converts list into array
  */
 /* harmony default export */ const toArray = (Array.from);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/getFilesAndDirectoriesFromDirectory.js
+;// ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/getFilesAndDirectoriesFromDirectory.js
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
  */
@@ -12695,7 +12839,7 @@ function getFilesAndDirectoriesFromDirectory(directoryReader, oldEntries, logDro
     onSuccess(oldEntries);
   });
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/index.js
+;// ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/webkitGetAsEntryApi/index.js
 
 /**
  * Polyfill for the new (experimental) getAsFileSystemHandle API (using the popular webkitGetAsEntry behind the scenes)
@@ -12805,7 +12949,7 @@ async function* getFilesFromDataTransfer(dataTransfer, logDropError) {
     } else if (lastResortFile != null) yield lastResortFile;
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/fallbackApi.js
+;// ./node_modules/@uppy/utils/lib/getDroppedFiles/utils/fallbackApi.js
 
 
 // .files fallback, should be implemented in any browser
@@ -12813,7 +12957,7 @@ function fallbackApi(dataTransfer) {
   const files = toArray(dataTransfer.files);
   return Promise.resolve(files);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/getDroppedFiles/index.js
+;// ./node_modules/@uppy/utils/lib/getDroppedFiles/index.js
 
 
 
@@ -12849,13 +12993,13 @@ async function getDroppedFiles(dataTransfer, options) {
 }
 // EXTERNAL MODULE: ./node_modules/eventemitter3/index.js
 var eventemitter3 = __webpack_require__(228);
-;// CONCATENATED MODULE: ./node_modules/eventemitter3/index.mjs
+;// ./node_modules/eventemitter3/index.mjs
 
 
 
 /* harmony default export */ const node_modules_eventemitter3 = ((/* unused pure expression or super */ null && (EventEmitter)));
 
-;// CONCATENATED MODULE: ./node_modules/p-timeout/index.js
+;// ./node_modules/p-timeout/index.js
 class TimeoutError extends Error {
 	constructor(message) {
 		super(message);
@@ -12962,7 +13106,7 @@ function pTimeout(promise, milliseconds, fallback, options) {
 	return cancelablePromise;
 }
 
-;// CONCATENATED MODULE: ./node_modules/p-queue/dist/lower-bound.js
+;// ./node_modules/p-queue/dist/lower-bound.js
 // Port of lower_bound from https://en.cppreference.com/w/cpp/algorithm/lower_bound
 // Used to compute insertion index to keep queue sorted after insertion
 function lowerBound(array, value, comparator) {
@@ -12982,7 +13126,7 @@ function lowerBound(array, value, comparator) {
     return first;
 }
 
-;// CONCATENATED MODULE: ./node_modules/p-queue/dist/priority-queue.js
+;// ./node_modules/p-queue/dist/priority-queue.js
 var __classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
@@ -13024,7 +13168,7 @@ class PriorityQueue {
 _PriorityQueue_queue = new WeakMap();
 /* harmony default export */ const priority_queue = (PriorityQueue);
 
-;// CONCATENATED MODULE: ./node_modules/p-queue/dist/index.js
+;// ./node_modules/p-queue/dist/index.js
 var __classPrivateFieldSet = (undefined && undefined.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -13357,45 +13501,45 @@ _PQueue_carryoverConcurrencyCount = new WeakMap(), _PQueue_isIntervalIgnored = n
 };
 /* harmony default export */ const dist = (PQueue);
 
-;// CONCATENATED MODULE: ./node_modules/preact/hooks/dist/hooks.module.js
-var hooks_module_t,hooks_module_r,hooks_module_u,hooks_module_i,hooks_module_o=0,hooks_module_f=[],hooks_module_c=l,hooks_module_e=hooks_module_c.__b,hooks_module_a=hooks_module_c.__r,hooks_module_v=hooks_module_c.diffed,hooks_module_l=hooks_module_c.__c,hooks_module_m=hooks_module_c.unmount,hooks_module_s=hooks_module_c.__;function hooks_module_d(n,t){hooks_module_c.__h&&hooks_module_c.__h(hooks_module_r,n,hooks_module_o||t),hooks_module_o=0;var u=hooks_module_r.__H||(hooks_module_r.__H={__:[],__h:[]});return n>=u.__.length&&u.__.push({}),u.__[n]}function hooks_module_h(n){return hooks_module_o=1,hooks_module_p(hooks_module_D,n)}function hooks_module_p(n,u,i){var o=hooks_module_d(hooks_module_t++,2);if(o.t=n,!o.__c&&(o.__=[i?i(u):hooks_module_D(void 0,u),function(n){var t=o.__N?o.__N[0]:o.__[0],r=o.t(t,n);t!==r&&(o.__N=[r,o.__[1]],o.__c.setState({}))}],o.__c=hooks_module_r,!hooks_module_r.u)){var f=function(n,t,r){if(!o.__c.__H)return!0;var u=o.__c.__H.__.filter(function(n){return!!n.__c});if(u.every(function(n){return!n.__N}))return!c||c.call(this,n,t,r);var i=!1;return u.forEach(function(n){if(n.__N){var t=n.__[0];n.__=n.__N,n.__N=void 0,t!==n.__[0]&&(i=!0)}}),!(!i&&o.__c.props===n)&&(!c||c.call(this,n,t,r))};hooks_module_r.u=!0;var c=hooks_module_r.shouldComponentUpdate,e=hooks_module_r.componentWillUpdate;hooks_module_r.componentWillUpdate=function(n,t,r){if(this.__e){var u=c;c=void 0,f(n,t,r),c=u}e&&e.call(this,n,t,r)},hooks_module_r.shouldComponentUpdate=f}return o.__N||o.__}function hooks_module_y(n,u){var i=hooks_module_d(hooks_module_t++,3);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__H.__h.push(i))}function hooks_module_(n,u){var i=hooks_module_d(hooks_module_t++,4);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__h.push(i))}function hooks_module_A(n){return hooks_module_o=5,hooks_module_T(function(){return{current:n}},[])}function hooks_module_F(n,t,r){hooks_module_o=6,hooks_module_(function(){return"function"==typeof n?(n(t()),function(){return n(null)}):n?(n.current=t(),function(){return n.current=null}):void 0},null==r?r:r.concat(n))}function hooks_module_T(n,r){var u=hooks_module_d(hooks_module_t++,7);return hooks_module_C(u.__H,r)&&(u.__=n(),u.__H=r,u.__h=n),u.__}function hooks_module_q(n,t){return hooks_module_o=8,hooks_module_T(function(){return n},t)}function hooks_module_x(n){var u=hooks_module_r.context[n.__c],i=hooks_module_d(hooks_module_t++,9);return i.c=n,u?(null==i.__&&(i.__=!0,u.sub(hooks_module_r)),u.props.value):n.__}function hooks_module_P(n,t){hooks_module_c.useDebugValue&&hooks_module_c.useDebugValue(t?t(n):n)}function hooks_module_b(n){var u=hooks_module_d(hooks_module_t++,10),i=hooks_module_h();return u.__=n,hooks_module_r.componentDidCatch||(hooks_module_r.componentDidCatch=function(n,t){u.__&&u.__(n,t),i[1](n)}),[i[0],function(){i[1](void 0)}]}function hooks_module_g(){var n=hooks_module_d(hooks_module_t++,11);if(!n.__){for(var u=hooks_module_r.__v;null!==u&&!u.__m&&null!==u.__;)u=u.__;var i=u.__m||(u.__m=[0,0]);n.__="P"+i[0]+"-"+i[1]++}return n.__}function hooks_module_j(){for(var n;n=hooks_module_f.shift();)if(n.__P&&n.__H)try{n.__H.__h.forEach(hooks_module_z),n.__H.__h.forEach(hooks_module_B),n.__H.__h=[]}catch(t){n.__H.__h=[],hooks_module_c.__e(t,n.__v)}}hooks_module_c.__b=function(n){hooks_module_r=null,hooks_module_e&&hooks_module_e(n)},hooks_module_c.__=function(n,t){n&&t.__k&&t.__k.__m&&(n.__m=t.__k.__m),hooks_module_s&&hooks_module_s(n,t)},hooks_module_c.__r=function(n){hooks_module_a&&hooks_module_a(n),hooks_module_t=0;var i=(hooks_module_r=n.__c).__H;i&&(hooks_module_u===hooks_module_r?(i.__h=[],hooks_module_r.__h=[],i.__.forEach(function(n){n.__N&&(n.__=n.__N),n.i=n.__N=void 0})):(i.__h.forEach(hooks_module_z),i.__h.forEach(hooks_module_B),i.__h=[],hooks_module_t=0)),hooks_module_u=hooks_module_r},hooks_module_c.diffed=function(n){hooks_module_v&&hooks_module_v(n);var t=n.__c;t&&t.__H&&(t.__H.__h.length&&(1!==hooks_module_f.push(t)&&hooks_module_i===hooks_module_c.requestAnimationFrame||((hooks_module_i=hooks_module_c.requestAnimationFrame)||hooks_module_w)(hooks_module_j)),t.__H.__.forEach(function(n){n.i&&(n.__H=n.i),n.i=void 0})),hooks_module_u=hooks_module_r=null},hooks_module_c.__c=function(n,t){t.some(function(n){try{n.__h.forEach(hooks_module_z),n.__h=n.__h.filter(function(n){return!n.__||hooks_module_B(n)})}catch(r){t.some(function(n){n.__h&&(n.__h=[])}),t=[],hooks_module_c.__e(r,n.__v)}}),hooks_module_l&&hooks_module_l(n,t)},hooks_module_c.unmount=function(n){hooks_module_m&&hooks_module_m(n);var t,r=n.__c;r&&r.__H&&(r.__H.__.forEach(function(n){try{hooks_module_z(n)}catch(n){t=n}}),r.__H=void 0,t&&hooks_module_c.__e(t,r.__v))};var hooks_module_k="function"==typeof requestAnimationFrame;function hooks_module_w(n){var t,r=function(){clearTimeout(u),hooks_module_k&&cancelAnimationFrame(t),setTimeout(n)},u=setTimeout(r,100);hooks_module_k&&(t=requestAnimationFrame(r))}function hooks_module_z(n){var t=hooks_module_r,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),hooks_module_r=t}function hooks_module_B(n){var t=hooks_module_r;n.__c=n.__(),hooks_module_r=t}function hooks_module_C(n,t){return!n||n.length!==t.length||t.some(function(t,r){return t!==n[r]})}function hooks_module_D(n,t){return"function"==typeof t?t(n):t}
+;// ./node_modules/preact/hooks/dist/hooks.module.js
+var hooks_module_t,hooks_module_r,hooks_module_u,hooks_module_i,hooks_module_o=0,hooks_module_f=[],hooks_module_c=l,hooks_module_e=hooks_module_c.__b,hooks_module_a=hooks_module_c.__r,hooks_module_v=hooks_module_c.diffed,hooks_module_l=hooks_module_c.__c,hooks_module_m=hooks_module_c.unmount,hooks_module_s=hooks_module_c.__;function hooks_module_d(n,t){hooks_module_c.__h&&hooks_module_c.__h(hooks_module_r,n,hooks_module_o||t),hooks_module_o=0;var u=hooks_module_r.__H||(hooks_module_r.__H={__:[],__h:[]});return n>=u.__.length&&u.__.push({}),u.__[n]}function hooks_module_h(n){return hooks_module_o=1,hooks_module_p(hooks_module_D,n)}function hooks_module_p(n,u,i){var o=hooks_module_d(hooks_module_t++,2);if(o.t=n,!o.__c&&(o.__=[i?i(u):hooks_module_D(void 0,u),function(n){var t=o.__N?o.__N[0]:o.__[0],r=o.t(t,n);t!==r&&(o.__N=[r,o.__[1]],o.__c.setState({}))}],o.__c=hooks_module_r,!hooks_module_r.u)){var f=function(n,t,r){if(!o.__c.__H)return!0;var u=o.__c.__H.__.filter(function(n){return!!n.__c});if(u.every(function(n){return!n.__N}))return!c||c.call(this,n,t,r);var i=o.__c.props!==n;return u.forEach(function(n){if(n.__N){var t=n.__[0];n.__=n.__N,n.__N=void 0,t!==n.__[0]&&(i=!0)}}),c&&c.call(this,n,t,r)||i};hooks_module_r.u=!0;var c=hooks_module_r.shouldComponentUpdate,e=hooks_module_r.componentWillUpdate;hooks_module_r.componentWillUpdate=function(n,t,r){if(this.__e){var u=c;c=void 0,f(n,t,r),c=u}e&&e.call(this,n,t,r)},hooks_module_r.shouldComponentUpdate=f}return o.__N||o.__}function hooks_module_y(n,u){var i=hooks_module_d(hooks_module_t++,3);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__H.__h.push(i))}function hooks_module_(n,u){var i=hooks_module_d(hooks_module_t++,4);!hooks_module_c.__s&&hooks_module_C(i.__H,u)&&(i.__=n,i.i=u,hooks_module_r.__h.push(i))}function hooks_module_A(n){return hooks_module_o=5,hooks_module_T(function(){return{current:n}},[])}function hooks_module_F(n,t,r){hooks_module_o=6,hooks_module_(function(){return"function"==typeof n?(n(t()),function(){return n(null)}):n?(n.current=t(),function(){return n.current=null}):void 0},null==r?r:r.concat(n))}function hooks_module_T(n,r){var u=hooks_module_d(hooks_module_t++,7);return hooks_module_C(u.__H,r)&&(u.__=n(),u.__H=r,u.__h=n),u.__}function hooks_module_q(n,t){return hooks_module_o=8,hooks_module_T(function(){return n},t)}function hooks_module_x(n){var u=hooks_module_r.context[n.__c],i=hooks_module_d(hooks_module_t++,9);return i.c=n,u?(null==i.__&&(i.__=!0,u.sub(hooks_module_r)),u.props.value):n.__}function hooks_module_P(n,t){hooks_module_c.useDebugValue&&hooks_module_c.useDebugValue(t?t(n):n)}function hooks_module_b(n){var u=hooks_module_d(hooks_module_t++,10),i=hooks_module_h();return u.__=n,hooks_module_r.componentDidCatch||(hooks_module_r.componentDidCatch=function(n,t){u.__&&u.__(n,t),i[1](n)}),[i[0],function(){i[1](void 0)}]}function hooks_module_g(){var n=hooks_module_d(hooks_module_t++,11);if(!n.__){for(var u=hooks_module_r.__v;null!==u&&!u.__m&&null!==u.__;)u=u.__;var i=u.__m||(u.__m=[0,0]);n.__="P"+i[0]+"-"+i[1]++}return n.__}function hooks_module_j(){for(var n;n=hooks_module_f.shift();)if(n.__P&&n.__H)try{n.__H.__h.forEach(hooks_module_z),n.__H.__h.forEach(hooks_module_B),n.__H.__h=[]}catch(t){n.__H.__h=[],hooks_module_c.__e(t,n.__v)}}hooks_module_c.__b=function(n){hooks_module_r=null,hooks_module_e&&hooks_module_e(n)},hooks_module_c.__=function(n,t){n&&t.__k&&t.__k.__m&&(n.__m=t.__k.__m),hooks_module_s&&hooks_module_s(n,t)},hooks_module_c.__r=function(n){hooks_module_a&&hooks_module_a(n),hooks_module_t=0;var i=(hooks_module_r=n.__c).__H;i&&(hooks_module_u===hooks_module_r?(i.__h=[],hooks_module_r.__h=[],i.__.forEach(function(n){n.__N&&(n.__=n.__N),n.i=n.__N=void 0})):(i.__h.forEach(hooks_module_z),i.__h.forEach(hooks_module_B),i.__h=[],hooks_module_t=0)),hooks_module_u=hooks_module_r},hooks_module_c.diffed=function(n){hooks_module_v&&hooks_module_v(n);var t=n.__c;t&&t.__H&&(t.__H.__h.length&&(1!==hooks_module_f.push(t)&&hooks_module_i===hooks_module_c.requestAnimationFrame||((hooks_module_i=hooks_module_c.requestAnimationFrame)||hooks_module_w)(hooks_module_j)),t.__H.__.forEach(function(n){n.i&&(n.__H=n.i),n.i=void 0})),hooks_module_u=hooks_module_r=null},hooks_module_c.__c=function(n,t){t.some(function(n){try{n.__h.forEach(hooks_module_z),n.__h=n.__h.filter(function(n){return!n.__||hooks_module_B(n)})}catch(r){t.some(function(n){n.__h&&(n.__h=[])}),t=[],hooks_module_c.__e(r,n.__v)}}),hooks_module_l&&hooks_module_l(n,t)},hooks_module_c.unmount=function(n){hooks_module_m&&hooks_module_m(n);var t,r=n.__c;r&&r.__H&&(r.__H.__.forEach(function(n){try{hooks_module_z(n)}catch(n){t=n}}),r.__H=void 0,t&&hooks_module_c.__e(t,r.__v))};var hooks_module_k="function"==typeof requestAnimationFrame;function hooks_module_w(n){var t,r=function(){clearTimeout(u),hooks_module_k&&cancelAnimationFrame(t),setTimeout(n)},u=setTimeout(r,100);hooks_module_k&&(t=requestAnimationFrame(r))}function hooks_module_z(n){var t=hooks_module_r,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),hooks_module_r=t}function hooks_module_B(n){var t=hooks_module_r;n.__c=n.__(),hooks_module_r=t}function hooks_module_C(n,t){return!n||n.length!==t.length||t.some(function(t,r){return t!==n[r]})}function hooks_module_D(n,t){return"function"==typeof t?t(n):t}
 //# sourceMappingURL=hooks.module.js.map
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js
+;// ./node_modules/@uppy/provider-views/lib/ProviderView/AuthView.js
 /* eslint-disable react/require-default-props */
 
 
 function GoogleIcon() {
-  return _("svg", {
+  return g("svg", {
     width: "26",
     height: "26",
     viewBox: "0 0 26 26",
     xmlns: "http://www.w3.org/2000/svg"
-  }, _("g", {
+  }, g("g", {
     fill: "none",
     "fill-rule": "evenodd"
-  }, _("circle", {
+  }, g("circle", {
     fill: "#FFF",
     cx: "13",
     cy: "13",
     r: "13"
-  }), _("path", {
+  }), g("path", {
     d: "M21.64 13.205c0-.639-.057-1.252-.164-1.841H13v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z",
     fill: "#4285F4",
     "fill-rule": "nonzero"
-  }), _("path", {
+  }), g("path", {
     d: "M13 22c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H4.957v2.332A8.997 8.997 0 0013 22z",
     fill: "#34A853",
     "fill-rule": "nonzero"
-  }), _("path", {
+  }), g("path", {
     d: "M7.964 14.71A5.41 5.41 0 017.682 13c0-.593.102-1.17.282-1.71V8.958H4.957A8.996 8.996 0 004 13c0 1.452.348 2.827.957 4.042l3.007-2.332z",
     fill: "#FBBC05",
     "fill-rule": "nonzero"
-  }), _("path", {
+  }), g("path", {
     d: "M13 7.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C17.463 4.891 15.426 4 13 4a8.997 8.997 0 00-8.043 4.958l3.007 2.332C8.672 9.163 10.656 7.58 13 7.58z",
     fill: "#EA4335",
     "fill-rule": "nonzero"
-  }), _("path", {
+  }), g("path", {
     d: "M4 4h18v18H4z"
   })));
 }
@@ -13412,13 +13556,13 @@ function DefaultForm(_ref) {
     e.preventDefault();
     onAuth();
   }, [onAuth]);
-  return _("form", {
+  return g("form", {
     onSubmit: onSubmit
-  }, isGoogleDrive ? _("button", {
+  }, isGoogleDrive ? g("button", {
     type: "submit",
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google",
     "data-uppy-super-focusable": true
-  }, _(GoogleIcon, null), i18n('signInWithGoogle')) : _("button", {
+  }, g(GoogleIcon, null), i18n('signInWithGoogle')) : g("button", {
     type: "submit",
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn",
     "data-uppy-super-focusable": true
@@ -13432,7 +13576,7 @@ const defaultRenderForm = _ref2 => {
     i18n,
     onAuth
   } = _ref2;
-  return _(DefaultForm, {
+  return g(DefaultForm, {
     pluginName: pluginName,
     i18n: i18n,
     onAuth: onAuth
@@ -13447,15 +13591,15 @@ function AuthView(props) {
     handleAuth,
     renderForm = defaultRenderForm
   } = props;
-  return _("div", {
+  return g("div", {
     className: "uppy-Provider-auth"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Provider-authIcon"
-  }, pluginIcon()), _("div", {
+  }, pluginIcon()), g("div", {
     className: "uppy-Provider-authTitle"
   }, i18n('authenticateWithTitle', {
     pluginName
-  })), _("div", {
+  })), g("div", {
     className: "uppy-Provider-authForm"
   }, renderForm({
     pluginName,
@@ -13464,7 +13608,7 @@ function AuthView(props) {
     onAuth: handleAuth
   })));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/ProviderView/User.js
+;// ./node_modules/@uppy/provider-views/lib/ProviderView/User.js
 
 function User(_ref) {
   let {
@@ -13472,17 +13616,17 @@ function User(_ref) {
     logout,
     username
   } = _ref;
-  return _(k, null, _("span", {
+  return g(k, null, g("span", {
     className: "uppy-ProviderBrowser-user",
     key: "username"
-  }, username), _("button", {
+  }, username), g("button", {
     type: "button",
     onClick: logout,
     className: "uppy-u-reset uppy-c-btn uppy-ProviderBrowser-userLogout",
     key: "logout"
   }, i18n('logOut')));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Breadcrumbs.js
+;// ./node_modules/@uppy/provider-views/lib/Breadcrumbs.js
 
 const Breadcrumb = props => {
   const {
@@ -13490,7 +13634,7 @@ const Breadcrumb = props => {
     title,
     isLast
   } = props;
-  return _(k, null, _("button", {
+  return g(k, null, g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn",
     onClick: getFolder
@@ -13503,35 +13647,35 @@ function Breadcrumbs(props) {
     breadcrumbsIcon,
     breadcrumbs
   } = props;
-  return _("div", {
+  return g("div", {
     className: "uppy-Provider-breadcrumbs"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Provider-breadcrumbsIcon"
-  }, breadcrumbsIcon), breadcrumbs.map((directory, i) => _(Breadcrumb, {
+  }, breadcrumbsIcon), breadcrumbs.map((directory, i) => g(Breadcrumb, {
     key: directory.id,
     getFolder: () => getFolder(directory.requestPath, directory.name),
     title: i === 0 ? title : directory.name,
     isLast: i + 1 === breadcrumbs.length
   })));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/ProviderView/Header.js
+;// ./node_modules/@uppy/provider-views/lib/ProviderView/Header.js
 /* eslint-disable react/destructuring-assignment */
 
 
 
 function Header(props) {
-  return _(k, null, props.showBreadcrumbs && _(Breadcrumbs, {
+  return g(k, null, props.showBreadcrumbs && g(Breadcrumbs, {
     getFolder: props.getFolder,
     breadcrumbs: props.breadcrumbs,
     breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
     title: props.title
-  }), _(User, {
+  }), g(User, {
     logout: props.logout,
     username: props.username,
     i18n: props.i18n
   }));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js
+;// ./node_modules/@uppy/utils/lib/remoteFileObjToLocal.js
 
 function remoteFileObjToLocal(file) {
   return {
@@ -13540,7 +13684,7 @@ function remoteFileObjToLocal(file) {
     extension: file.name ? getFileNameAndExtension(file.name).extension : null
   };
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/VirtualList.js
+;// ./node_modules/@uppy/utils/lib/VirtualList.js
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /**
  * Adapted from preact-virtual-list: https://github.com/developit/preact-virtual-list
@@ -13592,7 +13736,7 @@ const STYLE_CONTENT = {
   width: '100%',
   overflow: 'visible'
 };
-class VirtualList extends b {
+class VirtualList extends x {
   constructor(props) {
     super(props);
 
@@ -13688,12 +13832,12 @@ class VirtualList extends b {
     // items by accessibility and outline tools.
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
-      _("div", _extends({
+      g("div", _extends({
         onScroll: this.handleScroll
-      }, props), _("div", {
+      }, props), g("div", {
         role: "presentation",
         style: styleInner
-      }, _("div", {
+      }, g("div", {
         role: "presentation",
         style: styleContent
       }, selection.map(renderRow))))
@@ -13701,7 +13845,7 @@ class VirtualList extends b {
   }
 }
 /* harmony default export */ const lib_VirtualList = (VirtualList);
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js
+;// ./node_modules/@uppy/provider-views/node_modules/nanoid/non-secure/index.js
 let non_secure_urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 let non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
@@ -13723,7 +13867,7 @@ let non_secure_nanoid = (size = 21) => {
   return id
 }
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/SearchFilterInput.js
+;// ./node_modules/@uppy/provider-views/lib/SearchFilterInput.js
 /* eslint-disable react/require-default-props */
 
 
@@ -13771,7 +13915,7 @@ function SearchFilterInput(props) {
       document.body.removeChild(form);
     };
   }, [form, validateAndSearch]);
-  return _(k, null, _("input", {
+  return g(k, null, g("input", {
     className: `uppy-u-reset ${inputClassName}`,
     type: "search",
     "aria-label": inputLabel,
@@ -13780,35 +13924,35 @@ function SearchFilterInput(props) {
     onInput: handleInput,
     form: form.id,
     "data-uppy-super-focusable": true
-  }), !showButton && _("svg", {
+  }), !showButton && g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon uppy-ProviderBrowser-searchFilterIcon",
     width: "12",
     height: "12",
     viewBox: "0 0 12 12"
-  }, _("path", {
+  }, g("path", {
     d: "M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z"
-  })), !showButton && searchText && _("button", {
+  })), !showButton && searchText && g("button", {
     className: "uppy-u-reset uppy-ProviderBrowser-searchFilterReset",
     type: "button",
     "aria-label": clearSearchLabel,
     title: clearSearchLabel,
     onClick: handleReset
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     viewBox: "0 0 19 19"
-  }, _("path", {
+  }, g("path", {
     d: "M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z"
-  }))), showButton && _("button", {
+  }))), showButton && g("button", {
     className: `uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`,
     type: "submit",
     form: form.id
   }, buttonLabel));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/FooterActions.js
+;// ./node_modules/@uppy/provider-views/lib/FooterActions.js
 
 function FooterActions(_ref) {
   let {
@@ -13817,37 +13961,37 @@ function FooterActions(_ref) {
     i18n,
     selected
   } = _ref;
-  return _("div", {
+  return g("div", {
     className: "uppy-ProviderBrowser-footer"
-  }, _("button", {
+  }, g("button", {
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary",
     onClick: done,
     type: "button"
   }, i18n('selectX', {
     smart_count: selected
-  })), _("button", {
+  })), g("button", {
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-link",
     onClick: cancel,
     type: "button"
   }, i18n('cancel')));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js
+;// ./node_modules/@uppy/provider-views/lib/Item/components/ItemIcon.js
 /* eslint-disable react/require-default-props */
 
 function FileIcon() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: 11,
     height: 14.5,
     viewBox: "0 0 44 58"
-  }, _("path", {
+  }, g("path", {
     d: "M27.437.517a1 1 0 0 0-.094.03H4.25C2.037.548.217 2.368.217 4.58v48.405c0 2.212 1.82 4.03 4.03 4.03H39.03c2.21 0 4.03-1.818 4.03-4.03V15.61a1 1 0 0 0-.03-.28 1 1 0 0 0 0-.093 1 1 0 0 0-.03-.032 1 1 0 0 0 0-.03 1 1 0 0 0-.032-.063 1 1 0 0 0-.03-.063 1 1 0 0 0-.032 0 1 1 0 0 0-.03-.063 1 1 0 0 0-.032-.03 1 1 0 0 0-.03-.063 1 1 0 0 0-.063-.062l-14.593-14a1 1 0 0 0-.062-.062A1 1 0 0 0 28 .708a1 1 0 0 0-.374-.157 1 1 0 0 0-.156 0 1 1 0 0 0-.03-.03l-.003-.003zM4.25 2.547h22.218v9.97c0 2.21 1.82 4.03 4.03 4.03h10.564v36.438a2.02 2.02 0 0 1-2.032 2.032H4.25c-1.13 0-2.032-.9-2.032-2.032V4.58c0-1.13.902-2.032 2.03-2.032zm24.218 1.345l10.375 9.937.75.718H30.5c-1.13 0-2.032-.9-2.032-2.03V3.89z"
   }));
 }
 function FolderIcon() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
@@ -13856,12 +14000,12 @@ function FolderIcon() {
       marginRight: 3
     },
     viewBox: "0 0 276.157 276.157"
-  }, _("path", {
+  }, g("path", {
     d: "M273.08 101.378c-3.3-4.65-8.86-7.32-15.254-7.32h-24.34V67.59c0-10.2-8.3-18.5-18.5-18.5h-85.322c-3.63 0-9.295-2.875-11.436-5.805l-6.386-8.735c-4.982-6.814-15.104-11.954-23.546-11.954H58.73c-9.292 0-18.638 6.608-21.737 15.372l-2.033 5.752c-.958 2.71-4.72 5.37-7.596 5.37H18.5C8.3 49.09 0 57.39 0 67.59v167.07c0 .886.16 1.73.443 2.52.152 3.306 1.18 6.424 3.053 9.064 3.3 4.652 8.86 7.32 15.255 7.32h188.487c11.395 0 23.27-8.425 27.035-19.18l40.677-116.188c2.11-6.035 1.43-12.164-1.87-16.816zM18.5 64.088h8.864c9.295 0 18.64-6.607 21.738-15.37l2.032-5.75c.96-2.712 4.722-5.373 7.597-5.373h29.565c3.63 0 9.295 2.876 11.437 5.806l6.386 8.735c4.982 6.815 15.104 11.954 23.546 11.954h85.322c1.898 0 3.5 1.602 3.5 3.5v26.47H69.34c-11.395 0-23.27 8.423-27.035 19.178L15 191.23V67.59c0-1.898 1.603-3.5 3.5-3.5zm242.29 49.15l-40.676 116.188c-1.674 4.78-7.812 9.135-12.877 9.135H18.75c-1.447 0-2.576-.372-3.02-.997-.442-.625-.422-1.814.057-3.18l40.677-116.19c1.674-4.78 7.812-9.134 12.877-9.134h188.487c1.448 0 2.577.372 3.02.997.443.625.423 1.814-.056 3.18z"
   }));
 }
 function VideoIcon() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     style: {
@@ -13869,9 +14013,9 @@ function VideoIcon() {
       marginRight: 4
     },
     viewBox: "0 0 58 58"
-  }, _("path", {
+  }, g("path", {
     d: "M36.537 28.156l-11-7a1.005 1.005 0 0 0-1.02-.033C24.2 21.3 24 21.635 24 22v14a1 1 0 0 0 1.537.844l11-7a1.002 1.002 0 0 0 0-1.688zM26 34.18V23.82L34.137 29 26 34.18z"
-  }), _("path", {
+  }), g("path", {
     d: "M57 6H1a1 1 0 0 0-1 1v44a1 1 0 0 0 1 1h56a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1zM10 28H2v-9h8v9zm-8 2h8v9H2v-9zm10 10V8h34v42H12V40zm44-12h-8v-9h8v9zm-8 2h8v9h-8v-9zm8-22v9h-8V8h8zM2 8h8v9H2V8zm0 42v-9h8v9H2zm54 0h-8v-9h8v9z"
   }));
 }
@@ -13882,17 +14026,17 @@ function ItemIcon(props) {
   if (itemIconString === null) return null;
   switch (itemIconString) {
     case 'file':
-      return _(FileIcon, null);
+      return g(FileIcon, null);
     case 'folder':
-      return _(FolderIcon, null);
+      return g(FolderIcon, null);
     case 'video':
-      return _(VideoIcon, null);
+      return g(VideoIcon, null);
     default:
       {
         const {
           alt
         } = props;
-        return _("img", {
+        return g("img", {
           src: itemIconString,
           alt: alt
           // @ts-expect-error TS does not understand but attribute exists here.
@@ -13905,7 +14049,7 @@ function ItemIcon(props) {
       }
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js
+;// ./node_modules/@uppy/provider-views/lib/Item/components/GridLi.js
 /* eslint-disable react/require-default-props */
 
 
@@ -13926,10 +14070,10 @@ function GridListItem(props) {
   const checkBoxClassName = classnames('uppy-u-reset', 'uppy-ProviderBrowserItem-checkbox', 'uppy-ProviderBrowserItem-checkbox--grid', {
     'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked
   });
-  return _("li", {
+  return g("li", {
     className: className,
     title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : undefined
-  }, _("input", {
+  }, g("input", {
     type: "checkbox",
     className: checkBoxClassName,
     onChange: toggleCheckbox,
@@ -13942,14 +14086,14 @@ function GridListItem(props) {
     checked: isChecked,
     disabled: isDisabled,
     "data-uppy-super-focusable": true
-  }), _("label", {
+  }), g("label", {
     htmlFor: id,
     "aria-label": title,
     className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
   }, itemIconEl, showTitles && title, children));
 }
 /* harmony default export */ const GridLi = (GridListItem);
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js
+;// ./node_modules/@uppy/provider-views/lib/Item/components/ListLi.js
 /* eslint-disable react/require-default-props */
 
 
@@ -13978,10 +14122,10 @@ function ListItem(props) {
     showTitles,
     i18n
   } = props;
-  return _("li", {
+  return g("li", {
     className: className,
     title: isDisabled ? restrictionError == null ? void 0 : restrictionError.message : undefined
-  }, !isCheckboxDisabled ? _("input", {
+  }, !isCheckboxDisabled ? g("input", {
     type: "checkbox",
     className: `uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`,
     onChange: toggleCheckbox,
@@ -13999,25 +14143,25 @@ function ListItem(props) {
     "data-uppy-super-focusable": true
   }) : null, type === 'file' ?
   // label for a checkbox
-  _("label", {
+  g("label", {
     htmlFor: id,
     className: "uppy-u-reset uppy-ProviderBrowserItem-inner"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-ProviderBrowserItem-iconWrap"
   }, itemIconEl), showTitles && title)
   // button to open a folder
-  : _("button", {
+  : g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner",
     onClick: handleFolderClick,
     "aria-label": i18n('openFolderNamed', {
       name: title
     })
-  }, _("div", {
+  }, g("div", {
     className: "uppy-ProviderBrowserItem-iconWrap"
-  }, itemIconEl), showTitles && title ? _("span", null, title) : i18n('unnamed')));
+  }, itemIconEl), showTitles && title ? g("span", null, title) : i18n('unnamed')));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Item/index.js
+;// ./node_modules/@uppy/provider-views/lib/Item/index.js
 function Item_extends() { Item_extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return Item_extends.apply(this, arguments); }
 /* eslint-disable react/require-default-props */
 
@@ -14041,25 +14185,25 @@ function Item(props) {
   }, {
     'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video'
   });
-  const itemIconEl = _(ItemIcon, {
+  const itemIconEl = g(ItemIcon, {
     itemIconString: itemIconString
   });
   switch (viewType) {
     case 'grid':
-      return _(GridLi, Item_extends({}, props, {
+      return g(GridLi, Item_extends({}, props, {
         className: className,
         itemIconEl: itemIconEl
       }));
     case 'list':
-      return _(ListItem, Item_extends({}, props, {
+      return g(ListItem, Item_extends({}, props, {
         className: className,
         itemIconEl: itemIconEl
       }));
     case 'unsplash':
-      return _(GridLi, Item_extends({}, props, {
+      return g(GridLi, Item_extends({}, props, {
         className: className,
         itemIconEl: itemIconEl
-      }), _("a", {
+      }), g("a", {
         href: `${author.url}?utm_source=Companion&utm_medium=referral`,
         target: "_blank",
         rel: "noopener noreferrer",
@@ -14070,7 +14214,7 @@ function Item(props) {
       throw new Error(`There is no such type ${viewType}`);
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/Browser.js
+;// ./node_modules/@uppy/provider-views/lib/Browser.js
 /* eslint-disable react/require-default-props */
 
 
@@ -14166,15 +14310,15 @@ function Browser(props) {
   } = props;
   const selected = currentSelection.length;
   const rows = hooks_module_T(() => [...folders, ...files], [folders, files]);
-  return _("div", {
+  return g("div", {
     className: classnames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${viewType}`)
-  }, headerComponent && _("div", {
+  }, headerComponent && g("div", {
     className: "uppy-ProviderBrowser-header"
-  }, _("div", {
+  }, g("div", {
     className: classnames('uppy-ProviderBrowser-headerBar', !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')
-  }, headerComponent)), showSearchFilter && _("div", {
+  }, headerComponent)), showSearchFilter && g("div", {
     class: "uppy-ProviderBrowser-searchFilter"
-  }, _(SearchFilterInput, {
+  }, g(SearchFilterInput, {
     search: search,
     searchTerm: searchTerm,
     clearSearch: clearSearch,
@@ -14184,23 +14328,23 @@ function Browser(props) {
     searchOnInput: searchOnInput
   })), (() => {
     if (isLoading) {
-      return _("div", {
+      return g("div", {
         className: "uppy-Provider-loading"
-      }, _("span", null, typeof isLoading === 'string' ? isLoading : i18n('loading')));
+      }, g("span", null, typeof isLoading === 'string' ? isLoading : i18n('loading')));
     }
     if (!folders.length && !files.length) {
-      return _("div", {
+      return g("div", {
         className: "uppy-Provider-empty"
       }, noResultsLabel);
     }
     if (virtualList) {
-      return _("div", {
+      return g("div", {
         className: "uppy-ProviderBrowser-body"
-      }, _("ul", {
+      }, g("ul", {
         className: "uppy-ProviderBrowser-list"
-      }, _(lib_VirtualList, {
+      }, g(lib_VirtualList, {
         data: rows,
-        renderRow: f => _(Browser_ListItem, {
+        renderRow: f => g(Browser_ListItem, {
           currentSelection: currentSelection,
           uppyFiles: uppyFiles,
           viewType: viewType,
@@ -14216,16 +14360,16 @@ function Browser(props) {
         rowHeight: 31
       })));
     }
-    return _("div", {
+    return g("div", {
       className: "uppy-ProviderBrowser-body"
-    }, _("ul", {
+    }, g("ul", {
       className: "uppy-ProviderBrowser-list",
       onScroll: handleScroll,
       role: "listbox"
       // making <ul> not focusable for firefox
       ,
       tabIndex: -1
-    }, rows.map(f => _(Browser_ListItem, {
+    }, rows.map(f => g(Browser_ListItem, {
       currentSelection: currentSelection,
       uppyFiles: uppyFiles,
       viewType: viewType,
@@ -14238,7 +14382,7 @@ function Browser(props) {
       getNextFolder: getNextFolder,
       f: f
     }))));
-  })(), selected > 0 && _(FooterActions, {
+  })(), selected > 0 && g(FooterActions, {
     selected: selected,
     done: done,
     cancel: cancel,
@@ -14246,9 +14390,9 @@ function Browser(props) {
   }));
 }
 /* harmony default export */ const lib_Browser = (Browser);
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/CloseWrapper.js
+;// ./node_modules/@uppy/provider-views/lib/CloseWrapper.js
 
-class CloseWrapper extends b {
+class CloseWrapper extends x {
   componentWillUnmount() {
     const {
       onUnmount
@@ -14262,7 +14406,7 @@ class CloseWrapper extends b {
     return H(children)[0];
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/View.js
+;// ./node_modules/@uppy/provider-views/lib/View.js
 
 
 // Conditional type for selecting the plugin
@@ -14459,7 +14603,7 @@ class View {
     });
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js
+;// ./node_modules/@uppy/provider-views/lib/ProviderView/ProviderView.js
 function ProviderView_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var ProviderView_id = 0;
 function ProviderView_classPrivateFieldLooseKey(name) { return "__private_" + ProviderView_id++ + "_" + name; }
@@ -14485,13 +14629,13 @@ function prependPath(path, component) {
   return `${path}/${component}`;
 }
 function defaultPickerIcon() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     width: "30",
     height: "30",
     viewBox: "0 0 30 30"
-  }, _("path", {
+  }, g("path", {
     d: "M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z"
   }));
 }
@@ -14899,7 +15043,7 @@ class ProviderView extends View {
       done: this.donePicking,
       cancel: this.cancelPicking,
       // eslint-disable-next-line react/jsx-props-no-spreading
-      headerComponent: _(Header, headerProps),
+      headerComponent: g(Header, headerProps),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
@@ -14913,9 +15057,9 @@ class ProviderView extends View {
       isLoading: loading
     };
     if (authenticated === false) {
-      return _(CloseWrapper, {
+      return g(CloseWrapper, {
         onUnmount: this.clearSelection
-      }, _(AuthView, {
+      }, g(AuthView, {
         pluginName: this.plugin.title,
         pluginIcon: pluginIcon,
         handleAuth: this.handleAuth,
@@ -14924,9 +15068,9 @@ class ProviderView extends View {
         loading: loading
       }));
     }
-    return _(CloseWrapper, {
+    return g(CloseWrapper, {
       onUnmount: this.clearSelection
-    }, _(lib_Browser, browserProps));
+    }, g(lib_Browser, browserProps));
   }
 }
 async function _withAbort2(op) {
@@ -15040,9 +15184,9 @@ async function _recursivelyListAllFiles2(_ref3) {
   }
 }
 ProviderView.VERSION = ProviderView_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/ProviderView/index.js
+;// ./node_modules/@uppy/provider-views/lib/ProviderView/index.js
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js
+;// ./node_modules/@uppy/provider-views/lib/SearchProviderView/SearchProviderView.js
 function SearchProviderView_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var SearchProviderView_id = 0;
 function SearchProviderView_classPrivateFieldLooseKey(name) { return "__private_" + SearchProviderView_id++ + "_" + name; }
@@ -15221,11 +15365,11 @@ class SearchProviderView extends View {
       }
     };
     if (isInputMode) {
-      return _(CloseWrapper, {
+      return g(CloseWrapper, {
         onUnmount: this.resetPluginState
-      }, _("div", {
+      }, g("div", {
         className: "uppy-SearchProvider"
-      }, _(SearchFilterInput, {
+      }, g(SearchFilterInput, {
         search: this.search,
         inputLabel: i18n('enterTextToSearch'),
         buttonLabel: i18n('searchImages'),
@@ -15234,9 +15378,9 @@ class SearchProviderView extends View {
         showButton: true
       })));
     }
-    return _(CloseWrapper, {
+    return g(CloseWrapper, {
       onUnmount: this.resetPluginState
-    }, _(lib_Browser, browserProps));
+    }, g(lib_Browser, browserProps));
   }
 }
 function _updateFilesAndInputMode2(res, files) {
@@ -15252,12 +15396,12 @@ function _updateFilesAndInputMode2(res, files) {
   });
 }
 SearchProviderView.VERSION = SearchProviderView_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js
+;// ./node_modules/@uppy/provider-views/lib/SearchProviderView/index.js
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/provider-views/lib/index.js
+;// ./node_modules/@uppy/provider-views/lib/index.js
 
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js
+;// ./node_modules/@uppy/dashboard/node_modules/nanoid/non-secure/index.js
 let nanoid_non_secure_urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 let nanoid_non_secure_customAlphabet = (alphabet, defaultSize = 21) => {
@@ -15279,7 +15423,7 @@ let nanoid_non_secure_nanoid = (size = 21) => {
   return id
 }
 
-;// CONCATENATED MODULE: ./node_modules/memoize-one/dist/memoize-one.esm.js
+;// ./node_modules/memoize-one/dist/memoize-one.esm.js
 var safeIsNaN = Number.isNaN ||
     function ponyfill(value) {
         return typeof value === 'number' && value !== value;
@@ -15332,9 +15476,9 @@ function memoizeOne(resultFn, isEqual) {
 
 
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/FOCUSABLE_ELEMENTS.js
+;// ./node_modules/@uppy/utils/lib/FOCUSABLE_ELEMENTS.js
 /* harmony default export */ const FOCUSABLE_ELEMENTS = (['a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])', 'area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])', 'input:not([disabled]):not([inert]):not([aria-hidden])', 'select:not([disabled]):not([inert]):not([aria-hidden])', 'textarea:not([disabled]):not([inert]):not([aria-hidden])', 'button:not([disabled]):not([inert]):not([aria-hidden])', 'iframe:not([tabindex^="-"]):not([inert]):not([aria-hidden])', 'object:not([tabindex^="-"]):not([inert]):not([aria-hidden])', 'embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])', '[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])', '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])']);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/getActiveOverlayEl.js
+;// ./node_modules/@uppy/dashboard/lib/utils/getActiveOverlayEl.js
 /**
  * @returns {HTMLElement} - either dashboard element, or the overlay that's most on top
  */
@@ -15346,7 +15490,7 @@ function getActiveOverlayEl(dashboardEl, activeOverlayType) {
   }
   return dashboardEl;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/trapFocus.js
+;// ./node_modules/@uppy/dashboard/lib/utils/trapFocus.js
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
@@ -15414,7 +15558,7 @@ function forInline(event, activeOverlayType, dashboardEl) {
 }
 // EXTERNAL MODULE: ./node_modules/lodash/debounce.js
 var lodash_debounce = __webpack_require__(8221);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/createSuperFocus.js
+;// ./node_modules/@uppy/dashboard/lib/utils/createSuperFocus.js
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
@@ -15466,7 +15610,7 @@ function createSuperFocus() {
   //    2. Performance: there can be many state update()s in a second, and this function is called every time.
   return lodash_debounce(superFocus, 260);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isDragDropSupported.js
+;// ./node_modules/@uppy/utils/lib/isDragDropSupported.js
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
  */
@@ -15485,111 +15629,111 @@ function isDragDropSupported() {
 }
 // EXTERNAL MODULE: ./node_modules/is-shallow-equal/index.js
 var is_shallow_equal = __webpack_require__(6993);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/getFileTypeIcon.js
+;// ./node_modules/@uppy/dashboard/lib/utils/getFileTypeIcon.js
 
 function iconImage() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("g", {
+  }, g("g", {
     fill: "#686DE0",
     fillRule: "evenodd"
-  }, _("path", {
+  }, g("path", {
     d: "M5 7v10h15V7H5zm0-1h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z",
     fillRule: "nonzero"
-  }), _("path", {
+  }), g("path", {
     d: "M6.35 17.172l4.994-5.026a.5.5 0 0 1 .707 0l2.16 2.16 3.505-3.505a.5.5 0 0 1 .707 0l2.336 2.31-.707.72-1.983-1.97-3.505 3.505a.5.5 0 0 1-.707 0l-2.16-2.159-3.938 3.939-1.409.026z",
     fillRule: "nonzero"
-  }), _("circle", {
+  }), g("circle", {
     cx: "7.5",
     cy: "9.5",
     r: "1.5"
   })));
 }
 function iconAudio() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("path", {
+  }, g("path", {
     d: "M9.5 18.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V7.25a.5.5 0 0 1 .379-.485l9-2.25A.5.5 0 0 1 18.5 5v11.64c0 1.14-1.145 2-2.5 2s-2.5-.86-2.5-2c0-1.14 1.145-2 2.5-2 .557 0 1.079.145 1.5.396V8.67l-8 2v7.97zm8-11v-2l-8 2v2l8-2zM7 19.64c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1zm9-2c.855 0 1.5-.484 1.5-1s-.645-1-1.5-1-1.5.484-1.5 1 .645 1 1.5 1z",
     fill: "#049BCF",
     fillRule: "nonzero"
   }));
 }
 function iconVideo() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("path", {
+  }, g("path", {
     d: "M16 11.834l4.486-2.691A1 1 0 0 1 22 10v6a1 1 0 0 1-1.514.857L16 14.167V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.834zM15 9H5v8h10V9zm1 4l5 3v-6l-5 3z",
     fill: "#19AF67",
     fillRule: "nonzero"
   }));
 }
 function iconPDF() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("path", {
+  }, g("path", {
     d: "M9.766 8.295c-.691-1.843-.539-3.401.747-3.726 1.643-.414 2.505.938 2.39 3.299-.039.79-.194 1.662-.537 3.148.324.49.66.967 1.055 1.51.17.231.382.488.629.757 1.866-.128 3.653.114 4.918.655 1.487.635 2.192 1.685 1.614 2.84-.566 1.133-1.839 1.084-3.416.249-1.141-.604-2.457-1.634-3.51-2.707a13.467 13.467 0 0 0-2.238.426c-1.392 4.051-4.534 6.453-5.707 4.572-.986-1.58 1.38-4.206 4.914-5.375.097-.322.185-.656.264-1.001.08-.353.306-1.31.407-1.737-.678-1.059-1.2-2.031-1.53-2.91zm2.098 4.87c-.033.144-.068.287-.104.427l.033-.01-.012.038a14.065 14.065 0 0 1 1.02-.197l-.032-.033.052-.004a7.902 7.902 0 0 1-.208-.271c-.197-.27-.38-.526-.555-.775l-.006.028-.002-.003c-.076.323-.148.632-.186.8zm5.77 2.978c1.143.605 1.832.632 2.054.187.26-.519-.087-1.034-1.113-1.473-.911-.39-2.175-.608-3.55-.608.845.766 1.787 1.459 2.609 1.894zM6.559 18.789c.14.223.693.16 1.425-.413.827-.648 1.61-1.747 2.208-3.206-2.563 1.064-4.102 2.867-3.633 3.62zm5.345-10.97c.088-1.793-.351-2.48-1.146-2.28-.473.119-.564 1.05-.056 2.405.213.566.52 1.188.908 1.859.18-.858.268-1.453.294-1.984z",
     fill: "#E2514A",
     fillRule: "nonzero"
   }));
 }
 function iconArchive() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("path", {
+  }, g("path", {
     d: "M10.45 2.05h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V2.55a.5.5 0 0 1 .5-.5zm2.05 1.024h1.05a.5.5 0 0 1 .5.5V3.6a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5v-.001zM10.45 0h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5V.5a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 3.074h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-2.05 1.024h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm-2.05 1.025h1.05a.5.5 0 0 1 .5.5v.025a.5.5 0 0 1-.5.5h-1.05a.5.5 0 0 1-.5-.5v-.025a.5.5 0 0 1 .5-.5zm2.05 1.025h1.05a.5.5 0 0 1 .5.5v.024a.5.5 0 0 1-.5.5H12.5a.5.5 0 0 1-.5-.5v-.024a.5.5 0 0 1 .5-.5zm-1.656 3.074l-.82 5.946c.52.302 1.174.458 1.976.458.803 0 1.455-.156 1.975-.458l-.82-5.946h-2.311zm0-1.025h2.312c.512 0 .946.378 1.015.885l.82 5.946c.056.412-.142.817-.501 1.026-.686.398-1.515.597-2.49.597-.974 0-1.804-.199-2.49-.597a1.025 1.025 0 0 1-.5-1.026l.819-5.946c.07-.507.503-.885 1.015-.885zm.545 6.6a.5.5 0 0 1-.397-.561l.143-.999a.5.5 0 0 1 .495-.429h.74a.5.5 0 0 1 .495.43l.143.998a.5.5 0 0 1-.397.561c-.404.08-.819.08-1.222 0z",
     fill: "#00C469",
     fillRule: "nonzero"
   }));
 }
 function iconFile() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("g", {
+  }, g("g", {
     fill: "#A7AFB7",
     fillRule: "nonzero"
-  }, _("path", {
+  }, g("path", {
     d: "M5.5 22a.5.5 0 0 1-.5-.5v-18a.5.5 0 0 1 .5-.5h10.719a.5.5 0 0 1 .367.16l3.281 3.556a.5.5 0 0 1 .133.339V21.5a.5.5 0 0 1-.5.5h-14zm.5-1h13V7.25L16 4H6v17z"
-  }), _("path", {
+  }), g("path", {
     d: "M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z"
   })));
 }
 function iconText() {
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "25",
     height: "25",
     viewBox: "0 0 25 25"
-  }, _("path", {
+  }, g("path", {
     d: "M4.5 7h13a.5.5 0 1 1 0 1h-13a.5.5 0 0 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z",
     fill: "#5A5E69",
     fillRule: "nonzero"
@@ -15654,7 +15798,7 @@ function getIconByMime(fileType) {
   }
   return defaultChoice;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FilePreview.js
+;// ./node_modules/@uppy/dashboard/lib/components/FilePreview.js
 
 
 function FilePreview(props) {
@@ -15662,7 +15806,7 @@ function FilePreview(props) {
     file
   } = props;
   if (file.preview) {
-    return _("img", {
+    return g("img", {
       className: "uppy-Dashboard-Item-previewImg",
       alt: file.name,
       src: file.preview
@@ -15672,21 +15816,21 @@ function FilePreview(props) {
     color,
     icon
   } = getIconByMime(file.type);
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-previewIconWrap"
-  }, _("span", {
+  }, g("span", {
     className: "uppy-Dashboard-Item-previewIcon",
     style: {
       color
     }
-  }, icon), _("svg", {
+  }, icon), g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-Dashboard-Item-previewIconBg",
     width: "58",
     height: "76",
     viewBox: "0 0 58 76"
-  }, _("rect", {
+  }, g("rect", {
     fill: "#FFF",
     width: "58",
     height: "76",
@@ -15694,7 +15838,7 @@ function FilePreview(props) {
     fillRule: "evenodd"
   })));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/MetaErrorMessage.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/MetaErrorMessage.js
 
 const metaFieldIdToName = (metaFieldId, metaFields) => {
   const fields = typeof metaFields === 'function' ? metaFields() : metaFields;
@@ -15715,18 +15859,18 @@ function MetaErrorMessage(props) {
     return null;
   }
   const metaFieldsString = missingRequiredMetaFields.map(missingMetaField => metaFieldIdToName(missingMetaField, metaFields)).join(', ');
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-errorMessage"
   }, i18n('missingRequiredMetaFields', {
     smart_count: missingRequiredMetaFields.length,
     fields: metaFieldsString
-  }), ' ', _("button", {
+  }), ' ', g("button", {
     type: "button",
     class: "uppy-u-reset uppy-Dashboard-Item-errorMessageBtn",
     onClick: () => toggleFileCard(true, file.id)
   }, i18n('editFile')));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/FilePreviewAndLink/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/FilePreviewAndLink/index.js
 
 
 
@@ -15741,29 +15885,29 @@ function FilePreviewAndLink(props) {
   } = props;
   const white = 'rgba(255, 255, 255, 0.5)';
   const previewBackgroundColor = file.preview ? white : getIconByMime(file.type).color;
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-previewInnerWrap",
     style: {
       backgroundColor: previewBackgroundColor
     }
-  }, showLinkToFileUploadResult && file.uploadURL && _("a", {
+  }, showLinkToFileUploadResult && file.uploadURL && g("a", {
     className: "uppy-Dashboard-Item-previewLink",
     href: file.uploadURL,
     rel: "noreferrer noopener",
     target: "_blank",
     "aria-label": file.meta.name
-  }, _("span", {
+  }, g("span", {
     hidden: true
-  }, file.meta.name)), _(FilePreview, {
+  }, file.meta.name)), g(FilePreview, {
     file: file
-  }), _(MetaErrorMessage, {
+  }), g(MetaErrorMessage, {
     file: file,
     i18n: i18n,
     toggleFileCard: toggleFileCard,
     metaFields: metaFields
   }));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/FileProgress/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/FileProgress/index.js
 /* eslint-disable react/destructuring-assignment */
 
 function onPauseResumeCancelRetry(props) {
@@ -15797,9 +15941,9 @@ function progressIndicatorTitle(props) {
   return '';
 }
 function ProgressIndicatorButton(props) {
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-progress"
-  }, _("button", {
+  }, g("button", {
     className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator",
     type: "button",
     "aria-label": progressIndicatorTitle(props),
@@ -15811,7 +15955,7 @@ function ProgressCircleContainer(_ref) {
   let {
     children
   } = _ref;
-  return _("svg", {
+  return g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     width: "70",
@@ -15826,14 +15970,14 @@ function ProgressCircle(_ref2) {
   } = _ref2;
   // circle length equals 2 * PI * R
   const circleLength = 2 * Math.PI * 15;
-  return _("g", null, _("circle", {
+  return g("g", null, g("circle", {
     className: "uppy-Dashboard-Item-progressIcon--bg",
     r: "15",
     cx: "18",
     cy: "18",
     "stroke-width": "2",
     fill: "none"
-  }), _("circle", {
+  }), g("circle", {
     className: "uppy-Dashboard-Item-progressIcon--progress",
     r: "15",
     cx: "18",
@@ -15853,16 +15997,16 @@ function FileProgress(props) {
 
   // Green checkmark when complete
   if (props.isUploaded) {
-    return _("div", {
+    return g("div", {
       className: "uppy-Dashboard-Item-progress"
-    }, _("div", {
+    }, g("div", {
       className: "uppy-Dashboard-Item-progressIndicator"
-    }, _(ProgressCircleContainer, null, _("circle", {
+    }, g(ProgressCircleContainer, null, g("circle", {
       r: "15",
       cx: "18",
       cy: "18",
       fill: "#1bb240"
-    }), _("polygon", {
+    }), g("polygon", {
       className: "uppy-Dashboard-Item-progressIcon--check",
       transform: "translate(2, 3)",
       points: "14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"
@@ -15876,20 +16020,20 @@ function FileProgress(props) {
   if (props.error && !props.hideRetryButton) {
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
-      _(ProgressIndicatorButton, props, _("svg", {
+      g(ProgressIndicatorButton, props, g("svg", {
         "aria-hidden": "true",
         focusable: "false",
         className: "uppy-c-icon uppy-Dashboard-Item-progressIcon--retry",
         width: "28",
         height: "31",
         viewBox: "0 0 16 19"
-      }, _("path", {
+      }, g("path", {
         d: "M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"
-      }), _("path", {
+      }), g("path", {
         d: "M7.9 3H10v2H7.9z"
-      }), _("path", {
+      }), g("path", {
         d: "M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"
-      }), _("path", {
+      }), g("path", {
         d: "M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"
       })))
     );
@@ -15899,22 +16043,22 @@ function FileProgress(props) {
   if (props.resumableUploads && !props.hidePauseResumeButton) {
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
-      _(ProgressIndicatorButton, props, _(ProgressCircleContainer, null, _(ProgressCircle, {
+      g(ProgressIndicatorButton, props, g(ProgressCircleContainer, null, g(ProgressCircle, {
         progress: props.file.progress.percentage
-      }), props.file.isPaused ? _("polygon", {
+      }), props.file.isPaused ? g("polygon", {
         className: "uppy-Dashboard-Item-progressIcon--play",
         transform: "translate(3, 3)",
         points: "12 20 12 10 20 15"
-      }) : _("g", {
+      }) : g("g", {
         className: "uppy-Dashboard-Item-progressIcon--pause",
         transform: "translate(14.5, 13)"
-      }, _("rect", {
+      }, g("rect", {
         x: "0",
         y: "0",
         width: "2",
         height: "10",
         rx: "0"
-      }), _("rect", {
+      }), g("rect", {
         x: "5",
         y: "0",
         width: "2",
@@ -15928,9 +16072,9 @@ function FileProgress(props) {
   if (!props.resumableUploads && props.individualCancellation && !props.hideCancelButton) {
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
-      _(ProgressIndicatorButton, props, _(ProgressCircleContainer, null, _(ProgressCircle, {
+      g(ProgressIndicatorButton, props, g(ProgressCircleContainer, null, g(ProgressCircle, {
         progress: props.file.progress.percentage
-      }), _("polygon", {
+      }), g("polygon", {
         className: "cancel",
         transform: "translate(2, 2)",
         points: "19.8856516 11.0625 16 14.9481516 12.1019737 11.0625 11.0625 12.1143484 14.9481516 16 11.0625 19.8980263 12.1019737 20.9375 16 17.0518484 19.8856516 20.9375 20.9375 19.8980263 17.0518484 16 20.9375 12"
@@ -15939,15 +16083,15 @@ function FileProgress(props) {
   }
 
   // Just progress when buttons are disabled
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-progress"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Dashboard-Item-progressIndicator"
-  }, _(ProgressCircleContainer, null, _(ProgressCircle, {
+  }, g(ProgressCircleContainer, null, g(ProgressCircle, {
     progress: props.file.progress.percentage
   }))));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/truncateString.js
+;// ./node_modules/@uppy/utils/lib/truncateString.js
 /**
  * Truncates a string to the given number of chars (maxLength) by inserting '...' in the middle of that string.
  * Partially taken from https://stackoverflow.com/a/5723274/3192470.
@@ -15965,7 +16109,7 @@ function truncateString(string, maxLength) {
   const backChars = Math.floor(charsToShow / 2);
   return string.slice(0, frontChars) + separator + string.slice(-backChars);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/FileInfo/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/FileInfo/index.js
 /* eslint-disable react/destructuring-assignment */
 
 
@@ -15991,7 +16135,7 @@ const renderFileName = props => {
     // the author on the second line.
     return author ? 20 : 30;
   }
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-name",
     title: name
   }, truncateString(name, getMaxNameLength()));
@@ -16006,18 +16150,18 @@ const renderAuthor = props => {
   if (!author) {
     return null;
   }
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-author"
-  }, _("a", {
+  }, g("a", {
     href: `${author.url}?utm_source=Companion&utm_medium=referral`,
     target: "_blank",
     rel: "noopener noreferrer"
-  }, truncateString(author.name, 13)), providerName ? _(k, null, ` ${dot} `, providerName, ` ${dot} `) : null);
+  }, truncateString(author.name, 13)), providerName ? g(k, null, ` ${dot} `, providerName, ` ${dot} `) : null);
 };
-const renderFileSize = props => props.file.size && _("div", {
+const renderFileSize = props => props.file.size && g("div", {
   className: "uppy-Dashboard-Item-statusSize"
 }, prettierBytes(props.file.size));
-const ReSelectButton = props => props.file.isGhost && _("span", null, ' \u2022 ', _("button", {
+const ReSelectButton = props => props.file.isGhost && g("span", null, ' \u2022 ', g("button", {
   className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect",
   type: "button",
   onClick: props.toggleAddFilesPanel
@@ -16028,7 +16172,7 @@ const ErrorButton = _ref => {
     onClick
   } = _ref;
   if (file.error) {
-    return _("button", {
+    return g("button", {
       className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-errorDetails",
       "aria-label": file.error,
       "data-microtip-position": "bottom",
@@ -16043,26 +16187,26 @@ function FileInfo(props) {
   const {
     file
   } = props;
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-fileInfo",
     "data-uppy-file-source": file.source
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Dashboard-Item-fileName"
-  }, renderFileName(props), _(ErrorButton, {
+  }, renderFileName(props), g(ErrorButton, {
     file: props.file
     // eslint-disable-next-line no-alert
     ,
     onClick: () => alert(props.file.error) // TODO: move to a custom alert implementation
-  })), _("div", {
+  })), g("div", {
     className: "uppy-Dashboard-Item-status"
-  }, renderAuthor(props), renderFileSize(props), ReSelectButton(props)), _(MetaErrorMessage, {
+  }, renderAuthor(props), renderFileSize(props), ReSelectButton(props)), g(MetaErrorMessage, {
     file: props.file,
     i18n: props.i18n,
     toggleFileCard: props.toggleFileCard,
     metaFields: props.metaFields
   }));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/copyToClipboard.js
+;// ./node_modules/@uppy/dashboard/lib/utils/copyToClipboard.js
 /**
  * Copies text to clipboard by creating an almost invisible textarea,
  * adding text there, then running execCommand('copy').
@@ -16114,7 +16258,7 @@ function copyToClipboard(textToCopy, fallbackString) {
     }
   });
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/Buttons/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/Buttons/index.js
 
 
 function EditButton(_ref) {
@@ -16127,7 +16271,7 @@ function EditButton(_ref) {
     onClick
   } = _ref;
   if (!uploadInProgressOrComplete && metaFields && metaFields.length > 0 || !uploadInProgressOrComplete && canEditFile(file)) {
-    return _("button", {
+    return g("button", {
       className: "uppy-u-reset uppy-c-btn uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit",
       type: "button",
       "aria-label": i18n('editFileWithFilename', {
@@ -16137,25 +16281,25 @@ function EditButton(_ref) {
         file: file.meta.name
       }),
       onClick: () => onClick()
-    }, _("svg", {
+    }, g("svg", {
       "aria-hidden": "true",
       focusable: "false",
       className: "uppy-c-icon",
       width: "14",
       height: "14",
       viewBox: "0 0 14 14"
-    }, _("g", {
+    }, g("g", {
       fillRule: "evenodd"
-    }, _("path", {
+    }, g("path", {
       d: "M1.5 10.793h2.793A1 1 0 0 0 5 10.5L11.5 4a1 1 0 0 0 0-1.414L9.707.793a1 1 0 0 0-1.414 0l-6.5 6.5A1 1 0 0 0 1.5 8v2.793zm1-1V8L9 1.5l1.793 1.793-6.5 6.5H2.5z",
       fillRule: "nonzero"
-    }), _("rect", {
+    }), g("rect", {
       x: "1",
       y: "12.293",
       width: "11",
       height: "1",
       rx: ".5"
-    }), _("path", {
+    }), g("path", {
       fillRule: "nonzero",
       d: "M6.793 2.5L9.5 5.207l.707-.707L7.5 1.793z"
     }))));
@@ -16168,7 +16312,7 @@ function RemoveButton(_ref2) {
     onClick,
     file
   } = _ref2;
-  return _("button", {
+  return g("button", {
     className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove",
     type: "button",
     "aria-label": i18n('removeFile', {
@@ -16178,16 +16322,16 @@ function RemoveButton(_ref2) {
       file: file.meta.name
     }),
     onClick: () => onClick()
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "18",
     height: "18",
     viewBox: "0 0 18 18"
-  }, _("path", {
+  }, g("path", {
     d: "M9 0C4.034 0 0 4.034 0 9s4.034 9 9 9 9-4.034 9-9-4.034-9-9-9z"
-  }), _("path", {
+  }), g("path", {
     fill: "#FFF",
     d: "M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z"
   })));
@@ -16206,20 +16350,20 @@ function CopyLinkButton(props) {
   const {
     i18n
   } = props;
-  return _("button", {
+  return g("button", {
     className: "uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink",
     type: "button",
     "aria-label": i18n('copyLink'),
     title: i18n('copyLink'),
     onClick: event => copyLinkToClipboard(event, props)
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "14",
     height: "14",
     viewBox: "0 0 14 12"
-  }, _("path", {
+  }, g("path", {
     d: "M7.94 7.703a2.613 2.613 0 0 1-.626 2.681l-.852.851a2.597 2.597 0 0 1-1.849.766A2.616 2.616 0 0 1 2.764 7.54l.852-.852a2.596 2.596 0 0 1 2.69-.625L5.267 7.099a1.44 1.44 0 0 0-.833.407l-.852.851a1.458 1.458 0 0 0 1.03 2.486c.39 0 .755-.152 1.03-.426l.852-.852c.231-.231.363-.522.406-.824l1.04-1.038zm4.295-5.937A2.596 2.596 0 0 0 10.387 1c-.698 0-1.355.272-1.849.766l-.852.851a2.614 2.614 0 0 0-.624 2.688l1.036-1.036c.041-.304.173-.6.407-.833l.852-.852c.275-.275.64-.426 1.03-.426a1.458 1.458 0 0 1 1.03 2.486l-.852.851a1.442 1.442 0 0 1-.824.406l-1.04 1.04a2.596 2.596 0 0 0 2.683-.628l.851-.85a2.616 2.616 0 0 0 0-3.697zm-6.88 6.883a.577.577 0 0 0 .82 0l3.474-3.474a.579.579 0 1 0-.819-.82L5.355 7.83a.579.579 0 0 0 0 .819z"
   })));
 }
@@ -16243,27 +16387,27 @@ function Buttons(props) {
       openFileEditor(file);
     }
   };
-  return _("div", {
+  return g("div", {
     className: "uppy-Dashboard-Item-actionWrapper"
-  }, _(EditButton, {
+  }, g(EditButton, {
     i18n: i18n,
     file: file,
     uploadInProgressOrComplete: uploadInProgressOrComplete,
     canEditFile: canEditFile,
     metaFields: metaFields,
     onClick: editAction
-  }), showLinkToFileUploadResult && file.uploadURL ? _(CopyLinkButton, {
+  }), showLinkToFileUploadResult && file.uploadURL ? g(CopyLinkButton, {
     file: file,
     uppy: uppy,
     i18n: i18n
-  }) : null, showRemoveButton ? _(RemoveButton, {
+  }) : null, showRemoveButton ? g(RemoveButton, {
     i18n: i18n,
     file: file,
     uppy: uppy,
     onClick: () => uppy.removeFile(file.id, 'removed-by-user')
   }) : null);
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileItem/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileItem/index.js
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
 
@@ -16275,7 +16419,7 @@ function Buttons(props) {
 
 
 
-class FileItem extends b {
+class FileItem extends x {
   componentDidMount() {
     const {
       file
@@ -16335,19 +16479,19 @@ class FileItem extends b {
       'is-noIndividualCancellation': !this.props.individualCancellation,
       'is-ghost': isGhost
     });
-    return _("div", {
+    return g("div", {
       className: dashboardItemClass,
       id: `uppy_${file.id}`,
       role: this.props.role
-    }, _("div", {
+    }, g("div", {
       className: "uppy-Dashboard-Item-preview"
-    }, _(FilePreviewAndLink, {
+    }, g(FilePreviewAndLink, {
       file: file,
       showLinkToFileUploadResult: this.props.showLinkToFileUploadResult,
       i18n: this.props.i18n,
       toggleFileCard: this.props.toggleFileCard,
       metaFields: this.props.metaFields
-    }), _(FileProgress, {
+    }), g(FileProgress, {
       uppy: this.props.uppy,
       file: file,
       error: error,
@@ -16360,9 +16504,9 @@ class FileItem extends b {
       resumableUploads: this.props.resumableUploads,
       individualCancellation: this.props.individualCancellation,
       i18n: this.props.i18n
-    })), _("div", {
+    })), g("div", {
       className: "uppy-Dashboard-Item-fileInfoAndButtons"
-    }, _(FileInfo, {
+    }, g(FileInfo, {
       file: file,
       id: this.props.id,
       acquirers: this.props.acquirers,
@@ -16373,7 +16517,7 @@ class FileItem extends b {
       toggleFileCard: this.props.toggleFileCard,
       metaFields: this.props.metaFields,
       isSingleFile: this.props.isSingleFile
-    }), _(Buttons, {
+    }), g(Buttons, {
       file: file,
       metaFields: this.props.metaFields,
       showLinkToFileUploadResult: this.props.showLinkToFileUploadResult,
@@ -16387,7 +16531,7 @@ class FileItem extends b {
     })));
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileList.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileList.js
 
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -16456,11 +16600,11 @@ function FileList(_ref) {
   ) =>
   // associated with the `VirtualList` element.
   // We use the first file ID as the key—this should not change across scroll rerenders
-  _("div", {
+  g("div", {
     class: "uppy-Dashboard-filesInner",
     role: "presentation",
     key: row[0]
-  }, row.map(fileID => _(FileItem, {
+  }, row.map(fileID => g(FileItem, {
     key: fileID
     // @ts-expect-error it's fine
     ,
@@ -16502,11 +16646,11 @@ function FileList(_ref) {
     file: files[fileID]
   })));
   if (isSingleFile) {
-    return _("div", {
+    return g("div", {
       class: "uppy-Dashboard-files"
     }, renderRow(rows[0]));
   }
-  return _(lib_VirtualList, {
+  return g(lib_VirtualList, {
     class: "uppy-Dashboard-files",
     role: "list",
     data: rows,
@@ -16514,7 +16658,7 @@ function FileList(_ref) {
     rowHeight: rowHeight
   });
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/AddFiles.js
+;// ./node_modules/@uppy/dashboard/lib/components/AddFiles.js
 let AddFiles_Symbol$for;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
@@ -16522,7 +16666,7 @@ let AddFiles_Symbol$for;
 /* eslint-disable react/destructuring-assignment */
 
 AddFiles_Symbol$for = Symbol.for('uppy test: disable unused locale key warning');
-class AddFiles extends b {
+class AddFiles extends x {
   constructor() {
     super(...arguments);
     this.triggerFileInputClick = () => {
@@ -16549,7 +16693,7 @@ class AddFiles extends b {
       event.target.value = null; // eslint-disable-line no-param-reassign
     };
     this.renderHiddenInput = (isFolder, refCallback) => {
-      return _("input", {
+      return g("input", {
         className: "uppy-Dashboard-input",
         hidden: true,
         "aria-hidden": "true",
@@ -16569,7 +16713,7 @@ class AddFiles extends b {
         video: 'video/*'
       };
       const accept = typeToAccept[type];
-      return _("input", {
+      return g("input", {
         className: "uppy-Dashboard-input",
         hidden: true,
         "aria-hidden": "true",
@@ -16583,92 +16727,92 @@ class AddFiles extends b {
       });
     };
     this.renderMyDeviceAcquirer = () => {
-      return _("div", {
+      return g("div", {
         className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": "MyDevice"
-      }, _("button", {
+      }, g("button", {
         type: "button",
         className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerFileInputClick
-      }, _("div", {
+      }, g("div", {
         className: "uppy-DashboardTab-inner"
-      }, _("svg", {
+      }, g("svg", {
         className: "uppy-DashboardTab-iconMyDevice",
         "aria-hidden": "true",
         focusable: "false",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, _("path", {
+      }, g("path", {
         d: "M8.45 22.087l-1.305-6.674h17.678l-1.572 6.674H8.45zm4.975-12.412l1.083 1.765a.823.823 0 00.715.386h7.951V13.5H8.587V9.675h4.838zM26.043 13.5h-1.195v-2.598c0-.463-.336-.75-.798-.75h-8.356l-1.082-1.766A.823.823 0 0013.897 8H7.728c-.462 0-.815.256-.815.718V13.5h-.956a.97.97 0 00-.746.37.972.972 0 00-.19.81l1.724 8.565c.095.44.484.755.933.755H24c.44 0 .824-.3.929-.727l2.043-8.568a.972.972 0 00-.176-.825.967.967 0 00-.753-.38z",
         fill: "currentcolor",
         "fill-rule": "evenodd"
-      }))), _("div", {
+      }))), g("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('myDevice'))));
     };
     this.renderPhotoCamera = () => {
-      return _("div", {
+      return g("div", {
         className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": "MobilePhotoCamera"
-      }, _("button", {
+      }, g("button", {
         type: "button",
         className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerPhotoCameraInputClick
-      }, _("div", {
+      }, g("div", {
         className: "uppy-DashboardTab-inner"
-      }, _("svg", {
+      }, g("svg", {
         "aria-hidden": "true",
         focusable: "false",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, _("path", {
+      }, g("path", {
         d: "M23.5 9.5c1.417 0 2.5 1.083 2.5 2.5v9.167c0 1.416-1.083 2.5-2.5 2.5h-15c-1.417 0-2.5-1.084-2.5-2.5V12c0-1.417 1.083-2.5 2.5-2.5h2.917l1.416-2.167C13 7.167 13.25 7 13.5 7h5c.25 0 .5.167.667.333L20.583 9.5H23.5zM16 11.417a4.706 4.706 0 00-4.75 4.75 4.704 4.704 0 004.75 4.75 4.703 4.703 0 004.75-4.75c0-2.663-2.09-4.75-4.75-4.75zm0 7.825c-1.744 0-3.076-1.332-3.076-3.074 0-1.745 1.333-3.077 3.076-3.077 1.744 0 3.074 1.333 3.074 3.076s-1.33 3.075-3.074 3.075z",
         fill: "#02B383",
         "fill-rule": "nonzero"
-      }))), _("div", {
+      }))), g("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('takePictureBtn'))));
     };
     this.renderVideoCamera = () => {
-      return _("div", {
+      return g("div", {
         className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": "MobileVideoCamera"
-      }, _("button", {
+      }, g("button", {
         type: "button",
         className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
         tabIndex: 0,
         "data-uppy-super-focusable": true,
         onClick: this.triggerVideoCameraInputClick
-      }, _("div", {
+      }, g("div", {
         className: "uppy-DashboardTab-inner"
-      }, _("svg", {
+      }, g("svg", {
         "aria-hidden": "true",
         width: "32",
         height: "32",
         viewBox: "0 0 32 32"
-      }, _("path", {
+      }, g("path", {
         fill: "#FF675E",
         fillRule: "nonzero",
         d: "m21.254 14.277 2.941-2.588c.797-.313 1.243.818 1.09 1.554-.01 2.094.02 4.189-.017 6.282-.126.915-1.145 1.08-1.58.34l-2.434-2.142c-.192.287-.504 1.305-.738.468-.104-1.293-.028-2.596-.05-3.894.047-.312.381.823.426 1.069.063-.384.206-.744.362-1.09zm-12.939-3.73c3.858.013 7.717-.025 11.574.02.912.129 1.492 1.237 1.351 2.217-.019 2.412.04 4.83-.03 7.239-.17 1.025-1.166 1.59-2.029 1.429-3.705-.012-7.41.025-11.114-.019-.913-.129-1.492-1.237-1.352-2.217.018-2.404-.036-4.813.029-7.214.136-.82.83-1.473 1.571-1.454z "
-      }))), _("div", {
+      }))), g("div", {
         className: "uppy-DashboardTab-name"
       }, this.props.i18n('recordVideoBtn'))));
     };
     this.renderBrowseButton = (text, onClickFn) => {
       const numberOfAcquirers = this.props.acquirers.length;
-      return _("button", {
+      return g("button", {
         type: "button",
         className: "uppy-u-reset uppy-c-btn uppy-Dashboard-browse",
         onClick: onClickFn,
@@ -16683,7 +16827,7 @@ class AddFiles extends b {
       // to Camel
       const lowerFMSelectionType = this.props.fileManagerSelectionType;
       const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1);
-      return _("div", {
+      return g("div", {
         class: "uppy-Dashboard-AddFiles-title"
       },
       // eslint-disable-next-line no-nested-ternary
@@ -16699,11 +16843,11 @@ class AddFiles extends b {
     };
     this.renderAcquirer = acquirer => {
       var _this$props$activePic;
-      return _("div", {
+      return g("div", {
         className: "uppy-DashboardTab",
         role: "presentation",
         "data-uppy-acquirer-id": acquirer.id
-      }, _("button", {
+      }, g("button", {
         type: "button",
         className: "uppy-u-reset uppy-c-btn uppy-DashboardTab-btn",
         role: "tab",
@@ -16713,9 +16857,9 @@ class AddFiles extends b {
         "aria-selected": ((_this$props$activePic = this.props.activePickerPanel) == null ? void 0 : _this$props$activePic.id) === acquirer.id,
         "data-uppy-super-focusable": true,
         onClick: () => this.props.showPanel(acquirer.id)
-      }, _("div", {
+      }, g("div", {
         className: "uppy-DashboardTab-inner"
-      }, acquirer.icon()), _("div", {
+      }, acquirer.icon()), g("div", {
         className: "uppy-DashboardTab-name"
       }, acquirer.name)));
     };
@@ -16724,7 +16868,7 @@ class AddFiles extends b {
       // just one button on a new line
       const acquirersWithoutLastTwo = [...acquirers];
       const lastTwoAcquirers = acquirersWithoutLastTwo.splice(acquirers.length - 2, acquirers.length);
-      return _(k, null, acquirersWithoutLastTwo.map(acquirer => this.renderAcquirer(acquirer)), _("span", {
+      return g(k, null, acquirersWithoutLastTwo.map(acquirer => this.renderAcquirer(acquirer)), g("span", {
         role: "presentation",
         style: {
           'white-space': 'nowrap'
@@ -16768,14 +16912,14 @@ class AddFiles extends b {
           key,
           elements
         } = _ref;
-        return _(k, {
+        return g(k, {
           key: key
         }, elements);
       });
-      return _(k, null, this.renderDropPasteBrowseTagline(list.length), _("div", {
+      return g(k, null, this.renderDropPasteBrowseTagline(list.length), g("div", {
         className: "uppy-Dashboard-AddFiles-list",
         role: "tablist"
-      }, renderList(listWithoutLastTwo), _("span", {
+      }, renderList(listWithoutLastTwo), g("span", {
         role: "presentation",
         style: {
           'white-space': 'nowrap'
@@ -16796,23 +16940,23 @@ class AddFiles extends b {
     const {
       i18nArray
     } = this.props;
-    const uppyBranding = _("span", null, _("svg", {
+    const uppyBranding = g("span", null, g("svg", {
       "aria-hidden": "true",
       focusable: "false",
       className: "uppy-c-icon uppy-Dashboard-poweredByIcon",
       width: "11",
       height: "11",
       viewBox: "0 0 11 11"
-    }, _("path", {
+    }, g("path", {
       d: "M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z",
       fillRule: "evenodd"
-    })), _("span", {
+    })), g("span", {
       className: "uppy-Dashboard-poweredByUppy"
     }, "Uppy"));
     const linkText = i18nArray('poweredBy', {
       uppy: uppyBranding
     });
-    return _("a", {
+    return g("a", {
       tabIndex: -1,
       href: "https://uppy.io",
       rel: "noreferrer noopener",
@@ -16826,7 +16970,7 @@ class AddFiles extends b {
       showNativeVideoCameraButton,
       nativeCameraFacingMode
     } = this.props;
-    return _("div", {
+    return g("div", {
       className: "uppy-Dashboard-AddFiles"
     }, this.renderHiddenInput(false, ref => {
       this.fileInput = ref;
@@ -16836,38 +16980,38 @@ class AddFiles extends b {
       this.mobilePhotoFileInput = ref;
     }), showNativeVideoCameraButton && this.renderHiddenCameraInput('video', nativeCameraFacingMode, ref => {
       this.mobileVideoFileInput = ref;
-    }), this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles), _("div", {
+    }), this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles), g("div", {
       className: "uppy-Dashboard-AddFiles-info"
-    }, this.props.note && _("div", {
+    }, this.props.note && g("div", {
       className: "uppy-Dashboard-note"
     }, this.props.note), this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)));
   }
 }
 /* harmony default export */ const components_AddFiles = (AddFiles);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/AddFilesPanel.js
+;// ./node_modules/@uppy/dashboard/lib/components/AddFilesPanel.js
 /* eslint-disable react/destructuring-assignment */
 
 
 
 const AddFilesPanel = props => {
-  return _("div", {
+  return g("div", {
     className: classnames('uppy-Dashboard-AddFilesPanel', props.className),
     "data-uppy-panelType": "AddFiles",
     "aria-hidden": !props.showAddFilesPanel
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-bar"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
-  }, props.i18n('addingMoreFiles')), _("button", {
+  }, props.i18n('addingMoreFiles')), g("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
     onClick: () => props.toggleAddFilesPanel(false)
-  }, props.i18n('back'))), _(components_AddFiles, props));
+  }, props.i18n('back'))), g(components_AddFiles, props));
 };
 /* harmony default export */ const components_AddFilesPanel = (AddFilesPanel);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/utils/ignoreEvent.js
+;// ./node_modules/@uppy/dashboard/lib/utils/ignoreEvent.js
 // ignore drop/paste events if they are not in input or textarea —
 // otherwise when Url plugin adds drop/paste listeners to this.el,
 // draging UI elements or pasting anything into any field triggers those events —
@@ -16885,7 +17029,7 @@ function ignoreEvent(ev) {
   ev.stopPropagation();
 }
 /* harmony default export */ const utils_ignoreEvent = (ignoreEvent);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/PickerPanelContent.js
+;// ./node_modules/@uppy/dashboard/lib/components/PickerPanelContent.js
 
 
 
@@ -16898,7 +17042,7 @@ function PickerPanelContent(_ref) {
     state,
     uppy
   } = _ref;
-  return _("div", {
+  return g("div", {
     className: classnames('uppy-DashboardContent-panel', className),
     role: "tabpanel",
     "data-uppy-panelType": "PickerPanel",
@@ -16907,24 +17051,24 @@ function PickerPanelContent(_ref) {
     onDragLeave: utils_ignoreEvent,
     onDrop: utils_ignoreEvent,
     onPaste: utils_ignoreEvent
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-bar"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, i18n('importFrom', {
     name: activePickerPanel.name
-  })), _("button", {
+  })), g("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
     onClick: hideAllPanels
-  }, i18n('cancel'))), _("div", {
+  }, i18n('cancel'))), g("div", {
     className: "uppy-DashboardContent-panelBody"
   }, uppy.getPlugin(activePickerPanel.id).render(state)));
 }
 /* harmony default export */ const components_PickerPanelContent = (PickerPanelContent);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/EditorPanel.js
+;// ./node_modules/@uppy/dashboard/lib/components/EditorPanel.js
 /* eslint-disable react/destructuring-assignment */
 
 
@@ -16934,37 +17078,37 @@ function EditorPanel(props) {
     props.uppy.emit('file-editor:cancel', file);
     props.closeFileEditor();
   };
-  return _("div", {
+  return g("div", {
     className: classnames('uppy-DashboardContent-panel', props.className),
     role: "tabpanel",
     "data-uppy-panelType": "FileEditor",
     id: "uppy-DashboardContent-panel--editor"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-bar"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, props.i18nArray('editing', {
-    file: _("span", {
+    file: g("span", {
       className: "uppy-DashboardContent-titleFile"
     }, file.meta ? file.meta.name : file.name)
-  })), _("button", {
+  })), g("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
     onClick: handleCancel
-  }, props.i18n('cancel')), _("button", {
+  }, props.i18n('cancel')), g("button", {
     className: "uppy-DashboardContent-save",
     type: "button",
     onClick: props.saveFileEditor
-  }, props.i18n('save'))), _("div", {
+  }, props.i18n('save'))), g("div", {
     className: "uppy-DashboardContent-panelBody"
   }, props.editors.map(target => {
     return props.uppy.getPlugin(target.id).render(props.state);
   })));
 }
 /* harmony default export */ const components_EditorPanel = (EditorPanel);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/PickerPanelTopBar.js
+;// ./node_modules/@uppy/dashboard/lib/components/PickerPanelTopBar.js
 
 const uploadStates = {
   STATE_ERROR: 'error',
@@ -17063,37 +17207,37 @@ function PanelTopBar(props) {
     // eslint-disable-next-line react/destructuring-assignment
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles;
   }
-  return _("div", {
+  return g("div", {
     className: "uppy-DashboardContent-bar"
-  }, !isAllComplete && !hideCancelButton ? _("button", {
+  }, !isAllComplete && !hideCancelButton ? g("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
     onClick: () => uppy.cancelAll()
-  }, i18n('cancel')) : _("div", null), _("div", {
+  }, i18n('cancel')) : g("div", null), g("div", {
     className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
-  }, _(UploadStatus, props)), allowNewUpload ? _("button", {
+  }, g(UploadStatus, props)), allowNewUpload ? g("button", {
     className: "uppy-DashboardContent-addMore",
     type: "button",
     "aria-label": i18n('addMoreFiles'),
     title: i18n('addMoreFiles'),
     onClick: () => toggleAddFilesPanel(true)
-  }, _("svg", {
+  }, g("svg", {
     "aria-hidden": "true",
     focusable: "false",
     className: "uppy-c-icon",
     width: "15",
     height: "15",
     viewBox: "0 0 15 15"
-  }, _("path", {
+  }, g("path", {
     d: "M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z"
-  })), _("span", {
+  })), g("span", {
     className: "uppy-DashboardContent-addMoreCaption"
-  }, i18n('addMore'))) : _("div", null));
+  }, i18n('addMore'))) : g("div", null));
 }
 /* harmony default export */ const PickerPanelTopBar = (PanelTopBar);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileCard/RenderMetaFields.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileCard/RenderMetaFields.js
 
 function RenderMetaFields(props) {
   const {
@@ -17109,10 +17253,10 @@ function RenderMetaFields(props) {
   return computedMetaFields.map(field => {
     const id = `uppy-Dashboard-FileCard-input-${field.id}`;
     const required = requiredMetaFields.includes(field.id);
-    return _("fieldset", {
+    return g("fieldset", {
       key: field.id,
       className: "uppy-Dashboard-FileCard-fieldset"
-    }, _("label", {
+    }, g("label", {
       className: "uppy-Dashboard-FileCard-label",
       htmlFor: id
     }, field.name), field.render !== undefined ? field.render({
@@ -17121,7 +17265,7 @@ function RenderMetaFields(props) {
       fieldCSSClasses,
       required,
       form: form.id
-    }, _) : _("input", {
+    }, g) : g("input", {
       className: fieldCSSClasses.text,
       id: id,
       form: form.id,
@@ -17134,7 +17278,7 @@ function RenderMetaFields(props) {
     }));
   });
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/FileCard/index.js
+;// ./node_modules/@uppy/dashboard/lib/components/FileCard/index.js
 
 
 
@@ -17197,39 +17341,39 @@ function FileCard(props) {
       document.body.removeChild(form);
     };
   }, [form, handleSave]);
-  return _("div", {
+  return g("div", {
     className: classnames('uppy-Dashboard-FileCard', className),
     "data-uppy-panelType": "FileCard",
     onDragOver: utils_ignoreEvent,
     onDragLeave: utils_ignoreEvent,
     onDrop: utils_ignoreEvent,
     onPaste: utils_ignoreEvent
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-bar"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-DashboardContent-title",
     role: "heading",
     "aria-level": "1"
   }, i18nArray('editing', {
-    file: _("span", {
+    file: g("span", {
       className: "uppy-DashboardContent-titleFile"
     }, file.meta ? file.meta.name : file.name)
-  })), _("button", {
+  })), g("button", {
     className: "uppy-DashboardContent-back",
     type: "button",
     form: form.id,
     title: i18n('finishEditingFile'),
     onClick: handleCancel
-  }, i18n('cancel'))), _("div", {
+  }, i18n('cancel'))), g("div", {
     className: "uppy-Dashboard-FileCard-inner"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Dashboard-FileCard-preview",
     style: {
       backgroundColor: getIconByMime(file.type).color
     }
-  }, _(FilePreview, {
+  }, g(FilePreview, {
     file: file
-  }), showEditButton && _("button", {
+  }), showEditButton && g("button", {
     type: "button",
     className: "uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit",
     onClick: event => {
@@ -17240,31 +17384,31 @@ function FileCard(props) {
       handleSave(event);
       openFileEditor(file);
     }
-  }, i18n('editImage'))), _("div", {
+  }, i18n('editImage'))), g("div", {
     className: "uppy-Dashboard-FileCard-info"
-  }, _(RenderMetaFields, {
+  }, g(RenderMetaFields, {
     computedMetaFields: computedMetaFields,
     requiredMetaFields: requiredMetaFields,
     updateMeta: updateMeta,
     form: form,
     formState: formState
-  })), _("div", {
+  })), g("div", {
     className: "uppy-Dashboard-FileCard-actions"
-  }, _("button", {
+  }, g("button", {
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
     // If `form` attribute is supported, we want a submit button to trigger the form validation.
     // Otherwise, fallback to a classic button with a onClick event handler.
     ,
     type: "submit",
     form: form.id
-  }, i18n('saveChanges')), _("button", {
+  }, i18n('saveChanges')), g("button", {
     className: "uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn",
     type: "button",
     onClick: handleCancel,
     form: form.id
   }, i18n('cancel')))));
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/Slide.js
+;// ./node_modules/@uppy/dashboard/lib/components/Slide.js
 
 
 
@@ -17334,12 +17478,12 @@ function Slide(_ref) {
   }, []); // Cleanup useEffect
 
   if (!cachedChildren) return null;
-  return E(cachedChildren, {
+  return G(cachedChildren, {
     className: classnames(className, cachedChildren.props.className)
   });
 }
 /* harmony default export */ const components_Slide = (Slide);
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/components/Dashboard.js
+;// ./node_modules/@uppy/dashboard/lib/components/Dashboard.js
 function Dashboard_extends() { Dashboard_extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return Dashboard_extends.apply(this, arguments); }
 /* eslint-disable react/destructuring-assignment, react/jsx-props-no-spreading */
 
@@ -17410,7 +17554,7 @@ function Dashboard_Dashboard(props) {
     }
     return props.i18n('recoveredAllFiles');
   };
-  const dashboard = _("div", {
+  const dashboard = g("div", {
     className: dashboardClassName,
     "data-uppy-theme": props.theme,
     "data-uppy-num-acquirers": props.acquirers.length,
@@ -17422,12 +17566,12 @@ function Dashboard_Dashboard(props) {
     onDragOver: props.handleDragOver,
     onDragLeave: props.handleDragLeave,
     onDrop: props.handleDrop
-  }, _("div", {
+  }, g("div", {
     "aria-hidden": "true",
     className: "uppy-Dashboard-overlay",
     tabIndex: -1,
     onClick: props.handleClickOutside
-  }), _("div", {
+  }), g("div", {
     className: "uppy-Dashboard-inner",
     "aria-modal": !props.inline && 'true',
     role: props.inline ? undefined : 'dialog',
@@ -17435,47 +17579,47 @@ function Dashboard_Dashboard(props) {
       width: props.inline && props.width ? props.width : '',
       height: props.inline && props.height ? props.height : ''
     }
-  }, !props.inline ? _("button", {
+  }, !props.inline ? g("button", {
     className: "uppy-u-reset uppy-Dashboard-close",
     type: "button",
     "aria-label": props.i18n('closeModal'),
     title: props.i18n('closeModal'),
     onClick: props.closeModal
-  }, _("span", {
+  }, g("span", {
     "aria-hidden": "true"
-  }, "\xD7")) : null, _("div", {
+  }, "\xD7")) : null, g("div", {
     className: "uppy-Dashboard-innerWrap"
-  }, _("div", {
+  }, g("div", {
     className: "uppy-Dashboard-dropFilesHereHint"
-  }, props.i18n('dropHint')), showFileList && _(PickerPanelTopBar, props), numberOfFilesForRecovery && _("div", {
+  }, props.i18n('dropHint')), showFileList && g(PickerPanelTopBar, props), numberOfFilesForRecovery && g("div", {
     className: "uppy-Dashboard-serviceMsg"
-  }, _("svg", {
+  }, g("svg", {
     className: "uppy-Dashboard-serviceMsg-icon",
     "aria-hidden": "true",
     focusable: "false",
     width: "21",
     height: "16",
     viewBox: "0 0 24 19"
-  }, _("g", {
+  }, g("g", {
     transform: "translate(0 -1)",
     fill: "none",
     fillRule: "evenodd"
-  }, _("path", {
+  }, g("path", {
     d: "M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z",
     fill: "#FFD300"
-  }), _("path", {
+  }), g("path", {
     fill: "#000",
     d: "M11 6h2l-.3 8h-1.4z"
-  }), _("circle", {
+  }), g("circle", {
     fill: "#000",
     cx: "12",
     cy: "17",
     r: "1"
-  }))), _("strong", {
+  }))), g("strong", {
     className: "uppy-Dashboard-serviceMsg-title"
-  }, props.i18n('sessionRestored')), _("div", {
+  }, props.i18n('sessionRestored')), g("div", {
     className: "uppy-Dashboard-serviceMsg-text"
-  }, renderRestoredText())), showFileList ? _(FileList, {
+  }, renderRestoredText())), showFileList ? g(FileList, {
     id: props.id,
     error: props.error,
     i18n: props.i18n,
@@ -17502,26 +17646,26 @@ function Dashboard_Dashboard(props) {
     itemsPerRow: itemsPerRow
   })
   // eslint-disable-next-line react/jsx-props-no-spreading
-  : _(components_AddFiles, Dashboard_extends({}, props, {
+  : g(components_AddFiles, Dashboard_extends({}, props, {
     isSizeMD: isSizeMD
-  })), _(components_Slide, null, props.showAddFilesPanel ? _(components_AddFilesPanel, Dashboard_extends({
+  })), g(components_Slide, null, props.showAddFilesPanel ? g(components_AddFilesPanel, Dashboard_extends({
     key: "AddFiles"
   }, props, {
     isSizeMD: isSizeMD
-  })) : null), _(components_Slide, null, props.fileCardFor ? _(FileCard, Dashboard_extends({
+  })) : null), g(components_Slide, null, props.fileCardFor ? g(FileCard, Dashboard_extends({
     key: "FileCard"
-  }, props)) : null), _(components_Slide, null, props.activePickerPanel ? _(components_PickerPanelContent, Dashboard_extends({
+  }, props)) : null), g(components_Slide, null, props.activePickerPanel ? g(components_PickerPanelContent, Dashboard_extends({
     key: "Picker"
-  }, props)) : null), _(components_Slide, null, props.showFileEditor ? _(components_EditorPanel, Dashboard_extends({
+  }, props)) : null), g(components_Slide, null, props.showFileEditor ? g(components_EditorPanel, Dashboard_extends({
     key: "Editor"
-  }, props)) : null), _("div", {
+  }, props)) : null), g("div", {
     className: "uppy-Dashboard-progressindicators"
   }, props.progressindicators.map(target => {
     return props.uppy.getPlugin(target.id).render(props.state);
   })))));
   return dashboard;
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/locale.js
+;// ./node_modules/@uppy/dashboard/lib/locale.js
 /* harmony default export */ const dashboard_lib_locale = ({
   strings: {
     // When `inline: false`, used as the screen reader label for the button that closes the modal.
@@ -17615,7 +17759,7 @@ function Dashboard_Dashboard(props) {
     recordVideoBtn: 'Record Video'
   }
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/Dashboard.js
+;// ./node_modules/@uppy/dashboard/lib/Dashboard.js
 function Dashboard_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var Dashboard_id = 0;
 function Dashboard_classPrivateFieldLooseKey(name) { return "__private_" + Dashboard_id++ + "_" + name; }
@@ -18772,9 +18916,9 @@ class Dashboard extends lib_UIPlugin {
   }
 }
 Dashboard.VERSION = Dashboard_packageJson.version;
-;// CONCATENATED MODULE: ./node_modules/@uppy/dashboard/lib/index.js
+;// ./node_modules/@uppy/dashboard/lib/index.js
 
-;// CONCATENATED MODULE: ./node_modules/@uppy/core/lib/EventManager.js
+;// ./node_modules/@uppy/core/lib/EventManager.js
 function EventManager_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var EventManager_id = 0;
 function EventManager_classPrivateFieldLooseKey(name) { return "__private_" + EventManager_id++ + "_" + name; }
@@ -18861,7 +19005,7 @@ class EventManager {
     });
   }
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/RateLimitedQueue.js
+;// ./node_modules/@uppy/utils/lib/RateLimitedQueue.js
 function RateLimitedQueue_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var RateLimitedQueue_id = 0;
 function RateLimitedQueue_classPrivateFieldLooseKey(name) { return "__private_" + RateLimitedQueue_id++ + "_" + name; }
@@ -19166,7 +19310,7 @@ function _dequeue2(handler) {
   }
 }
 const internalRateLimitedQueue = Symbol('__queue');
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/NetworkError.js
+;// ./node_modules/@uppy/utils/lib/NetworkError.js
 class NetworkError extends Error {
   constructor(error, xhr) {
     if (xhr === void 0) {
@@ -19179,7 +19323,7 @@ class NetworkError extends Error {
   }
 }
 /* harmony default export */ const lib_NetworkError = (NetworkError);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/isNetworkError.js
+;// ./node_modules/@uppy/utils/lib/isNetworkError.js
 function isNetworkError(xhr) {
   if (!xhr) {
     return false;
@@ -19187,7 +19331,7 @@ function isNetworkError(xhr) {
   return xhr.readyState !== 0 && xhr.readyState !== 4 || xhr.status === 0;
 }
 /* harmony default export */ const lib_isNetworkError = (isNetworkError);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/ProgressTimeout.js
+;// ./node_modules/@uppy/utils/lib/ProgressTimeout.js
 function ProgressTimeout_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var ProgressTimeout_id = 0;
 function ProgressTimeout_classPrivateFieldLooseKey(name) { return "__private_" + ProgressTimeout_id++ + "_" + name; }
@@ -19243,7 +19387,7 @@ class ProgressTimeout {
   }
 }
 /* harmony default export */ const lib_ProgressTimeout = (ProgressTimeout);
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/fetcher.js
+;// ./node_modules/@uppy/utils/lib/fetcher.js
 
 
 const noop = () => {};
@@ -19333,7 +19477,7 @@ function fetcher(url, options) {
   }
   return requestWithRetry();
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/utils/lib/fileFilters.js
+;// ./node_modules/@uppy/utils/lib/fileFilters.js
 function filterNonFailedFiles(files) {
   const hasError = file => 'error' in file && !!file.error;
   return files.filter(file => !hasError(file));
@@ -19346,14 +19490,14 @@ function filterFilesToEmitUploadStarted(files) {
     return !((_file$progress = file.progress) != null && _file$progress.uploadStarted) || !file.isRestored;
   });
 }
-;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/locale.js
+;// ./node_modules/@uppy/xhr-upload/lib/locale.js
 /* harmony default export */ const xhr_upload_lib_locale = ({
   strings: {
     // Shown in the Informer if an upload is being canceled because it stalled for too long.
     uploadStalled: 'Upload has not made any progress for %{seconds} seconds. You may want to retry it.'
   }
 });
-;// CONCATENATED MODULE: ./node_modules/@uppy/xhr-upload/lib/index.js
+;// ./node_modules/@uppy/xhr-upload/lib/index.js
 function xhr_upload_lib_classPrivateFieldLooseBase(receiver, privateKey) { if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) { throw new TypeError("attempted to use private field on non-instance"); } return receiver; }
 var xhr_upload_lib_id = 0;
 function xhr_upload_lib_classPrivateFieldLooseKey(name) { return "__private_" + xhr_upload_lib_id++ + "_" + name; }
@@ -19810,7 +19954,7 @@ var es_regexp_exec = __webpack_require__(7495);
 var es_regexp_to_string = __webpack_require__(8781);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.match.js
 var es_string_match = __webpack_require__(1761);
-;// CONCATENATED MODULE: ./client/src/js/common.js
+;// ./client/src/js/common.js
 
 
 
@@ -20079,7 +20223,7 @@ function DFU() {
     }
   };
 }
-;// CONCATENATED MODULE: ./client/src/js/loader.js
+;// ./client/src/js/loader.js
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -20325,7 +20469,7 @@ function DFULoader(opts) {
     this.uploadElement.dispatchEvent(ev);
   };
 }
-;// CONCATENATED MODULE: ./client/src/js/uppy.js
+;// ./client/src/js/uppy.js
 
 
 
@@ -20346,7 +20490,7 @@ dfuXHRUploaders.forEach(function (dfuXHRUploaderElement) {
 });
 })();
 
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
 // extracted by mini-css-extract-plugin
