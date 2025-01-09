@@ -169,6 +169,8 @@ class UserFormFieldTest extends FunctionalTest
 
         // load the form (with the dummy textfields)
         $response = $this->get($page->URLSegment);
+
+        unset($data[$field_name]);
         // submit the form
         $response = $this->submitForm($form->FormName(), null, $data);
 
