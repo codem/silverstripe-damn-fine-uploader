@@ -83,7 +83,10 @@ export default function DFULoader(opts) {
         formData: formData,
         bundle: bundle,
         fieldName: this.uploadElement.dataset.name,
-        endpoint: config.request.endpoint
+        endpoint: config.request.endpoint,
+        shouldRetry: function(xhr) {
+          return false;
+        }
       }
     );
 

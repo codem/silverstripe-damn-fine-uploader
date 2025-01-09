@@ -20937,7 +20937,10 @@ function DFULoader(opts) {
       formData: formData,
       bundle: bundle,
       fieldName: this.uploadElement.dataset.name,
-      endpoint: config.request.endpoint
+      endpoint: config.request.endpoint,
+      shouldRetry: function shouldRetry(xhr) {
+        return false;
+      }
     });
     uppy.on('upload-success', function (file, response) {
       var uri = '';
