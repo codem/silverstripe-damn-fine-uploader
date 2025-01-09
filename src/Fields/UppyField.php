@@ -34,7 +34,7 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-6Z9WRc7GeUv/hggXdOg35gi1m3birtpqCgb3cO8saC9jlrSynh/iaW5VZlCkk/U6"
+                "integrity" => "sha384-VB66JL1kKQm1Iut7XNwUSHvKDf6dUGzY4b72VO6t0Tm2mv9TM0CYdYhmvyz9cOHi"
             ]
         );
         Requirements::css(
