@@ -8,3 +8,6 @@
 /tests/codeception/codeception.yml
 /tests/codeception/.env
 /tests/codeception/tests/_output/*
+/composer.lock
+/public/
+/vendor/
