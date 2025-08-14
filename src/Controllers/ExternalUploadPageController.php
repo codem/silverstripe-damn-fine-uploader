@@ -6,9 +6,9 @@ namespace Codem\DamnFineUploader;
  * @author James
  */
 use Codem\DamnFineUploader\UppyField;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\FormAction;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPRequest;
@@ -32,7 +32,7 @@ class ExternalUploadPageController extends UploadPageController
 
     /**
      * Return the upload field
-     * @return AbstractUppyExternalUploadField;
+     * @return AbstractUppyExternalUploadField
      */
     protected function getUploadField()
     {
@@ -53,7 +53,7 @@ class ExternalUploadPageController extends UploadPageController
      * Use an {@link Extension} to handle further file uploading
      */
     public function uploaded(HTTPRequest $request) : HTTPResponse {
-        $response = new HTTPResponse();
+        $response = HTTPResponse::create();
         return $response;
     }
 

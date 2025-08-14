@@ -2,13 +2,13 @@
 
 namespace Codem\DamnFineUploader;
 
-use Silverstripe\Forms\CheckboxsetField;
+use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Provide a field to allow file type selections
  */
-class TypeSelectionField extends CheckboxsetField
+class TypeSelectionField extends CheckboxSetField
 {
     public function __construct($name, $title = null, $source = [], $value = null)
     {

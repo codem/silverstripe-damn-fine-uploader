@@ -32,8 +32,8 @@ class UppyFieldTest extends SapphireTest
     {
         $fields = FieldList::create();
         $actions = FieldList::create();
-        $controller = new PageController();
-        $form = new Form($controller, "TestForm", $fields, $actions);
+        $controller = PageController::create();
+        $form = Form::create($controller, "TestForm", $fields, $actions);
 
         $bytes = 1048576;
         $max_filesize = 2 * $bytes;
@@ -97,8 +97,8 @@ class UppyFieldTest extends SapphireTest
     {
         $fields = FieldList::create();
         $actions = FieldList::create();
-        $controller = new PageController();
-        $form = new Form($controller, "TestForm", $fields, $actions);
+        $controller = PageController::create();
+        $form = Form::create($controller, "TestForm", $fields, $actions);
 
         $bytes = 1048576;//1 MB
         $max_filesize = 1 * $bytes;

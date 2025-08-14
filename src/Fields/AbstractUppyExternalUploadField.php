@@ -39,12 +39,6 @@ abstract class AbstractUppyExternalUploadField extends UppyField
     protected $serviceConfig = [];
 
     /**
-     * array of service classes linked to field
-     * @var array
-     */
-    private static $uploadServices = [];
-
-    /**
      * Generate a signed URL for upload to the external target
      */
     abstract public function generateSignedUrl(string $fileName) : string;
@@ -59,7 +53,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      */
     public function remove(HTTPRequest $request) : HTTPResponse {
         $response = false;
-        return (new HTTPResponse(json_encode($response), 400))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode($response), 400)->addHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -67,7 +61,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      */
     public function upload(HTTPRequest $request) : HTTPResponse {
         $response = false;
-        return (new HTTPResponse(json_encode($response), 400))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode($response), 400)->addHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -99,9 +93,9 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * @return self|null
      */
     public static function getUploadField($serviceName, $args = []) : ?self {
-        self::getUploadServices();
+        $uploadServices = self::getUploadServices();
         $field = null;
-        if(isset(self::$uploadServices[ $serviceName ])) {
+        if(isset($uploadServices[ $serviceName ])) {
             // link to field
             $serviceClasses = self::getUploadFields();
             foreach($serviceClasses as $serviceClass) {
@@ -134,15 +128,12 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * Get an array of services linked to fields being children of this class
      */
     public static function getUploadServices() : array {
-        if(!empty(self::$uploadServices)) {
-            return self::$uploadServices;
-        }
-        self::$uploadServices = [];
+        $uploadServices = [];
         $serviceClasses = self::getUploadFields();
         foreach($serviceClasses as $serviceClass) {
-            self::$uploadServices[ $serviceClass::getServiceName() ] = $serviceClass::getServiceDescription();
+            $uploadServices[ $serviceClass::getServiceName() ] = $serviceClass::getServiceDescription();
         }
-        return self::$uploadServices;
+        return $uploadServices;
     }
 
     /**
@@ -238,9 +229,9 @@ abstract class AbstractUppyExternalUploadField extends UppyField
             // failed to notify
             $response = false;
             Logger::log("Failed notify() post upload: " . $e->getMessage(), "NOTICE");
-        } finally {
-            return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
         }
+
+        return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');
     }
 
     /**

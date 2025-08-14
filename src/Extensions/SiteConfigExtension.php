@@ -5,7 +5,7 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
-use Silverstripe\ORM\DataExtension;
+use SilverStripe\ORM\DataExtension;
 use Symbiote\MultiValueField\Fields\MultiValueCheckboxField;
 use Symbiote\MultiValueField\Fields\MultiValueDropdownField;
 use Symbiote\MultiValueField\Fields\MultiValueListField;

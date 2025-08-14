@@ -5,6 +5,7 @@ namespace Codem\DamnFineUploader\Tests;
 use Codem\DamnFineUploader\DamnFineUploaderField;
 use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UploadPageController;
+use SilverStripe\Assets\File;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;

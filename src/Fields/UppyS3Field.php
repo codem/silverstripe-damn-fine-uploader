@@ -55,7 +55,7 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
         $response = [
             'presignedurl' => $url
         ];
-        return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\Assets\File;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injector;
@@ -33,8 +34,6 @@ trait SubmittedDamnFineUploader
     /**
      * Return the value of this field for inclusion into things such as
      * reports.
-     *
-     * @return string
      */
     public function getFormattedValue()
     {
@@ -53,15 +52,15 @@ trait SubmittedDamnFineUploader
 
     /**
      * Return the value for this field in the CSV export.
-     *
-     * @return string
      */
     public function getExportValue()
     {
         $links = [];
         foreach ($this->getSubmittedFiles() as $file) {
-            $links[] = $file->getAbsoluteURL();
+            if($file instanceof File) {
+                $links[] = $file->getAbsoluteURL();
+            }
         }
-        return implode('|', $links);
+        return DBField::create_field(DBVarchar::class, implode('|', $links));
     }
 }

@@ -12,7 +12,6 @@ use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 class EditableUploadField extends EditableFileField
 {
     use EditableDamnFineUploader;
-    use Migrations;
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
@@ -53,25 +52,6 @@ class EditableUploadField extends EditableFileField
         parent::onBeforeWrite();
         // set implementation on this field
         $this->Implementation = DamnFineUploaderField::IMPLEMENTATION_UPPY;
-    }
-
-    /**
-     * Require default records / perform migration handling on dev/build
-     */
-    public function requireDefaultRecords()
-    {
-        if(get_class($this) == EditableUploadField::class) {
-            // avoid child classes running this method
-            if ($this->config()->get('run_migration_1')) {
-                $this->migrationDeprecateFineUploader();
-            }
-            if ($this->config()->get('run_migration_manymanyhasmany')) {
-                $this->migrationManyManyHasMany();
-            }
-            if ($this->config()->get('run_migration_allowedmimetypedeprecation')) {
-                $this->migrateAllowedMimeTypes();
-            }
-        }
     }
 
     public function getCMSFields()

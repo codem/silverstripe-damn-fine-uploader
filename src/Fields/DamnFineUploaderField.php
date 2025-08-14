@@ -11,9 +11,9 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
-use Silverstripe\Forms\FileField;
-use Silverstripe\Forms\Form;
-use Silverstripe\Forms\FormField;
+use SilverStripe\Forms\FileField;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\FileUploadReceiver;
 use SilverStripe\Forms\FileHandleField;
 use SilverStripe\MimeValidator\MimeUploadValidator;
@@ -304,7 +304,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * @return HTTPResponse
      */
     public function presign(HTTPRequest $request) : HTTPResponse {
-        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode(false), 400)->addHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -314,7 +314,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * @return HTTPResponse
      */
     public function notify(HTTPRequest $request) : HTTPResponse {
-        return (new HTTPResponse(json_encode(false), 400))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode(false), 400)->addHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -1096,7 +1096,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         foreach ($types as $type) {
             if (strpos($type, "image/") === 0) {
                 return true;
-                break;
             }
         }
 
@@ -1264,7 +1263,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // set default folder name, if not set
         if (!$this->folderName) {
-            $this->setFolderName(Upload::config()->uploads_folder);
+            $this->setFolderName(Upload::config()->get('uploads_folder'));
         }
 
         // Using date based sub directories

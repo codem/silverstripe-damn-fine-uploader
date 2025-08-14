@@ -6,9 +6,9 @@ namespace Codem\DamnFineUploader;
  * @author James
  */
 use Codem\DamnFineUploader\UppyField;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\FormAction;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPResponse;
@@ -28,7 +28,7 @@ class UploadPageController extends \PageController
     private static $upload_field_name = "UploadField";
 
     /**
-     * @return UppyField;
+     * @return UppyField
      */
     protected function getUploadField()
     {
@@ -86,7 +86,7 @@ class UploadPageController extends \PageController
 
 
     /**
-     * @return FormAction;
+     * @return FormAction
      */
     protected function getUploadAction()
     {

@@ -55,11 +55,10 @@ class UppyField extends DamnFineUploaderField
     /**
      * Uppy does not support removal of files post-upload
      * @param HTTPRequest $request
-     * @return boolean
      */
     public function remove(HTTPRequest $request)
     {
-        return false;
+        return HTTPResponse::create('', 501);
     }
 
     /**
@@ -105,7 +104,7 @@ class UppyField extends DamnFineUploaderField
         $response = [
             'uuid' => $uuid
         ];
-        return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -127,7 +126,7 @@ class UppyField extends DamnFineUploaderField
      */
     protected function errorResponse($result, $code = 400)
     {
-        return (new HTTPResponse($result, 400))->addHeader('Content-Type', 'text/plain');
+        return HTTPResponse::create($result, 400)->addHeader('Content-Type', 'text/plain');
     }
 
     /**
@@ -136,7 +135,7 @@ class UppyField extends DamnFineUploaderField
      */
     protected function removeSuccessResponse()
     {
-        return (new HTTPResponse('', 200))->addHeader('Content-Type', 'text/plain');
+        return HTTPResponse::create('', 200)->addHeader('Content-Type', 'text/plain');
     }
 
     /**

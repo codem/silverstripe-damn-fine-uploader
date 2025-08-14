@@ -50,37 +50,42 @@ trait S3Upload
      */
     public function getServiceClient() : ?object {
 
-         $options = [
-             'region'  => $this->getServiceConfigValue('S3_REGION'),
-             'version' => $this->getServiceConfigValue('API_VERSION')
-         ];
 
-         /**
-          * Credentials only passed if it is set.
-          * If not set, infrastructure is expected to have assumed role to run s3 transactions
-          */
-         if( ($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
-             && ($awsSecretAccessKey = $this->getServiceConfigValue('AWS_SECRET_ACCESS_KEY'))
-         ) {
-             $options['credentials'] = new Credentials(
-                 $awsKeyId,
-                 $awsSecretAccessKey
-             );
-         }
+        if(!class_exists(S3Client::class) || !class_exists(Credentials::class)) {
+            return null;
+        }
 
-         if($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
-             $options['endpoint'] = $endpoint;
-         }
+        $options = [
+            'region'  => $this->getServiceConfigValue('S3_REGION'),
+            'version' => $this->getServiceConfigValue('API_VERSION')
+        ];
 
-         if($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
-             $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
-         }
+        /**
+         * Credentials only passed if it is set.
+        * If not set, infrastructure is expected to have assumed role to run s3 transactions
+        */
+        if( ($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
+            && ($awsSecretAccessKey = $this->getServiceConfigValue('AWS_SECRET_ACCESS_KEY'))
+        ) {
+            $options['credentials'] = new Credentials(
+                $awsKeyId,
+                $awsSecretAccessKey
+            );
+        }
 
-         if($debug = $this->getServiceConfigValue('DEBUG')) {
-             $options['debug'] = $debug;
-         }
+        if($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
+            $options['endpoint'] = $endpoint;
+        }
 
-         return new S3Client($options);
+        if($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
+            $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
+        }
+
+        if($debug = $this->getServiceConfigValue('DEBUG')) {
+            $options['debug'] = $debug;
+        }
+
+        return new S3Client($options);
 
     }
 

@@ -60,11 +60,10 @@ trait EditableDamnFineUploader
     }
 
     /**
-     * The value returned by this value is null, when this method is called
+     * The value returned by this method is an empty string, when this method is called
      * any files in the request are linked to the submitted upload field
      * Note $data param can be passed to this method by controller but is not present in EditableFileField
      *
-     * @return null
      * @throws \Exception
      */
     public function getValueFromData(/*$data*/)
@@ -75,14 +74,14 @@ trait EditableDamnFineUploader
             $controller = null;
             $parent = $this->Parent();
             if($parent instanceof SiteTree) {
-                $controller = ModelAsController::controller_for($this->Parent());
-            } else if(class_exists(ElementForm::class) && $parent instanceof ElementForm) {
+                $controller = ModelAsController::controller_for($parent);
+            } else if(class_exists(ElementForm::class) && class_exists(ElementFormController::class) && $parent instanceof ElementForm) {
                 $controller = Injector::inst()->create(ElementFormController::class, $parent);
                 $controller->doInit();
             }
 
             if (!$controller) {
-                throw new ValidationException(
+                throw ValidationException::create(
                     _t(
                         "DamnFineUploader.NO_CONTROLLER",
                         "Sorry, the file upload could not be completed due to a system error."
@@ -91,9 +90,13 @@ trait EditableDamnFineUploader
             }
 
             $form = null;
+            /** @phpstan-ignore class.notFound */
             if($controller->hasMethod('Form')) {
+                /** @phpstan-ignore class.notFound */
                 $form = $controller->Form();
+                /** @phpstan-ignore class.notFound */
             } else if($controller->hasMethod('getUploadForm')) {
+                /** @phpstan-ignore class.notFound */
                 $form = $controller->getUploadForm();
             }
 
@@ -131,7 +134,7 @@ trait EditableDamnFineUploader
                 }
             } else if($this->Required == 1) {
                 // required field but not files found
-                throw new ValidationException(
+                throw ValidationException::create(
                     _t(
                         "DamnFineUploader.REQUIRED_FIELD_NO_FILES",
                         "Please upload some files. The uploader requires Javascript, please ensure that it is enabled in your web browser."
@@ -139,15 +142,15 @@ trait EditableDamnFineUploader
                 );
             }
 
-            // the Value value for the field is null
-            return null;
+            
+            return '';
 
         } catch (\Exception $e) {
             // failed at some point
             Logger::log("Error:" . $e->getMessage(), "NOTICE");
         }
 
-        throw new ValidationException(
+        throw ValidationException::create(
             _t(
                 "DamnFineUploader.UPLOADED_FILES_NOT_FOUND",
                 "Sorry, the file upload could not be completed due to a system error."

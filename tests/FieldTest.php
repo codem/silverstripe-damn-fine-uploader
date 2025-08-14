@@ -5,8 +5,8 @@ namespace Codem\DamnFineUploader\Tests;
 use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
 
 class FieldTest extends SapphireTest
 {
