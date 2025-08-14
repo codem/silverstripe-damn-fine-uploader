@@ -16,13 +16,12 @@ trait S3Upload
 
     /**
      * Generate a signed URL for upload to the external target
-     * @param string $fileName
      */
     public function generateSignedUrl(string $fileName = '') : string {
         $serviceClient = $this->getServiceClient();
         $bucket = $this->getServiceConfigValue('S3_BUCKET');
 
-        if($fileName == '') {
+        if($fileName === '') {
             $fileName = $this->generateUploadHash();
         }
 
@@ -41,8 +40,7 @@ trait S3Upload
             $cmd,
             "+{$expiry} minutes"
         );
-        $presignedUrl = (string)$request->getUri();
-        return $presignedUrl;
+        return (string)$request->getUri();
     }
 
     /**

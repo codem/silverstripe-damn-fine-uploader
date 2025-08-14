@@ -15,6 +15,6 @@ class FieldTestController extends Controller implements TestOnly
         parent::__construct();
     }
 
-    private static $url_segment = 'FieldTestController';
+    private static string $url_segment = 'FieldTestController';
 
 }

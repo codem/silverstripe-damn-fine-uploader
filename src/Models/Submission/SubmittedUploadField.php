@@ -8,45 +8,30 @@ use SilverStripe\Assets\File;
 /**
  * Base Submitted Upload Field record
  * You should not instantiate this class
+ * @method \SilverStripe\ORM\HasManyList<\SilverStripe\Assets\File> Files()
  */
 class SubmittedUploadField extends SubmittedFormField
 {
     use SubmittedDamnFineUploader;
 
-    /**
-     * @var string
-     */
-    private static $singular_name = 'Submitted drag & drop file upload field';
+    private static string $singular_name = 'Submitted drag & drop file upload field';
 
-    /**
-     * @var string
-     */
-    private static $plural_names = 'Submitted drag & drop file upload fields';
+    private static string $plural_names = 'Submitted drag & drop file upload fields';
 
     /**
      * Defines the database table name
-     * @var string
      */
-    private static $table_name = 'SubmittedUploadField';
+    private static string $table_name = 'SubmittedUploadField';
 
-    /**
-     * @var array
-     */
-    private static $has_many = [
+    private static array $has_many = [
         'Files' => File::class
     ];
 
-    /**
-     * @var array
-     */
-    private static $owns = [
+    private static array $owns = [
         'Files'
     ];
 
-    /**
-     * @var array
-     */
-    private static $cascade_deletes = [
+    private static array $cascade_deletes = [
         'Files'
     ];
 }

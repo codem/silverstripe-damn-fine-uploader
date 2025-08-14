@@ -23,6 +23,16 @@ use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
  * This page requires extension in code to handle file upload response to the user
  * as such it can only be created, edit and published by those with allowed permissions
  * @author James
+ * @property float $MaxFileSizeMB
+ * @property ?string $SelectedFileTypes
+ * @property int $FileUploadLimit
+ * @property bool $UseDateFolder
+ * @property ?string $FormFieldTitle
+ * @property ?string $FormFieldDescription
+ * @property ?string $FormFieldRightTitle
+ * @property ?string $FormUploadButtonTitle
+ * @property int $FolderID
+ * @method \SilverStripe\Assets\Folder Folder()
  */
 class UploadPage extends \Page implements PermissionProvider
 {
@@ -30,7 +40,7 @@ class UploadPage extends \Page implements PermissionProvider
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
-    private static $db = [
+    private static array $db = [
         'MaxFileSizeMB' => 'Float',
         'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
@@ -41,39 +51,33 @@ class UploadPage extends \Page implements PermissionProvider
         'FormUploadButtonTitle' => 'Varchar(255)',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Folder' => Folder::class,
     ];
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'MaxFileSizeMB' => 0,
         'UseDateFolder' => 1,
         'FileUploadLimit' => 3,
         'FormFieldTitle' => 'Upload',
     ];
 
-    private static $table_name = 'DamnFineUploaderPage';
+    private static string $table_name = 'DamnFineUploaderPage';
 
     /**
      * Singular name for CMS
-     * @var string
      */
-    private static $singular_name = 'A page that handles file uploads';
+    private static string $singular_name = 'A page that handles file uploads';
 
     /**
      * Plural name for CMS
-     * @var string
      */
-    private static $plural_name = 'Pages that handle file uploads';
+    private static string $plural_name = 'Pages that handle file uploads';
 
-    /**
-     * @var string
-     */
-    private static $description = 'Allows multiple uploads, requires customisation in code.';
+    private static string $description = 'Allows multiple uploads, requires customisation in code.';
 
     /**
      * Check if this page can be published
@@ -88,6 +92,7 @@ class UploadPage extends \Page implements PermissionProvider
         if(!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_PUBLISH");
     }
 
@@ -104,6 +109,7 @@ class UploadPage extends \Page implements PermissionProvider
         if(!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_EDIT");
     }
 
@@ -121,6 +127,7 @@ class UploadPage extends \Page implements PermissionProvider
         if(!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_CREATE");
     }
 

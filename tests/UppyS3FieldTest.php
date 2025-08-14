@@ -16,7 +16,7 @@ class UppyS3FieldTest extends SapphireTest
     /**
      * Test service name value
      */
-    public function testServiceName()
+    public function testServiceName(): void
     {
         $serviceName = UppyS3Field::getServiceName();
         $this->assertEquals(UppyS3Field::SERVICE_NAME, $serviceName);
@@ -25,7 +25,7 @@ class UppyS3FieldTest extends SapphireTest
     /**
      * Test service description value
      */
-    public function testServiceDescription()
+    public function testServiceDescription(): void
     {
         $serviceDescription = UppyS3Field::getServiceDescription();
         $this->assertEquals(UppyS3Field::SERVICE_DESCRIPTION, $serviceDescription);

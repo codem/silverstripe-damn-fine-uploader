@@ -9,18 +9,24 @@ use SilverStripe\Assets\File;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
+/**
+ * @property ?string $DFU
+ * @property bool $IsDfuUpload
+ * @property int $SubmittedUploadFieldID
+ * @method \Codem\DamnFineUploader\SubmittedUploadField SubmittedUploadField()
+ * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\Assets\File & static)>
+ */
 class FileExtension extends DataExtension
 {
-    private static $db = [
+    private static array $db = [
         'DFU' => 'Varchar(255)',
         'IsDfuUpload' => 'Boolean',
     ];
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'IsDfuUpload' => 0
     ];
 
@@ -28,11 +34,11 @@ class FileExtension extends DataExtension
      * If the file was submitted via a UserDefinedFormController
      * this field will contain the field ID
      */
-    private static $has_one = [
+    private static array $has_one = [
         'SubmittedUploadField' => SubmittedUploadField::class
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'DFU' => ['type' => 'unique', 'columns' => ['DFU'] ]
     ];
 
@@ -51,9 +57,9 @@ class FileExtension extends DataExtension
      * Note that this retrieves a file from the DRAFT stage as it may not be public
      * @param string $uuid the file uuid sent by back on upload as newUuid and submitted with the form
      * @param string $form_security_token the Security Token value from the form, sent to the uploader with each upload
-     * @param boolean $untrust when true (the default), the uploader token will be removed when the file is retrieved. Warning: this will mean you can no longer retrieve the file using this method again.
+     * @param bool $untrust when true (the default), the uploader token will be removed when the file is retrieved. Warning: this will mean you can no longer retrieve the file using this method again.
      */
-    public function getByDfuToken($uuid, $form_security_token, $untrust = true)
+    public function getByDfuToken(string $uuid, string $form_security_token, bool $untrust = true)
     {
         $token = $uuid . "|" . $form_security_token;
         $file = Versioned::get_by_stage(File::class, Versioned::DRAFT)
@@ -63,6 +69,7 @@ class FileExtension extends DataExtension
             $file->DFU = null;
             $file->writeToStage(Versioned::DRAFT);
         }
+
         return $file;
     }
 }

@@ -34,32 +34,39 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 {
     use FileUploadReceiver;
 
-    const IMPLEMENTATION_TRADITIONAL_CORE = 'uppy';// @deprecated
-    const IMPLEMENTATION_TRADITIONAL_UI = 'uppy';// @deprecated
-    const IMPLEMENTATION_UPPY = 'uppy';// Uppy
+    const IMPLEMENTATION_UPPY = 'uppy';
+    
     const UUID_NAME = 'dfu_uuid';
 
-    protected $file_input_param = '';// file is uploaded in this POST variable
+    // file is uploaded in this POST variable
+    protected string $file_input_param = '';
 
-    protected $lib_config = [];//library configuration
-    protected $runtime_config = [];//runtime config, merged into lib_config
-    protected $option_delete;
-    protected $option_request = [];//custom request/delete settings
-    protected $default_accepted_types = 'image/jpg,image/gif,image/png,image/webp,image/jpeg';// default to images if no accepted types set
-    protected $use_date_folder = true;
+    //library configuration
+    protected array $lib_config = [];
+    
+    //runtime config, merged into lib_config
+    protected $runtime_config = [];
 
-    protected $implementation = '';
+    // custom delete settings
+    protected array $option_delete = [];
 
-    /**
-     * @var bool
-     */
-    protected $supportsNotifications = false;
+    // custom request settings
+    protected array $option_request = [];
+   
+    // default to images if no accepted types set
+    protected string $default_accepted_types = 'image/jpg,image/gif,image/png,image/webp,image/jpeg';
+    
+    protected bool $use_date_folder = true;
+
+    protected string $implementation = '';
+
+    protected bool $supportsNotifications = false;
 
     /**
      * @var array
      * Array of mimetypes that are never allowed in uploads
      */
-    private static $denied_mimetypes = [
+    private static array $denied_mimetypes = [
         'text/x-php', 'text/php', 'application/php', 'application/x-php',
         'application/x-httpd-php', 'application/x-httpd-php-source',
         'application/javascript', 'text/javascript',
@@ -73,7 +80,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * @var array
      * Array of types that are never allowed in uploads
      */
-    private static $denied_types = [
+    private static array $denied_types = [
         '.php',
         '.js',
         '.css',
@@ -86,9 +93,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * @config
-     * @var array
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'upload',
         'remove',
         'notify',
@@ -125,7 +131,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if($request) {
             $post = $request->postVars();
         }
-        return isset($post[$this->getName()]) ? $post[$this->getName()] : null;
+
+        return $post[$this->getName()] ?? null;
     }
 
     public function Value()
@@ -140,8 +147,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function getValidator()
     {
-        $validator = Injector::inst()->get(MimeUploadValidator::class);
-        return $validator;
+        return Injector::inst()->get(MimeUploadValidator::class);
     }
 
     /**
@@ -211,7 +217,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Retrieve the file input data from the request
      * @return array|false
      */
-    private function getFileFromRequest(HTTPRequest $request)
+    private function getFileFromRequest()
     {
         if (isset($_FILES[ $this->file_input_param ])) {
             return $_FILES[ $this->file_input_param ];
@@ -233,6 +239,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!$token || !$token->checkRequest($request)) {
             throw new Exception("SecurityToken is not valid");
         }
+
         $token_value = $token->getValue();
         $form_security_token_name = $token->getName();
 
@@ -258,23 +265,23 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (empty($post[ self::UUID_NAME ])) {
             throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_MISSING_UUID', 'Required data not received'));
         }
+
         return $post[ self::UUID_NAME ];
     }
 
     /**
-      * Action to handle upload of a single file
-      * @note the PHP settings to consider here are file_uploads, upload_max_filesize, post_max_size, upload_tmp_dir
-      *      file_uploads - when off, the $_FILES array will be empty
-      *      upload_max_filesize - files over this size will trigger error #1
-      *      post_max_size - requests over this size will cause the $_FILES array to be empty
-      *      upload_tmp_dir - an invalid or non-writable tmp dir will cause error #6 or #7
-      * @note depending on the size of the uploads allowed, you may like to increase the max input/execution time for these requests
-      *
-      * Implementations can implement their own upload method
-      *
-      * @param HTTPRequest $request
-      * @return HTTPResponse
-      */
+     * Action to handle upload of a single file
+     * @note the PHP settings to consider here are file_uploads, upload_max_filesize, post_max_size, upload_tmp_dir
+     *      file_uploads - when off, the $_FILES array will be empty
+     *      upload_max_filesize - files over this size will trigger error #1
+     *      post_max_size - requests over this size will cause the $_FILES array to be empty
+     *      upload_tmp_dir - an invalid or non-writable tmp dir will cause error #6 or #7
+     * @note depending on the size of the uploads allowed, you may like to increase the max input/execution time for these requests
+     *
+     * Implementations can implement their own upload method
+     *
+     * @return HTTPResponse
+     */
     public function upload(HTTPRequest $request)
     {
         try {
@@ -283,12 +290,9 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             if(!$result) {
                 throw new \Exception("The file could not be saved");
             }
+
             return $result;
-        } catch (MissingDataException $e) {
-            $error = $e->getMessage();
-        } catch (InvalidRequestException $e) {
-            $error = $e->getMessage();
-        } catch (InvalidFileException $e) {
+        } catch (MissingDataException|InvalidRequestException|InvalidFileException $e) {
             $error = $e->getMessage();
         } catch (Exception $e) {
             $error = "General error:" . $e->getMessage();
@@ -300,8 +304,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * By default fields do not support presign
-     * @param HTTPRequest $request
-     * @return HTTPResponse
      */
     public function presign(HTTPRequest $request) : HTTPResponse {
         return HTTPResponse::create(json_encode(false), 400)->addHeader('Content-Type', 'application/json');
@@ -310,8 +312,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Handle notification received after upload success, error or completion
      * By default fields do not support notify, child fields should support this
-     * @param HTTPRequest $request
-     * @return HTTPResponse
      */
     public function notify(HTTPRequest $request) : HTTPResponse {
         return HTTPResponse::create(json_encode(false), 400)->addHeader('Content-Type', 'application/json');
@@ -322,7 +322,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * @return \SilverStripe\Assets\File
      * @throws InvalidFileException|Exception
      */
-    private function saveFile($file_upload, string $uuid, string $form_security_token_value)
+    private function saveFile(array $file_upload, string $uuid, string $form_security_token_value): File
     {
 
         // Set allowed max file size
@@ -332,7 +332,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // This will call loadIntoFile which triggers onAfterUpload()
         $file = $this->saveTemporaryFile($file_upload, $error);
-        if ($error) {
+        if ($error !== null && $error !== '') {
             // log this error
             Logger::log("File upload failed with error:" . $error, "INFO");
             throw new InvalidFileException(_t(
@@ -340,6 +340,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
                 'Sorry, the file could not be saved'
             ));
         }
+
         if (!$file || !($file instanceof File)) {
             // log this error
             Logger::log("Invalid file instance returned on upload attempt", "INFO");
@@ -360,9 +361,10 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         try {
             // generate thumbnails for the admin
             AssetAdmin::singleton()->generateThumbnails($file);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // No-op as this is just  nice-to-have
         }
+
         return $file;
     }
 
@@ -379,6 +381,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             if(!$allow_delete) {
                 throw new InvalidRequestException("Cannot remove this file");
             }
+
             $post = $request->postVars();
             if ($request->isPOST() && empty($post)) {
                 //invalid POST
@@ -396,11 +399,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
             //remove the file
             return $this->removeFile($file_uuid, $form_security_token);
-        } catch (MissingDataException $e) {
-            $error = $e->getMessage();
-        } catch (InvalidRequestException $e) {
-            $error = $e->getMessage();
-        } catch (FileRemovalException $e) {
+        } catch (MissingDataException|InvalidRequestException|FileRemovalException $e) {
             $error = $e->getMessage();
         } catch (Exception $e) {
             $error = "General error:" . $e->getMessage();
@@ -414,7 +413,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * Remove a file based on its uuid and the form's security token
      * You can override this handling if you wish to modify the response (e.g a 202 response)
      */
-    final protected function removeFile($uuid, $form_security_token)
+    final protected function removeFile(string $uuid, string $form_security_token)
     {
         $record = FileRetriever::getFile($uuid, $form_security_token);
         $record_id = null;
@@ -615,16 +614,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (empty($this->lib_config['validation']['sizeLimit'])) {
             // if not yet set, use the system size
             $this->lib_config['validation']['sizeLimit'] = $system_max_file_size;
-        } else if($system_max_file_size > 0) {
+        } elseif ($system_max_file_size > 0) {
             // ensure that the size is under the system size
             $this->lib_config['validation']['sizeLimit'] = min($this->lib_config['validation']['sizeLimit'], $system_max_file_size);
         }
 
         // sanity checks on the minimum size limits provided
-        if (isset($this->lib_config['validation']['minSizeLimit']) && isset($this->lib_config['validation']['sizeLimit'])) {
-            if ($this->lib_config['validation']['minSizeLimit'] > $this->lib_config['validation']['sizeLimit']) {
-                $this->lib_config['validation']['minSizeLimit'] = 0;
-            }
+        if (isset($this->lib_config['validation']['minSizeLimit']) && isset($this->lib_config['validation']['sizeLimit']) && $this->lib_config['validation']['minSizeLimit'] > $this->lib_config['validation']['sizeLimit']) {
+            $this->lib_config['validation']['minSizeLimit'] = 0;
         }
 
         $this->default_configuration_complete = true;
@@ -653,6 +650,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $action = $this->getForm()->FormAction();
             $link = Controller::join_links($action, $this->NotificationLink());
         }
+
         return $link;
     }
 
@@ -666,7 +664,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Set a Form Security Token on config
-     * @param SecurityToken $token
      */
     public function setSecurityToken(SecurityToken $token)
     {
@@ -695,8 +692,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             return $this->runtime_config['request']['endpoint'];
         } else {
             $action = $this->getForm()->FormAction();
-            $link = Controller::join_links($action, $this->UploadLink());
-            return $link;
+            return Controller::join_links($action, $this->UploadLink());
         }
     }
 
@@ -720,14 +716,12 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             return $this->runtime_config['deleteFile']['endpoint'];
         } else {
             $action = $this->getForm()->FormAction();
-            $link = Controller::join_links($action, $this->RemoveLink());
-            return $link;
+            return Controller::join_links($action, $this->RemoveLink());
         }
     }
 
     /**
      * Provide custom request endpoint configuration
-     * @param array $request
      */
     public function setOptionRequest(array $request)
     {
@@ -753,9 +747,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!$this->hasDefaultConfiguration()) {
             $this->setUploaderDefaultConfig();
         }
+
         if (isset($this->lib_config[$category][$key])) {
             return $this->lib_config[$category][$key];
         }
+
         return null;
     }
 
@@ -779,16 +775,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Filter the provided types - types without a period are given one
      * types in the denied types and mimetypes configuration are removed
-     * @param array $types
-     * @return array
      */
     public function filterTypes(array $types) : array {
         // ensure that types without a period get one
         array_walk(
             $types,
-            function( &$value, $key ) {
+            function( &$value, $key ): void {
                 $value = trim($value);
-                if($value != "" && strpos($value, ".") === false && strpos($value, "/") === false) {
+                if($value !== "" && !str_contains($value, ".") && !str_contains($value, "/")) {
                     $value = ".{$value}";
                 }
             }
@@ -798,10 +792,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $this->config()->get('denied_mimetypes'),
             $this->config()->get('denied_types')
         );
-        if(!empty($denied)) {
+        if($denied !== []) {
             // returns values in $types that are not in the list of denied types
             $types = array_diff($types, $denied);
         }
+
         return array_values( array_unique( array_filter($types) ) );
     }
 
@@ -819,7 +814,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * For compatibility with other Silverstripe uploaders, the extension e.g "png" is allowed and will be set as .png
      *
      * Extensions are automatically determined based on the types provided
-     * @param array $types
      * @return self
      */
     public function setAcceptedTypes(array $types)
@@ -828,6 +822,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             // cannot set empty types
             return $this;
         }
+
         $types = $this->filterTypes($types);
         // ensure the type array is
         $this->runtime_config['validation']['acceptFiles'] = implode(",", $types);
@@ -841,7 +836,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Return the accepted types in configuration, set by setAcceptedTypes
      * This should be called after setUploaderDefaultConfig() is processed
-     * @return array
      */
     public function getAcceptedTypes() : array
     {
@@ -851,9 +845,11 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (is_string($acceptFiles)) {
             $acceptedTypes = array_filter(explode(",", $acceptFiles));
         }
+
         if(count($acceptedTypes) == 0) {
             $acceptedTypes = explode(",", $this->getDefaultAcceptedTypes());
         }
+
         // @var array
         $acceptedTypes = $this->filterTypes($acceptedTypes);
         $this->lib_config['validation']['acceptFiles'] = implode(",", $acceptedTypes);
@@ -874,8 +870,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function getSystemAllowedMaxFileSize()
     {
-        $bytes = (int)$this->getValidator()->getAllowedMaxFileSize();
-        return $bytes;
+        return (int)$this->getValidator()->getAllowedMaxFileSize();
     }
 
     /**
@@ -886,11 +881,8 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     public function setAllowedMaxFileSize($bytes)
     {
         $system = $this->getSystemAllowedMaxFileSize();
-        if($system > 0) {
-            $limit = min($bytes, $system);
-        } else {
-            $limit = $bytes;
-        }
+        $limit = $system > 0 ? min($bytes, $system) : $bytes;
+
         $this->runtime_config['validation']['sizeLimit'] = round($limit);
 
         return $this;
@@ -951,34 +943,35 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $mimeTypes = HTTP::config()->uninherited('MimeTypes');
         $extensions = [];
         foreach ($types as $type) {
-            if(strpos($type, ".") === false && strpos($type, "/") === false) {
+            if (in_array(str_contains((string) $type, "."), [0, false], true) && !str_contains((string) $type, "/")) {
                 // e.g "png"
                 $extensions[] = $type;
-            } else if(strpos($type, ".") === 0) {
+            } elseif (str_starts_with((string) $type, ".")) {
                 // e.g ".png" - add the standard extension, without the .
-                $extensions[] = substr($type, 1);
+                $extensions[] = substr((string) $type, 1);
             } else {
-                $parts = explode("/", $type);
+                $parts = explode("/", (string) $type);
                 $filtered = array_filter(
                     $mimeTypes,
-                    function($mimeType, $extension) use ($type, $parts) {
-                        if($mimeType == $type) {
+                    function($mimeType, $extension) use ($type, $parts): bool {
+                        if ($mimeType == $type) {
                             // exact mimetype match
                             return true;
-                        } else if(count($parts) == 2 && $parts[1] == "*") {
+                        } elseif (count($parts) == 2 && $parts[1] == "*") {
                             // that the mimetype (image/png) starts with image/
-                            return  strpos( $mimeType, $parts[0] . "/") === 0;
+                            return  str_starts_with($mimeType, $parts[0] . "/");
                         } else {
                             return false;
                         }
                     },
                     ARRAY_FILTER_USE_BOTH
                 );
-                if(!empty($filtered)) {
+                if($filtered !== []) {
                     $extensions = array_merge($extensions, array_keys($filtered));
                 }
             }
         }
+
         // return extensions with empty values removed
         $extensions = array_filter($extensions);
         sort( $extensions );
@@ -1021,8 +1014,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function AcceptedItemLimit()
     {
-        $limit = $this->lib_config['validation']['itemLimit'];
-        return $limit;
+        return $this->lib_config['validation']['itemLimit'];
     }
 
     /**
@@ -1033,6 +1025,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['maxWidth'])) {
             return (int)$this->lib_config['validation']['image']['maxWidth'];
         }
+
         return false;
     }
 
@@ -1044,6 +1037,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['maxHeight'])) {
             return (int)$this->lib_config['validation']['image']['maxHeight'];
         }
+
         return false;
     }
 
@@ -1052,6 +1046,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (($width = $this->AcceptedMaxWidth()) && ($height = $this->AcceptedMaxHeight())) {
             return $width . "×" . $height;
         }
+
         return "";
     }
 
@@ -1063,6 +1058,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['minWidth'])) {
             return (int)$this->lib_config['validation']['image']['minWidth'];
         }
+
         return false;
     }
 
@@ -1074,6 +1070,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['minHeight'])) {
             return (int)$this->lib_config['validation']['image']['minHeight'];
         }
+
         return false;
     }
 
@@ -1082,6 +1079,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (($width = $this->AcceptedMinWidth()) && ($height = $this->AcceptedMinHeight())) {
             return $width . "×" . $height;
         }
+
         return "";
     }
 
@@ -1094,7 +1092,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         // Check accepted types first
         $types = $this->getAcceptedTypes();
         foreach ($types as $type) {
-            if (strpos($type, "image/") === 0) {
+            if (str_starts_with((string) $type, "image/")) {
                 return true;
             }
         }
@@ -1103,7 +1101,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $categoryExtensions = File::get_category_extensions(['image', 'image/supported']);
         $allowedExtensions =  $this->getAllowedExtensions();
         $diff = array_intersect($categoryExtensions, $allowedExtensions);
-        return count($diff) > 0;
+        return $diff !== [];
     }
 
     public function Field($properties = [])
@@ -1147,13 +1145,14 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     final protected function parseMimeType($mimetype)
     {
         $parsed = false;
-        if (strpos($mimetype, "/") !== false) {
-            $parts = explode('/', $mimetype);
+        if (str_contains((string) $mimetype, "/")) {
+            $parts = explode('/', (string) $mimetype);
             $parsed = [
                 'type' => $parts[0],
                 'subtype' => $parts[1],
             ];
         }
+
         return $parsed;
     }
 
@@ -1181,16 +1180,20 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // use the Upload class to validate using the MimeUploadValidator
         $valid = $this->getUpload()->validate($tmp_file);
-        $file_path = isset($tmp_file['tmp_name']) ? $tmp_file['tmp_name'] : '';
+        $file_path = $tmp_file['tmp_name'] ?? '';
         if (!$file_path) {
             throw new InvalidFileException(_t('DamnFineUploader.TMP_FILE_NOT_FOUND', 'Sorry, the file could not be read'));
         }
+
         // get file info using finfo
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mimetype = $finfo->file($file_path);
 
         // check for a denied mimetype in this uploader's configuration
         $is_denied = $this->isDeniedMimeType($mimetype);
+        if(!$is_denied) {
+            $valid = false;
+        }
 
         return [
             'valid' => $valid,
@@ -1200,16 +1203,15 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Given a mimetpye, check if configuration denies it
-     * @param string $mimetype
-     * @return boolean
      */
-    public function isDeniedMimeType(string $mimetype) {
+    public function isDeniedMimeType(string $mimetype): bool {
         // fallback - check denied mimetypes
         $is_denied = false;
         $denied = $this->config()->get('denied_mimetypes');
         if(!empty($denied) && is_array($denied)) {
-            $is_denied = array_search($mimetype, $denied) !== false;
+            $is_denied = in_array($mimetype, $denied);
         }
+
         return $is_denied;
     }
 
@@ -1251,7 +1253,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $file_uuid = $this->getFileUuidFromRequest($request);
 
         // Get the uploaded file
-        $file_upload = $this->getFileFromRequest($request);
+        $file_upload = $this->getFileFromRequest();
 
         // Do we have a file tmp_name ?
         if (empty($file_upload['tmp_name'])) {
@@ -1278,7 +1280,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         // Check the tmp file against allowed mimetypes  - e.g file/bad being uploaded as file.good
         $result = $this->checkUploadedFile($file_upload);
         if (!$result['valid']) {
-            $mimetype = !empty($result['mimetype']) ? $result['mimetype'] : 'unknown';
+            $mimetype = empty($result['mimetype']) ? 'unknown' : $result['mimetype'];
             throw new InvalidRequestException(sprintf(_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE', 'The file uploaded could not be accepted as it is a %s file, please try again with a different file'), $mimetype));
         }
 
@@ -1301,15 +1303,15 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      * For PHP5 this uses the random_compat lib polyfill
      * @returns string
      */
-    protected static function sign_uuid($uuid)
+    protected static function sign_uuid(string $uuid)
     {
         $key = Config::inst()->get(DamnFineUploaderField::class, 'signing_key');
         if (empty($key)) {
             throw new Exception("No signing key is set in configuration");
         }
+
         $salt = bin2hex(random_bytes(16));
-        $token = hash_hmac("sha256", $uuid . $salt, $key, false);
-        return $token;
+        return hash_hmac("sha256", $uuid . $salt, (string) $key, false);
     }
 
     /**
@@ -1320,8 +1322,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (empty($uuid)) {
             throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_MISSING_UUID', 'Required data not received'));
         }
-        $signed_value = self::sign_uuid($uuid);
-        return $signed_value;
+        return self::sign_uuid($uuid);
     }
 
     /**
@@ -1334,6 +1335,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if ($check == 0) {
             return 0;
         }
+
         return round(($in / $check), 2);
     }
 }

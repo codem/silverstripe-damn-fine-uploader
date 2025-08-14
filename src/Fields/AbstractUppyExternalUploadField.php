@@ -66,24 +66,16 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 
     /**
      * Presign URL for the field
-     * @return string
      */
     public function getPresignUrl() : string {
         $action = $this->getForm()->FormAction();
-        $link = Controller::join_links($action, $this->PresignLink());
-        return $link;
+        return Controller::join_links($action, $this->PresignLink());
     }
 
-    /**
-     * @return string
-     */
     final public static function getServiceName() : string {
         return static::SERVICE_NAME;
     }
 
-    /**
-     * @return string
-     */
     final public static function getServiceDescription() : string {
         return static::SERVICE_DESCRIPTION;
     }
@@ -113,6 +105,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                 }
             }
         }
+
         return $field;
     }
 
@@ -120,8 +113,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * Get a list of classes representing fields that are children of this class
      */
     public static function getUploadFields() : array {
-        $fields = ClassInfo::subclassesFor( self::class, false );
-        return $fields;
+        return ClassInfo::subclassesFor( self::class, false );
     }
 
     /**
@@ -133,6 +125,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
         foreach($serviceClasses as $serviceClass) {
             $uploadServices[ $serviceClass::getServiceName() ] = $serviceClass::getServiceDescription();
         }
+
         return $uploadServices;
     }
 
@@ -141,8 +134,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      */
     public function generateUploadHash() : string {
         $generator = new RandomGenerator();
-        $token = $generator->randomToken('sha256');
-        return $token;
+        return $generator->randomToken('sha256');
     }
 
     /**
@@ -165,23 +157,19 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * @return mixed
      */
     public function getServiceConfigValue(string $key) {
-        $value = array_key_exists($key, $this->serviceConfig) ? $this->serviceConfig[ $key ] : null;
-        return $value;
+        return $this->serviceConfig[ $key ] ?? null;
     }
 
     /**
-      * Handle notification received after upload success, error or completion
-      * For completion the POST data will have a 'completed' key
-      * For per file completion notifications, the POST data will have a id being the uploader file id
-      * along with name, size, type and uuid keys
-      * The uuid is the value included in a {@link self::upload()} response
-      *
-      * This method simply notifies extends of a completed upload or completed batch
-      * by passing the request value to the extension
-      *
-      * @param HTTPRequest $request
-      * @return HTTPResponse
-      */
+     * Handle notification received after upload success, error or completion
+     * For completion the POST data will have a 'completed' key
+     * For per file completion notifications, the POST data will have a id being the uploader file id
+     * along with name, size, type and uuid keys
+     * The uuid is the value included in a {@link self::upload()} response
+     *
+     * This method simply notifies extends of a completed upload or completed batch
+     * by passing the request value to the extension
+     */
     public function notify(HTTPRequest $request) : HTTPResponse {
         try {
 
@@ -204,6 +192,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                 if(empty($meta[ $tokenName ])) {
                     throw new \Exception("No security token in the submitted notification");
                 }
+
                 if($meta[ $tokenName ] !== $tokenValue) {
                     throw new \Exception("Security token value does not match the expected value");
                 }
@@ -212,23 +201,24 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                 $externalUpload = ExternalUpload::create([
                     'ServiceName' => static::getServiceName(),
                     'ServiceTitle' => static::getServiceDescription(),
-                    'Title' => isset($post['name']) ? $post['name'] : '',
+                    'Title' => $post['name'] ?? '',
                     'Description' => '',
-                    'IsSuccess' => isset($post['result']) ? $post['result'] : 0,
-                    'UploadSize' => isset($post['size']) ? $post['size'] : 0,
-                    'UploadType' => isset($post['type']) ? $post['type'] : '',
-                    'UploadHash' => isset($post['id']) ? $post['id'] : '',
-                    'UploadUri' => isset($post['uri']) ? $post['uri'] : '',
-                    'UploadSrc' => isset($post['src']) ? $post['src'] : '',
+                    'IsSuccess' => $post['result'] ?? 0,
+                    'UploadSize' => $post['size'] ?? 0,
+                    'UploadType' => $post['type'] ?? '',
+                    'UploadHash' => $post['id'] ?? '',
+                    'UploadUri' => $post['uri'] ?? '',
+                    'UploadSrc' => $post['src'] ?? '',
                     'UploadBatchId' => ''
                 ]);
                 $id = $externalUpload->write();
             }
+
             $response = true;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             // failed to notify
             $response = false;
-            Logger::log("Failed notify() post upload: " . $e->getMessage(), "NOTICE");
+            Logger::log("Failed notify() post upload: " . $exception->getMessage(), "NOTICE");
         }
 
         return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');

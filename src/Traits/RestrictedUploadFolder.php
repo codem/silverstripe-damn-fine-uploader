@@ -20,14 +20,15 @@ trait RestrictedUploadFolder {
         $folder = $this->Folder();
         if(!$folder->exists()) {
             $suffix = bin2hex( random_bytes(4) );
-            if($this instanceof SiteTree) {
+            if ($this instanceof SiteTree) {
                 $folderName = "page-{$suffix}/uploads";
                 /** @phpstan-ignore instanceof.alwaysFalse */
-            } else if($this instanceof EditableUploadField ) {
+            } elseif ($this instanceof EditableUploadField) {
                 $folderName = "form-{$suffix}/uploads";
             } else {
                 $folderName = "uploads-{$suffix}";
             }
+
             $folder = UserDefinedFormAdmin::getFormSubmissionFolder($folderName);
             $this->FolderID = $folder->ID;
         }

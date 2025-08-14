@@ -7,29 +7,28 @@ use SilverStripe\ORM\DataObject;
 /**
  * Represents an external upload
  * @author James
+ * @property ?string $ServiceName
+ * @property ?string $ServiceTitle
+ * @property string $Title
+ * @property ?string $Description
+ * @property bool $IsSuccess
+ * @property int $UploadSize
+ * @property ?string $UploadType
+ * @property ?string $UploadHash
+ * @property ?string $UploadUri
+ * @property ?string $UploadSrc
+ * @property ?string $UploadBatchId
  */
 class ExternalUpload extends DataObject
 {
 
-    /**
-     * @var string
-     */
-    private static $table_name = "ExternalUpload";
+    private static string $table_name = "ExternalUpload";
 
-    /**
-     * @var string
-     */
-    private static $singular_name = "An upload to an external service";
+    private static string $singular_name = "An upload to an external service";
 
-    /**
-     * @var string
-     */
-    private static $plural_name = "Uploads to an external service";
+    private static string $plural_name = "Uploads to an external service";
 
-    /**
-     * @var array
-     */
-    private static $db = [
+    private static array $db = [
         'ServiceName' => 'Varchar(255)',
         'ServiceTitle' => 'Varchar(255)',
         'Title' => 'Varchar(255)',
@@ -43,10 +42,7 @@ class ExternalUpload extends DataObject
         'UploadBatchId' => 'Varchar(255)'
     ];
 
-    /**
-     * @var array
-     */
-    private static $indexes = [
+    private static array $indexes = [
         'ServiceName' => true,
         'ServiceUpload' => [
             'type' => 'unique',
@@ -54,10 +50,7 @@ class ExternalUpload extends DataObject
         ]
     ];
 
-    /**
-     * @var array
-     */
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Title' => 'Title',
         'Created.Nice' => 'Created',
         'UploadHash' => 'Upload code',
@@ -70,8 +63,7 @@ class ExternalUpload extends DataObject
      */
     public function getCMSFields() {
         $fields = parent::getCMSFields();
-        $fields = $fields->makeReadonly();
-        return $fields;
+        return $fields->makeReadonly();
     }
 
 }

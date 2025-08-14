@@ -18,8 +18,9 @@ class TypeSelectionField extends CheckboxSetField
 
     /**
      * Get the allowed types from Site Config
+     * @return mixed[]
      */
-    public function getAllowedTypes() {
+    public function getAllowedTypes(): array {
         $config = SiteConfig::current_site_config();
         $data = [];
         if($config->AllowedFileExtensions) {
@@ -30,6 +31,7 @@ class TypeSelectionField extends CheckboxSetField
                 }
             }
         }
+
         return $data;
     }
 }

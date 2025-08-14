@@ -28,10 +28,7 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
      */
     const SERVICE_DESCRIPTION = 'Upload files direct to S3';
 
-    /**
-     * @var array
-     */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'notify', // notify of completed upload
         'presign' // return a presigned URL for a single file
     ];
@@ -45,12 +42,10 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
 
     /**
      * Pre sign a URL for a single file, called when a file is added to the uploader
-     * @param HTTPRequest $request
-     * @return HTTPResponse
      */
     public function presign(HTTPRequest $request) : HTTPResponse {
         $post = $request->postVars();
-        $fileName = isset($post['id']) ? $post['id'] : '';
+        $fileName = $post['id'] ?? '';
         $url = $this->generateSignedUrl($fileName);
         $response = [
             'presignedurl' => $url

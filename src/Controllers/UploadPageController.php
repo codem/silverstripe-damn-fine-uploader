@@ -16,16 +16,17 @@ use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
+ * @extends \PageController<\Codem\DamnFineUploader\UploadPage>
  */
 class UploadPageController extends \PageController
 {
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'UploadForm',
         'handleUpload'
     ];
 
-    private static $upload_field_name = "UploadField";
+    private static string $upload_field_name = "UploadField";
 
     /**
      * @return UppyField
@@ -43,12 +44,15 @@ class UploadPageController extends \PageController
         if ($data->FormFieldTitle) {
             $field->setTitle($data->FormFieldTitle);
         }
+
         if ($data->FormFieldDescription) {
-            $field->setDescription(strip_tags($data->FormFieldDescription));
+            $field->setDescription(strip_tags((string) $data->FormFieldDescription));
         }
+
         if ($data->FormFieldRightTitle) {
-            $field->setRightTitle(strip_tags($data->FormFieldRightTitle));
+            $field->setRightTitle(strip_tags((string) $data->FormFieldRightTitle));
         }
+
         if ($data->FormFieldTitle) {
             $field->setTitle($data->FormFieldTitle);
         }
@@ -65,6 +69,7 @@ class UploadPageController extends \PageController
         if ($limit <= 0) {
             $limit = 1;
         }
+
         $field->setAllowedMaxItemLimit($limit);
 
         // Set a folder name
@@ -162,14 +167,14 @@ class UploadPageController extends \PageController
             $response_data['found'] = count($files);
             // your extension handles the uploads
             $response = $this->extend('handleUploadedFiles', $response_data, $upload_field, $form);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $response = $this->extend('handleFailedUpload', $response_data, $upload_field, $form);
         }
 
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } else if($response_data['expected'] > 0
+        } elseif ($response_data['expected'] > 0
             && $response_data['expected'] == $response_data['found']) {
             $form->sessionMessage(
                 _t(

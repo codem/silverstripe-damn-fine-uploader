@@ -8,6 +8,10 @@ use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 /**
  * @note provides an EditableUploadField for the userforms module
  * returns a field based on the implementation, currently Uppy
+ * @property ?string $SelectedFileTypes
+ * @property int $FileUploadLimit
+ * @property bool $UseDateFolder
+ * @property ?string $Implementation
  */
 class EditableUploadField extends EditableFileField
 {
@@ -15,16 +19,13 @@ class EditableUploadField extends EditableFileField
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
-    private static $table_name = 'EditableUploadField';
+    private static string $table_name = 'EditableUploadField';
 
-    private static $singular_name = 'File Upload Field - Drag and Drop';
-    private static $plural_name = 'File Upload Fields - Drag and Drop';
+    private static string $singular_name = 'File Upload Field - Drag and Drop';
 
-    private static $run_migration_1 = true;
-    private static $run_migration_manymanyhasmany = false;
-    private static $run_migration_allowedmimetypedeprecation = false;
+    private static string $plural_name = 'File Upload Fields - Drag and Drop';
 
-    private static $db = [
+    private static array $db = [
         'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
@@ -33,9 +34,8 @@ class EditableUploadField extends EditableFileField
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'UseDateFolder' => 1,
         'FileUploadLimit' => 3,
         'Implementation' => DamnFineUploaderField::IMPLEMENTATION_UPPY

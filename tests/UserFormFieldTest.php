@@ -33,6 +33,7 @@ class UserFormFieldTest extends FunctionalTest
     protected static $fixture_file = 'UserFormFieldTest.yml';
 
     protected static $use_draft_site = false;
+
     protected static $disable_themes = true;
 
     private $fixture_file_count = 0;
@@ -55,6 +56,7 @@ class UserFormFieldTest extends FunctionalTest
             $file->setFromLocalFile($sourcePath, $file->Filename);
             $file->writeToStage(Versioned::DRAFT);
         }
+
         $this->fixture_file_count = $files->count();
 
         Config::modify()->merge(SSViewer::class, 'themes', ['simple', '$default']);
@@ -94,14 +96,14 @@ class UserFormFieldTest extends FunctionalTest
     {
         $page = $this->objFromFixture(UserDefinedForm::class, $fixtureName);
 
-        $this->actWithPermission('ADMIN', function () use ($page) {
+        $this->actWithPermission('ADMIN', function () use ($page): void {
             $page->publishRecursive();
         });
 
         return $page;
     }
 
-    public function testFilesUploadedAndAttached()
+    public function testFilesUploadedAndAttached(): void
     {
 
         // create the page
@@ -172,7 +174,7 @@ class UserFormFieldTest extends FunctionalTest
 
         unset($data[$field_name]);
         // submit the form
-        $response = $this->submitForm($form->FormName(), null, $data);
+        $this->submitForm($form->FormName(), null, $data);
 
         // check submitted files
         $submitted = SubmittedUploadField::get();

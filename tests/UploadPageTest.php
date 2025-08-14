@@ -47,11 +47,10 @@ class UploadPageTest extends SapphireTest
         parent::tearDown();
     }
 
-    public function testUploadPage() {
+    public function testUploadPage(): void {
 
         $title = 'Test upload page';
         $fileTypes = ["jpeg","jpg","png","pdf"];
-        $expectedMimeTypes = "image/jpeg,image/png,image/webp,application/pdf";
         $expectedAcceptFiles = ".jpeg,.jpg,.png,.pdf";
         $fileUploadLimit = 3;
         $maxFileSizeMb = 3.5;
@@ -75,7 +74,7 @@ class UploadPageTest extends SapphireTest
         $uploadPage->write();
 
         $this->assertTrue($uploadPage->isInDB());
-        $this->assertEquals( $fileTypes, json_decode($uploadPage->SelectedFileTypes) );
+        $this->assertEquals( $fileTypes, json_decode((string) $uploadPage->SelectedFileTypes) );
         $this->assertEquals( $maxFileSizeMb, $uploadPage->MaxFileSizeMB );
         $this->assertEquals( $useDateFolder, $uploadPage->UseDateFolder );
         $this->assertEquals( $fileUploadLimit, $uploadPage->FileUploadLimit );

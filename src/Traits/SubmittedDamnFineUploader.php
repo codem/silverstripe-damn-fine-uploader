@@ -39,7 +39,7 @@ trait SubmittedDamnFineUploader
     {
         $title = _t('DamnFineUploader.DOWNLOAD_FILE', 'Download file');
         $files = [];
-        foreach ($this->getSubmittedFiles() as $i => $file) {
+        foreach ($this->getSubmittedFiles() as $file) {
             $files[] = sprintf(
                 '%s - <a href="%s" target="_blank">%s</a>',
                 $file->Name,
@@ -47,6 +47,7 @@ trait SubmittedDamnFineUploader
                 $title
             );
         }
+
         return DBField::create_field('HTMLText', implode('<br/>', $files));
     }
 
@@ -61,6 +62,7 @@ trait SubmittedDamnFineUploader
                 $links[] = $file->getAbsoluteURL();
             }
         }
+
         return DBField::create_field(DBVarchar::class, implode('|', $links));
     }
 }

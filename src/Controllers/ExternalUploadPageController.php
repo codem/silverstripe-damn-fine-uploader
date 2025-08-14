@@ -17,14 +17,12 @@ use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
+ * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage>
  */
 class ExternalUploadPageController extends UploadPageController
 {
 
-    /**
-     * @var array
-     */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'UploadForm',
         'handleUpload',
         'uploaded' // notification URL
@@ -44,8 +42,7 @@ class ExternalUploadPageController extends UploadPageController
                 'Upload'
             )
         ];
-        $field = $this->data()->getUploadField($args);
-        return $field;
+        return $this->data()->getUploadField($args);
     }
 
     /**
@@ -53,8 +50,7 @@ class ExternalUploadPageController extends UploadPageController
      * Use an {@link Extension} to handle further file uploading
      */
     public function uploaded(HTTPRequest $request) : HTTPResponse {
-        $response = HTTPResponse::create();
-        return $response;
+        return HTTPResponse::create();
     }
 
     /**
@@ -73,13 +69,13 @@ class ExternalUploadPageController extends UploadPageController
             $submissionCount = $submissions->count();
             // your extension handles the uploads
             $response = $this->extend('handleExternalUploadedFiles', $submissions);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } else if($submissionCount > 0) {
+        } elseif ($submissionCount > 0) {
             $form->sessionMessage(
                 _t(
                     "DamnFineUploader.FILES_UPLOADED",

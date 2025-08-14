@@ -30,7 +30,7 @@ trait EditableDamnFineUploader
     /**
      * @var SubmittedUploadField
      */
-    protected $submitted_form_field = null;
+    protected $submitted_form_field;
 
     /**
      * Get the uploader field, in the future this will return a field based on the implementation value
@@ -38,10 +38,9 @@ trait EditableDamnFineUploader
      */
     protected function getUploaderField()
     {
-        $field = UppyField::create($this->Name, $this->Title ?: false, null, null)
+        return UppyField::create($this->Name, $this->Title ?: false, null, null)
                     ->setFieldHolderTemplate(EditableFormField::class . '_holder')
-                    ->setTemplate(__CLASS__);
-        return $field;
+                    ->setTemplate(self::class);
     }
 
     /**
@@ -53,6 +52,7 @@ trait EditableDamnFineUploader
         if($this->submitted_form_field) {
             return $this->submitted_form_field;
         }
+
         $this->submitted_form_field = SubmittedUploadField::create();
         // this field needs to be in the DB, to enable relation writes
         $this->submitted_form_field->write();
@@ -66,16 +66,16 @@ trait EditableDamnFineUploader
      *
      * @throws \Exception
      */
-    public function getValueFromData(/*$data*/)
+    public function getValueFromData(/*$data*/): string
     {
 
         try {
 
             $controller = null;
             $parent = $this->Parent();
-            if($parent instanceof SiteTree) {
+            if ($parent instanceof SiteTree) {
                 $controller = ModelAsController::controller_for($parent);
-            } else if(class_exists(ElementForm::class) && class_exists(ElementFormController::class) && $parent instanceof ElementForm) {
+            } elseif (class_exists(ElementForm::class) && class_exists(ElementFormController::class) && $parent instanceof ElementForm) {
                 $controller = Injector::inst()->create(ElementFormController::class, $parent);
                 $controller->doInit();
             }
@@ -91,11 +91,11 @@ trait EditableDamnFineUploader
 
             $form = null;
             /** @phpstan-ignore class.notFound */
-            if($controller->hasMethod('Form')) {
+            if ($controller->hasMethod('Form')) {
                 /** @phpstan-ignore class.notFound */
                 $form = $controller->Form();
                 /** @phpstan-ignore class.notFound */
-            } else if($controller->hasMethod('getUploadForm')) {
+            } elseif ($controller->hasMethod('getUploadForm')) {
                 /** @phpstan-ignore class.notFound */
                 $form = $controller->getUploadForm();
             }
@@ -123,16 +123,17 @@ trait EditableDamnFineUploader
               */
             $field = $this->getSubmittedFormField();
 
-            if(!empty($files)) {
+            if (!empty($files)) {
                 foreach($files as $file) {
                     if($file->SubmittedUploadFieldID && $file->SubmittedUploadFieldID != $field->ID) {
                         throw new \Exception("The file #{$file->ID} is already linked to submitted field #{$file->SubmittedUploadFieldID}");
                     }
+
                     $file->UserFormUpload = UserFormFileExtension::USER_FORM_UPLOAD_TRUE;// mark as a userform upload ('t','f', null)
                     $file->SubmittedUploadFieldID = $field->ID;// associate with the field
                     $file->writeToStage(Versioned::DRAFT);
                 }
-            } else if($this->Required == 1) {
+            } elseif ($this->Required == 1) {
                 // required field but not files found
                 throw ValidationException::create(
                     _t(
@@ -145,9 +146,9 @@ trait EditableDamnFineUploader
             
             return '';
 
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             // failed at some point
-            Logger::log("Error:" . $e->getMessage(), "NOTICE");
+            Logger::log("Error:" . $exception->getMessage(), "NOTICE");
         }
 
         throw ValidationException::create(
@@ -184,6 +185,7 @@ trait EditableDamnFineUploader
         if ((int)$this->FileUploadLimit <= 0) {
             $this->FileUploadLimit = 3;
         }
+
         $field->setAllowedMaxItemLimit($this->FileUploadLimit);
 
         // Set a folder name

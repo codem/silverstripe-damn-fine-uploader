@@ -23,17 +23,14 @@ use SilverStripe\MimeValidator\MimeUploadValidator;
  */
 trait CMSFieldConfigurator
 {
-    /**
-     * @return float
-     */
-    public static function get_php_max_file_size()
+    public static function get_php_max_file_size(): int
     {
         $maxUpload = Convert::memstring2bytes(ini_get('upload_max_filesize'));
         $maxPost = Convert::memstring2bytes(ini_get('post_max_size'));
         return min($maxUpload, $maxPost);
     }
 
-    public function getPHPMaxFileSizeMB()
+    public function getPHPMaxFileSizeMB(): float
     {
         return round(static::get_php_max_file_size() / 1024 / 1024, 1);
     }
@@ -47,14 +44,14 @@ trait CMSFieldConfigurator
         if(json_last_error() == JSON_ERROR_NONE && is_array($allowedTypes)) {
             return array_unique($allowedTypes);
         }
+
         return [];
     }
 
     /**
      * Get the allowed mime types, based on the selected file types
-     * @return array
      */
-    public function getAllowedMimeTypes() {
+    public function getAllowedMimeTypes(): array {
         $types = $this->getAllowedTypes();
         $mimetypes = [];
         if(count($types) > 0) {
@@ -63,14 +60,14 @@ trait CMSFieldConfigurator
                 $mimetypes = array_merge($mimetypes, $expected);
             }
         }
+
         return array_unique($mimetypes);
     }
 
     /**
      * This is pinched from MimeUploadValidator
-     * @return array
      */
-    public function getMimeTypes($extension) {
+    public function getMimeTypes($extension): array {
         $expectedMimes = [];
         // Get the mime types set in framework core
         $knownMimes = Config::inst()->get(HTTP::class, 'MimeTypes');
@@ -95,7 +92,6 @@ trait CMSFieldConfigurator
 
     /**
      * Add generic CMS fields to the record
-     * @return FieldList
      */
     public function addGenericFields(FieldList $fields, string $tab = "Main") : FieldList
     {

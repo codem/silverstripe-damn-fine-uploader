@@ -16,9 +16,8 @@ class UppyField extends DamnFineUploaderField
 
     /**
      * @config
-     * @var array
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'upload', // local upload endpoint
         'notify', // notify of completed upload
         'presign' // return a presigned URL for a single file
@@ -47,14 +46,13 @@ class UppyField extends DamnFineUploaderField
         );
     }
 
-    public function getImplementation()
+    public function getImplementation(): string
     {
         return parent::IMPLEMENTATION_UPPY;
     }
 
     /**
      * Uppy does not support removal of files post-upload
-     * @param HTTPRequest $request
      */
     public function remove(HTTPRequest $request)
     {

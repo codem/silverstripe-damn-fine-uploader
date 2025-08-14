@@ -14,6 +14,7 @@ class FieldTest extends SapphireTest
     protected static $extra_controllers = [
         FieldTestController::class,
     ];
+
     public function setUp() : void {
         parent::setUp();
     }
@@ -25,14 +26,14 @@ class FieldTest extends SapphireTest
     /**
      * Test field configuration
      */
-    public function testFieldConfig() {
+    public function testFieldConfig(): void {
 
         $controller = FieldTestController::create();
 
         $fields = FieldList::create(
             $field = UppyField::create('TestUpload', 'Test Upload')
         );
-        $form = Form::create($controller, 'TestForm', $fields);
+        Form::create($controller, 'TestForm', $fields);
 
         // render the field
         $html = $field->forTemplate();
@@ -51,7 +52,7 @@ class FieldTest extends SapphireTest
 
         $this->assertEquals(0, $c['validation']['minSizeLimit']);
         $this->assertEquals(
-            $field->getExtensionsForTypes( explode(",", $c['validation']['acceptFiles']) ),
+            $field->getExtensionsForTypes( explode(",", (string) $c['validation']['acceptFiles']) ),
             $c['validation']['allowedExtensions']
         );
         $this->assertFalse($c['debug']);
@@ -88,10 +89,11 @@ class FieldTest extends SapphireTest
 
         $doc = new \DOMDocument();
         $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
         $tags = $doc->getElementsByTagName('div');
         $element = $tags[0];
         $config = $element->getAttribute('data-config');
-        $config = json_decode($config, true);
+        $config = json_decode((string) $config, true);
 
         // config from getUploaderConfig should be the same as the config in the field HTML
         $this->assertEquals($c, $config);
