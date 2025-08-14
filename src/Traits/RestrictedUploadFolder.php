@@ -8,8 +8,8 @@ use SilverStripe\UserForms\Control\UserDefinedFormAdmin;
 /**
  * Apply folder restrictions to the upload field
  */
-trait RestrictedUploadFolder {
-
+trait RestrictedUploadFolder
+{
     /**
      * Create the default upload folder and apply restrictions
      * @note when applied to EditableUploadField, this overrides {@link SilverStripe\UserForms\Model\EditableFormField\EditableFileField::createdProtectedFolder()}
@@ -18,8 +18,8 @@ trait RestrictedUploadFolder {
     public function createProtectedFolder(): void
     {
         $folder = $this->Folder();
-        if(!$folder->exists()) {
-            $suffix = bin2hex( random_bytes(4) );
+        if (!$folder->exists()) {
+            $suffix = bin2hex(random_bytes(4));
             if ($this instanceof SiteTree) {
                 $folderName = "page-{$suffix}/uploads";
                 /** @phpstan-ignore instanceof.alwaysFalse */

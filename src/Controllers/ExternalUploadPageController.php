@@ -2,9 +2,6 @@
 
 namespace Codem\DamnFineUploader;
 
-use Codem\DamnFineUploader\UppyField;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
@@ -19,7 +16,6 @@ use SilverStripe\ORM\ValidationResult;
  */
 class ExternalUploadPageController extends UploadPageController
 {
-
     private static array $allowed_actions = [
         'UploadForm',
         'handleUpload',
@@ -47,7 +43,8 @@ class ExternalUploadPageController extends UploadPageController
      * Handle the file upload
      * Use an {@link Extension} to handle further file uploading
      */
-    public function uploaded(HTTPRequest $request) : HTTPResponse {
+    public function uploaded(HTTPRequest $request): HTTPResponse
+    {
         return HTTPResponse::create();
     }
 

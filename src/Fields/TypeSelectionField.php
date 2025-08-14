@@ -20,13 +20,14 @@ class TypeSelectionField extends CheckboxSetField
      * Get the allowed types from Site Config
      * @return mixed[]
      */
-    public function getAllowedTypes(): array {
+    public function getAllowedTypes(): array
+    {
         $config = SiteConfig::current_site_config();
         $data = [];
-        if($config->AllowedFileExtensions) {
+        if ($config->AllowedFileExtensions) {
             $types = $config->AllowedFileExtensions->getValues();
-            if(is_array($types)) {
-                foreach($types as $type) {
+            if (is_array($types)) {
+                foreach ($types as $type) {
                     $data[$type] = $type;
                 }
             }

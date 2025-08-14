@@ -9,24 +9,18 @@ use SilverStripe\Assets\Folder;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\Form;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\UserForms\Extension\UserFormFileExtension;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\UserForms\Model\EditableFormField;
-use SilverStripe\View\Parsers\URLSegmentFilter;
 
 /**
  * Trait for editable DFU field implementations
  */
 trait EditableDamnFineUploader
 {
-
     /**
      * @var SubmittedUploadField
      */
@@ -49,7 +43,7 @@ trait EditableDamnFineUploader
      */
     public function getSubmittedFormField()
     {
-        if($this->submitted_form_field) {
+        if ($this->submitted_form_field) {
             return $this->submitted_form_field;
         }
 
@@ -100,7 +94,7 @@ trait EditableDamnFineUploader
                 $form = $controller->getUploadForm();
             }
 
-            if(!($form instanceof Form)) {
+            if (!($form instanceof Form)) {
                 throw new \Exception(
                     _t(
                         "DamnFineUploader.UPLOAD_CONTROLLER_ERROR",
@@ -124,8 +118,8 @@ trait EditableDamnFineUploader
             $field = $this->getSubmittedFormField();
 
             if ($files !== []) {
-                foreach($files as $file) {
-                    if($file->SubmittedUploadFieldID && $file->SubmittedUploadFieldID != $field->ID) {
+                foreach ($files as $file) {
+                    if ($file->SubmittedUploadFieldID && $file->SubmittedUploadFieldID != $field->ID) {
                         throw new \Exception("The file #{$file->ID} is already linked to submitted field #{$file->SubmittedUploadFieldID}");
                     }
 
@@ -143,7 +137,7 @@ trait EditableDamnFineUploader
                 );
             }
 
-            
+
             return '';
 
         } catch (\Exception $exception) {

@@ -5,18 +5,11 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\Form;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
-use SilverStripe\Core\Convert;
-use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Member;
-use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * A page that handles file uploads
@@ -36,7 +29,6 @@ use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
  */
 class UploadPage extends \Page implements PermissionProvider
 {
-
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
@@ -89,7 +81,7 @@ class UploadPage extends \Page implements PermissionProvider
     public function canPublish($member = null)
     {
         $can = parent::canPublish($member);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
 
@@ -106,7 +98,7 @@ class UploadPage extends \Page implements PermissionProvider
     public function canEdit($member = null)
     {
         $can = parent::canEdit($member);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
 
@@ -124,7 +116,7 @@ class UploadPage extends \Page implements PermissionProvider
     public function canCreate($member = null, $context = [])
     {
         $can = parent::canCreate($member, $context);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
 

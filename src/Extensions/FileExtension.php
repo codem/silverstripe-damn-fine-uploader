@@ -4,9 +4,7 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\File;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Versioned\Versioned;
 
 /**

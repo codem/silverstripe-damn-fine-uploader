@@ -21,7 +21,6 @@ use SilverStripe\ORM\DataObject;
  */
 class ExternalUpload extends DataObject
 {
-
     private static string $table_name = "ExternalUpload";
 
     private static string $singular_name = "An upload to an external service";
@@ -61,7 +60,8 @@ class ExternalUpload extends DataObject
      * @inheritdoc
      * All fields in this record are readonly
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
         return $fields->makeReadonly();
     }

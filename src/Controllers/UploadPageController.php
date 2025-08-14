@@ -5,7 +5,6 @@ namespace Codem\DamnFineUploader;
 /**
  * @author James
  */
-use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\Form;
@@ -20,7 +19,6 @@ use SilverStripe\ORM\ValidationResult;
  */
 class UploadPageController extends \PageController
 {
-
     private static array $allowed_actions = [
         'UploadForm',
         'handleUpload'

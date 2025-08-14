@@ -4,19 +4,14 @@ namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\UppyField;
 use Codem\DamnFineUploader\SubmittedUploadField;
-use SilverStripe\Forms\LabelField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\Session;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
-use SilverStripe\Forms\HiddenField;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\UserForms\Control\UserDefinedFormController;
@@ -26,10 +21,8 @@ use SilverStripe\UserForms\Model\EditableFormField\EditableTextField;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\SSViewer;
 
-
 class UserFormFieldTest extends FunctionalTest
 {
-
     protected static $fixture_file = 'UserFormFieldTest.yml';
 
     protected static $use_draft_site = false;
@@ -40,7 +33,7 @@ class UserFormFieldTest extends FunctionalTest
 
     protected $usesDatabase = true;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         // permission
@@ -80,7 +73,7 @@ class UserFormFieldTest extends FunctionalTest
 
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
         TestAssetStore::reset();
@@ -132,11 +125,11 @@ class UserFormFieldTest extends FunctionalTest
         $file_ids = [];
 
         $data = [];
-        foreach($form->Fields() as $field) {
+        foreach ($form->Fields() as $field) {
             $data[ $field->getName() ] = $field->dataValue();
         }
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             //create a pseudo upload token value for test purposes that can be compared against
             $upload_token_value = "upload_token_file{$file->ID}{$file->Name}";
 
@@ -186,20 +179,20 @@ class UserFormFieldTest extends FunctionalTest
             $submitted_files->count(),
             "The stored submitted file count ({$submitted_files->count()}) does not match the fixture file count {$this->fixture_file_count}"
         );
-        foreach($submitted_files as $submitted_file) {
+        foreach ($submitted_files as $submitted_file) {
             $file = Versioned::get_by_stage(File::class, Versioned::DRAFT)
-                    ->filter( [
+                    ->filter([
                         'SubmittedUploadFieldID' => $submitted->ID,
                         'ID' => $submitted_file->ID
-                    ] )->first();
+                    ])->first();
             $this->assertTrue(
                 array_key_exists($file->ID, $file_ids),
                 "File linked to submitted upload field does not exist in list of files uploaded"
             );
             $this->assertEmpty($file->DFU, 'Upload token value from DB is not empty post-upload, it should be');
             $this->assertFalse($file->isPublished(), "File #{$file->ID} is published, it should not be");
-            $this->assertEquals(UserFormFileExtension::USER_FORM_UPLOAD_TRUE, $file->UserFormUpload,  "File should be marked UserFormUpload=1");
-            $this->assertEquals(1, $file->IsDfuUpload,  "File should be marked IsDfuUpload=1");
+            $this->assertEquals(UserFormFileExtension::USER_FORM_UPLOAD_TRUE, $file->UserFormUpload, "File should be marked UserFormUpload=1");
+            $this->assertEquals(1, $file->IsDfuUpload, "File should be marked IsDfuUpload=1");
         }
 
     }

@@ -5,11 +5,7 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Assets\File;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\Form;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
 class FileRetriever
@@ -27,7 +23,7 @@ class FileRetriever
         $data = Controller::curr()->getRequest()->postVars();
 
         $posted_uuids = $data[ $key ] ?? null;
-        if(is_null($posted_uuids) || empty($posted_uuids)) {
+        if (is_null($posted_uuids) || empty($posted_uuids)) {
             // not posted, possibly no file uploads made
             return [];
         }
@@ -38,7 +34,7 @@ class FileRetriever
         }
 
         $token_value = $form_security_token->getValue();
-        if(!$token_value) {
+        if (!$token_value) {
             throw new \Exception("The form does not contain a valid token");
         }
 
@@ -58,17 +54,17 @@ class FileRetriever
                     );
 
         $file_count = 0;
-        if($files) {
+        if ($files) {
             $file_count = $files->count();
         }
 
-        if($file_count != count($upload_tokens)) {
+        if ($file_count != count($upload_tokens)) {
             // ensure that all files in the request are found
             throw new \Exception("Some files could not be found");
         }
 
         $list = [];
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if ($untrust) {
                 $file->DFU = null;
                 $file->writeToStage(Versioned::DRAFT);
@@ -91,7 +87,8 @@ class FileRetriever
      * Get a single file based on its generated uuid and the form security token used during the upload
      * @return mixed a SilverStripe\Assets\File or null, if the file could not be found
      */
-    public static function getFile(string $uuid, string $token_value) {
+    public static function getFile(string $uuid, string $token_value)
+    {
         $upload_token = $uuid . "|" . $token_value;
         return Versioned::get_by_stage(File::class, Versioned::DRAFT)
                     ->filter(

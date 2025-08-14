@@ -4,7 +4,6 @@ namespace Codem\DamnFineUploader;
 
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\Security;
 
 /**
  * Logger helper class

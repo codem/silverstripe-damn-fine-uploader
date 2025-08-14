@@ -2,8 +2,6 @@
 
 namespace Codem\DamnFineUploader;
 
-use SilverStripe\Control\Controller;
-use SilverStripe\View\Requirements;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 
@@ -12,21 +10,21 @@ use SilverStripe\Control\HTTPResponse;
  * The field gathers a pre-signed URL and provides that in the field
  * The upload goes directly to S3 via a PUT request and returns a result when done
  */
-class UppyS3Field extends AbstractUppyExternalUploadField {
-
+class UppyS3Field extends AbstractUppyExternalUploadField
+{
     use S3Upload;
 
     /**
      * Unique name for this service, used to select service used in forms
      * @var string
      */
-    const SERVICE_NAME = 'AWS_S3_DIRECT_UPLOAD';
+    public const SERVICE_NAME = 'AWS_S3_DIRECT_UPLOAD';
 
     /**
      * Description for this service
      * @var string
      */
-    const SERVICE_DESCRIPTION = 'Upload files direct to S3';
+    public const SERVICE_DESCRIPTION = 'Upload files direct to S3';
 
     private static array $allowed_actions = [
         'notify', // notify of completed upload
@@ -36,14 +34,16 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
     /**
      * @inheritdoc
      */
-    public function getHttpUploadMethod() : string {
+    public function getHttpUploadMethod(): string
+    {
         return 'PUT';
     }
 
     /**
      * Pre sign a URL for a single file, called when a file is added to the uploader
      */
-    public function presign(HTTPRequest $request) : HTTPResponse {
+    public function presign(HTTPRequest $request): HTTPResponse
+    {
         $post = $request->postVars();
         $fileName = $post['id'] ?? '';
         $url = $this->generateSignedUrl($fileName);
@@ -56,7 +56,8 @@ class UppyS3Field extends AbstractUppyExternalUploadField {
     /**
      * @inheritdoc
      */
-    public function notify(HTTPRequest $request) : HTTPResponse {
+    public function notify(HTTPRequest $request): HTTPResponse
+    {
         return parent::notify($request);
     }
 

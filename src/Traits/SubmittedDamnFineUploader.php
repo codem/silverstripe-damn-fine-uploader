@@ -6,8 +6,6 @@ use SilverStripe\Assets\File;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\ORM\HasManyList;
-use SilverStripe\Control\Controller;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\UserForms\Extension\UserFormFileExtension;
 use SilverStripe\Versioned\Versioned;
 
@@ -16,11 +14,11 @@ use SilverStripe\Versioned\Versioned;
  */
 trait SubmittedDamnFineUploader
 {
-
     /**
      * Return submitted files after they have been written to the draft stage
      */
-    public function getSubmittedFiles() : HasManyList {
+    public function getSubmittedFiles(): HasManyList
+    {
         return Versioned::withVersionedMode(function () {
             Versioned::set_stage(Versioned::DRAFT);
             // Return draft files, with relevant filters
@@ -58,7 +56,7 @@ trait SubmittedDamnFineUploader
     {
         $links = [];
         foreach ($this->getSubmittedFiles() as $file) {
-            if($file instanceof File) {
+            if ($file instanceof File) {
                 $links[] = $file->getAbsoluteURL();
             }
         }

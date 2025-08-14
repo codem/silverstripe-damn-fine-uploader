@@ -5,14 +5,12 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\View\Requirements;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
-use Exception;
 
 /**
  * @note provides a field to handle Uppy File Uploader uploads
  */
 class UppyField extends DamnFineUploaderField
 {
-
     protected string $implementation = parent::IMPLEMENTATION_UPPY;
 
     /**

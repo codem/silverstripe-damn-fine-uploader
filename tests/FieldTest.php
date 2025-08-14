@@ -3,30 +3,31 @@
 namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\UppyField;
-use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 
 class FieldTest extends SapphireTest
 {
-
     protected static $extra_controllers = [
         FieldTestController::class,
     ];
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         parent::setUp();
     }
 
-    public function tearDown() : void {
+    public function tearDown(): void
+    {
         parent::tearDown();
     }
 
     /**
      * Test field configuration
      */
-    public function testFieldConfig(): void {
+    public function testFieldConfig(): void
+    {
 
         $controller = FieldTestController::create();
 
@@ -52,7 +53,7 @@ class FieldTest extends SapphireTest
 
         $this->assertEquals(0, $c['validation']['minSizeLimit']);
         $this->assertEquals(
-            $field->getExtensionsForTypes( explode(",", (string) $c['validation']['acceptFiles']) ),
+            $field->getExtensionsForTypes(explode(",", (string) $c['validation']['acceptFiles'])),
             $c['validation']['allowedExtensions']
         );
         $this->assertFalse($c['debug']);
@@ -75,7 +76,7 @@ class FieldTest extends SapphireTest
             'tooManyItemsError',
             'typeError',
         ];
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $this->assertNotEmpty($c['messages'][$key]);
         }
 

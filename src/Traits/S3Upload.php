@@ -3,7 +3,6 @@
 namespace Codem\DamnFineUploader;
 
 use Aws\Credentials\Credentials;
-use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 
 /**
@@ -13,15 +12,15 @@ use Aws\S3\S3Client;
  */
 trait S3Upload
 {
-
     /**
      * Generate a signed URL for upload to the external target
      */
-    public function generateSignedUrl(string $fileName = '') : string {
+    public function generateSignedUrl(string $fileName = ''): string
+    {
         $serviceClient = $this->getServiceClient();
         $bucket = $this->getServiceConfigValue('S3_BUCKET');
 
-        if($fileName === '') {
+        if ($fileName === '') {
             $fileName = $this->generateUploadHash();
         }
 
@@ -29,7 +28,8 @@ trait S3Upload
         $fileName = str_replace("/", "-", $fileName);
 
         $cmd = $serviceClient->getCommand(
-            'PutObject', [
+            'PutObject',
+            [
                 'Bucket' => $bucket,
                 'Key' => $fileName
             ]
@@ -46,10 +46,11 @@ trait S3Upload
     /**
      * Get the service client
      */
-    public function getServiceClient() : ?object {
+    public function getServiceClient(): ?object
+    {
 
 
-        if(!class_exists(S3Client::class) || !class_exists(Credentials::class)) {
+        if (!class_exists(S3Client::class) || !class_exists(Credentials::class)) {
             return null;
         }
 
@@ -62,7 +63,7 @@ trait S3Upload
          * Credentials only passed if it is set.
         * If not set, infrastructure is expected to have assumed role to run s3 transactions
         */
-        if( ($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
+        if (($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
             && ($awsSecretAccessKey = $this->getServiceConfigValue('AWS_SECRET_ACCESS_KEY'))
         ) {
             $options['credentials'] = new Credentials(
@@ -71,15 +72,15 @@ trait S3Upload
             );
         }
 
-        if($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
+        if ($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
             $options['endpoint'] = $endpoint;
         }
 
-        if($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
+        if ($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
             $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
         }
 
-        if($debug = $this->getServiceConfigValue('DEBUG')) {
+        if ($debug = $this->getServiceConfigValue('DEBUG')) {
             $options['debug'] = $debug;
         }
 

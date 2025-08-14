@@ -14,17 +14,18 @@ class UserDefinedFormControllerExtension extends Extension
      * for inclusion in the email
      * @return void
      */
-    public function updateEmailData($emailData, &$attachments) {
+    public function updateEmailData($emailData, &$attachments)
+    {
         $fields = $emailData['Fields'] ?? false;
-        if($fields) {
-            foreach($fields as $field) {
-                if(!($field instanceof SubmittedUploadField)) {
+        if ($fields) {
+            foreach ($fields as $field) {
+                if (!($field instanceof SubmittedUploadField)) {
                     continue;
                 }
 
                 /** @var \SilverStripe\ORM\HasManyList */
                 $files = $field->getSubmittedFiles();
-                foreach($files as $file) {
+                foreach ($files as $file) {
                     $attachments[] = $file;
                 }
             }

@@ -12,7 +12,6 @@ use SilverStripe\Forms\FieldList;
  */
 class ExternalUploadPage extends UploadPage
 {
-
     private static array $db = [
         'ServiceName' => 'Varchar(255)',// const SERVICE_NAME in the field subclass
     ];
@@ -41,7 +40,8 @@ class ExternalUploadPage extends UploadPage
 
     private static string $description = 'After page creation, choose an upload service';
 
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCmsFields();
         $serviceClasses = AbstractUppyExternalUploadField::getUploadServices();
         $fields->insertBefore(
@@ -64,9 +64,10 @@ class ExternalUploadPage extends UploadPage
      * Get the upload field for the current service
      * @param array $args for the AbstractUppyExternalUploadField
      */
-    public function getUploadField(array $args = []) : ?AbstractUppyExternalUploadField {
+    public function getUploadField(array $args = []): ?AbstractUppyExternalUploadField
+    {
         $uploadField = null;
-        if($this->ServiceName) {
+        if ($this->ServiceName) {
             $uploadField = AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);
         }
 

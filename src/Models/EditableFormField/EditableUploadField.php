@@ -3,7 +3,6 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
-use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * @note provides an EditableUploadField for the userforms module

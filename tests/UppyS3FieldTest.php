@@ -3,7 +3,6 @@
 namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\UppyS3Field;
-use Codem\DamnFineUploader\AbstractUppyExternalUploadField;
 use SilverStripe\Dev\SapphireTest;
 
 /**
@@ -12,7 +11,6 @@ use SilverStripe\Dev\SapphireTest;
  */
 class UppyS3FieldTest extends SapphireTest
 {
-
     /**
      * Test service name value
      */
