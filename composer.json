@@ -26,7 +26,8 @@
         "symbiote/silverstripe-multivaluefield": "^6"
     },
     "suggest" : {
-        "dnadesign/silverstripe-elemental-userforms" : "Provides form content blocks as part of elemental"
+        "dnadesign/silverstripe-elemental-userforms" : "Provides form content blocks as part of elemental",
+        "aws/aws-sdk-php": "Provides an S3 client"
     },
     "require-dev": {
         "codeception/codeception": "^5",
@@ -38,9 +39,6 @@
         "phpstan/phpstan-phpunit": "^2",
         "rector/rector": "^2",
         "nswdpc/ci-files": "dev-v-4"
-    },
-    "suggest":{
-        "aws/aws-sdk-php": "Provides an S3 client"
     },
     "extra": {
         "expose": [
