@@ -64,7 +64,7 @@ class ExternalUploadPage extends UploadPage
      * Get the upload field for the current service
      * @param array $args for the AbstractUppyExternalUploadField
      */
-    public function getUploadField($args = []) : ?AbstractUppyExternalUploadField {
+    public function getUploadField(array $args = []) : ?AbstractUppyExternalUploadField {
         $uploadField = null;
         if($this->ServiceName) {
             $uploadField = AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);

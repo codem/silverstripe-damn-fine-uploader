@@ -116,7 +116,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         // When creating new files, rename on conflict
         $this->getUpload()->setReplaceFile(false);
         parent::__construct($name, $title, $value);
-        if (!$this->file_input_param) {
+        if ($this->file_input_param === '') {
             $this->file_input_param = $name;
         }
     }
@@ -212,7 +212,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Retrieve the file input data from the request
-     * @return ?array
      */
     private function getFileFromRequest(): ?array
     {
@@ -283,7 +282,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         try {
             $this->setRequest($request);
             $result = $this->validateUpload( $this->getValidator() );
-            if(!$result) {
+            if(!$result instanceof \SilverStripe\Control\HTTPResponse) {
                 throw new \Exception("The file could not be saved");
             }
 
@@ -648,7 +647,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     public function hasDefaultConfiguration(): bool
     {
-        return !empty($this->lib_config) && $this->default_configuration_complete;
+        return $this->lib_config !== [] && $this->default_configuration_complete;
     }
 
     /**
@@ -738,11 +737,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
             $this->setUploaderDefaultConfig();
         }
 
-        if (isset($this->lib_config[$category][$key])) {
-            return $this->lib_config[$category][$key];
-        }
-
-        return null;
+        return $this->lib_config[$category][$key] ?? null;
     }
 
     /**
@@ -877,7 +872,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * This method is provided for consistency
      */
-    public function setAcceptedMaxFileSize($bytes): self
+    public function setAcceptedMaxFileSize(int $bytes): self
     {
         return $this->setAllowedMaxFileSize($bytes);
     }
@@ -922,7 +917,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * Return a list of extensions matching the file types provided
      * @param array $types example: [ 'png', '.png', 'image.png', 'image/*' ]
-     * @return array
      */
     final public function getExtensionsForTypes(array $types): array
     {
@@ -1132,7 +1126,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     {
         $parsed = null;
         if (str_contains($mimetype, "/")) {
-            $parts = explode('/', (string) $mimetype);
+            $parts = explode('/', $mimetype);
             $parsed = [
                 'type' => $parts[0],
                 'subtype' => $parts[1],
@@ -1153,7 +1147,6 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
     /**
      * @note provided a path to an uploaded file, check that it matches configuration prior to saving
      * The return value is an array with keys 'valid' being a boolean and 'mimetype' being the detected file mimetype
-     * @param array $tmp_file
      * @throws \Exception
      */
     protected function checkUploadedFile(array $tmp_file): array
@@ -1196,6 +1189,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if(!empty($denied) && is_array($denied)) {
             $is_denied = in_array($mimetype, $denied);
         }
+
         return $is_denied;
     }
 
@@ -1271,7 +1265,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $uuid = $this->getUuid($file_uuid);
 
         // save it
-        $file = $this->saveFile($file_upload, $uuid, $form_security_token_value);
+        $this->saveFile($file_upload, $uuid, $form_security_token_value);
 
         return $this->uploadSuccessfulResponse($file_upload, $uuid);
 
@@ -1297,9 +1291,10 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
      */
     protected function getUuid(string $uuid): string
     {
-        if (empty($uuid)) {
+        if ($uuid === '') {
             throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_MISSING_UUID', 'Required data not received'));
         }
+
         return self::sign_uuid($uuid);
     }
 

@@ -107,7 +107,6 @@ class UppyField extends DamnFineUploaderField
     /**
      * Return the response that Uppy expects on error
      * @param array $file_upload the uploaded file (or empty array, if it could not be found)
-     * @param string $error_message
      */
     protected function uploadErrorResponse(array $file_upload, string $error_message): HTTPResponse
     {

@@ -123,7 +123,7 @@ trait EditableDamnFineUploader
               */
             $field = $this->getSubmittedFormField();
 
-            if (!empty($files)) {
+            if ($files !== []) {
                 foreach($files as $file) {
                     if($file->SubmittedUploadFieldID && $file->SubmittedUploadFieldID != $field->ID) {
                         throw new \Exception("The file #{$file->ID} is already linked to submitted field #{$file->SubmittedUploadFieldID}");

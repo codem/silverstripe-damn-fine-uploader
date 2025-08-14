@@ -170,7 +170,7 @@ class UserFormFieldTest extends FunctionalTest
         $page->publishRecursive();
 
         // load the form (with the dummy textfields)
-        $response = $this->get($page->URLSegment);
+        $this->get($page->URLSegment);
 
         unset($data[$field_name]);
         // submit the form
