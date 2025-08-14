@@ -177,7 +177,7 @@ trait EditableDamnFineUploader
         // max file size, handle in bytes, provided in MB
         $bytes = $this->MaxFileSizeMB * 1048576;
         if ($bytes > 0) {
-            $field->setAllowedMaxFileSize($bytes);
+            $field->setAllowedMaxFileSize((int) $bytes);
         } else {
             $field->setAllowedMaxFileSize(self::get_php_max_file_size());
         }

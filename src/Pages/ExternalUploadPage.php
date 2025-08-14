@@ -55,7 +55,8 @@ class ExternalUploadPage extends UploadPage
         return $fields;
     }
 
-    public function addSaveLocationFields(FieldList $fields, string $tab) {
+    public function addSaveLocationFields(FieldList $fields, string $tab): void
+    {
         // NOOP
     }
 

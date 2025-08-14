@@ -67,7 +67,7 @@ trait CMSFieldConfigurator
     /**
      * This is pinched from MimeUploadValidator
      */
-    public function getMimeTypes($extension): array {
+    public function getMimeTypes(string $extension): array {
         $expectedMimes = [];
         // Get the mime types set in framework core
         $knownMimes = Config::inst()->get(HTTP::class, 'MimeTypes');
@@ -134,7 +134,8 @@ trait CMSFieldConfigurator
     /**
      * Local save fields
      */
-    public function addSaveLocationFields(FieldList $fields, string $tab) {
+    public function addSaveLocationFields(FieldList $fields, string $tab): void
+    {
 
         // determine folder name for field
         $folder = $this->Folder();
@@ -181,13 +182,13 @@ trait CMSFieldConfigurator
                 LiteralField::create(
                     'FileUploadWarning',
                     '<p class="alert alert-warning">'
-                    . _t(
+                    . htmlspecialchars(_t(
                         'SilverStripe\\UserForms\\Model\\UserDefinedForm.UnrestrictedFileUploadWarning',
                         'Access to the current upload folder "{path}" is not restricted. Uploaded files will be publicly accessible if the exact URL is known.',
                         [
                             'path' => Convert::raw2att($folder->Filename)
                         ]
-                    )
+                    ))
                     . '</p>'
                 )
             );

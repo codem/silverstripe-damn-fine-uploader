@@ -29,14 +29,10 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 
     /**
      * External upload fields support notifications on upload
-     * @var bool
      */
-    protected $supportsNotifications = true;
+    protected bool $supportsNotifications = true;
 
-    /**
-     * @var array
-     */
-    protected $serviceConfig = [];
+    protected array $serviceConfig = [];
 
     /**
      * Generate a signed URL for upload to the external target
@@ -84,7 +80,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * Return the upload field linked to the service name
      * @return self|null
      */
-    public static function getUploadField($serviceName, $args = []) : ?self {
+    public static function getUploadField(string $serviceName, array $args = []) : ?self {
         $uploadServices = self::getUploadServices();
         $field = null;
         if(isset($uploadServices[ $serviceName ])) {
@@ -227,9 +223,8 @@ abstract class AbstractUppyExternalUploadField extends UppyField
     /**
      * For external destinations, there is no limit (override in subclass)
      * Return bytes being the max upload size for the destination
-     * @return int
      */
-    public function getSystemAllowedMaxFileSize()
+    public function getSystemAllowedMaxFileSize(): int
     {
         return 0;
     }

@@ -12,7 +12,8 @@ use Exception;
  */
 class UppyField extends DamnFineUploaderField
 {
-    protected $implementation = parent::IMPLEMENTATION_UPPY;
+
+    protected string $implementation = parent::IMPLEMENTATION_UPPY;
 
     /**
      * @config
@@ -23,7 +24,7 @@ class UppyField extends DamnFineUploaderField
         'presign' // return a presigned URL for a single file
     ];
 
-    protected function setRequirements()
+    protected function setRequirements(): void
     {
         Requirements::set_force_js_to_bottom(true);
 
@@ -54,16 +55,15 @@ class UppyField extends DamnFineUploaderField
     /**
      * Uppy does not support removal of files post-upload
      */
-    public function remove(HTTPRequest $request)
+    public function remove(HTTPRequest $request): HTTPResponse
     {
         return HTTPResponse::create('', 501);
     }
 
     /**
      * Template helper method for UppyField, returns the serialised configuration string for the library
-     * @return string
      */
-    public function UploaderConfig()
+    public function UploaderConfig(): string
     {
         if (!$this->hasDefaultConfiguration()) {
             $this->setUploaderDefaultConfig();
@@ -95,9 +95,8 @@ class UppyField extends DamnFineUploaderField
      * Return the response that Uppy expects
      * @param array $file_upload the uploaded file
      * @param string $uuid our unique ref of the file
-     * @return HTTPResponse
      */
-    protected function uploadSuccessfulResponse(array $file_upload, $uuid)
+    protected function uploadSuccessfulResponse(array $file_upload, string $uuid): HTTPResponse
     {
         $response = [
             'uuid' => $uuid
@@ -109,9 +108,8 @@ class UppyField extends DamnFineUploaderField
      * Return the response that Uppy expects on error
      * @param array $file_upload the uploaded file (or empty array, if it could not be found)
      * @param string $error_message
-     * @return HTTPResponse
      */
-    protected function uploadErrorResponse(array $file_upload, $error_message)
+    protected function uploadErrorResponse(array $file_upload, string $error_message): HTTPResponse
     {
         return $this->errorResponse($error_message, 400);
     }
@@ -120,18 +118,16 @@ class UppyField extends DamnFineUploaderField
      * Error response for Uppy
      * @param string $result error string
      * @param int $code HTTP error code
-     * @return HTTPResponse
      */
-    protected function errorResponse($result, $code = 400)
+    protected function errorResponse(string $result, int $code = 400): HTTPResponse
     {
         return HTTPResponse::create($result, 400)->addHeader('Content-Type', 'text/plain');
     }
 
     /**
      * Return the response that Uppy expects on successful file removal
-     * @return HTTPResponse
      */
-    protected function removeSuccessResponse()
+    protected function removeSuccessResponse(): HTTPResponse
     {
         return HTTPResponse::create('', 200)->addHeader('Content-Type', 'text/plain');
     }
@@ -139,10 +135,9 @@ class UppyField extends DamnFineUploaderField
     /**
      * Return the response that Uppy expects on file removal error
      * @param array $file_upload the uploaded file or empty if the file could not be found
-     * @param string $error
-     * @return HTTPResponse
+     * @param string $error message
      */
-    protected function removeErrorResponse(array $file_upload, $error)
+    protected function removeErrorResponse(array $file_upload, string $error): HTTPResponse
     {
         return $this->errorResponse($error, 400);
     }

@@ -2,9 +2,6 @@
 
 namespace Codem\DamnFineUploader;
 
-/**
- * @author James
- */
 use Codem\DamnFineUploader\UppyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
@@ -17,6 +14,7 @@ use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
+ * @author James
  * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage>
  */
 class ExternalUploadPageController extends UploadPageController
