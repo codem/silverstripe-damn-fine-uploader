@@ -113,9 +113,9 @@ class UploadPageController extends \PageController
      */
     public function UploadForm()
     {
-        $upload_field = $this->getUploadField();
+        $uploadField = $this->getUploadField();
         $fields = FieldList::create(
-            $upload_field
+            $uploadField
         );
         $actions = FieldList::create(
             $this->getUploadAction()
@@ -142,7 +142,7 @@ class UploadPageController extends \PageController
     public function handleUpload(array $data, Form $form)
     {
         try {
-            $response_data = [
+            $fileData = [
                 'expected' => 0,// expected uploads
                 'found' => 0,// uploads successfully saved
                 'files' => [],// array of found File records
@@ -150,35 +150,35 @@ class UploadPageController extends \PageController
             ];
 
             $fields = $form->Fields();
-            $upload_field = $fields->dataFieldByName($this->config()->get('upload_field_name'));
-            if (!$upload_field) {
+            $uploadField = $fields->dataFieldByName($this->config()->get('upload_field_name'));
+            if (!$uploadField) {
                 throw new \Exception("Field not found");
             }
 
-            $name = $upload_field->getName();
+            $name = $uploadField->getName();
             $files = FileRetriever::getUploadedFilesByKey($name, $form, true);
             $file_ids = isset($data[$name]) && is_array($data[$name]) ? $data[$name] : [];
-            $response_data['file_ids'] = $file_ids;
-            $response_data['expected'] = count($file_ids);
-            $response_data['files'] = $files;
-            $response_data['found'] = count($files);
+            $fileData['file_ids'] = $file_ids;
+            $fileData['expected'] = count($file_ids);
+            $fileData['files'] = $files;
+            $fileData['found'] = count($files);
             // your extension handles the uploads
-            $response = $this->extend('handleUploadedFiles', $response_data, $upload_field, $form);
+            $response = $this->extend('handleUploadedFiles', $fileData, $uploadField, $form);
         } catch (\Exception) {
-            $response = $this->extend('handleFailedUpload', $response_data, $upload_field, $form);
+            $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form);
         }
 
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } elseif ($response_data['expected'] > 0
-            && $response_data['expected'] == $response_data['found']) {
+        } elseif ($fileData['expected'] > 0
+            && $fileData['expected'] == $fileData['found']) {
             $form->sessionMessage(
                 _t(
                     "DamnFineUploader.FILES_UPLOADED",
                     "{uploaded} file(s) were saved",
                     [
-                        'uploaded' => $response_data['found']
+                        'uploaded' => $fileData['found']
                     ]
                 ),
                 ValidationResult::TYPE_GOOD
@@ -190,8 +190,8 @@ class UploadPageController extends \PageController
                     "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
                     "Only {uploaded} out of {attempted} files could be uploaded",
                     [
-                        'uploaded' => $response_data['found'],
-                        'attempted' => $response_data['expected']
+                        'uploaded' => $fileData['found'],
+                        'attempted' => $fileData['expected']
                     ]
                 ),
                 ValidationResult::TYPE_ERROR
