@@ -31,7 +31,10 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      */
     protected bool $supportsNotifications = true;
 
-    protected array $serviceConfig = [];
+    /**
+     * Service configuration for the field
+     */
+    private static array $serviceConfig = [];
 
     /**
      * Generate a signed URL for upload to the external target
@@ -97,11 +100,6 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                         $serviceClass,
                         $args
                     );
-                    $serviceConfig = Config::inst()->get(
-                        $serviceClass,
-                        'serviceConfig'
-                    );
-                    $field->setServiceConfig($serviceConfig);
                     break;
                 }
             }
@@ -142,24 +140,17 @@ abstract class AbstractUppyExternalUploadField extends UppyField
     }
 
     /**
-     * Get a service configuration value
-     */
-    public function setServiceConfig(array $config): self
-    {
-        $this->serviceConfig = $config;
-        return $this;
-    }
-
-    /**
      * Get the service configuration
      */
     public function getServiceConfig(): array
     {
-        return $this->serviceConfig;
+        return static::config()->get('serviceConfig');
     }
 
     /**
      * Get a value from configuration
+     * Implementing classes can override this method to retrieve custom configuration
+     * e.g from environment. See UppyS3Field for an example.
      * @return mixed
      */
     public function getServiceConfigValue(string $key)

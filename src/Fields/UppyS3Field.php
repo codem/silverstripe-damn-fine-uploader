@@ -40,6 +40,22 @@ class UppyS3Field extends AbstractUppyExternalUploadField
     }
 
     /**
+     * Overrides the parent getServiceConfigValue method to
+     * return configuration values from environment if appropriate
+     * @return mixed
+     */
+    public function getServiceConfigValue(string $key)
+    {
+        if(str_starts_with($key, 'S3_UPLOAD_')) {
+            // return these values from the environment
+            return \SilverStripe\Core\Environment::getEnv($key);
+        } else {
+            // return from the service configuration
+            return $this->serviceConfig[ $key ] ?? null;
+        }
+    }
+
+    /**
      * Pre sign a URL for a single file, called when a file is added to the uploader
      */
     public function presign(HTTPRequest $request): HTTPResponse

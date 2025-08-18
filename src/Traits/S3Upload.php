@@ -7,7 +7,8 @@ use Aws\S3\S3Client;
 
 /**
  * Trait to configure direct S3 Uploads
- * Used in conjunction with ExternalUpload
+ * Used by fields that extend the AbstractUppyExternalUploadField
+ * See UppyS3Field for an example
  * @author James
  */
 trait S3Upload
@@ -18,7 +19,7 @@ trait S3Upload
     public function generateSignedUrl(string $fileName = ''): string
     {
         $serviceClient = $this->getServiceClient();
-        $bucket = $this->getServiceConfigValue('S3_BUCKET');
+        $bucket = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_BUCKET');
 
         if ($fileName === '') {
             $fileName = $this->generateUploadHash();
@@ -35,7 +36,7 @@ trait S3Upload
             ]
         );
 
-        $expiry = intval($this->getServiceConfigValue('UPLOAD_EXPIRY_MINUTES'));
+        $expiry = intval($this->getServiceConfigValue('S3_UPLOAD_EXPIRY_MINUTES'));
         $request = $serviceClient->createPresignedRequest(
             $cmd,
             "+{$expiry} minutes"
@@ -55,16 +56,16 @@ trait S3Upload
         }
 
         $options = [
-            'region'  => $this->getServiceConfigValue('S3_REGION'),
-            'version' => $this->getServiceConfigValue('API_VERSION')
+            'region'  => $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION'),
+            'version' => $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION')
         ];
 
         /**
          * Credentials only passed if it is set.
-        * If not set, infrastructure is expected to have assumed role to run s3 transactions
-        */
-        if (($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
-            && ($awsSecretAccessKey = $this->getServiceConfigValue('AWS_SECRET_ACCESS_KEY'))
+         * If not set, infrastructure is expected to have assumed role to run s3 transactions
+         */
+        if (($awsKeyId = $this->getServiceConfigValue('S3_UPLOAD_AWS_ACCESS_KEY_ID'))
+            && ($awsSecretAccessKey = $this->getServiceConfigValue('S3_UPLOAD_AWS_SECRET_ACCESS_KEY'))
         ) {
             $options['credentials'] = new Credentials(
                 $awsKeyId,
@@ -72,15 +73,15 @@ trait S3Upload
             );
         }
 
-        if ($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
+        if ($endpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_ENDPOINT')) {
             $options['endpoint'] = $endpoint;
         }
 
-        if ($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
+        if ($usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT')) {
             $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
         }
 
-        if ($debug = $this->getServiceConfigValue('DEBUG')) {
+        if ($debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG')) {
             $options['debug'] = $debug;
         }
 
