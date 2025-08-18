@@ -19,6 +19,10 @@ trait S3Upload
     public function generateSignedUrl(string $fileName = ''): string
     {
         $serviceClient = $this->getServiceClient();
+        if(!$serviceClient instanceof S3Client) {
+            Logger::log("Error: the S3Client could not be created", "NOTICE");
+            return '';
+        }
         $bucket = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_BUCKET');
 
         if ($fileName === '') {
@@ -55,9 +59,20 @@ trait S3Upload
             return null;
         }
 
+        $region = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION');
+        if(!is_string($region) || $region == "") {
+            Logger::log("Error: invalid S3_UPLOAD_AWS_S3_REGION value - expected an AWS region string", "NOTICE");
+            return null;
+        }
+        $version = $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION');
+        if(!is_string($region) || $region == "") {
+            Logger::log("Error: invalid S3_UPLOAD_AWS_API_VERSION value - expected an AWS version string", "NOTICE");
+            return null;
+        }
+
         $options = [
-            'region'  => $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION'),
-            'version' => $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION')
+            'region'  => $region,
+            'version' => $version
         ];
 
         /**
@@ -77,12 +92,14 @@ trait S3Upload
             $options['endpoint'] = $endpoint;
         }
 
-        if ($usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT')) {
-            $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
+        $usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT');
+        if ($usePathStyleEndpoint && strtolower($usePathStyleEndpoint ?? '') !== "false") {
+            $options['use_path_style_endpoint'] = true;
         }
 
-        if ($debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG')) {
-            $options['debug'] = $debug;
+        $debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG');
+        if ($debug && strtolower($debug ?? '') !== "false") {
+            $options['debug'] = true;
         }
 
         return new S3Client($options);
