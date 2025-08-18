@@ -1175,7 +1175,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
         // check for a denied mimetype in this uploader's configuration
         $is_denied = $this->isDeniedMimeType($mimetype);
-        if (!$is_denied) {
+        if ($is_denied) {
             $valid = false;
         }
 
