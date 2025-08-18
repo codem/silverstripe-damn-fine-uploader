@@ -86,11 +86,7 @@ class UploadPageController extends \PageController
     }
 
 
-
-    /**
-     * @return FormAction
-     */
-    protected function getUploadAction()
+    protected function getUploadAction(): FormAction
     {
         $data = $this->data();
         $action = FormAction::create(
@@ -110,10 +106,15 @@ class UploadPageController extends \PageController
 
     /**
      * A file upload form
+     * No form is returned if an upload field is not available
      */
-    public function UploadForm()
+    public function UploadForm(): ?Form
     {
         $uploadField = $this->getUploadField();
+        if(!$uploadField instanceof DamnFineUploaderField) {
+            return null;
+        }
+
         $fields = FieldList::create(
             $uploadField
         );
@@ -130,7 +131,7 @@ class UploadPageController extends \PageController
     /**
      * For templates that have $Form
      */
-    public function Form()
+    public function Form(): ?Form
     {
         return $this->UploadForm();
     }
