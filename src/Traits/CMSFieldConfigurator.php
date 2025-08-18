@@ -51,10 +51,10 @@ trait CMSFieldConfigurator
             'Root.' . $tab,
             CompositeField::create(
                 NumericField::create('MaxFileSizeMB')
-                    ->setTitle('Max File Size MB')
-                    ->setDescription("Note: Maximum php allowed size is {$this->getPHPMaxFileSizeMB()} MB"),
+                    ->setTitle(_t('DamnFineUploader.MAX_FILE_SIZE_MB', 'Max File Size MB'))
+                    ->setDescription(_t('DamnFineUploader.MAX_FILE_SIZE_MB_DESCRIPTION', "Note: Maximum php allowed size is {maxSize} MB", ['maxSize' => $this->getPHPMaxFileSizeMB()])),
                 NumericField::create('FileUploadLimit')
-                    ->setTitle('Maximum number of files allowed in the upload')
+                    ->setTitle(_t('DamnFineUploader.MAX_NUMBER_FILES_IN_UPLOAD','Maximum number of files allowed in the upload'))
             )->setTitle(_t('DamnFineUploader.RESTRICTIONS', 'Restrictions'))
         );
 

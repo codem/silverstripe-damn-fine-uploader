@@ -1266,7 +1266,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         $result = $this->checkUploadedFile($file_upload);
         if (!$result['valid']) {
             $mimetype = empty($result['mimetype']) ? 'unknown' : $result['mimetype'];
-            throw new InvalidRequestException(sprintf(_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE', 'The file uploaded could not be accepted as it is a %s file, please try again with a different file'), $mimetype));
+            throw new InvalidRequestException(_t('DamnFineUploader.UPLOAD_NOT_ACCEPTED_FILE', 'The file uploaded could not be accepted as it is a {invalidFileType} file, please try again with a different file', ['invalidFileType' => $mimetype]));
         }
 
         // create the file UUID for this file, sent back in the request
