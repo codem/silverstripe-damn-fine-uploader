@@ -48,26 +48,4 @@ class FileExtension extends DataExtension
         $fields->removeByName('SubmittedUploadFieldID');
     }
 
-    /**
-     * @deprecated see FileRetriever::getUploadedFilesByKey() and FileRetriever::getFile()
-     * This method will be removed in a future release
-     * Given a uuid of a file and the form's security id, retrieve an uploaded file
-     * Note that this retrieves a file from the DRAFT stage as it may not be public
-     * @param string $uuid the file uuid sent by back on upload as newUuid and submitted with the form
-     * @param string $form_security_token the Security Token value from the form, sent to the uploader with each upload
-     * @param bool $untrust when true (the default), the uploader token will be removed when the file is retrieved. Warning: this will mean you can no longer retrieve the file using this method again.
-     */
-    public function getByDfuToken(string $uuid, string $form_security_token, bool $untrust = true)
-    {
-        $token = $uuid . "|" . $form_security_token;
-        $file = Versioned::get_by_stage(File::class, Versioned::DRAFT)
-              ->filter(["DFU" => $token])
-              ->first();
-        if (!empty($file->ID) && $untrust) {
-            $file->DFU = null;
-            $file->writeToStage(Versioned::DRAFT);
-        }
-
-        return $file;
-    }
 }
