@@ -17,8 +17,3 @@ Codem\DamnFineUploader\DamnFineUploaderField:
     deleteFile:
       forceConfirm: true
       method: 'POST'
-Codem\DamnFineUploader\EditableUploadField:
-  # migration_1 is fineuploader deprecation
-  run_migration_1: false
-  run_migration_manymanyhasmany: false
-  run_migration_allowedmimetypedeprecation: false

@@ -1,7 +1,3 @@
 ---
 Name: dfu_assets
 ---
-# ensure webp is included in the list of allowed extensions
-SilverStripe\Assets\File:
-  allowed_extensions:
-    - webp
