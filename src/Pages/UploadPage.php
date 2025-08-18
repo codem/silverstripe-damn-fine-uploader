@@ -17,7 +17,6 @@ use SilverStripe\Security\Member;
  * as such it can only be created, edit and published by those with allowed permissions
  * @author James
  * @property float $MaxFileSizeMB
- * @property ?string $SelectedFileTypes
  * @property int $FileUploadLimit
  * @property bool $UseDateFolder
  * @property ?string $FormFieldTitle
@@ -34,7 +33,6 @@ class UploadPage extends \Page implements PermissionProvider
 
     private static array $db = [
         'MaxFileSizeMB' => 'Float',
-        'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'FormFieldTitle' => 'Varchar(255)',
@@ -192,6 +190,21 @@ class UploadPage extends \Page implements PermissionProvider
             _t('DamnFineUploader.TAB_UPLOADS', 'Uploads')
         );
 
+
+        // Ensure that the SelectedFileTypes field is added to the composite field
+        if($selectedFileTypesField = $fields->dataFieldByName('SelectedFileTypes')) {
+            $fields->insertAfter('FileUploadLimit', $selectedFileTypesField);
+        }
+
         return $fields;
     }
+
+    /**
+     * This method is retained for backwards compatibility
+     * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
+     */
+    public function getAllowedTypes(): array {
+        return $this->getExtensionsForValidator();
+    }
+
 }

@@ -35,64 +35,6 @@ trait CMSFieldConfigurator
     }
 
     /**
-     * Gets allowed types based on the select file types
-     */
-    public function getAllowedTypes(): array
-    {
-        $selected = $this->SelectedFileTypes;
-        $allowedTypes = json_decode($selected ?? '', true);
-        if (json_last_error() == JSON_ERROR_NONE && is_array($allowedTypes)) {
-            return array_unique($allowedTypes);
-        }
-
-        return [];
-    }
-
-    /**
-     * Get the allowed mime types, based on the selected file types
-     */
-    public function getAllowedMimeTypes(): array
-    {
-        $types = $this->getAllowedTypes();
-        $mimetypes = [];
-        if (count($types) > 0) {
-            foreach ($types as $type) {
-                $expected = $this->getMimeTypes($type);
-                $mimetypes = array_merge($mimetypes, $expected);
-            }
-        }
-
-        return array_unique($mimetypes);
-    }
-
-    /**
-     * This is pinched from MimeUploadValidator
-     */
-    public function getMimeTypes(string $extension): array
-    {
-        $expectedMimes = [];
-        // Get the mime types set in framework core
-        $knownMimes = Config::inst()->get(HTTP::class, 'MimeTypes');
-        if (isset($knownMimes[$extension])) {
-            $expectedMimes[] = $knownMimes[$extension];
-        }
-
-        // Get the mime types and their variations from mime validator
-        $knownMimes =  Config::inst()->get(MimeUploadValidator::class, 'MimeTypes');
-        if (isset($knownMimes[$extension])) {
-            $mimes = (array) $knownMimes[$extension];
-
-            foreach ($mimes as $mime) {
-                if (!in_array($mime, $expectedMimes)) {
-                    $expectedMimes[] = $mime;
-                }
-            }
-        }
-
-        return $expectedMimes;
-    }
-
-    /**
      * Add generic CMS fields to the record
      */
     public function addGenericFields(FieldList $fields, string $tab = "Main"): FieldList
@@ -101,17 +43,8 @@ trait CMSFieldConfigurator
         $fields->removeByName([
             'Implementation',
             'Folder','FolderID', 'UseDateFolder',
-            'MaxFileSizeMB','FileUploadLimit','SelectedFileTypes'
+            'MaxFileSizeMB','FileUploadLimit'
         ]);
-
-        // get allowed types field
-        $typeSelectionField = TypeSelectionField::create('SelectedFileTypes')
-            ->setTitle(
-                _t(
-                    'DamnFineUploader.SELECT_FILE_TYPES',
-                    'Select allowed file types for this upload field'
-                )
-            );
 
         // Restrictions
         $fields->addFieldToTab(
@@ -121,8 +54,7 @@ trait CMSFieldConfigurator
                     ->setTitle('Max File Size MB')
                     ->setDescription("Note: Maximum php allowed size is {$this->getPHPMaxFileSizeMB()} MB"),
                 NumericField::create('FileUploadLimit')
-                    ->setTitle('Maximum number of files allowed in the upload'),
-                $typeSelectionField
+                    ->setTitle('Maximum number of files allowed in the upload')
             )->setTitle(_t('DamnFineUploader.RESTRICTIONS', 'Restrictions'))
         );
 

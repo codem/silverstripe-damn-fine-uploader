@@ -7,7 +7,6 @@ use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 /**
  * @note provides an EditableUploadField for the userforms module
  * returns a field based on the implementation, currently Uppy
- * @property ?string $SelectedFileTypes
  * @property int $FileUploadLimit
  * @property bool $UseDateFolder
  * @property ?string $Implementation
@@ -25,7 +24,6 @@ class EditableUploadField extends EditableFileField
     private static string $plural_name = 'File Upload Fields - Drag and Drop';
 
     private static array $db = [
-        'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'Implementation' => 'Varchar(16)'
@@ -58,6 +56,14 @@ class EditableUploadField extends EditableFileField
         $fields = parent::getCMSFields();
         $this->addGenericFields($fields, _t('DamnFineUploader.TAB_MAIN', 'Main'));
         return $fields;
+    }
+
+    /**
+     * This method is retained for backwards compatibility
+     * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
+     */
+    public function getAllowedTypes(): array {
+        return $this->getExtensionsForValidator();
     }
 
 }

@@ -922,6 +922,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
 
     /**
      * Return a list of extensions matching the file types provided
+     * The types provided can be extensions (with or without prefix .), or a mimetype
      * @param array $types example: [ 'png', '.png', 'image.png', 'image/*' ]
      */
     final public function getExtensionsForTypes(array $types): array
