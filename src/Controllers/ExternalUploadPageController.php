@@ -18,7 +18,6 @@ class ExternalUploadPageController extends UploadPageController
 {
     private static array $allowed_actions = [
         'UploadForm',
-        'handleUpload',
         'uploaded' // notification URL
     ];
 
