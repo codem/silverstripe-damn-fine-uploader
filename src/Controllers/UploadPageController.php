@@ -20,8 +20,7 @@ use SilverStripe\ORM\ValidationResult;
 class UploadPageController extends \PageController
 {
     private static array $allowed_actions = [
-        'UploadForm',
-        'handleUpload'
+        'UploadForm'
     ];
 
     private static string $upload_field_name = "UploadField";
