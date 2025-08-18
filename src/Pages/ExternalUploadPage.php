@@ -26,6 +26,10 @@ class ExternalUploadPage extends UploadPage
         'FormFieldTitle' => 'Upload',
     ];
 
+    private static array $has_many = [
+        'ExternalUploads' => ExternalUpload::class
+    ];
+
     private static string $table_name = 'ExternalUploadPage';
 
     /**
