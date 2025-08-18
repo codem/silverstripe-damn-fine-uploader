@@ -164,8 +164,8 @@ class UploadPageController extends \PageController
             $fileData['found'] = count($files);
             // your extension handles the uploads
             $response = $this->extend('handleUploadedFiles', $fileData, $uploadField, $form);
-        } catch (\Exception) {
-            $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form);
+        } catch (\Exception $exception) {
+            $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form, $exception);
         }
 
         if ($response instanceof HTTPResponse) {
