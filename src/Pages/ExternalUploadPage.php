@@ -4,6 +4,8 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\ORM\DataList;
 
 /**
  * A page that handles file uploads to an external service
@@ -44,6 +46,20 @@ class ExternalUploadPage extends UploadPage
 
     private static string $description = 'After page creation, choose an upload service';
 
+    /**
+     * Get uploads made via this page's controller
+     */
+    public function getLinkedExternalUploads(): ?DataList
+    {
+        if($this->isInDB()) {
+            return ExternalUpload::get()->filter([
+                'UploadSrcRecordId' => $this->ID
+            ])->sort(['Created' => 'DESC']);
+        } else {
+            return null;
+        }
+    }
+
     public function getCMSFields()
     {
         $fields = parent::getCmsFields();
@@ -56,6 +72,17 @@ class ExternalUploadPage extends UploadPage
                 $serviceClasses
             )->setEmptyString('')
         );
+
+        $tabName = "Root." . _t('DamnFineUploader.TAB_UPLOADS', 'Uploads');
+        $fields->addFieldToTab(
+            $tabName,
+            GridField::create(
+                'ExternalUploads',
+                _t('DamnFineUploader.EXTERNAL_UPLOADS', 'External uploads'),
+                $this->getLinkedExternalUploads()
+            )
+        );
+
         return $fields;
     }
 

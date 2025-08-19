@@ -196,6 +196,12 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                     throw new \Exception("Security token value does not match the expected value");
                 }
 
+                $controller = Controller::curr();
+                $page = null;
+                if($controller && $controller instanceof \SilverStripe\CMS\Controllers\ContentController) {
+                    $page = $controller->data();
+                }
+
                 // single file upload completion
                 $externalUpload = ExternalUpload::create([
                     'ServiceName' => static::getServiceName(),
@@ -208,7 +214,8 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                     'UploadHash' => $post['id'] ?? '',
                     'UploadUri' => $post['uri'] ?? '',
                     'UploadSrc' => $post['src'] ?? '',
-                    'UploadBatchId' => ''
+                    'UploadBatchId' => '',
+                    'UploadSrcRecordId' => $page ? $page->ID : 0
                 ]);
                 $id = $externalUpload->write();
             }

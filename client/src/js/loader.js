@@ -86,6 +86,9 @@ export default function DFULoader(opts) {
         endpoint: config.request.endpoint,
         shouldRetry: function(xhr) {
           return false;
+        },
+        getResponseData: function(xhr) {
+          return { url: xhr.responseText };
         }
       }
     );

@@ -32,15 +32,16 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-VB66JL1kKQm1Iut7XNwUSHvKDf6dUGzY4b72VO6t0Tm2mv9TM0CYdYhmvyz9cOHi"
+                "integrity" => "sha384-LRxkTL/zOxD1tg7tQnvisk66N7TpOK2ozVGF94gmrk/pks/R/8blFT0R5z0vqKVz"
             ]
         );
+
         Requirements::css(
             'codem/silverstripe-damn-fine-uploader:client/dist/styles/uppy.min.css',
             'screen',
             [
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-Yfc66Dde4DdHF1r8dSVR2nhYqsgoXyIYdqinztQQ+Ruw9KxvTj5Pz8fjTETxRCkd"
+                "integrity" => "sha384-s2jjKjT1leXthhJ1s4qtk/aZVZGqpZYseSmb7//Lnl6ZQ6nGPEtZWfqHjwL3t3BE"
             ]
         );
     }
