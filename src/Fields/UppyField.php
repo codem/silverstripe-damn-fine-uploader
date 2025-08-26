@@ -32,7 +32,7 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-LRxkTL/zOxD1tg7tQnvisk66N7TpOK2ozVGF94gmrk/pks/R/8blFT0R5z0vqKVz"
+                "integrity" => "sha384-cgBrXteYttNigBVuF7GbSBJxBOeMgOsSoiqoP4tMnJATvtQxz5+0PgPIKKH5+ql6"
             ]
         );
 

@@ -18212,13 +18212,20 @@ function DFULoader(opts) {
       bundle: bundle,
       fieldName: this.uploadElement.dataset.name,
       endpoint: config.request.endpoint,
+      responseType: 'json',
       shouldRetry: function shouldRetry(xhr) {
         return false;
       },
       getResponseData: function getResponseData(xhr) {
-        return {
-          url: xhr.responseText
-        };
+        if (_typeof(xhr.response) == 'object') {
+          return xhr.response;
+        } else if (xhr.responseURL != '') {
+          return {
+            url: xhr.responseURL
+          };
+        } else {
+          return {};
+        }
       }
     });
     uppy.on('upload-success', function (file, response) {
