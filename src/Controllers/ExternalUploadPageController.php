@@ -12,7 +12,6 @@ use SilverStripe\ORM\ValidationResult;
 /**
  * Controller for handling file uploads
  * @author James
- * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage>
  */
 class ExternalUploadPageController extends UploadPageController
 {
@@ -23,19 +22,24 @@ class ExternalUploadPageController extends UploadPageController
 
     /**
      * Return the upload field
-     * @return AbstractUppyExternalUploadField
      */
-    protected function getUploadField()
+    protected function getUploadField(): ?AbstractUppyExternalUploadField
     {
         $args = [
-            $this->config()->get('upload_field_name'),// name
+            // name
+            $this->config()->get('upload_field_name'),
             // title
             _t(
                 'DamnFineUploader.UPLOAD',
                 'Upload'
             )
         ];
-        return $this->data()->getUploadField($args);
+        $page = $this->data();
+        if($page instanceof ExternalUploadPage) {
+            return $page->getUploadField($args);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -59,11 +63,16 @@ class ExternalUploadPageController extends UploadPageController
         try {
             $submissionCount = 0;
             $response = null;
-            $submissions = $this->data()->ExternalUploads();
+            $page = $this->data();
+            if(!$page instanceof ExternalUploadPage) {
+                throw new \RuntimeException("Controller has invalid page model");
+            }
+            $submissions = $page->ExternalUploads();
             $submissionCount = $submissions->count();
             // your extension handles the uploads
             $response = $this->extend('handleExternalUploadedFiles', $submissions);
-        } catch (\Exception) {
+        } catch (\Exception $exception) {
+            Logger::log("Failed to handle upload: " . $exception->getMessage(), "NOTICE");
         }
 
         if ($response instanceof HTTPResponse) {

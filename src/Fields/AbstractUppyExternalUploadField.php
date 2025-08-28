@@ -153,9 +153,10 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * e.g from environment. See UppyS3Field for an example.
      * @return mixed
      */
-    public function getServiceConfigValue(string $key)
+    public function getServiceConfigValue(string $key): mixed
     {
-        return $this->serviceConfig[ $key ] ?? null;
+        $config = $this->getServiceConfig();
+        return $config[ $key ] ?? null;
     }
 
     /**

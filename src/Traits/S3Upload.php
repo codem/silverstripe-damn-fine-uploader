@@ -65,7 +65,7 @@ trait S3Upload
             return null;
         }
         $version = $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION');
-        if(!is_string($region) || $region == "") {
+        if(!is_string($version) || $version == "") {
             Logger::log("Error: invalid S3_UPLOAD_AWS_API_VERSION value - expected an AWS version string", "NOTICE");
             return null;
         }
@@ -93,12 +93,12 @@ trait S3Upload
         }
 
         $usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT');
-        if ($usePathStyleEndpoint && strtolower($usePathStyleEndpoint ?? '') !== "false") {
+        if ($usePathStyleEndpoint && strtolower($usePathStyleEndpoint) !== "false") {
             $options['use_path_style_endpoint'] = true;
         }
 
         $debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG');
-        if ($debug && strtolower($debug ?? '') !== "false") {
+        if ($debug && strtolower($debug) !== "false") {
             $options['debug'] = true;
         }
 
