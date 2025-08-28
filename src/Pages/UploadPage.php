@@ -193,7 +193,7 @@ class UploadPage extends \Page implements PermissionProvider
 
 
         // Ensure that the SelectedFileTypes field is added to the composite field
-        if($selectedFileTypesField = $fields->dataFieldByName('SelectedFileTypes')) {
+        if ($selectedFileTypesField = $fields->dataFieldByName('SelectedFileTypes')) {
             $fields->insertAfter('FileUploadLimit', $selectedFileTypesField);
         }
 
@@ -204,7 +204,8 @@ class UploadPage extends \Page implements PermissionProvider
      * This method is retained for backwards compatibility
      * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
      */
-    public function getAllowedTypes(): array {
+    public function getAllowedTypes(): array
+    {
         return $this->getExtensionsForValidator();
     }
 

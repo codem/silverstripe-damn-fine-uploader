@@ -45,7 +45,7 @@ class UppyS3Field extends AbstractUppyExternalUploadField
      */
     public function getServiceConfigValue(string $key): mixed
     {
-        if(str_starts_with($key, 'S3_UPLOAD_')) {
+        if (str_starts_with($key, 'S3_UPLOAD_')) {
             // return these values from the environment
             return \SilverStripe\Core\Environment::getEnv($key);
         } else {

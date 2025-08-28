@@ -5,7 +5,6 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Assets\File;
-use SilverStripe\Versioned\Versioned;
 
 /**
  * @property ?string $DFU

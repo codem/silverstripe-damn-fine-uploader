@@ -111,7 +111,7 @@ class UploadPageController extends \PageController
     public function UploadForm(): ?Form
     {
         $uploadField = $this->getUploadField();
-        if(!$uploadField instanceof DamnFineUploaderField) {
+        if (!$uploadField instanceof DamnFineUploaderField) {
             return null;
         }
 

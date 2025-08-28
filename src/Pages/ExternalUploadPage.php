@@ -52,7 +52,7 @@ class ExternalUploadPage extends UploadPage
      */
     public function getLinkedExternalUploads(): ?DataList
     {
-        if($this->isInDB()) {
+        if ($this->isInDB()) {
             return ExternalUpload::get()->filter([
                 'UploadSrcRecordId' => $this->ID
             ])->sort(['Created' => 'DESC']);

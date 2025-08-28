@@ -36,7 +36,7 @@ class ExternalUploadPageController extends UploadPageController
             )
         ];
         $page = $this->data();
-        if($page instanceof ExternalUploadPage) {
+        if ($page instanceof ExternalUploadPage) {
             return $page->getUploadField($args);
         } else {
             return null;
@@ -65,7 +65,7 @@ class ExternalUploadPageController extends UploadPageController
             $submissionCount = 0;
             $response = null;
             $page = $this->data();
-            if(!$page instanceof ExternalUploadPage) {
+            if (!$page instanceof ExternalUploadPage) {
                 throw new \RuntimeException("Controller has invalid page model");
             }
 

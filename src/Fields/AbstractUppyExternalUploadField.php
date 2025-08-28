@@ -6,7 +6,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\RandomGenerator;
 
@@ -198,7 +197,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 
                 $controller = Controller::curr();
                 $page = null;
-                if($controller && $controller instanceof \SilverStripe\CMS\Controllers\ContentController) {
+                if ($controller && $controller instanceof \SilverStripe\CMS\Controllers\ContentController) {
                     $page = $controller->data();
                 }
 

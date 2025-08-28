@@ -63,7 +63,8 @@ class EditableUploadField extends EditableFileField
      * This method is retained for backwards compatibility
      * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
      */
-    public function getAllowedTypes(): array {
+    public function getAllowedTypes(): array
+    {
         return $this->getExtensionsForValidator();
     }
 

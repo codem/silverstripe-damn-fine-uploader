@@ -3,7 +3,6 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 

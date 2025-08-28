@@ -19,7 +19,7 @@ trait S3Upload
     public function generateSignedUrl(string $fileName = ''): string
     {
         $serviceClient = $this->getServiceClient();
-        if(!$serviceClient instanceof S3Client) {
+        if (!$serviceClient instanceof S3Client) {
             Logger::log("Error: the S3Client could not be created", "NOTICE");
             return '';
         }
@@ -61,13 +61,13 @@ trait S3Upload
         }
 
         $region = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION');
-        if(!is_string($region) || $region === "") {
+        if (!is_string($region) || $region === "") {
             Logger::log("Error: invalid S3_UPLOAD_AWS_S3_REGION value - expected an AWS region string", "NOTICE");
             return null;
         }
 
         $version = $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION');
-        if(!is_string($version) || $version === "") {
+        if (!is_string($version) || $version === "") {
             Logger::log("Error: invalid S3_UPLOAD_AWS_API_VERSION value - expected an AWS version string", "NOTICE");
             return null;
         }

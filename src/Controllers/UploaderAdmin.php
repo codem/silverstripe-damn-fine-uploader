@@ -21,7 +21,7 @@ class UploaderAdmin extends ModelAdmin
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
-        if($this->modelClass == ExternalUpload::class) {
+        if ($this->modelClass == ExternalUpload::class) {
             $form->Fields()->unshift(
                 LiteralField::create(
                     'ExternalUploadDeleteNote',
