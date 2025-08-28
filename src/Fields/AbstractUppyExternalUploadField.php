@@ -151,7 +151,6 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      * Get a value from configuration
      * Implementing classes can override this method to retrieve custom configuration
      * e.g from environment. See UppyS3Field for an example.
-     * @return mixed
      */
     public function getServiceConfigValue(string $key): mixed
     {

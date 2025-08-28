@@ -21,6 +21,7 @@ use SilverStripe\Security\PermissionProvider;
  * @property ?string $UploadUri
  * @property ?string $UploadSrc
  * @property ?string $UploadBatchId
+ * @property int $UploadSrcRecordId
  */
 class ExternalUpload extends DataObject implements PermissionProvider
 {

@@ -12,6 +12,7 @@ use SilverStripe\ORM\ValidationResult;
 /**
  * Controller for handling file uploads
  * @author James
+ * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage>
  */
 class ExternalUploadPageController extends UploadPageController
 {
@@ -67,6 +68,7 @@ class ExternalUploadPageController extends UploadPageController
             if(!$page instanceof ExternalUploadPage) {
                 throw new \RuntimeException("Controller has invalid page model");
             }
+
             $submissions = $page->ExternalUploads();
             $submissionCount = $submissions->count();
             // your extension handles the uploads

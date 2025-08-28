@@ -42,7 +42,6 @@ class UppyS3Field extends AbstractUppyExternalUploadField
     /**
      * Overrides the parent getServiceConfigValue method to
      * return configuration values from environment if appropriate
-     * @return mixed
      */
     public function getServiceConfigValue(string $key): mixed
     {

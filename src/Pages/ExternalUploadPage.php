@@ -11,6 +11,7 @@ use SilverStripe\ORM\DataList;
  * A page that handles file uploads to an external service
  * @author James
  * @property ?string $ServiceName
+ * @method \SilverStripe\ORM\HasManyList<\Codem\DamnFineUploader\ExternalUpload> ExternalUploads()
  */
 class ExternalUploadPage extends UploadPage
 {

@@ -10,6 +10,7 @@ use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
  * @property int $FileUploadLimit
  * @property bool $UseDateFolder
  * @property ?string $Implementation
+ * @mixin \NSWDPC\FileTypeManagement\Extensions\EditableFileFieldExtension
  */
 class EditableUploadField extends EditableFileField
 {

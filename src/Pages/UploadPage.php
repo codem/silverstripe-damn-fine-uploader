@@ -25,6 +25,7 @@ use SilverStripe\Security\Member;
  * @property ?string $FormUploadButtonTitle
  * @property int $FolderID
  * @method \SilverStripe\Assets\Folder Folder()
+ * @mixin \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension
  */
 class UploadPage extends \Page implements PermissionProvider
 {

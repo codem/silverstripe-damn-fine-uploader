@@ -31,6 +31,7 @@ class UploaderAdmin extends ModelAdmin
                 )
             );
         }
+
         return $form;
     }
 

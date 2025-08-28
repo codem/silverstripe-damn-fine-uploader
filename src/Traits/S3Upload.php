@@ -23,6 +23,7 @@ trait S3Upload
             Logger::log("Error: the S3Client could not be created", "NOTICE");
             return '';
         }
+
         $bucket = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_BUCKET');
 
         if ($fileName === '') {
@@ -60,12 +61,13 @@ trait S3Upload
         }
 
         $region = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION');
-        if(!is_string($region) || $region == "") {
+        if(!is_string($region) || $region === "") {
             Logger::log("Error: invalid S3_UPLOAD_AWS_S3_REGION value - expected an AWS region string", "NOTICE");
             return null;
         }
+
         $version = $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION');
-        if(!is_string($version) || $version == "") {
+        if(!is_string($version) || $version === "") {
             Logger::log("Error: invalid S3_UPLOAD_AWS_API_VERSION value - expected an AWS version string", "NOTICE");
             return null;
         }
@@ -93,12 +95,12 @@ trait S3Upload
         }
 
         $usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT');
-        if ($usePathStyleEndpoint && strtolower($usePathStyleEndpoint) !== "false") {
+        if ($usePathStyleEndpoint && strtolower((string) $usePathStyleEndpoint) !== "false") {
             $options['use_path_style_endpoint'] = true;
         }
 
         $debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG');
-        if ($debug && strtolower($debug) !== "false") {
+        if ($debug && strtolower((string) $debug) !== "false") {
             $options['debug'] = true;
         }
 
