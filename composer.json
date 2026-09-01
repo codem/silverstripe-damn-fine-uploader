@@ -55,6 +55,8 @@
                 "src/Extensions/",
                 "src/Fields/",
                 "src/Models/",
+                "src/Models/EditableFormField",
+                "src/Models/Submission",
                 "src/Pages/",
                 "src/Services/",
                 "src/Traits/"
