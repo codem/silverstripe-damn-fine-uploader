@@ -11,3 +11,4 @@
 /composer.lock
 /public/
 /vendor/
+/.phpactor.json
