@@ -3,26 +3,30 @@
 namespace Codem\DamnFineUploader;
 
 use Aws\Credentials\Credentials;
-use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 
 /**
  * Trait to configure direct S3 Uploads
- * Used in conjunction with ExternalUpload
+ * Used by fields that extend the AbstractUppyExternalUploadField
+ * See UppyS3Field for an example
  * @author James
  */
 trait S3Upload
 {
-
     /**
      * Generate a signed URL for upload to the external target
-     * @param string $fileName
      */
-    public function generateSignedUrl(string $fileName = '') : string {
+    public function generateSignedUrl(string $fileName = ''): string
+    {
         $serviceClient = $this->getServiceClient();
-        $bucket = $this->getServiceConfigValue('S3_BUCKET');
+        if (!$serviceClient instanceof S3Client) {
+            Logger::log("Error: the S3Client could not be created", "NOTICE");
+            return '';
+        }
 
-        if($fileName == '') {
+        $bucket = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_BUCKET');
+
+        if ($fileName === '') {
             $fileName = $this->generateUploadHash();
         }
 
@@ -30,57 +34,77 @@ trait S3Upload
         $fileName = str_replace("/", "-", $fileName);
 
         $cmd = $serviceClient->getCommand(
-            'PutObject', [
+            'PutObject',
+            [
                 'Bucket' => $bucket,
                 'Key' => $fileName
             ]
         );
 
-        $expiry = intval($this->getServiceConfigValue('UPLOAD_EXPIRY_MINUTES'));
+        $expiry = intval($this->getServiceConfigValue('S3_UPLOAD_EXPIRY_MINUTES'));
         $request = $serviceClient->createPresignedRequest(
             $cmd,
             "+{$expiry} minutes"
         );
-        $presignedUrl = (string)$request->getUri();
-        return $presignedUrl;
+        return (string)$request->getUri();
     }
 
     /**
      * Get the service client
      */
-    public function getServiceClient() : ?object {
+    public function getServiceClient(): ?object
+    {
 
-         $options = [
-             'region'  => $this->getServiceConfigValue('S3_REGION'),
-             'version' => $this->getServiceConfigValue('API_VERSION')
-         ];
 
-         /**
-          * Credentials only passed if it is set.
-          * If not set, infrastructure is expected to have assumed role to run s3 transactions
-          */
-         if( ($awsKeyId = $this->getServiceConfigValue('AWS_ACCESS_KEY_ID'))
-             && ($awsSecretAccessKey = $this->getServiceConfigValue('AWS_SECRET_ACCESS_KEY'))
-         ) {
-             $options['credentials'] = new Credentials(
-                 $awsKeyId,
-                 $awsSecretAccessKey
-             );
-         }
+        if (!class_exists(S3Client::class) || !class_exists(Credentials::class)) {
+            return null;
+        }
 
-         if($endpoint = $this->getServiceConfigValue('ENDPOINT')) {
-             $options['endpoint'] = $endpoint;
-         }
+        $region = $this->getServiceConfigValue('S3_UPLOAD_AWS_S3_REGION');
+        if (!is_string($region) || $region === "") {
+            Logger::log("Error: invalid S3_UPLOAD_AWS_S3_REGION value - expected an AWS region string", "NOTICE");
+            return null;
+        }
 
-         if($usePathStyleEndpoint = $this->getServiceConfigValue('USE_PATH_STYLE_ENDPOINT')) {
-             $options['use_path_style_endpoint'] = $usePathStyleEndpoint;
-         }
+        $version = $this->getServiceConfigValue('S3_UPLOAD_AWS_API_VERSION');
+        if (!is_string($version) || $version === "") {
+            Logger::log("Error: invalid S3_UPLOAD_AWS_API_VERSION value - expected an AWS version string", "NOTICE");
+            return null;
+        }
 
-         if($debug = $this->getServiceConfigValue('DEBUG')) {
-             $options['debug'] = $debug;
-         }
+        $options = [
+            'region'  => $region,
+            'version' => $version
+        ];
 
-         return new S3Client($options);
+        /**
+         * Credentials only passed if it is set.
+         * If not set, infrastructure is expected to have assumed role to run s3 transactions
+         */
+        if (($awsKeyId = $this->getServiceConfigValue('S3_UPLOAD_AWS_ACCESS_KEY_ID'))
+            && ($awsSecretAccessKey = $this->getServiceConfigValue('S3_UPLOAD_AWS_SECRET_ACCESS_KEY'))
+        ) {
+            $options['credentials'] = new Credentials(
+                $awsKeyId,
+                $awsSecretAccessKey
+            );
+        }
+
+        if ($endpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_ENDPOINT')) {
+            $options['endpoint'] = $endpoint;
+        }
+
+        $usePathStyleEndpoint = $this->getServiceConfigValue('S3_UPLOAD_AWS_USE_PATH_STYLE_ENDPOINT');
+        if ($usePathStyleEndpoint && strtolower((string) $usePathStyleEndpoint) !== "false") {
+            $options['use_path_style_endpoint'] = true;
+        }
+
+        $debug = $this->getServiceConfigValue('S3_UPLOAD_AWS_DEBUG');
+        if ($debug && strtolower((string) $debug) !== "false") {
+            $options['debug'] = true;
+        }
+
+        return new S3Client($options);
 
     }
 

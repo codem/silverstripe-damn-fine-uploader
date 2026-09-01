@@ -5,10 +5,9 @@ namespace Codem\DamnFineUploader;
 /**
  * @author James
  */
-use Codem\DamnFineUploader\UppyField;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\FormAction;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPResponse;
@@ -16,19 +15,18 @@ use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
+ * @extends \PageController<\Codem\DamnFineUploader\UploadPage>
  */
 class UploadPageController extends \PageController
 {
-
-    private static $allowed_actions = [
-        'UploadForm',
-        'handleUpload'
+    private static array $allowed_actions = [
+        'UploadForm'
     ];
 
-    private static $upload_field_name = "UploadField";
+    private static string $upload_field_name = "UploadField";
 
     /**
-     * @return UppyField;
+     * @return UppyField
      */
     protected function getUploadField()
     {
@@ -43,12 +41,15 @@ class UploadPageController extends \PageController
         if ($data->FormFieldTitle) {
             $field->setTitle($data->FormFieldTitle);
         }
+
         if ($data->FormFieldDescription) {
-            $field->setDescription(strip_tags($data->FormFieldDescription));
+            $field->setDescription(strip_tags((string) $data->FormFieldDescription));
         }
+
         if ($data->FormFieldRightTitle) {
-            $field->setRightTitle(strip_tags($data->FormFieldRightTitle));
+            $field->setRightTitle(strip_tags((string) $data->FormFieldRightTitle));
         }
+
         if ($data->FormFieldTitle) {
             $field->setTitle($data->FormFieldTitle);
         }
@@ -56,7 +57,7 @@ class UploadPageController extends \PageController
         // max file size, handle in bytes, provided in MB
         $bytes = $data->MaxFileSizeMB * 1048576;
         if ($bytes > 0) {
-            $field->setAllowedMaxFileSize($bytes);
+            $field->setAllowedMaxFileSize((int) $bytes);
         } else {
             $field->setAllowedMaxFileSize(UploadPage::get_php_max_file_size());
         }
@@ -65,6 +66,7 @@ class UploadPageController extends \PageController
         if ($limit <= 0) {
             $limit = 1;
         }
+
         $field->setAllowedMaxItemLimit($limit);
 
         // Set a folder name
@@ -84,11 +86,7 @@ class UploadPageController extends \PageController
     }
 
 
-
-    /**
-     * @return FormAction;
-     */
-    protected function getUploadAction()
+    protected function getUploadAction(): FormAction
     {
         $data = $this->data();
         $action = FormAction::create(
@@ -108,12 +106,17 @@ class UploadPageController extends \PageController
 
     /**
      * A file upload form
+     * No form is returned if an upload field is not available
      */
-    public function UploadForm()
+    public function UploadForm(): ?Form
     {
-        $upload_field = $this->getUploadField();
+        $uploadField = $this->getUploadField();
+        if (!$uploadField instanceof DamnFineUploaderField) {
+            return null;
+        }
+
         $fields = FieldList::create(
-            $upload_field
+            $uploadField
         );
         $actions = FieldList::create(
             $this->getUploadAction()
@@ -128,7 +131,7 @@ class UploadPageController extends \PageController
     /**
      * For templates that have $Form
      */
-    public function Form()
+    public function Form(): ?Form
     {
         return $this->UploadForm();
     }
@@ -140,7 +143,7 @@ class UploadPageController extends \PageController
     public function handleUpload(array $data, Form $form)
     {
         try {
-            $response_data = [
+            $fileData = [
                 'expected' => 0,// expected uploads
                 'found' => 0,// uploads successfully saved
                 'files' => [],// array of found File records
@@ -148,53 +151,53 @@ class UploadPageController extends \PageController
             ];
 
             $fields = $form->Fields();
-            $upload_field = $fields->dataFieldByName($this->config()->get('upload_field_name'));
-            if (!$upload_field) {
+            $uploadField = $fields->dataFieldByName($this->config()->get('upload_field_name'));
+            if (!$uploadField) {
                 throw new \Exception("Field not found");
             }
 
-            $name = $upload_field->getName();
+            $name = $uploadField->getName();
             $files = FileRetriever::getUploadedFilesByKey($name, $form, true);
             $file_ids = isset($data[$name]) && is_array($data[$name]) ? $data[$name] : [];
-            $response_data['file_ids'] = $file_ids;
-            $response_data['expected'] = count($file_ids);
-            $response_data['files'] = $files;
-            $response_data['found'] = count($files);
+            $fileData['file_ids'] = $file_ids;
+            $fileData['expected'] = count($file_ids);
+            $fileData['files'] = $files;
+            $fileData['found'] = count($files);
             // your extension handles the uploads
-            $response = $this->extend('handleUploadedFiles', $response_data, $upload_field, $form);
-        } catch (\Exception $e) {
-            $response = $this->extend('handleFailedUpload', $response_data, $upload_field, $form);
+            $response = $this->extend('handleUploadedFiles', $fileData, $uploadField, $form);
+        } catch (\Exception $exception) {
+            $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form, $exception);
         }
-
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } else if($response_data['expected'] > 0
-            && $response_data['expected'] == $response_data['found']) {
+        }
+
+        if ($fileData['expected'] > 0
+            && $fileData['expected'] == $fileData['found']) {
             $form->sessionMessage(
                 _t(
                     "DamnFineUploader.FILES_UPLOADED",
                     "{uploaded} file(s) were saved",
                     [
-                        'uploaded' => $response_data['found']
+                        'uploaded' => $fileData['found']
                     ]
                 ),
                 ValidationResult::TYPE_GOOD
             );
             return $this->redirectBack();
-        } else {
-            $form->sessionMessage(
-                _t(
-                    "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
-                    "Only {uploaded} out of {attempted} files could be uploaded",
-                    [
-                        'uploaded' => $response_data['found'],
-                        'attempted' => $response_data['expected']
-                    ]
-                ),
-                ValidationResult::TYPE_ERROR
-            );
-            return $this->redirectBack();
         }
+        $form->sessionMessage(
+            _t(
+                "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
+                "Only {uploaded} out of {attempted} files could be uploaded",
+                [
+                    'uploaded' => $fileData['found'],
+                    'attempted' => $fileData['expected']
+                ]
+            ),
+            ValidationResult::TYPE_ERROR
+        );
+        return $this->redirectBack();
     }
 }

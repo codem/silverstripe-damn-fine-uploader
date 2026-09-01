@@ -3,13 +3,10 @@
 namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\DamnFineUploaderField;
-use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UppyField;
-use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\Form;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\Validator;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -24,16 +21,15 @@ use stdClass;
  */
 class UppyFieldTest extends SapphireTest
 {
-
     /**
      * Test field configuration and settings
      */
-    public function testFieldConfiguration()
+    public function testFieldConfiguration(): void
     {
         $fields = FieldList::create();
         $actions = FieldList::create();
-        $controller = new PageController();
-        $form = new Form($controller, "TestForm", $fields, $actions);
+        $controller = PageController::create();
+        $form = Form::create($controller, "TestForm", $fields, $actions);
 
         $bytes = 1048576;
         $max_filesize = 2 * $bytes;
@@ -52,7 +48,7 @@ class UppyFieldTest extends SapphireTest
                 ->setDescription('A description');
 
         // configures the field
-        $result = $field->Field();
+        $field->Field();
 
         $system_max_filesize = $field->getSystemAllowedMaxFileSize();
         $resolved_max_filesize = min($system_max_filesize, $max_filesize);
@@ -76,7 +72,7 @@ class UppyFieldTest extends SapphireTest
         $returned_max_dimensions = $field->AcceptedMaxDimensions();
         $returned_min_dimensions = $field->AcceptedMinDimensions();
 
-        $this->assertEquals( array_intersect($returned_types, $input_types), $expected_types, "Returned types does not match expected allowed file types" );
+        $this->assertEquals(array_intersect($returned_types, $input_types), $expected_types, "Returned types does not match expected allowed file types");
         $this->assertTrue($returned_extensions == $expected_extensions, "Extensions does not match {$expected_extensions} got {$returned_extensions}");
         $this->assertTrue($returned_max_filesize == $expected_max_filesize, "FileSize does not match {$expected_max_filesize} got {$returned_max_filesize}");
         $this->assertTrue($returned_min_filesize == $expected_min_filesize, "Extensions does not match {$expected_min_filesize} got {$returned_min_filesize}");
@@ -93,15 +89,15 @@ class UppyFieldTest extends SapphireTest
         $this->assertTrue($field->AcceptsImages() == $expected_accepts_images, "Accepts images should be true");
     }
 
-    public function testRenderedField()
+    public function testRenderedField(): void
     {
         $fields = FieldList::create();
         $actions = FieldList::create();
-        $controller = new PageController();
-        $form = new Form($controller, "TestForm", $fields, $actions);
+        $controller = PageController::create();
+        $form = Form::create($controller, "TestForm", $fields, $actions);
 
         $bytes = 1048576;//1 MB
-        $max_filesize = 1 * $bytes;
+        $max_filesize = $bytes;
         $min_filesize = 0.5 * $bytes;
 
         $item_limit = 5;
@@ -147,7 +143,7 @@ class UppyFieldTest extends SapphireTest
 
         // file types
         $this->assertNotEmpty($config->validation->acceptFiles, "Accept Files is empty");
-        $config_accept_files = explode(",", $config->validation->acceptFiles);
+        $config_accept_files = explode(",", (string) $config->validation->acceptFiles);
         sort($config_accept_files);
         sort($accepted_types);
 
@@ -171,16 +167,19 @@ class UppyFieldTest extends SapphireTest
     /**
      * Setting empty accepted types
      */
-    public function testSetEmptyAcceptedTypes() {
+    public function testSetEmptyAcceptedTypes(): void
+    {
         $field = UppyField::create('DefaultAcceptedTypes', 'Default accepted types');
         $field->setAcceptedTypes([]);// will override any configuration value
         $field->initFieldConfig();
+
         $acceptedTypes = $field->getAcceptedTypes();
         $expectedTypes = $field->getDefaultAcceptedTypes();
         $this->assertEquals($expectedTypes, implode(",", $acceptedTypes));
     }
 
-    public function testAcceptedTypes() {
+    public function testAcceptedTypes(): void
+    {
         Config::modify()->merge(
             DamnFineUploaderField::class,
             'denied_types',
@@ -192,12 +191,14 @@ class UppyFieldTest extends SapphireTest
         $field = UppyField::create('AcceptedTypes', 'Accepted types');
         $field->setAcceptedTypes($types);
         $field->initFieldConfig();
+
         $acceptedTypes = $field->getAcceptedTypes();
         $expectedTypes = [".jpg",".png",".jpeg"];
         $this->assertEquals($expectedTypes, $acceptedTypes);
     }
 
-    public function testDeniedTypes() {
+    public function testDeniedTypes(): void
+    {
         Config::modify()->set(
             DamnFineUploaderField::class,
             'denied_mimetypes',
@@ -217,7 +218,7 @@ class UppyFieldTest extends SapphireTest
         $field = UppyField::create('DeniedTypes', 'Denied types');
         $field->setAcceptedTypes($types);
         $field->initFieldConfig();
-        $this->assertTrue( $field->isDeniedMimeType('text/denied') );
+        $this->assertTrue($field->isDeniedMimeType('text/denied'));
         $acceptedTypes = $field->getAcceptedTypes();
         $expectedTypes = [".jpg"];
         $this->assertEquals($expectedTypes, $acceptedTypes);
@@ -226,7 +227,8 @@ class UppyFieldTest extends SapphireTest
     /**
      * Test filterTypes method
      */
-    public function testFilterTypes() {
+    public function testFilterTypes(): void
+    {
         Config::modify()->set(
             DamnFineUploaderField::class,
             'denied_mimetypes',
@@ -247,6 +249,7 @@ class UppyFieldTest extends SapphireTest
         $field = UppyField::create('FilterTypes', 'Filter types');
         $field->setAcceptedTypes($types);
         $field->initFieldConfig();
+
         $filterTypes = $field->filterTypes($types);
         $expectedTypes = [".webp","image/*"];
         $this->assertEquals($expectedTypes, $filterTypes);
@@ -255,18 +258,20 @@ class UppyFieldTest extends SapphireTest
     /**
      * Test wildcard category/* handling
      */
-    public function testWildcardTypes() {
+    public function testWildcardTypes(): void
+    {
         $types = ["image/*"];
         $field = UppyField::create('WildcardTypes', 'Wildcard types');
         $field->setAcceptedTypes($types);
         $field->initFieldConfig();
+
         $acceptedTypes = $field->getAcceptedTypes();
-        $this->assertEquals( $types, $acceptedTypes );
-        $acceptedExtensions = $field->getExtensionsForTypes( $acceptedTypes );
-        $this->assertNotEmpty( $acceptedExtensions );
+        $this->assertEquals($types, $acceptedTypes);
+        $acceptedExtensions = $field->getExtensionsForTypes($acceptedTypes);
+        $this->assertNotEmpty($acceptedExtensions);
         // test for well know image types
-        foreach(["jpg","png","pcx","bmp","png", "jpeg","gif"] as $extension) {
-            $this->assertContains( $extension, $acceptedExtensions );
+        foreach (["jpg","png","pcx","bmp","png", "jpeg","gif"] as $extension) {
+            $this->assertContains($extension, $acceptedExtensions);
         }
     }
 

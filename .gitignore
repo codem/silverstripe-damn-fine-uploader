@@ -1,4 +1,4 @@
-/.php_cs.cache
+/.php-cs-fixer.cache
 /node_modules
 /package-lock.json
 /yarn-error.log
@@ -8,3 +8,7 @@
 /tests/codeception/codeception.yml
 /tests/codeception/.env
 /tests/codeception/tests/_output/*
+/composer.lock
+/public/
+/vendor/
+/.phpactor.json

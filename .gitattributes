@@ -7,7 +7,6 @@
 /yarn.lock                  export-ignore
 /package.json               export-ignore
 /.editorconfig              export-ignore
-/.php-cs-fixer.dist.php     export-ignore
 /phpunit.xml.dist           export-ignore
 /code-of-conduct.md         export-ignore
 /CONTRIBUTING.md            export-ignore

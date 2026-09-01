@@ -5,6 +5,7 @@ namespace Codem\DamnFineUploader\Tests;
 use Codem\DamnFineUploader\DamnFineUploaderField;
 use Codem\DamnFineUploader\UploadPage;
 use Codem\DamnFineUploader\UploadPageController;
+use SilverStripe\Assets\File;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -17,12 +18,12 @@ use SilverStripe\View\SSViewer;
  */
 class UploadPageTest extends SapphireTest
 {
-
     protected $usesDatabase = true;
 
     protected static $fixture_file = 'UploadPageTest.yml';
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         parent::setUp();
         SSViewer::set_themes([SSViewer::PUBLIC_THEME, SSViewer::DEFAULT_THEME]);
 
@@ -42,15 +43,16 @@ class UploadPageTest extends SapphireTest
 
     }
 
-    public function tearDown() : void {
+    public function tearDown(): void
+    {
         parent::tearDown();
     }
 
-    public function testUploadPage() {
+    public function testUploadPage(): void
+    {
 
         $title = 'Test upload page';
         $fileTypes = ["jpeg","jpg","png","pdf"];
-        $expectedMimeTypes = "image/jpeg,image/png,image/webp,application/pdf";
         $expectedAcceptFiles = ".jpeg,.jpg,.png,.pdf";
         $fileUploadLimit = 3;
         $maxFileSizeMb = 3.5;
@@ -74,13 +76,13 @@ class UploadPageTest extends SapphireTest
         $uploadPage->write();
 
         $this->assertTrue($uploadPage->isInDB());
-        $this->assertEquals( $fileTypes, json_decode($uploadPage->SelectedFileTypes) );
-        $this->assertEquals( $maxFileSizeMb, $uploadPage->MaxFileSizeMB );
-        $this->assertEquals( $useDateFolder, $uploadPage->UseDateFolder );
-        $this->assertEquals( $fileUploadLimit, $uploadPage->FileUploadLimit );
-        $this->assertEquals( $formFieldTitle, $uploadPage->FormFieldTitle );
-        $this->assertEquals( $formFieldDescription, $uploadPage->FormFieldDescription );
-        $this->assertEquals( $formFieldRightTitle, $uploadPage->FormFieldRightTitle );
+        $this->assertEquals($fileTypes, json_decode((string) $uploadPage->SelectedFileTypes));
+        $this->assertEquals($maxFileSizeMb, $uploadPage->MaxFileSizeMB);
+        $this->assertEquals($useDateFolder, $uploadPage->UseDateFolder);
+        $this->assertEquals($fileUploadLimit, $uploadPage->FileUploadLimit);
+        $this->assertEquals($formFieldTitle, $uploadPage->FormFieldTitle);
+        $this->assertEquals($formFieldDescription, $uploadPage->FormFieldDescription);
+        $this->assertEquals($formFieldRightTitle, $uploadPage->FormFieldRightTitle);
 
         $folder = $uploadPage->Folder();
         $this->assertTrue($folder->exists());
@@ -91,14 +93,14 @@ class UploadPageTest extends SapphireTest
         $uploadPage->write();
 
         $updatedFolder = $uploadPage->Folder();
-        $this->assertEquals($folder->getFilename(), $updatedFolder->getFilename() );
+        $this->assertEquals($folder->getFilename(), $updatedFolder->getFilename());
 
-        $uploadPageController = UploadPageController::create( $uploadPage );
+        $uploadPageController = UploadPageController::create($uploadPage);
 
         $form = $uploadPageController->Form();
-        $uploadField = $form->Fields()->dataFieldByName( UploadPageController::config()->get('upload_field_name') );
+        $uploadField = $form->Fields()->dataFieldByName(UploadPageController::config()->get('upload_field_name'));
 
-        $this->assertInstanceOf( DamnFineUploaderField::class, $uploadField);
+        $this->assertInstanceOf(DamnFineUploaderField::class, $uploadField);
 
         $formTemplate = $form->forTemplate();
 

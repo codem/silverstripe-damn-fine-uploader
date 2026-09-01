@@ -5,26 +5,24 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\View\Requirements;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
-use Exception;
 
 /**
  * @note provides a field to handle Uppy File Uploader uploads
  */
 class UppyField extends DamnFineUploaderField
 {
-    protected $implementation = parent::IMPLEMENTATION_UPPY;
+    protected string $implementation = parent::IMPLEMENTATION_UPPY;
 
     /**
      * @config
-     * @var array
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'upload', // local upload endpoint
         'notify', // notify of completed upload
         'presign' // return a presigned URL for a single file
     ];
 
-    protected function setRequirements()
+    protected function setRequirements(): void
     {
         Requirements::set_force_js_to_bottom(true);
 
@@ -34,9 +32,10 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-tw8wprPbK+4kaGCY7SAWrvSVKzkiuI/YEoAAdP2WyPkYDgKgOwXBM/Vj6nL4pWj7"
+                "integrity" => "sha384-xEa7YpQ9wsAxJ9Tdtf4Ki+irjdl8G8VMkVpE4qbuV9RHJltZzkKQwmflsJ+1lf0q"
             ]
         );
+
         Requirements::css(
             'codem/silverstripe-damn-fine-uploader:client/dist/styles/uppy.min.css',
             'screen',
@@ -47,26 +46,23 @@ class UppyField extends DamnFineUploaderField
         );
     }
 
-    public function getImplementation()
+    public function getImplementation(): string
     {
         return parent::IMPLEMENTATION_UPPY;
     }
 
     /**
      * Uppy does not support removal of files post-upload
-     * @param HTTPRequest $request
-     * @return boolean
      */
-    public function remove(HTTPRequest $request)
+    public function remove(HTTPRequest $request): HTTPResponse
     {
-        return false;
+        return HTTPResponse::create('', 501);
     }
 
     /**
      * Template helper method for UppyField, returns the serialised configuration string for the library
-     * @return string
      */
-    public function UploaderConfig()
+    public function UploaderConfig(): string
     {
         if (!$this->hasDefaultConfiguration()) {
             $this->setUploaderDefaultConfig();
@@ -98,23 +94,20 @@ class UppyField extends DamnFineUploaderField
      * Return the response that Uppy expects
      * @param array $file_upload the uploaded file
      * @param string $uuid our unique ref of the file
-     * @return HTTPResponse
      */
-    protected function uploadSuccessfulResponse(array $file_upload, $uuid)
+    protected function uploadSuccessfulResponse(array $file_upload, string $uuid): HTTPResponse
     {
         $response = [
             'uuid' => $uuid
         ];
-        return (new HTTPResponse(json_encode($response), 200))->addHeader('Content-Type', 'application/json');
+        return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');
     }
 
     /**
      * Return the response that Uppy expects on error
      * @param array $file_upload the uploaded file (or empty array, if it could not be found)
-     * @param string $error_message
-     * @return HTTPResponse
      */
-    protected function uploadErrorResponse(array $file_upload, $error_message)
+    protected function uploadErrorResponse(array $file_upload, string $error_message): HTTPResponse
     {
         return $this->errorResponse($error_message, 400);
     }
@@ -123,29 +116,26 @@ class UppyField extends DamnFineUploaderField
      * Error response for Uppy
      * @param string $result error string
      * @param int $code HTTP error code
-     * @return HTTPResponse
      */
-    protected function errorResponse($result, $code = 400)
+    protected function errorResponse(string $result, int $code = 400): HTTPResponse
     {
-        return (new HTTPResponse($result, 400))->addHeader('Content-Type', 'text/plain');
+        return HTTPResponse::create($result, 400)->addHeader('Content-Type', 'text/plain');
     }
 
     /**
      * Return the response that Uppy expects on successful file removal
-     * @return HTTPResponse
      */
-    protected function removeSuccessResponse()
+    protected function removeSuccessResponse(): HTTPResponse
     {
-        return (new HTTPResponse('', 200))->addHeader('Content-Type', 'text/plain');
+        return HTTPResponse::create('', 200)->addHeader('Content-Type', 'text/plain');
     }
 
     /**
      * Return the response that Uppy expects on file removal error
      * @param array $file_upload the uploaded file or empty if the file could not be found
-     * @param string $error
-     * @return HTTPResponse
+     * @param string $error message
      */
-    protected function removeErrorResponse(array $file_upload, $error)
+    protected function removeErrorResponse(array $file_upload, string $error): HTTPResponse
     {
         return $this->errorResponse($error, 400);
     }

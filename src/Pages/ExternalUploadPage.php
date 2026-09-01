@@ -4,52 +4,64 @@ namespace Codem\DamnFineUploader;
 
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\ORM\DataList;
 
 /**
  * A page that handles file uploads to an external service
  * @author James
+ * @property ?string $ServiceName
+ * @method \SilverStripe\ORM\HasManyList<\Codem\DamnFineUploader\ExternalUpload> ExternalUploads()
  */
 class ExternalUploadPage extends UploadPage
 {
-
-    /**
-     * @var array
-     */
-    private static $db = [
+    private static array $db = [
         'ServiceName' => 'Varchar(255)',// const SERVICE_NAME in the field subclass
     ];
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'MaxFileSizeMB' => 0,
         'UseDateFolder' => 1,
         'FileUploadLimit' => 3,
         'FormFieldTitle' => 'Upload',
     ];
 
-    private static $table_name = 'ExternalUploadPage';
+    private static array $has_many = [
+        'ExternalUploads' => ExternalUpload::class
+    ];
+
+    private static string $table_name = 'ExternalUploadPage';
 
     /**
      * Singular name for CMS
-     * @var string
      */
-    private static $singular_name = 'A page handling file uploads to external services';
+    private static string $singular_name = 'A page handling file uploads to external services';
 
     /**
      * Plural name for CMS
-     * @var string
      */
-    private static $plural_name = 'Pages handling file uploads to an external service';
+    private static string $plural_name = 'Pages handling file uploads to an external service';
+
+    private static string $description = 'After page creation, choose an upload service';
 
     /**
-     * @var string
+     * Get uploads made via this page's controller
      */
-    private static $description = 'After page creation, choose an upload service';
+    public function getLinkedExternalUploads(): ?DataList
+    {
+        if ($this->isInDB()) {
+            return ExternalUpload::get()->filter([
+                'UploadSrcRecordId' => $this->ID
+            ])->sort(['Created' => 'DESC']);
+        }
+        return null;
+    }
 
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCmsFields();
         $serviceClasses = AbstractUppyExternalUploadField::getUploadServices();
         $fields->insertBefore(
@@ -60,24 +72,36 @@ class ExternalUploadPage extends UploadPage
                 $serviceClasses
             )->setEmptyString('')
         );
+
+        $tabName = "Root." . _t('DamnFineUploader.TAB_UPLOADS', 'Uploads');
+        $fields->addFieldToTab(
+            $tabName,
+            GridField::create(
+                'ExternalUploads',
+                _t('DamnFineUploader.EXTERNAL_UPLOADS', 'External uploads'),
+                $this->getLinkedExternalUploads()
+            )
+        );
+
         return $fields;
     }
 
-    public function addSaveLocationFields(FieldList $fields, string $tab) {
+    public function addSaveLocationFields(FieldList $fields, string $tab): void
+    {
         // NOOP
     }
 
     /**
      * Get the upload field for the current service
      * @param array $args for the AbstractUppyExternalUploadField
-     * @return AbstractUppyExternalUploadField|null
      */
-    public function getUploadField($args = []) : ?AbstractUppyExternalUploadField {
-        $uploadField = null;
-        if($this->ServiceName) {
-            $uploadField = AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);
+    public function getUploadField(array $args = []): ?AbstractUppyExternalUploadField
+    {
+        if ($this->ServiceName) {
+            return AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);
         }
-        return $uploadField;
+
+        return null;
     }
 
 

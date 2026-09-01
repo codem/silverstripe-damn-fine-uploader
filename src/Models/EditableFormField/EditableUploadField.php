@@ -3,30 +3,28 @@
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
-use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * @note provides an EditableUploadField for the userforms module
  * returns a field based on the implementation, currently Uppy
+ * @property int $FileUploadLimit
+ * @property bool $UseDateFolder
+ * @property ?string $Implementation
+ * @mixin \NSWDPC\FileTypeManagement\Extensions\EditableFileFieldExtension
  */
 class EditableUploadField extends EditableFileField
 {
     use EditableDamnFineUploader;
-    use Migrations;
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
-    private static $table_name = 'EditableUploadField';
+    private static string $table_name = 'EditableUploadField';
 
-    private static $singular_name = 'File Upload Field - Drag and Drop';
-    private static $plural_name = 'File Upload Fields - Drag and Drop';
+    private static string $singular_name = 'File Upload Field - Drag and Drop';
 
-    private static $run_migration_1 = true;
-    private static $run_migration_manymanyhasmany = false;
-    private static $run_migration_allowedmimetypedeprecation = false;
+    private static string $plural_name = 'File Upload Fields - Drag and Drop';
 
-    private static $db = [
-        'SelectedFileTypes' => 'Text',
+    private static array $db = [
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'Implementation' => 'Varchar(16)'
@@ -34,9 +32,8 @@ class EditableUploadField extends EditableFileField
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'UseDateFolder' => 1,
         'FileUploadLimit' => 3,
         'Implementation' => DamnFineUploaderField::IMPLEMENTATION_UPPY
@@ -55,30 +52,20 @@ class EditableUploadField extends EditableFileField
         $this->Implementation = DamnFineUploaderField::IMPLEMENTATION_UPPY;
     }
 
-    /**
-     * Require default records / perform migration handling on dev/build
-     */
-    public function requireDefaultRecords()
-    {
-        if(get_class($this) == EditableUploadField::class) {
-            // avoid child classes running this method
-            if ($this->config()->get('run_migration_1')) {
-                $this->migrationDeprecateFineUploader();
-            }
-            if ($this->config()->get('run_migration_manymanyhasmany')) {
-                $this->migrationManyManyHasMany();
-            }
-            if ($this->config()->get('run_migration_allowedmimetypedeprecation')) {
-                $this->migrateAllowedMimeTypes();
-            }
-        }
-    }
-
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
         $this->addGenericFields($fields, _t('DamnFineUploader.TAB_MAIN', 'Main'));
         return $fields;
+    }
+
+    /**
+     * This method is retained for backwards compatibility
+     * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
+     */
+    public function getAllowedTypes(): array
+    {
+        return $this->getExtensionsForValidator();
     }
 
 }

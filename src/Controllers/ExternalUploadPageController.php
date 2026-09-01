@@ -2,13 +2,7 @@
 
 namespace Codem\DamnFineUploader;
 
-/**
- * @author James
- */
-use Codem\DamnFineUploader\UppyField;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\FormAction;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\Form;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Extension;
 use SilverStripe\Control\HTTPRequest;
@@ -17,44 +11,44 @@ use SilverStripe\ORM\ValidationResult;
 
 /**
  * Controller for handling file uploads
+ * @author James
+ * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage> // @phpstan-ignore generics.notCompatible
  */
 class ExternalUploadPageController extends UploadPageController
 {
-
-    /**
-     * @var array
-     */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'UploadForm',
-        'handleUpload',
         'uploaded' // notification URL
     ];
 
     /**
      * Return the upload field
-     * @return AbstractUppyExternalUploadField;
      */
-    protected function getUploadField()
+    protected function getUploadField(): ?AbstractUppyExternalUploadField
     {
         $args = [
-            $this->config()->get('upload_field_name'),// name
+            // name
+            $this->config()->get('upload_field_name'),
             // title
             _t(
                 'DamnFineUploader.UPLOAD',
                 'Upload'
             )
         ];
-        $field = $this->data()->getUploadField($args);
-        return $field;
+        $page = $this->data();
+        if ($page instanceof ExternalUploadPage) {
+            return $page->getUploadField($args);
+        }
+        return null;
     }
 
     /**
      * Handle the file upload
      * Use an {@link Extension} to handle further file uploading
      */
-    public function uploaded(HTTPRequest $request) : HTTPResponse {
-        $response = new HTTPResponse();
-        return $response;
+    public function uploaded(HTTPRequest $request): HTTPResponse
+    {
+        return HTTPResponse::create();
     }
 
     /**
@@ -69,17 +63,24 @@ class ExternalUploadPageController extends UploadPageController
         try {
             $submissionCount = 0;
             $response = null;
-            $submissions = $this->data()->ExternalUploads();
+            $page = $this->data();
+            if (!$page instanceof ExternalUploadPage) {
+                throw new \RuntimeException("Controller has invalid page model");
+            }
+
+            $submissions = $page->ExternalUploads();
             $submissionCount = $submissions->count();
             // your extension handles the uploads
             $response = $this->extend('handleExternalUploadedFiles', $submissions);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
+            Logger::log("Failed to handle upload: " . $exception->getMessage(), "NOTICE");
         }
-
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } else if($submissionCount > 0) {
+        }
+
+        if ($submissionCount > 0) {
             $form->sessionMessage(
                 _t(
                     "DamnFineUploader.FILES_UPLOADED",
@@ -91,15 +92,14 @@ class ExternalUploadPageController extends UploadPageController
                 ValidationResult::TYPE_GOOD
             );
             return $this->redirectBack();
-        } else {
-            $form->sessionMessage(
-                _t(
-                    "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
-                    "No files could be uploaded",
-                ),
-                ValidationResult::TYPE_ERROR
-            );
-            return $this->redirectBack();
         }
+        $form->sessionMessage(
+            _t(
+                "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
+                "No files could be uploaded",
+            ),
+            ValidationResult::TYPE_ERROR
+        );
+        return $this->redirectBack();
     }
 }

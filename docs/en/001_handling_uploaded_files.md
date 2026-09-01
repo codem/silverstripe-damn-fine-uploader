@@ -17,10 +17,14 @@ For an example of this see UploadPageController::handleUpload()
 
 `src/Pages/UploadPage.php` and `src/Controllers/UploadPageController.php` provide a CMS page that can be added by users with specific permissions.
 
-There are three methods that Extensions can use:
+There are three methods that extensions can use:
 
 1. `updateUploadForm` to modify the form
 1. `handleUploadedFiles` to handle successfully uploaded files and
 1. `handleFailedUpload` to handle failed submissions.
 
-As can be seen, uploads are tied to the form `SecurityToken` value
+If the latter two extension methods return a HTTPResponse, that response will be returned from the controller. If not, the controller will complete the form submission and return a response based on the number of succcessful uploads matching the number of expected uploads.
+
+### Extending
+
+You can use the Injector API to provide your own controller handling, or create a subclass of UploadPage / UploadPageControllers to provide custom behaviour.

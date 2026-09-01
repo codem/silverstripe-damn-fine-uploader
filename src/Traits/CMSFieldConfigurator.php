@@ -2,130 +2,56 @@
 
 namespace Codem\DamnFineUploader;
 
-use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTP;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\ReadonlyField;
-use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\MimeValidator\MimeUploadValidator;
 
 /**
  * Trait for editable DFU field implementations
  */
 trait CMSFieldConfigurator
 {
-    /**
-     * @return float
-     */
-    public static function get_php_max_file_size()
+    public static function get_php_max_file_size(): int
     {
         $maxUpload = Convert::memstring2bytes(ini_get('upload_max_filesize'));
         $maxPost = Convert::memstring2bytes(ini_get('post_max_size'));
         return min($maxUpload, $maxPost);
     }
 
-    public function getPHPMaxFileSizeMB()
+    public function getPHPMaxFileSizeMB(): float
     {
         return round(static::get_php_max_file_size() / 1024 / 1024, 1);
     }
 
     /**
-     * Gets allowed types based on the select file types
-     */
-    public function getAllowedTypes() : array {
-        $selected = $this->SelectedFileTypes;
-        $allowedTypes = json_decode($selected ?? '', true);
-        if(json_last_error() == JSON_ERROR_NONE && is_array($allowedTypes)) {
-            return array_unique($allowedTypes);
-        }
-        return [];
-    }
-
-    /**
-     * Get the allowed mime types, based on the selected file types
-     * @return array
-     */
-    public function getAllowedMimeTypes() {
-        $types = $this->getAllowedTypes();
-        $mimetypes = [];
-        if(count($types) > 0) {
-            foreach($types as $type) {
-                $expected = $this->getMimeTypes($type);
-                $mimetypes = array_merge($mimetypes, $expected);
-            }
-        }
-        return array_unique($mimetypes);
-    }
-
-    /**
-     * This is pinched from MimeUploadValidator
-     * @return array
-     */
-    public function getMimeTypes($extension) {
-        $expectedMimes = [];
-        // Get the mime types set in framework core
-        $knownMimes = Config::inst()->get(HTTP::class, 'MimeTypes');
-        if (isset($knownMimes[$extension])) {
-            $expectedMimes[] = $knownMimes[$extension];
-        }
-
-        // Get the mime types and their variations from mime validator
-        $knownMimes =  Config::inst()->get(MimeUploadValidator::class, 'MimeTypes');
-        if (isset($knownMimes[$extension])) {
-            $mimes = (array) $knownMimes[$extension];
-
-            foreach ($mimes as $mime) {
-                if (!in_array($mime, $expectedMimes)) {
-                    $expectedMimes[] = $mime;
-                }
-            }
-        }
-
-        return $expectedMimes;
-    }
-
-    /**
      * Add generic CMS fields to the record
-     * @return FieldList
      */
-    public function addGenericFields(FieldList $fields, string $tab = "Main") : FieldList
+    public function addGenericFields(FieldList $fields, string $tab = "Main"): FieldList
     {
 
         $fields->removeByName([
             'Implementation',
             'Folder','FolderID', 'UseDateFolder',
-            'MaxFileSizeMB','FileUploadLimit','SelectedFileTypes'
+            'MaxFileSizeMB','FileUploadLimit'
         ]);
-
-        // get allowed types field
-        $typeSelectionField = TypeSelectionField::create('SelectedFileTypes')
-            ->setTitle(
-                _t(
-                    'DamnFineUploader.SELECT_FILE_TYPES',
-                    'Select allowed file types for this upload field'
-                )
-            );
 
         // Restrictions
         $fields->addFieldToTab(
             'Root.' . $tab,
             CompositeField::create(
                 NumericField::create('MaxFileSizeMB')
-                    ->setTitle('Max File Size MB')
-                    ->setDescription("Note: Maximum php allowed size is {$this->getPHPMaxFileSizeMB()} MB"),
+                    ->setTitle(_t('DamnFineUploader.MAX_FILE_SIZE_MB', 'Max File Size MB'))
+                    ->setDescription(_t('DamnFineUploader.MAX_FILE_SIZE_MB_DESCRIPTION', "Note: Maximum php allowed size is {maxSize} MB", ['maxSize' => $this->getPHPMaxFileSizeMB()])),
                 NumericField::create('FileUploadLimit')
-                    ->setTitle('Maximum number of files allowed in the upload'),
-                $typeSelectionField
-            )->setTitle( _t('DamnFineUploader.RESTRICTIONS', 'Restrictions') )
+                    ->setTitle(_t('DamnFineUploader.MAX_NUMBER_FILES_IN_UPLOAD', 'Maximum number of files allowed in the upload'))
+            )->setTitle(_t('DamnFineUploader.RESTRICTIONS', 'Restrictions'))
         );
 
         // SAVING
@@ -138,13 +64,14 @@ trait CMSFieldConfigurator
     /**
      * Local save fields
      */
-    public function addSaveLocationFields(FieldList $fields, string $tab) {
+    public function addSaveLocationFields(FieldList $fields, string $tab): void
+    {
 
         // determine folder name for field
         $folder = $this->Folder();
-        if($folder && $folder->exists()) {
+        if ($folder && $folder->exists()) {
             $uploadFolderLocation = $folder->getFilename();
-            $uploadFolderLink = Controller::join_links( AssetAdmin::create()->Link( 'show/' ), $folder->ID );
+            $uploadFolderLink = Controller::join_links(AssetAdmin::create()->Link('show/'), $folder->ID);
             $uploadFolderDescription = "<a target=\"_blank\" href=\"{$uploadFolderLink}\">"
                 . _t('DamnFineUploader.VIEW_FOLDER_ADMIN', 'View folder')
                 . "</a>";
@@ -162,7 +89,7 @@ trait CMSFieldConfigurator
                     'DamnFineUploader.FOLDER_DATE_FORMAT_DESCRIPTION',
                     'When checked, uploads will be saved into a date-based subdirectory structure. Example my-uploads/2020/12/31'
                 )
-        );
+            );
 
 
         // Composite field for showing save details
@@ -174,24 +101,24 @@ trait CMSFieldConfigurator
                     'UploadFolderLocation',
                     _t('DamnFineUploader.UPLOAD_FOLDER_LOCATION', 'Upload folder location'),
                     $uploadFolderLocation
-                )->setDescription( $uploadFolderDescription )
+                )->setDescription($uploadFolderDescription)
             )->setTitle(_t('DamnFineUploader.SAVING', 'Saving'))
         );
 
         // Apply restricted access warning (taken from userforms module)
-        if($folder && $folder->exists() && !$folder->hasRestrictedAccess()) {
+        if ($folder && $folder->exists() && !$folder->hasRestrictedAccess()) {
             $fields->insertBefore(
                 'UploadFolderLocation',
                 LiteralField::create(
                     'FileUploadWarning',
                     '<p class="alert alert-warning">'
-                    . _t(
+                    . htmlspecialchars(_t(
                         'SilverStripe\\UserForms\\Model\\UserDefinedForm.UnrestrictedFileUploadWarning',
                         'Access to the current upload folder "{path}" is not restricted. Uploaded files will be publicly accessible if the exact URL is known.',
                         [
                             'path' => Convert::raw2att($folder->Filename)
                         ]
-                    )
+                    ))
                     . '</p>'
                 )
             );

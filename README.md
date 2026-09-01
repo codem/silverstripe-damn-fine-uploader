@@ -21,11 +21,9 @@ The frontend uses [Uppy](https://uppy.io/) to handle & submit client uploads.
 
 ## Installing
 
-```
+```sh
 composer require codem/silverstripe-damn-fine-uploader
 ```
-
-[Use the latest version](https://github.com/codem/silverstripe-damn-fine-uploader/tags)
 
 ## Upload security
 
@@ -37,6 +35,7 @@ composer require codem/silverstripe-damn-fine-uploader
 + Use the `public` directory setup process available in more recent versions of Silverstripe
 + Ensure your web server is configured to not serve files that can be considered dangerous if they are served from an upload directory
 + Review upload fields periodically to ensure they are configured correctly
++ Use the SS_PROTECTED_ASSETS_PATH configuration option
 
 ## Configuration
 
@@ -50,11 +49,6 @@ The ```implementation``` entry can be used to add any configuration value suppor
 
 See [fields documentation](./docs/en/0001_fields.md) for examples.
 
-## Browser support
-
-All the good ones. The Uppy website provides [a list of supported browsers](https://uppy.io/docs/#Browser-Support)
-
-Even though Uppy purports to support Internet Explorer, any bugs raised related to Internet Explorer will be closed.
 
 ## Issues
 

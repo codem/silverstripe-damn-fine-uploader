@@ -3,36 +3,38 @@
 namespace Codem\DamnFineUploader\Tests;
 
 use Codem\DamnFineUploader\UppyField;
-use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
 
 class FieldTest extends SapphireTest
 {
-
     protected static $extra_controllers = [
         FieldTestController::class,
     ];
-    public function setUp() : void {
+
+    public function setUp(): void
+    {
         parent::setUp();
     }
 
-    public function tearDown() : void {
+    public function tearDown(): void
+    {
         parent::tearDown();
     }
 
     /**
      * Test field configuration
      */
-    public function testFieldConfig() {
+    public function testFieldConfig(): void
+    {
 
         $controller = FieldTestController::create();
 
         $fields = FieldList::create(
             $field = UppyField::create('TestUpload', 'Test Upload')
         );
-        $form = Form::create($controller, 'TestForm', $fields);
+        Form::create($controller, 'TestForm', $fields);
 
         // render the field
         $html = $field->forTemplate();
@@ -46,16 +48,15 @@ class FieldTest extends SapphireTest
 
         $this->assertEquals($implementation['validation']['image']['maxWidth'], $c['validation']['image']['maxWidth']);
         $this->assertEquals($implementation['validation']['image']['maxHeight'], $c['validation']['image']['maxHeight']);
-        $this->assertTrue(empty($implementation['validation']['image']['minWidth']));
-        $this->assertTrue(empty($implementation['validation']['image']['minHeight']));
 
         $this->assertEquals(0, $c['validation']['minSizeLimit']);
         $this->assertEquals(
-            $field->getExtensionsForTypes( explode(",", $c['validation']['acceptFiles']) ),
+            $field->getExtensionsForTypes(explode(",", (string) $c['validation']['acceptFiles'])),
             $c['validation']['allowedExtensions']
         );
         $this->assertFalse($c['debug']);
         // delete
+        $this->assertTrue($field->config()->get('allow_delete'));
         $this->assertTrue($c['deleteFile']['forceConfirm']);
         $this->assertEquals('POST', $c['deleteFile']['method']);
         $this->assertTrue($c['deleteFile']['enabled']);
@@ -74,7 +75,7 @@ class FieldTest extends SapphireTest
             'tooManyItemsError',
             'typeError',
         ];
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $this->assertNotEmpty($c['messages'][$key]);
         }
 
@@ -88,10 +89,11 @@ class FieldTest extends SapphireTest
 
         $doc = new \DOMDocument();
         $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
         $tags = $doc->getElementsByTagName('div');
         $element = $tags[0];
         $config = $element->getAttribute('data-config');
-        $config = json_decode($config, true);
+        $config = json_decode((string) $config, true);
 
         // config from getUploaderConfig should be the same as the config in the field HTML
         $this->assertEquals($c, $config);

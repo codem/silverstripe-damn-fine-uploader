@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codem\DamnFineUploader;
 
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\Security;
 
 /**
  * Logger helper class
@@ -12,7 +13,7 @@ use SilverStripe\Security\Security;
  */
 class Logger
 {
-    public static function log($message, $level = "DEBUG")
+    public static function log(string|\Stringable $message, $level = "DEBUG")
     {
         Injector::inst()->get(LoggerInterface::class)->log($level, $message);
     }

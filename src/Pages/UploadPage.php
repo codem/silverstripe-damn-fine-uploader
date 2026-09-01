@@ -5,34 +5,35 @@ namespace Codem\DamnFineUploader;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
-use Silverstripe\Forms\FieldList;
-use Silverstripe\Forms\FormAction;
-use Silverstripe\Forms\Form;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
-use SilverStripe\Core\Convert;
-use SilverStripe\UserForms\Model\EditableFormField\EditableFileField;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Member;
-use Symbiote\MultiValueField\ORM\FieldType\MultiValueField;
 
 /**
  * A page that handles file uploads
  * This page requires extension in code to handle file upload response to the user
  * as such it can only be created, edit and published by those with allowed permissions
  * @author James
+ * @property float $MaxFileSizeMB
+ * @property int $FileUploadLimit
+ * @property bool $UseDateFolder
+ * @property ?string $FormFieldTitle
+ * @property ?string $FormFieldDescription
+ * @property ?string $FormFieldRightTitle
+ * @property ?string $FormUploadButtonTitle
+ * @property int $FolderID
+ * @method \SilverStripe\Assets\Folder Folder()
+ * @mixin \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension
  */
 class UploadPage extends \Page implements PermissionProvider
 {
-
     use CMSFieldConfigurator;
     use RestrictedUploadFolder;
 
-    private static $db = [
+    private static array $db = [
         'MaxFileSizeMB' => 'Float',
-        'SelectedFileTypes' => 'Text',
         'FileUploadLimit' => 'Int',
         'UseDateFolder' => 'Boolean',
         'FormFieldTitle' => 'Varchar(255)',
@@ -41,39 +42,33 @@ class UploadPage extends \Page implements PermissionProvider
         'FormUploadButtonTitle' => 'Varchar(255)',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Folder' => Folder::class,
     ];
 
     /**
      * Add default values to database
-     * @var array
      */
-    private static $defaults = [
+    private static array $defaults = [
         'MaxFileSizeMB' => 0,
         'UseDateFolder' => 1,
         'FileUploadLimit' => 3,
         'FormFieldTitle' => 'Upload',
     ];
 
-    private static $table_name = 'DamnFineUploaderPage';
+    private static string $table_name = 'DamnFineUploaderPage';
 
     /**
      * Singular name for CMS
-     * @var string
      */
-    private static $singular_name = 'A page that handles file uploads';
+    private static string $singular_name = 'A page that handles file uploads';
 
     /**
      * Plural name for CMS
-     * @var string
      */
-    private static $plural_name = 'Pages that handle file uploads';
+    private static string $plural_name = 'Pages that handle file uploads';
 
-    /**
-     * @var string
-     */
-    private static $description = 'Allows multiple uploads, requires customisation in code.';
+    private static string $description = 'Allows multiple uploads, requires customisation in code.';
 
     /**
      * Check if this page can be published
@@ -85,9 +80,10 @@ class UploadPage extends \Page implements PermissionProvider
     public function canPublish($member = null)
     {
         $can = parent::canPublish($member);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_PUBLISH");
     }
 
@@ -101,9 +97,10 @@ class UploadPage extends \Page implements PermissionProvider
     public function canEdit($member = null)
     {
         $can = parent::canEdit($member);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_EDIT");
     }
 
@@ -118,9 +115,10 @@ class UploadPage extends \Page implements PermissionProvider
     public function canCreate($member = null, $context = [])
     {
         $can = parent::canCreate($member, $context);
-        if(!$can) {
+        if (!$can) {
             return $can;
         }
+
         return Permission::checkMember($member, "UPLOAD_PAGE_CREATE");
     }
 
@@ -193,6 +191,22 @@ class UploadPage extends \Page implements PermissionProvider
             _t('DamnFineUploader.TAB_UPLOADS', 'Uploads')
         );
 
+
+        // Ensure that the SelectedFileTypes field is added to the composite field
+        if ($selectedFileTypesField = $fields->dataFieldByName('SelectedFileTypes')) {
+            $fields->insertAfter('FileUploadLimit', $selectedFileTypesField);
+        }
+
         return $fields;
     }
+
+    /**
+     * This method is retained for backwards compatibility
+     * Use the \NSWDPC\FileTypeManagement\Extensions\FileTypeHandlingExtension::getFilteredAllowedExtensions() method. The extension is applied to this model via configuration.
+     */
+    public function getAllowedTypes(): array
+    {
+        return $this->getExtensionsForValidator();
+    }
+
 }

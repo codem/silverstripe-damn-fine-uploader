@@ -84,8 +84,20 @@ export default function DFULoader(opts) {
         bundle: bundle,
         fieldName: this.uploadElement.dataset.name,
         endpoint: config.request.endpoint,
+        responseType: 'json',
         shouldRetry: function(xhr) {
           return false;
+        },
+        getResponseData: function getResponseData(xhr) {
+          if(typeof xhr.response == 'object') {
+            return xhr.response;
+          } else if(xhr.responseURL != '') {
+            return {
+              url: xhr.responseURL
+            };
+          } else {
+            return {};
+          }
         }
       }
     );
