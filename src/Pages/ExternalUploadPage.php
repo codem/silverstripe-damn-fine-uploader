@@ -56,9 +56,8 @@ class ExternalUploadPage extends UploadPage
             return ExternalUpload::get()->filter([
                 'UploadSrcRecordId' => $this->ID
             ])->sort(['Created' => 'DESC']);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public function getCMSFields()
@@ -98,12 +97,11 @@ class ExternalUploadPage extends UploadPage
      */
     public function getUploadField(array $args = []): ?AbstractUppyExternalUploadField
     {
-        $uploadField = null;
         if ($this->ServiceName) {
-            $uploadField = AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);
+            return AbstractUppyExternalUploadField::getUploadField($this->ServiceName, $args);
         }
 
-        return $uploadField;
+        return null;
     }
 
 

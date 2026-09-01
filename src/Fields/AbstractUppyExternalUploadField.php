@@ -84,7 +84,6 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 
     /**
      * Return the upload field linked to the service name
-     * @return self|null
      */
     public static function getUploadField(string $serviceName, array $args = []): ?self
     {
@@ -203,8 +202,8 @@ abstract class AbstractUppyExternalUploadField extends UppyField
 
                 // single file upload completion
                 $externalUpload = ExternalUpload::create([
-                    'ServiceName' => static::getServiceName(),
-                    'ServiceTitle' => static::getServiceDescription(),
+                    'ServiceName' => self::getServiceName(),
+                    'ServiceTitle' => self::getServiceDescription(),
                     'Title' => $post['name'] ?? '',
                     'Description' => '',
                     'IsSuccess' => $post['result'] ?? 0,

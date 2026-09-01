@@ -168,11 +168,12 @@ class UploadPageController extends \PageController
         } catch (\Exception $exception) {
             $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form, $exception);
         }
-
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } elseif ($fileData['expected'] > 0
+        }
+
+        if ($fileData['expected'] > 0
             && $fileData['expected'] == $fileData['found']) {
             $form->sessionMessage(
                 _t(
@@ -185,19 +186,18 @@ class UploadPageController extends \PageController
                 ValidationResult::TYPE_GOOD
             );
             return $this->redirectBack();
-        } else {
-            $form->sessionMessage(
-                _t(
-                    "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
-                    "Only {uploaded} out of {attempted} files could be uploaded",
-                    [
-                        'uploaded' => $fileData['found'],
-                        'attempted' => $fileData['expected']
-                    ]
-                ),
-                ValidationResult::TYPE_ERROR
-            );
-            return $this->redirectBack();
         }
+        $form->sessionMessage(
+            _t(
+                "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
+                "Only {uploaded} out of {attempted} files could be uploaded",
+                [
+                    'uploaded' => $fileData['found'],
+                    'attempted' => $fileData['expected']
+                ]
+            ),
+            ValidationResult::TYPE_ERROR
+        );
+        return $this->redirectBack();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Core\Extension;
@@ -14,7 +16,7 @@ class UserDefinedFormControllerExtension extends Extension
      * for inclusion in the email
      * @return void
      */
-    public function updateEmailData($emailData, &$attachments)
+    public function updateEmailData(array $emailData, &$attachments)
     {
         $fields = $emailData['Fields'] ?? false;
         if ($fields) {
@@ -23,7 +25,6 @@ class UserDefinedFormControllerExtension extends Extension
                     continue;
                 }
 
-                /** @var \SilverStripe\ORM\HasManyList */
                 $files = $field->getSubmittedFiles();
                 foreach ($files as $file) {
                     $attachments[] = $file;

@@ -48,11 +48,10 @@ class UppyS3Field extends AbstractUppyExternalUploadField
         if (str_starts_with($key, 'S3_UPLOAD_')) {
             // return these values from the environment
             return \SilverStripe\Core\Environment::getEnv($key);
-        } else {
-            // return from the service configuration
-            $config = $this->getServiceConfig();
-            return $config[ $key ] ?? null;
         }
+        // return from the service configuration
+        $config = $this->getServiceConfig();
+        return $config[ $key ] ?? null;
     }
 
     /**
@@ -67,14 +66,6 @@ class UppyS3Field extends AbstractUppyExternalUploadField
             'presignedurl' => $url
         ];
         return HTTPResponse::create(json_encode($response), 200)->addHeader('Content-Type', 'application/json');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function notify(HTTPRequest $request): HTTPResponse
-    {
-        return parent::notify($request);
     }
 
 }

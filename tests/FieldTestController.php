@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codem\DamnFineUploader\Tests;
 
 use SilverStripe\Control\Controller;
@@ -10,11 +12,6 @@ use SilverStripe\Dev\TestOnly;
  */
 class FieldTestController extends Controller implements TestOnly
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     private static string $url_segment = 'FieldTestController';
 
 }

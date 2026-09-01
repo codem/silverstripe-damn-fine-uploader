@@ -12,7 +12,7 @@ use SilverStripe\ORM\ValidationResult;
 /**
  * Controller for handling file uploads
  * @author James
- * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage>
+ * @extends \Codem\DamnFineUploader\UploadPageController<\Codem\DamnFineUploader\ExternalUploadPage> // @phpstan-ignore generics.notCompatible
  */
 class ExternalUploadPageController extends UploadPageController
 {
@@ -38,9 +38,8 @@ class ExternalUploadPageController extends UploadPageController
         $page = $this->data();
         if ($page instanceof ExternalUploadPage) {
             return $page->getUploadField($args);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -76,11 +75,12 @@ class ExternalUploadPageController extends UploadPageController
         } catch (\Exception $exception) {
             Logger::log("Failed to handle upload: " . $exception->getMessage(), "NOTICE");
         }
-
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
-        } elseif ($submissionCount > 0) {
+        }
+
+        if ($submissionCount > 0) {
             $form->sessionMessage(
                 _t(
                     "DamnFineUploader.FILES_UPLOADED",
@@ -92,15 +92,14 @@ class ExternalUploadPageController extends UploadPageController
                 ValidationResult::TYPE_GOOD
             );
             return $this->redirectBack();
-        } else {
-            $form->sessionMessage(
-                _t(
-                    "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
-                    "No files could be uploaded",
-                ),
-                ValidationResult::TYPE_ERROR
-            );
-            return $this->redirectBack();
         }
+        $form->sessionMessage(
+            _t(
+                "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",
+                "No files could be uploaded",
+            ),
+            ValidationResult::TYPE_ERROR
+        );
+        return $this->redirectBack();
     }
 }

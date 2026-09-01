@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codem\DamnFineUploader;
 
 use Psr\Log\LoggerInterface;
