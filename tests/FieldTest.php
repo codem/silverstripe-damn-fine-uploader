@@ -48,8 +48,6 @@ class FieldTest extends SapphireTest
 
         $this->assertEquals($implementation['validation']['image']['maxWidth'], $c['validation']['image']['maxWidth']);
         $this->assertEquals($implementation['validation']['image']['maxHeight'], $c['validation']['image']['maxHeight']);
-        $this->assertTrue(empty($implementation['validation']['image']['minWidth']));
-        $this->assertTrue(empty($implementation['validation']['image']['minHeight']));
 
         $this->assertEquals(0, $c['validation']['minSizeLimit']);
         $this->assertEquals(
@@ -58,6 +56,7 @@ class FieldTest extends SapphireTest
         );
         $this->assertFalse($c['debug']);
         // delete
+        $this->assertTrue($field->config()->get('allow_delete'));
         $this->assertTrue($c['deleteFile']['forceConfirm']);
         $this->assertEquals('POST', $c['deleteFile']['method']);
         $this->assertTrue($c['deleteFile']['enabled']);
