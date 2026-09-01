@@ -23,7 +23,7 @@
     "babel-loader": "^9",
     "core-js": "^3.37",
     "css-loader": "^7",
-    "css-minimizer-webpack-plugin": "^7",
+    "css-minimizer-webpack-plugin": "^8",
     "kind-of": "^6.0.3",
     "mini-css-extract-plugin": "^2",
     "minimist": "^1.2.6",
