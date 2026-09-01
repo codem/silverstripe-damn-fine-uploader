@@ -133,7 +133,7 @@ abstract class AbstractUppyExternalUploadField extends UppyField
      */
     public function generateUploadHash(): string
     {
-        $generator = new RandomGenerator();
+        $generator = RandomGenerator::create();
         return $generator->randomToken('sha256');
     }
 

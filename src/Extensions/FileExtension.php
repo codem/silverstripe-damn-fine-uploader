@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Codem\DamnFineUploader;
 
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Assets\File;
 
 /**
@@ -13,9 +13,9 @@ use SilverStripe\Assets\File;
  * @property bool $IsDfuUpload
  * @property int $SubmittedUploadFieldID
  * @method \Codem\DamnFineUploader\SubmittedUploadField SubmittedUploadField()
- * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\Assets\File & static)>
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\Assets\File & static)>
  */
-class FileExtension extends DataExtension
+class FileExtension extends Extension
 {
     private static array $db = [
         'DFU' => 'Varchar(255)',

@@ -53,10 +53,7 @@ class FileRetriever
                         ]
                     );
 
-        $file_count = 0;
-        if ($files) {
-            $file_count = $files->count();
-        }
+        $file_count = $files->count();
 
         if ($file_count != count($upload_tokens)) {
             // ensure that all files in the request are found
