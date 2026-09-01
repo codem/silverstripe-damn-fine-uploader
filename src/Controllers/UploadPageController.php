@@ -168,6 +168,7 @@ class UploadPageController extends \PageController
         } catch (\Exception $exception) {
             $response = $this->extend('handleFailedUpload', $fileData, $uploadField, $form, $exception);
         }
+
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
@@ -187,6 +188,7 @@ class UploadPageController extends \PageController
             );
             return $this->redirectBack();
         }
+
         $form->sessionMessage(
             _t(
                 "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",

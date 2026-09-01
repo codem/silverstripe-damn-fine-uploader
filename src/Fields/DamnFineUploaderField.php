@@ -376,6 +376,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
                 //invalid POST
                 throw new InvalidRequestException("No file data provided");
             }
+
             if (!$request->isDELETE()) {
                 // fallback expect a DELETE
                 throw new InvalidRequestException("Invalid removal request received");
@@ -678,6 +679,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!empty($this->runtime_config['request']['endpoint'])) {
             return $this->runtime_config['request']['endpoint'];
         }
+
         $action = $this->getForm()->FormAction();
         return Controller::join_links($action, $this->UploadLink());
     }
@@ -702,6 +704,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!empty($this->runtime_config['deleteFile']['endpoint'])) {
             return $this->runtime_config['deleteFile']['endpoint'];
         }
+
         $action = $this->getForm()->FormAction();
         return Controller::join_links($action, $this->RemoveLink());
     }
@@ -939,10 +942,12 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
                             // exact mimetype match
                             return true;
                         }
+
                         if (count($parts) === 2 && $parts[1] == "*") {
                             // that the mimetype (image/png) starts with image/
                             return  str_starts_with($mimeType, $parts[0] . "/");
                         }
+
                         return false;
                     },
                     ARRAY_FILTER_USE_BOTH
@@ -1006,6 +1011,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['maxWidth'])) {
             return (int)$this->lib_config['validation']['image']['maxWidth'];
         }
+
         return null;
     }
 
@@ -1017,6 +1023,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['maxHeight'])) {
             return (int)$this->lib_config['validation']['image']['maxHeight'];
         }
+
         return null;
     }
 
@@ -1025,6 +1032,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (($width = $this->AcceptedMaxWidth()) && ($height = $this->AcceptedMaxHeight())) {
             return $width . "×" . $height;
         }
+
         return "";
     }
 
@@ -1036,6 +1044,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['minWidth'])) {
             return (int)$this->lib_config['validation']['image']['minWidth'];
         }
+
         return null;
     }
 
@@ -1047,6 +1056,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (isset($this->lib_config['validation']['image']['minHeight'])) {
             return (int)$this->lib_config['validation']['image']['minHeight'];
         }
+
         return null;
     }
 
@@ -1055,6 +1065,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (($width = $this->AcceptedMinWidth()) && ($height = $this->AcceptedMinHeight())) {
             return $width . "×" . $height;
         }
+
         return "";
     }
 
@@ -1110,6 +1121,7 @@ abstract class DamnFineUploaderField extends FormField implements FileHandleFiel
         if (!isset($mimeTypes[$ext])) {
             return 'application/unknown';
         }
+
         return $mimeTypes[$ext];
     }
 

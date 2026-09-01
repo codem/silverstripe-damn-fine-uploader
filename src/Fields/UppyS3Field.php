@@ -49,6 +49,7 @@ class UppyS3Field extends AbstractUppyExternalUploadField
             // return these values from the environment
             return \SilverStripe\Core\Environment::getEnv($key);
         }
+
         // return from the service configuration
         $config = $this->getServiceConfig();
         return $config[ $key ] ?? null;

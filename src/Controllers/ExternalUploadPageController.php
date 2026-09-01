@@ -39,6 +39,7 @@ class ExternalUploadPageController extends UploadPageController
         if ($page instanceof ExternalUploadPage) {
             return $page->getUploadField($args);
         }
+
         return null;
     }
 
@@ -75,6 +76,7 @@ class ExternalUploadPageController extends UploadPageController
         } catch (\Exception $exception) {
             Logger::log("Failed to handle upload: " . $exception->getMessage(), "NOTICE");
         }
+
         if ($response instanceof HTTPResponse) {
             // return the response returned from extensions
             return $response;
@@ -93,6 +95,7 @@ class ExternalUploadPageController extends UploadPageController
             );
             return $this->redirectBack();
         }
+
         $form->sessionMessage(
             _t(
                 "DamnFineUploader.FILES_UPLOADED_ATTEMPTED_MISMATCH",

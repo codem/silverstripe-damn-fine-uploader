@@ -55,7 +55,7 @@ class FileRetriever
 
         $file_count = $files->count();
 
-        if ($file_count != count($upload_tokens)) {
+        if ($file_count !== count($upload_tokens)) {
             // ensure that all files in the request are found
             throw new \Exception("Some files could not be found");
         }
@@ -84,7 +84,7 @@ class FileRetriever
      * Get a single file based on its generated uuid and the form security token used during the upload
      * @return mixed a SilverStripe\Assets\File or null, if the file could not be found
      */
-    public static function getFile(string $uuid, string $token_value)
+    public static function getFile(string $uuid, string $token_value): ?\SilverStripe\ORM\DataObject
     {
         $upload_token = $uuid . "|" . $token_value;
         return Versioned::get_by_stage(File::class, Versioned::DRAFT)

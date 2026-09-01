@@ -45,7 +45,7 @@ class ExternalUploadPage extends UploadPage
      */
     private static string $plural_name = 'Pages handling file uploads to an external service';
 
-    private static string $description = 'After page creation, choose an upload service';
+    private static string $class_description = 'After page creation, choose an upload service';
 
     /**
      * Get uploads made via this page's controller
@@ -57,6 +57,7 @@ class ExternalUploadPage extends UploadPage
                 'UploadSrcRecordId' => $this->ID
             ])->sort(['Created' => 'DESC']);
         }
+
         return null;
     }
 
