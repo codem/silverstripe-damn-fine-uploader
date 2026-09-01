@@ -32,7 +32,7 @@ class UppyField extends DamnFineUploaderField
                 "defer" => true,
                 "async" => true,
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-cgBrXteYttNigBVuF7GbSBJxBOeMgOsSoiqoP4tMnJATvtQxz5+0PgPIKKH5+ql6"
+                "integrity" => "sha384-xEa7YpQ9wsAxJ9Tdtf4Ki+irjdl8G8VMkVpE4qbuV9RHJltZzkKQwmflsJ+1lf0q"
             ]
         );
 
@@ -41,7 +41,7 @@ class UppyField extends DamnFineUploaderField
             'screen',
             [
                 "crossorigin" => "anonymous",
-                "integrity" => "sha384-s2jjKjT1leXthhJ1s4qtk/aZVZGqpZYseSmb7//Lnl6ZQ6nGPEtZWfqHjwL3t3BE"
+                "integrity" => "sha384-uB2eJ0Tc+VNqD+/CSKB3mNqUbsY+/rUp5TZ0f1oj17QulOX0UMgsas4rQiSbVV35"
             ]
         );
     }

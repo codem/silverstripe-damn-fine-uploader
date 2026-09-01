@@ -1,34 +1,34 @@
 {
-  "js/uppy.js.map": {
-    "src": "js/uppy.js.map",
-    "integrity": "sha384-NUrV3SZw9ijFc9X1oM1oUKICY2rpl6jKIw5wubMhzZMFnL8ypHIBNZ6c0Vomzlgv"
-  },
-  "js/uppy.min.js.map": {
-    "src": "js/uppy.min.js.map",
-    "integrity": "sha384-8bHx7w4z/IhPuLzVXQVPBcg5XKrhEUij6HdzotMXHGFDoYKBrdecGrl0INzK89rL"
-  },
-  "styles/uppy.css.map": {
-    "src": "styles/uppy.css.map",
-    "integrity": "sha384-APF2aCXtMEL+gOIrcM8rmvnP3HITs/vKNoUlWEYwbR2PeDc+AT9+qOZ9nVDvzyqE"
-  },
-  "styles/uppy.min.css.map": {
-    "src": "styles/uppy.min.css.map",
-    "integrity": "sha384-LeKKinGLOJ+/rf92S+01kYE3YZmE7n4hK7EfflnWqEnW+A40g60BuW+4EeZNim1Y"
-  },
   "uppy.css": {
     "src": "styles/uppy.css",
     "integrity": "sha384-sSjrfzb0QJ4/ph3lQ65VPGQUdENj8l0Hxpg6qj08ja/0Dq3YIUGWRpif+D2RZNXD"
   },
+  "uppy.css.map": {
+    "src": "styles/uppy.css.map",
+    "integrity": "sha384-APF2aCXtMEL+gOIrcM8rmvnP3HITs/vKNoUlWEYwbR2PeDc+AT9+qOZ9nVDvzyqE"
+  },
   "uppy.js": {
     "src": "js/uppy.js",
-    "integrity": "sha384-jcxESqf/g1KP8QWmi0BpagbMpQRrzbDYdgFKRKRaNxMKhrcd8FZvFMgZbzy2MMyJ"
+    "integrity": "sha384-/kjqgN84MUrrGwGZ95iMmi0oZdxV68sFnKIcPWhFD0EZsOn+FBhihnW2Aiy40bxv"
+  },
+  "uppy.js.map": {
+    "src": "js/uppy.js.map",
+    "integrity": "sha384-aOLGXtyf29/5m3yBQpX1OMMvbXQZ7kfeJ+/pPbqioj5gH5XJn370GK71Bk7GvVnq"
   },
   "uppy.min.css": {
     "src": "styles/uppy.min.css",
-    "integrity": "sha384-s2jjKjT1leXthhJ1s4qtk/aZVZGqpZYseSmb7//Lnl6ZQ6nGPEtZWfqHjwL3t3BE"
+    "integrity": "sha384-uB2eJ0Tc+VNqD+/CSKB3mNqUbsY+/rUp5TZ0f1oj17QulOX0UMgsas4rQiSbVV35"
+  },
+  "uppy.min.css.map": {
+    "src": "styles/uppy.min.css.map",
+    "integrity": "sha384-RFQIDk2eW5oUMOmW4oSQFIjSsJZqnlJTwqTz4B01b21WrfV87/V5FCkXgwTbAjEP"
   },
   "uppy.min.js": {
     "src": "js/uppy.min.js",
-    "integrity": "sha384-cgBrXteYttNigBVuF7GbSBJxBOeMgOsSoiqoP4tMnJATvtQxz5+0PgPIKKH5+ql6"
+    "integrity": "sha384-xEa7YpQ9wsAxJ9Tdtf4Ki+irjdl8G8VMkVpE4qbuV9RHJltZzkKQwmflsJ+1lf0q"
+  },
+  "uppy.min.js.map": {
+    "src": "js/uppy.min.js.map",
+    "integrity": "sha384-qB1oB0/DPHbMPWhPG47JijpDrcsw5twaxBnQzpsj2u0i/yGF92b5FMkz12iwKU3d"
   }
 }
