@@ -82,9 +82,8 @@ class FileRetriever
 
     /**
      * Get a single file based on its generated uuid and the form security token used during the upload
-     * @return mixed a SilverStripe\Assets\File or null, if the file could not be found
      */
-    public static function getFile(string $uuid, string $token_value): ?\SilverStripe\ORM\DataObject
+    public static function getFile(string $uuid, string $token_value): ?File
     {
         $upload_token = $uuid . "|" . $token_value;
         return Versioned::get_by_stage(File::class, Versioned::DRAFT)
