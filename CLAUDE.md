@@ -21,4 +21,4 @@ This project is a SilverStripe vendor module providing various uploader capabili
 
 ## Frontend build requirements
 
-1. The static CSS and JS to support the Uppy field is managed by Yarn via  a Webpack configuration.
+1. The static CSS and JS to support the Uppy field is managed by Bun (`bun install`, `bun run build`/`watch`), using Bun's native bundler via `build.mjs` at the project root. Targets modern evergreen browsers only (no IE11/legacy transpilation).

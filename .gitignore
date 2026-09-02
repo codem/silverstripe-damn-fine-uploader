@@ -1,10 +1,7 @@
 /.php-cs-fixer.cache
 /node_modules
 /package-lock.json
-/yarn-error.log
-/client/dist/styles/*.map
 /client/dist/js/*.map
-/client/dist/bundle-report.html
 /tests/codeception/codeception.yml
 /tests/codeception/.env
 /tests/codeception/tests/_output/*
