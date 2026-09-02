@@ -12,3 +12,6 @@
 /CONTRIBUTING.md            export-ignore
 /README.md                  export-ignore
 /docs                       export-ignore
+/CLAUDE.md                  export-ignore
+/AGENTS.md                  export-ignore
+/.devcontainer              export-ignore
