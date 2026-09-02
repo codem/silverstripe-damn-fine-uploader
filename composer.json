@@ -39,7 +39,8 @@
         "phpstan/phpstan": "^2",
         "phpstan/phpstan-phpunit": "^2",
         "rector/rector": "^2",
-        "nswdpc/ci-files": "dev-v-4"
+        "nswdpc/ci-files": "dev-v-4",
+        "aws/aws-sdk-php": "^3"
     },
     "extra": {
         "expose": [
