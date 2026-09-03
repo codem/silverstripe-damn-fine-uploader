@@ -64,6 +64,9 @@ RUN echo "opcache.enable_cli=1" > /usr/local/etc/php/conf.d/opcache-cli.ini
 # Increase memory limit for tooling
 RUN echo "memory_limit = -1" > /usr/local/etc/php/conf.d/memory-limit.ini
 
+# Increase upload limit to something sensible
+RUN printf "upload_max_filesize = 20M\npost_max_size = 20M\n" > /usr/local/etc/php/conf.d/upload-limit.ini
+
 # Fail the build loudly here rather than mysteriously later if any extension
 # Silverstripe needs isn't actually loaded. opcache is checked separately via
 # function_exists('opcache_get_status') rather than extension_loaded('opcache')
