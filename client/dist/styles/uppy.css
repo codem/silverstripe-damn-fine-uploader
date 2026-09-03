@@ -1,17 +1,13 @@
 /* node_modules/@uppy/core/dist/style.css */
 .uppy-Root {
-  position: relative;
   box-sizing: border-box;
-  color: #333;
-  text-align: left;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Segoe UI Symbol, Segoe UI Emoji, Apple Color Emoji, Helvetica, Arial, sans-serif;
+  text-align: left;
+  position: relative;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
   line-height: 1;
-}
-
-[dir="rtl"] .uppy-Root, .uppy-Root[dir="rtl"] {
-  text-align: right;
 }
 
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
@@ -23,15 +19,61 @@
 }
 
 .uppy-u-reset {
-  all: initial;
-  box-sizing: border-box;
-  appearance: none;
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Segoe UI Symbol, Segoe UI Emoji, Apple Color Emoji, Helvetica, Arial, sans-serif;
+  -webkit-appearance: none;
+  color: inherit;
+  -webkit-backface-visibility: visible;
+  backface-visibility: visible;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: none;
+  clear: none;
+  cursor: auto;
+  display: inline;
+  empty-cells: show;
+  float: none;
+  font-family: inherit;
   line-height: 1;
-}
-
-[dir="rtl"] .uppy-u-reset {
-  text-align: right;
+  font-size: inherit;
+  font-variant: normal;
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  letter-spacing: normal;
+  list-style: none;
+  opacity: 1;
+  outline: medium none invert;
+  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
+  text-align: left;
+  text-decoration: none;
+  text-indent: 0;
+  text-shadow: none;
+  text-transform: none;
+  transform-origin: 50% 50% 0;
+  transform-style: flat;
+  unicode-bidi: normal;
+  vertical-align: baseline;
+  visibility: visible;
+  white-space: normal;
+  z-index: auto;
+  background: none;
+  border: none;
+  border-image: ;
+  border-radius: 0;
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  transition: none;
+  font-style: normal;
+  font-weight: normal;
+  font-stretch: normal;
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 .uppy-c-textInput {
@@ -39,7 +81,6 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 6px 8px;
-  font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -50,8 +91,8 @@
 
 .uppy-c-textInput:focus {
   outline: none;
-  border-color: #1269cf99;
-  box-shadow: 0 0 0 3px #1269cf26;
+  border-color: #2275d799;
+  box-shadow: 0 0 0 3px #2275d726;
 }
 
 [data-uppy-theme="dark"] .uppy-c-textInput {
@@ -66,31 +107,28 @@
 }
 
 .uppy-c-icon {
+  fill: currentColor;
   display: inline-block;
   overflow: hidden;
-  fill: currentColor;
   max-width: 100%;
   max-height: 100%;
 }
 
 .uppy-c-btn {
-  display: inline-flex;
-  font-weight: 500;
-  font-size: inherit;
-  color: inherit;
-  white-space: nowrap;
+  display: inline-block;
   text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
-  justify-content: center;
-  align-items:  center;
   transition-property: background-color, color;
   transition-duration: .3s;
   font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
   line-height: 1;
-}
-
-[dir="rtl"] .uppy-c-btn {
-  text-align: center;
 }
 
 .uppy-c-btn:not(:disabled):not(.disabled) {
@@ -103,19 +141,19 @@
 
 .uppy-c-btn-primary {
   color: #fff;
-  background-color: #1269cf;
+  background-color: #2275d7;
   border-radius: 4px;
   padding: 10px 18px;
   font-size: 14px;
 }
 
-.uppy-c-btn-primary:not(:disabled):hover {
-  background-color: #0e51a0;
+.uppy-c-btn-primary:hover {
+  background-color: #1b5dab;
 }
 
 .uppy-c-btn-primary:focus {
   outline: none;
-  box-shadow: 0 0 0 3px #1269cf66;
+  box-shadow: 0 0 0 3px #2275d766;
 }
 
 .uppy-size--md .uppy-c-btn-primary {
@@ -138,10 +176,6 @@
   box-shadow: 0 0 0 2px #aae1ffd9;
 }
 
-.uppy-c-btn-primary.uppy-c-btn--disabled {
-  background-color: #8eb2db;
-}
-
 .uppy-c-btn-link {
   color: #525252;
   background-color: #0000;
@@ -157,7 +191,7 @@
 
 .uppy-c-btn-link:focus {
   outline: none;
-  box-shadow: 0 0 0 3px #1269cf40;
+  box-shadow: 0 0 0 3px #2275d740;
 }
 
 .uppy-size--md .uppy-c-btn-link {
@@ -184,23 +218,33 @@
   color: #939393;
 }
 
+.uppy-c-btn--small {
+  border-radius: 2px;
+  padding: 7px 16px;
+  font-size: .9em;
+}
+
+.uppy-size--md .uppy-c-btn--small {
+  border-radius: 2px;
+  padding: 8px 10px;
+}
+
 /* node_modules/@uppy/dashboard/dist/style.css */
 .uppy-Informer {
   position: absolute;
-  z-index: 1005;
   text-align: center;
+  opacity: 1;
+  z-index: 1005;
+  transition: all .25s ease-in;
   bottom: 60px;
   left: 0;
   right: 0;
+  transform: none;
 }
 
-.uppy-Informer span > div {
-  margin-bottom: 6px;
-}
-
-.uppy-Informer-animated {
-  z-index: -1000;
+.uppy-Informer[aria-hidden="true"] {
   opacity: 0;
+  z-index: -1000;
   transition: all .3s ease-in;
   transform: translateY(350%);
 }
@@ -229,50 +273,27 @@
   background-color: #333;
 }
 
-.uppy-Informer p span {
-  position: relative;
+.uppy-Informer span {
   display: inline-block;
-  color: #525252;
   vertical-align: middle;
-  top: -1px;
+  color: #525252;
+  position: relative;
   background-color: #fff;
   border-radius: 50%;
   width: 13px;
   height: 13px;
-  margin-inline-start: -1px;
+  margin-left: -1px;
   font-size: 10px;
   line-height: 12px;
-}
-
-.uppy-Informer p span:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  top: -1px;
   left: 3px;
 }
 
-.uppy-Informer p span:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 3px;
-}
-
-.uppy-Informer p span:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 3px;
-}
-
-.uppy-Informer p span:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 3px;
-}
-
-.uppy-Informer p span:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 3px;
-}
-
-.uppy-Informer p span:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 3px;
-}
-
-.uppy-Informer p span:hover {
+.uppy-Informer span:hover {
   cursor: help;
 }
 
-.uppy-Informer p span:after {
+.uppy-Informer span:after {
   word-wrap: break-word;
   line-height: 1.3;
 }
@@ -282,16 +303,16 @@
 }
 
 .uppy-Root [aria-label][role~="tooltip"]:before, .uppy-Root [aria-label][role~="tooltip"]:after {
-  position: absolute;
-  z-index: 10;
-  box-sizing: border-box;
-  transform-origin: top;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  opacity: 0;
-  transition: all var(--microtip-transition-duration, .18s) var(--microtip-transition-easing, ease-in-out) var(--microtip-transition-delay, 0s);
-  pointer-events: none;
   will-change: transform;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--microtip-transition-duration, .18s) var(--microtip-transition-easing, ease-in-out) var(--microtip-transition-delay, 0s);
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 10;
+  transform-origin: top;
   transform: translate3d(0, 0, 0);
 }
 
@@ -301,13 +322,13 @@
 }
 
 .uppy-Root [aria-label][role~="tooltip"]:after {
-  box-sizing: content-box;
   color: #fff;
-  font-weight: var(--microtip-font-weight, normal);
-  font-size: var(--microtip-font-size, 13px);
-  white-space: nowrap;
-  text-transform: var(--microtip-text-transform, none);
   content: attr(aria-label);
+  font-size: var(--microtip-font-size, 13px);
+  font-weight: var(--microtip-font-weight, normal);
+  text-transform: var(--microtip-text-transform, none);
+  white-space: nowrap;
+  box-sizing: content-box;
   background: #111111e6;
   border-radius: 4px;
   padding: .5em 1em;
@@ -323,19 +344,29 @@
   width: 18px;
   height: 6px;
   margin-bottom: 5px;
-  bottom: 100%;
-  left: 50%;
-  transform: translate3d(-50%, 0, 0);
 }
 
 .uppy-Root [role~="tooltip"][data-microtip-position|="top"]:after {
   margin-bottom: 11px;
+}
+
+.uppy-Root [role~="tooltip"][data-microtip-position|="top"]:before {
   bottom: 100%;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
 }
 
-.uppy-Root [role~="tooltip"][data-microtip-position|="top"]:hover:before, .uppy-Root [role~="tooltip"][data-microtip-position="top"]:hover:after {
+.uppy-Root [role~="tooltip"][data-microtip-position|="top"]:hover:before {
+  transform: translate3d(-50%, -5px, 0);
+}
+
+.uppy-Root [role~="tooltip"][data-microtip-position|="top"]:after {
+  bottom: 100%;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+}
+
+.uppy-Root [role~="tooltip"][data-microtip-position="top"]:hover:after {
   transform: translate3d(-50%, -5px, 0);
 }
 
@@ -363,20 +394,30 @@
   height: 6px;
   margin-top: 5px;
   margin-bottom: 0;
+}
+
+.uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]:after {
+  margin-top: 11px;
+}
+
+.uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]:before {
   top: 100%;
   bottom: auto;
   left: 50%;
   transform: translate3d(-50%, -10px, 0);
 }
 
+.uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]:hover:before {
+  transform: translate3d(-50%, 0, 0);
+}
+
 .uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]:after {
-  margin-top: 11px;
   top: 100%;
   left: 50%;
   transform: translate3d(-50%, -10px, 0);
 }
 
-.uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]:hover:before, .uppy-Root [role~="tooltip"][data-microtip-position="bottom"]:hover:after {
+.uppy-Root [role~="tooltip"][data-microtip-position="bottom"]:hover:after {
   transform: translate3d(-50%, 0, 0);
 }
 
@@ -458,12 +499,13 @@
 }
 
 .uppy-StatusBar {
-  position: relative;
-  z-index: 1001;
+  display: -ms-flexbox;
   display: flex;
+  position: relative;
   color: #fff;
+  z-index: 1001;
   background-color: #fff;
-  height: 46px;
+  height: 40px;
   transition: height .2s;
   font-size: 12px;
   font-weight: 400;
@@ -474,9 +516,13 @@
   background-color: #1f1f1f;
 }
 
+.uppy-size--md .uppy-StatusBar {
+  height: 46px;
+}
+
 .uppy-StatusBar:before {
-  position: absolute;
   content: "";
+  position: absolute;
   background-color: #eaeaea;
   width: 100%;
   height: 2px;
@@ -522,7 +568,7 @@
 .uppy-StatusBar-progress {
   position: absolute;
   z-index: 1001;
-  background-color: #1269cf;
+  background-color: #2275d7;
   height: 2px;
   transition: background-color, width .3s ease-out;
 }
@@ -552,19 +598,20 @@
 }
 
 .uppy-StatusBar-content {
+  display: -ms-flexbox;
+  display: flex;
   position: relative;
   z-index: 1002;
-  display: flex;
-  color: #333;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #333;
   align-items:  center;
   height: 100%;
-  padding-inline-start: 10px;
+  padding-left: 10px;
 }
 
 .uppy-size--md .uppy-StatusBar-content {
-  padding-inline-start: 15px;
+  padding-left: 15px;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar-content {
@@ -572,22 +619,22 @@
 }
 
 .uppy-StatusBar-status {
+  display: -ms-flexbox;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-inline-end: .3em;
+  padding-right: .3em;
   font-weight: normal;
   line-height: 1.4;
 }
 
-.uppy-StatusBar-statusPrimary {
-  display: flex;
-  font-weight: 500;
-  line-height: 1;
+.uppy-Root:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
+  display: none;
 }
 
-.uppy-StatusBar-statusPrimary button.uppy-StatusBar-details {
-  margin-left: 5px;
+.uppy-StatusBar-statusPrimary {
+  font-weight: 500;
+  line-height: 1;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar-statusPrimary {
@@ -610,18 +657,18 @@
 .uppy-StatusBar-statusSecondaryHint {
   display: inline-block;
   vertical-align: middle;
-  margin-inline-end: 5px;
+  margin-right: 5px;
   line-height: 1;
 }
 
 .uppy-size--md .uppy-StatusBar-statusSecondaryHint {
-  margin-inline-end: 8px;
+  margin-right: 8px;
 }
 
 .uppy-StatusBar-statusIndicator {
   position: relative;
   color: #525252;
-  margin-inline-end: 7px;
+  margin-right: 7px;
   top: 1px;
 }
 
@@ -630,68 +677,25 @@
 }
 
 .uppy-StatusBar-actions {
+  display: -ms-flexbox;
+  display: flex;
   position: absolute;
   z-index: 1004;
-  display: flex;
+  align-items:  center;
   top: 0;
   bottom: 0;
-  align-items:  center;
-}
-
-.uppy-StatusBar-actions:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
   right: 10px;
-}
-
-.uppy-StatusBar-actions:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 10px;
-}
-
-.uppy-StatusBar-actions:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 10px;
-}
-
-.uppy-StatusBar-actions:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
-}
-
-.uppy-StatusBar-actions:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
-}
-
-.uppy-StatusBar-actions:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
   position: static;
   background-color: #fafafa;
   width: 100%;
-  height: 100%;
   padding: 0 15px;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
   background-color: #1f1f1f;
-}
-
-.uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts {
-  flex-direction: column;
-  height: 90px;
-}
-
-.uppy-size--md .uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts {
-  flex-direction: row;
-  height: 65px;
-}
-
-.uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts .uppy-StatusBar-actions {
-  flex-direction: column;
-  justify-content: center;
-}
-
-.uppy-size--md .uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts .uppy-StatusBar-actions {
-  justify-content: initial;
-  flex-direction: row;
 }
 
 .uppy-StatusBar-actionCircleBtn {
@@ -710,7 +714,7 @@
 }
 
 .uppy-StatusBar-actionCircleBtn:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
+  box-shadow: 0 0 0 3px #2275d780;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar-actionCircleBtn:focus {
@@ -739,31 +743,23 @@
 
 .uppy-StatusBar-actionBtn {
   display: inline-block;
-  color: #1269cf;
+  vertical-align: middle;
   font-size: 10px;
   line-height: inherit;
-  vertical-align: middle;
+  color: #2275d7;
 }
 
 .uppy-size--md .uppy-StatusBar-actionBtn {
   font-size: 11px;
 }
 
-.uppy-StatusBar-actionBtn--disabled {
-  opacity: .4;
-}
-
-[data-uppy-theme="dark"] .uppy-StatusBar-actionBtn--disabled {
-  opacity: .7;
-}
-
 .uppy-StatusBar-actionBtn--retry {
-  position: relative;
   color: #fff;
+  position: relative;
   background-color: #ff4b23;
   border-radius: 8px;
   height: 16px;
-  margin-inline-end: 6px;
+  margin-right: 6px;
   padding: 1px 6px 3px 18px;
   line-height: 1;
 }
@@ -777,7 +773,7 @@
 }
 
 .uppy-StatusBar-actionBtn--retry:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
+  box-shadow: 0 0 0 3px #2275d780;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar-actionBtn--retry:focus {
@@ -799,30 +795,7 @@
 .uppy-StatusBar-actionBtn--retry svg {
   position: absolute;
   top: 3px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
   left: 6px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 6px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 6px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 6px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 6px;
-}
-
-.uppy-StatusBar-actionBtn--retry svg:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 6px;
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
@@ -851,25 +824,16 @@
   padding: 13px 22px;
 }
 
-.uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
-  cursor: not-allowed;
-  background-color: #1bb240;
-}
-
-[data-uppy-theme="dark"] .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
-  background-color: #1c8b37;
-}
-
 .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
-  color: #1269cf;
+  color: #2275d7;
   background-color: #0000;
 }
 
 .uppy-StatusBar-actionBtn--uploadNewlyAdded {
-  padding-inline-start: 3px;
-  padding-inline-end: 3px;
   border-radius: 3px;
   padding-bottom: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .uppy-StatusBar-actionBtn--uploadNewlyAdded:focus {
@@ -881,7 +845,7 @@
 }
 
 .uppy-StatusBar-actionBtn--uploadNewlyAdded:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
+  box-shadow: 0 0 0 3px #2275d780;
 }
 
 [data-uppy-theme="dark"] .uppy-StatusBar-actionBtn--uploadNewlyAdded:focus {
@@ -896,84 +860,13 @@
   box-shadow: 0 0 0 2px #aae1ffd9;
 }
 
-.uppy-StatusBar.is-preprocessing .uppy-StatusBar-actionBtn--uploadNewlyAdded, .uppy-StatusBar.is-postprocessing .uppy-StatusBar-actionBtn--uploadNewlyAdded {
-  display: none;
-}
-
-.uppy-StatusBar-actionBtn--done {
-  border-radius: 3px;
-  padding: 7px 8px;
-  line-height: 1;
-}
-
-.uppy-StatusBar-actionBtn--done:focus {
-  outline: none;
-}
-
-.uppy-StatusBar-actionBtn--done::-moz-focus-inner {
-  border: 0;
-}
-
-.uppy-StatusBar-actionBtn--done:hover {
-  color: #0e51a0;
-}
-
-.uppy-StatusBar-actionBtn--done:focus {
-  background-color: #dfe6f1;
-}
-
-[data-uppy-theme="dark"] .uppy-StatusBar-actionBtn--done:focus {
-  background-color: #333;
-}
-
-[data-uppy-theme="dark"] .uppy-StatusBar-actionBtn--done {
-  color: #02baf2;
-}
-
-.uppy-size--md .uppy-StatusBar-actionBtn--done {
-  font-size: 14px;
-}
-
-.uppy-StatusBar-serviceMsg {
-  color: #000;
-  padding-left: 10px;
-  font-size: 11px;
-  line-height: 1.1;
-}
-
-.uppy-size--md .uppy-StatusBar-serviceMsg {
-  padding-left: 15px;
-  font-size: 14px;
-}
-
-[data-uppy-theme="dark"] .uppy-StatusBar-serviceMsg {
-  color: #eaeaea;
-}
-
-.uppy-StatusBar-serviceMsg-ghostsIcon {
-  position: relative;
-  vertical-align: text-bottom;
-  opacity: .5;
-  width: 10px;
-  top: 2px;
-  left: 6px;
-}
-
-.uppy-size--md .uppy-StatusBar-serviceMsg-ghostsIcon {
-  width: 15px;
-  top: 1px;
-  left: 10px;
-}
-
 .uppy-StatusBar-details {
-  position: relative;
   display: inline-block;
-  color: #fff;
-  text-align: center;
   vertical-align: middle;
+  color: #fff;
+  position: relative;
+  text-align: center;
   cursor: help;
-  appearance: none;
-  top: 0;
   background-color: #939393;
   border-radius: 50%;
   width: 13px;
@@ -981,30 +874,8 @@
   font-size: 10px;
   font-weight: 600;
   line-height: 12px;
-}
-
-.uppy-StatusBar-details:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  top: 0;
   left: 2px;
-}
-
-.uppy-StatusBar-details:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 2px;
-}
-
-.uppy-StatusBar-details:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 2px;
-}
-
-.uppy-StatusBar-details:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
-}
-
-.uppy-StatusBar-details:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
-}
-
-.uppy-StatusBar-details:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
 }
 
 .uppy-StatusBar-details:after {
@@ -1015,10 +886,10 @@
 .uppy-StatusBar-spinner {
   animation-name: uppy-StatusBar-spinnerAnimation;
   animation-duration: 1s;
-  animation-timing-function: linear;
   animation-iteration-count: infinite;
-  fill: #1269cf;
-  margin-inline-end: 10px;
+  animation-timing-function: linear;
+  fill: #2275d7;
+  margin-right: 10px;
 }
 
 .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner, .uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
@@ -1035,7 +906,8 @@
   }
 }
 
-.uppy-ProviderBrowser-viewType--grid ul.uppy-ProviderBrowser-list, .uppy-ProviderBrowser-viewType--unsplash ul.uppy-ProviderBrowser-list {
+.uppy-ProviderBrowser-viewType--grid ul.uppy-ProviderBrowser-list {
+  display: -ms-flexbox;
   display: flex;
   flex-flow: wrap;
   justify-content: space-between;
@@ -1043,60 +915,56 @@
   padding: 6px;
 }
 
-.uppy-ProviderBrowser-viewType--grid ul.uppy-ProviderBrowser-list:after, .uppy-ProviderBrowser-viewType--unsplash ul.uppy-ProviderBrowser-list:after {
+.uppy-ProviderBrowser-viewType--grid ul.uppy-ProviderBrowser-list:after {
   content: "";
   flex: auto;
 }
 
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem {
+.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem {
   position: relative;
   width: 50%;
   margin: 0;
 }
 
-.uppy-size--md .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem, .uppy-size--md .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem {
+.uppy-size--md .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem {
   width: 33.3333%;
 }
 
-.uppy-size--lg .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem, .uppy-size--lg .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem {
+.uppy-size--lg .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem {
   width: 25%;
 }
 
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem:before, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem:before {
-  display: block;
+.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem:before {
   content: "";
+  display: block;
   padding-top: 100%;
 }
 
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--selected img, .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--selected svg, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--selected img, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--selected svg {
+.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--selected img, .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--selected svg {
   opacity: .85;
 }
 
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--disabled, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--disabled {
-  opacity: .5;
-}
-
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
+.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
   background-color: #93939333;
 }
 
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner, [data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
   background-color: #eaeaea33;
 }
 
-.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview svg, .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--noPreview svg {
+.uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview svg {
   fill: #000000b3;
   width: 30%;
   height: 30%;
 }
 
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview svg, [data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--unsplash li.uppy-ProviderBrowserItem--noPreview svg {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid li.uppy-ProviderBrowserItem--noPreview svg {
   fill: #fffc;
 }
 
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-inner, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-inner {
-  position: absolute;
+.uppy-ProviderBrowser-viewType--grid button.uppy-ProviderBrowserItem-inner {
   overflow: hidden;
+  position: absolute;
   text-align: center;
   border-radius: 4px;
   width: calc(100% - 14px);
@@ -1104,48 +972,27 @@
   inset: 7px;
 }
 
-@media (hover: none) {
-  .uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-inner .uppy-ProviderBrowserItem-author, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-inner .uppy-ProviderBrowserItem-author {
-    display: block;
-  }
+.uppy-ProviderBrowser-viewType--grid button.uppy-ProviderBrowserItem-inner:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #2275d7e6;
 }
 
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-inner, [data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-inner {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--grid button.uppy-ProviderBrowserItem-inner {
   box-shadow: 0 0 0 3px #aae1ffb3;
 }
 
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-inner img, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-inner img {
+.uppy-ProviderBrowser-viewType--grid button.uppy-ProviderBrowserItem-inner img {
   object-fit: cover;
   border-radius: 4px;
   width: 100%;
   height: 100%;
 }
 
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-author, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-author {
-  position: absolute;
-  display: none;
-  color: #fff;
-  text-decoration: none;
-  background: #0000004d;
-  width: 100%;
-  margin: 0;
-  padding: 5px;
-  font-size: 12px;
-  font-weight: 500;
-  bottom: 0;
-  left: 0;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-author:hover, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-author:hover {
-  text-decoration: underline;
-  background: #0006;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox {
+.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-fakeCheckbox {
   position: absolute;
   z-index: 1002;
   opacity: 0;
-  background-color: #1269cf;
+  background-color: #2275d7;
   border-radius: 50%;
   width: 26px;
   height: 26px;
@@ -1153,82 +1000,15 @@
   right: 16px;
 }
 
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:after, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:after {
-  top: 8px;
+.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-fakeCheckbox:after {
   width: 12px;
   height: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
+  top: 8px;
   left: 7px;
 }
 
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 7px;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox {
+.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
   opacity: 1;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox--grid:hover + label .uppy-ProviderBrowserItem-author, .uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox--grid:focus + label .uppy-ProviderBrowserItem-author, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox--grid:hover + label .uppy-ProviderBrowserItem-author, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox--grid:focus + label .uppy-ProviderBrowserItem-author {
-  display: block;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox--grid:focus + label, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox--grid:focus + label {
-  box-shadow: 0 0 0 3px #1269cf80;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox--grid:focus + label:focus, .uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox--grid:focus + label:focus {
-  outline: none;
-}
-
-.uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem-checkbox--grid:focus + label::-moz-focus-inner {
-  border: 0;
-}
-
-.uppy-ProviderBrowser-viewType--unsplash .uppy-ProviderBrowserItem-checkbox--grid:focus + label::-moz-focus-inner {
-  border: 0;
 }
 
 .uppy-ProviderBrowser-viewType--list {
@@ -1240,6 +1020,7 @@
 }
 
 .uppy-ProviderBrowser-viewType--list li.uppy-ProviderBrowserItem {
+  display: -ms-flexbox;
   display: flex;
   align-items:  center;
   margin: 0;
@@ -1250,182 +1031,90 @@
   color: #eaeaea;
 }
 
-.uppy-ProviderBrowser-viewType--list li.uppy-ProviderBrowserItem--disabled {
-  opacity: .6;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox {
+.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox {
   background-color: #fff;
   border: 1px solid #cfcfcf;
   border-radius: 3px;
   width: 17px;
   height: 17px;
-  margin-inline-end: 15px;
+  margin-right: 15px;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:focus {
+.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox:focus {
   outline: none;
-  border: 1px solid #1269cf;
-  box-shadow: 0 0 0 3px #1269cf40;
+  border: 1px solid #2275d7;
+  box-shadow: 0 0 0 3px #2275d740;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:after {
+.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox:after {
   opacity: 0;
-  top: 4px;
   width: 9px;
   height: 5px;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
+  top: 4px;
   left: 3px;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 3px;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 3px;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 3px;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 3px;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 3px;
-}
-
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-checkbox:focus {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox:focus {
   border-color: #02baf2b3;
   box-shadow: 0 0 0 3px #02baf233;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox, .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem--is-partial .uppy-ProviderBrowserItem-checkbox {
-  background-color: #1269cf;
-  border-color: #1269cf;
+.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  background-color: #2275d7;
+  border-color: #2275d7;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox:after, .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem--is-partial .uppy-ProviderBrowserItem-checkbox:after {
+.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-fakeCheckbox--is-checked:after {
   opacity: 1;
 }
 
 .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-inner {
-  display: flex;
-  color: inherit;
-  overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: -ms-flexbox;
+  display: flex;
   align-items:  center;
   padding: 2px;
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Segoe UI Symbol, Segoe UI Emoji, Apple Color Emoji, Helvetica, Arial, sans-serif;
 }
 
 .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-inner:focus {
-  text-decoration: underline;
   outline: none;
+  text-decoration: underline;
 }
 
 .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-inner img, .uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-inner svg {
-  margin-inline-end: 8px;
+  max-width: 20px;
+  max-height: 20px;
+  margin-right: 8px;
 }
 
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-inner span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  line-height: 1.2;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem--disabled .uppy-ProviderBrowserItem-inner {
-  cursor: default;
-}
-
-.uppy-ProviderBrowser-viewType--list .uppy-ProviderBrowserItem-iconWrap {
-  width: 20px;
-  margin-inline-end: 7px;
-}
-
-.uppy-ProviderBrowserItem-checkbox {
+.uppy-ProviderBrowserItem-fakeCheckbox {
   position: relative;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-.uppy-ProviderBrowserItem-checkbox:disabled, .uppy-ProviderBrowserItem-checkbox:disabled:after {
-  cursor: default;
-}
-
-[data-uppy-theme="dark"] .uppy-ProviderBrowserItem-checkbox {
-  background-color: #1f1f1f;
-  border-color: #939393;
-}
-
-[data-uppy-theme="dark"] .uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox {
-  background-color: #333;
-}
-
-.uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox:after {
+.uppy-ProviderBrowserItem-fakeCheckbox:after {
+  content: "";
   position: absolute;
   cursor: pointer;
-  content: "";
   border-bottom: 2px solid #eaeaea;
   border-left: 2px solid #eaeaea;
   transform: rotate(-45deg);
 }
 
-.uppy-ProviderBrowserItem--is-partial .uppy-ProviderBrowserItem-checkbox:after {
-  content: "" !important;
-  position: absolute !important;
-  background-color: #eaeaea !important;
-  height: 2px !important;
-  top: 50% !important;
-  left: 20% !important;
-  right: 20% !important;
-  transform: translateY(-50%) !important;
-}
-
-.uppy-SearchProvider {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: center;
-  align-items:  center;
-  width: 100%;
-  height: 100%;
-}
-
-[data-uppy-theme="dark"] .uppy-SearchProvider {
+[data-uppy-theme="dark"] .uppy-ProviderBrowserItem-fakeCheckbox {
   background-color: #1f1f1f;
+  border-color: #939393;
 }
 
-.uppy-SearchProvider-input {
-  width: 90%;
-  max-width: 650px;
-  margin-bottom: 15px;
-}
-
-.uppy-size--md .uppy-SearchProvider-input {
-  margin-bottom: 20px;
-}
-
-.uppy-SearchProvider-input::-webkit-search-cancel-button {
-  display: none;
-}
-
-.uppy-SearchProvider-searchButton {
-  padding: 13px 25px;
-}
-
-.uppy-size--md .uppy-SearchProvider-searchButton {
-  padding: 13px 30px;
+[data-uppy-theme="dark"] .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  background-color: #333;
 }
 
 .uppy-DashboardContent-panelBody {
+  display: -ms-flexbox;
   display: flex;
   flex: 1;
   justify-content: center;
@@ -1437,6 +1126,7 @@
 }
 
 .uppy-Provider-auth, .uppy-Provider-error, .uppy-Provider-loading, .uppy-Provider-empty {
+  display: -ms-flexbox;
   display: flex;
   color: #939393;
   flex-flow: column wrap;
@@ -1452,11 +1142,12 @@
 .uppy-Provider-authIcon svg {
   width: 100px;
   height: 75px;
+  margin-bottom: 15px;
 }
 
 .uppy-Provider-authTitle {
-  color: #757575;
   text-align: center;
+  color: #757575;
   max-width: 500px;
   margin-bottom: 30px;
   padding: 0 15px;
@@ -1473,29 +1164,9 @@
   color: #cfcfcf;
 }
 
-.uppy-Provider-btn-google {
-  display: flex;
-  background: #4285f4;
-  align-items:  center;
-  padding: 8px 12px !important;
-}
-
-.uppy-Provider-btn-google:hover {
-  background-color: #1266f1;
-}
-
-.uppy-Provider-btn-google:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px #4285f466;
-}
-
-.uppy-Provider-btn-google svg {
-  margin-right: 8px;
-}
-
 .uppy-Provider-breadcrumbs {
   color: #525252;
-  text-align: start;
+  text-align: left;
   flex: 1;
   margin-bottom: 10px;
   font-size: 12px;
@@ -1513,7 +1184,7 @@
   display: inline-block;
   color: #525252;
   vertical-align: middle;
-  margin-inline-end: 4px;
+  margin-right: 4px;
   line-height: 1;
 }
 
@@ -1539,29 +1210,19 @@
 }
 
 .uppy-Provider-breadcrumbs button:hover {
-  color: #0e51a0;
+  color: #1b5dab;
 }
 
 .uppy-Provider-breadcrumbs button:focus {
-  background-color: #dfe6f1;
+  background-color: #eceef2;
 }
 
 [data-uppy-theme="dark"] .uppy-Provider-breadcrumbs button:focus {
   background-color: #333;
 }
 
-.uppy-Provider-breadcrumbs button:not(:last-of-type) {
-  text-decoration: underline;
-}
-
-.uppy-Provider-breadcrumbs button:last-of-type {
-  color: #333;
-  cursor: normal;
-  pointer-events: none;
-  font-weight: 500;
-}
-
 .uppy-Provider-breadcrumbs button:hover {
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -1570,6 +1231,7 @@
 }
 
 .uppy-ProviderBrowser {
+  display: -ms-flexbox;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1589,39 +1251,16 @@
 }
 
 .uppy-ProviderBrowser-user:after {
+  content: "·";
   position: relative;
   color: #939393;
-  content: "·";
   font-weight: normal;
-}
-
-.uppy-ProviderBrowser-user:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
   left: 4px;
-}
-
-.uppy-ProviderBrowser-user:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 4px;
-}
-
-.uppy-ProviderBrowser-user:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))):after {
-  left: 4px;
-}
-
-.uppy-ProviderBrowser-user:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 4px;
-}
-
-.uppy-ProviderBrowser-user:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 4px;
-}
-
-.uppy-ProviderBrowser-user:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)):after {
-  right: 4px;
 }
 
 .uppy-ProviderBrowser-header {
-  position: relative;
   z-index: 1001;
+  position: relative;
   border-bottom: 1px solid #eaeaea;
 }
 
@@ -1639,6 +1278,7 @@
 }
 
 .uppy-size--md .uppy-ProviderBrowser-headerBar {
+  display: -ms-flexbox;
   display: flex;
   align-items:  center;
 }
@@ -1648,8 +1288,8 @@
 }
 
 .uppy-ProviderBrowser-headerBar--simple {
-  display: block;
   text-align: center;
+  display: block;
   justify-content: center;
 }
 
@@ -1659,148 +1299,94 @@
   flex: none;
 }
 
-.uppy-ProviderBrowser-searchFilter {
+.uppy-ProviderBrowser-search {
   position: relative;
+  display: -ms-flexbox;
   display: flex;
+  background-color: #fff;
   align-items:  center;
   width: 100%;
   height: 30px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  padding-left: 8px;
-  padding-right: 8px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
-.uppy-ProviderBrowser-searchFilterInput {
-  z-index: 1001;
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-search {
+  background-color: #1f1f1f;
+}
+
+.uppy-ProviderBrowser-searchIcon {
+  position: absolute;
+  z-index: 1002;
+  color: #bbb;
+  width: 12px;
+  height: 12px;
+  left: 16px;
+}
+
+.uppy-ProviderBrowser-searchInput {
   outline: 0;
-  color: #333;
-  background-color: #eaeaea;
+  z-index: 1001;
+  background-color: #0000;
   border: 0;
   border-radius: 4px;
   width: 100%;
   height: 30px;
-  padding-inline-start: 30px;
-  padding-inline-end: 30px;
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Segoe UI Symbol, Segoe UI Emoji, Apple Color Emoji, Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  margin: 0 8px;
+  padding-left: 27px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  font-size: 12px;
   line-height: 1.4;
 }
 
-.uppy-ProviderBrowser-searchFilterInput::-webkit-search-cancel-button {
-  display: none;
-}
-
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-searchFilterInput {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-searchInput {
   color: #eaeaea;
   background-color: #1f1f1f;
 }
 
-.uppy-ProviderBrowser-searchFilterInput:focus {
-  background-color: #cfcfcf;
-  border: 0;
+.uppy-ProviderBrowser-searchInput:focus {
+  outline: 0;
+  background-color: #f4f4f4;
 }
 
-[data-uppy-theme="dark"] .uppy-ProviderBrowser-searchFilterInput:focus {
+[data-uppy-theme="dark"] .uppy-ProviderBrowser-searchInput:focus {
   background-color: #333;
 }
 
-.uppy-ProviderBrowser-searchFilterIcon {
+.uppy-ProviderBrowser-searchClose {
   position: absolute;
   z-index: 1002;
+  color: #939393;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  padding: 6px;
+  top: 4px;
+  right: 12px;
+}
+
+.uppy-ProviderBrowser-searchClose:hover {
   color: #757575;
-  width: 12px;
-  height: 12px;
 }
 
-.uppy-ProviderBrowser-searchFilterIcon:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 16px;
+.uppy-ProviderBrowser-searchClose svg {
+  vertical-align: text-top;
 }
 
-.uppy-ProviderBrowser-searchFilterIcon:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterIcon:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterIcon:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterIcon:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterIcon:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterInput::placeholder {
+.uppy-ProviderBrowser-searchInput:-ms-input-placeholder {
   color: #939393;
   opacity: 1;
 }
 
-.uppy-ProviderBrowser-searchFilterReset {
-  position: absolute;
-  z-index: 1002;
+.uppy-ProviderBrowser-searchInput::placeholder {
   color: #939393;
-  cursor: pointer;
-  border-radius: 3px;
-  width: 22px;
-  height: 22px;
-  padding: 6px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 16px;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:focus {
-  outline: none;
-}
-
-.uppy-ProviderBrowser-searchFilterReset::-moz-focus-inner {
-  border: 0;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
-}
-
-.uppy-ProviderBrowser-searchFilterReset:hover {
-  color: #757575;
-}
-
-.uppy-ProviderBrowser-searchFilterReset svg {
-  vertical-align: text-top;
+  opacity: 1;
 }
 
 .uppy-ProviderBrowser-userLogout {
-  color: #1269cf;
-  line-height: inherit;
   cursor: pointer;
+  line-height: inherit;
+  color: #2275d7;
   border-radius: 3px;
   padding: 4px;
 }
@@ -1814,11 +1400,11 @@
 }
 
 .uppy-ProviderBrowser-userLogout:hover {
-  color: #0e51a0;
+  color: #1b5dab;
 }
 
 .uppy-ProviderBrowser-userLogout:focus {
-  background-color: #dfe6f1;
+  background-color: #eceef2;
 }
 
 [data-uppy-theme="dark"] .uppy-ProviderBrowser-userLogout:focus {
@@ -1839,13 +1425,14 @@
 }
 
 .uppy-ProviderBrowser-list {
-  position: absolute;
+  position: relative;
   display: block;
+  border-spacing: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  list-style: none;
-  border-spacing: 0;
   -webkit-overflow-scrolling: touch;
+  position: absolute;
+  list-style: none;
   background-color: #fff;
   flex: 1;
   width: 100%;
@@ -1859,10 +1446,6 @@
   background-color: #1f1f1f;
 }
 
-.uppy-ProviderBrowser-list:focus {
-  outline: none;
-}
-
 .uppy-ProviderBrowserItem-inner {
   cursor: pointer;
   font-size: 13px;
@@ -1870,16 +1453,17 @@
 }
 
 .uppy-ProviderBrowser-footer {
+  display: -ms-flexbox;
   display: flex;
   background-color: #fff;
   border-top: 1px solid #eaeaea;
-  justify-content: space-between;
   align-items:  center;
-  padding: 15px;
+  height: 65px;
+  padding: 0 15px;
 }
 
 .uppy-ProviderBrowser-footer button {
-  margin-inline-end: 8px;
+  margin-right: 8px;
 }
 
 [data-uppy-theme="dark"] .uppy-ProviderBrowser-footer {
@@ -1887,38 +1471,11 @@
   border-top: 1px solid #333;
 }
 
-.uppy-ProviderBrowser-footer-buttons {
-  flex-shrink: 0;
-}
-
-.uppy-ProviderBrowser-footer-error {
-  color: #e32437;
-  line-height: 18px;
-}
-
-@media (max-width: 426px) {
-  .uppy-ProviderBrowser-footer {
-    flex-direction: column-reverse;
-    align-items: stretch;
-  }
-
-  .uppy-ProviderBrowser-footer-error {
-    padding-bottom: 10px;
-  }
-}
-
-.picker-dialog-bg {
-  z-index: 20000 !important;
-}
-
-.picker-dialog {
-  z-index: 20001 !important;
-}
-
 .uppy-Dashboard-Item-previewInnerWrap {
-  position: relative;
-  display: flex;
   overflow: hidden;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
   border-radius: 3px;
   flex-direction: column;
   justify-content: center;
@@ -1932,15 +1489,11 @@
   box-shadow: 0 1px 2px #00000026;
 }
 
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-previewInnerWrap {
-  box-shadow: none;
-}
-
 .uppy-Dashboard-Item-previewInnerWrap:after {
-  position: absolute;
-  z-index: 1001;
-  display: none;
   content: "";
+  position: absolute;
+  display: none;
+  z-index: 1001;
   background-color: #000000a6;
   inset: 0;
 }
@@ -1952,7 +1505,7 @@
 }
 
 .uppy-Dashboard-Item-previewLink:focus {
-  box-shadow: inset 0 0 0 3px #579df0;
+  box-shadow: inset 0 0 0 3px #76abe9;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-Item-previewLink:focus {
@@ -1965,15 +1518,6 @@
   width: 100%;
   height: 100%;
   transform: translateZ(0);
-}
-
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-preview img.uppy-Dashboard-Item-previewImg {
-  object-fit: contain;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 100%;
-  padding: 10px;
 }
 
 .uppy-Dashboard-Item-progress {
@@ -1991,7 +1535,6 @@
 .uppy-Dashboard-Item-progressIndicator {
   display: inline-block;
   opacity: .9;
-  color: #fff;
   width: 38px;
   height: 38px;
 }
@@ -2014,7 +1557,7 @@ button.uppy-Dashboard-Item-progressIndicator::-moz-focus-inner {
 }
 
 button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progressIcon--bg, button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progressIcon--retry {
-  fill: #579df0;
+  fill: #76abe9;
 }
 
 .uppy-Dashboard-Item-progressIcon--circle {
@@ -2032,8 +1575,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-Item-progressIcon--play {
-  fill: #fff;
   stroke: #fff;
+  fill: #fff;
   transition: all .2s;
 }
 
@@ -2043,8 +1586,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-Item-progressIcon--pause {
-  fill: #fff;
   stroke: #fff;
+  fill: #fff;
   transition: all .2s;
 }
 
@@ -2060,37 +1603,9 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress {
   transform: initial;
   top: -9px;
+  right: -8px;
+  left: initial;
   width: auto;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: initial;
-  right: -8px;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: initial;
-  right: -8px;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: initial;
-  right: -8px;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: initial;
-  left: -8px;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: initial;
-  left: -8px;
-}
-
-.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: initial;
-  left: -8px;
 }
 
 .uppy-Dashboard-Item.is-error .uppy-Dashboard-Item-progressIndicator {
@@ -2119,21 +1634,13 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-Item-fileInfo {
-  padding-inline-end: 5px;
-}
-
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-fileInfo {
-  padding-inline-end: 10px;
-}
-
-.uppy-size--md.uppy-Dashboard--singleFile .uppy-Dashboard-Item-fileInfo {
-  padding-inline-end: 15px;
+  padding-right: 5px;
 }
 
 .uppy-Dashboard-Item-name {
-  word-wrap: anywhere;
   word-break: break-all;
-  margin-bottom: 5px;
+  word-wrap: anywhere;
+  margin-bottom: 4px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
@@ -2143,39 +1650,11 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   color: #eaeaea;
 }
 
-.uppy-size--md.uppy-Dashboard--singleFile .uppy-Dashboard-Item-name {
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.uppy-Dashboard-Item-fileName {
-  display: flex;
-  align-items: baseline;
-}
-
-.uppy-Dashboard-Item-fileName button {
-  margin-left: 5px;
-}
-
-.uppy-Dashboard-Item-author {
-  color: #757575;
-  vertical-align: bottom;
-  display: inline-block;
-  margin-bottom: 5px;
-  font-size: 11px;
-  font-weight: normal;
-  line-height: 1;
-}
-
-.uppy-Dashboard-Item-author a {
-  color: #757575;
-}
-
 .uppy-Dashboard-Item-status {
   color: #757575;
   font-size: 11px;
   font-weight: normal;
-  line-height: 1;
+  line-height: 1.3;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-Item-status {
@@ -2184,66 +1663,35 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-Dashboard-Item-statusSize {
   display: inline-block;
-  text-transform: uppercase;
   vertical-align: bottom;
-  margin-bottom: 5px;
+  text-transform: uppercase;
 }
 
-.uppy-Dashboard-Item-reSelect {
-  color: #1269cf;
-  font-weight: 600;
-  font-size: inherit;
-  font-family: inherit;
-}
-
-.uppy-Dashboard-Item-errorMessage {
-  color: #a51523;
-  background-color: #fdeff1;
-  padding: 5px 6px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.uppy-Dashboard-Item-errorMessageBtn {
-  text-decoration: underline;
-  color: #a51523;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.uppy-Dashboard-Item-preview .uppy-Dashboard-Item-errorMessage {
+.uppy-Dashboard-Item-sourceIcon {
   display: none;
+  vertical-align: bottom;
+  color: #bbb;
 }
 
-.uppy-size--md .uppy-Dashboard-Item-preview .uppy-Dashboard-Item-errorMessage {
-  display: block;
-  position: absolute;
-  border-top: 1px solid #f7c2c8;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  padding: 6px 8px;
-  line-height: 1.4;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.uppy-Dashboard-Item-sourceIcon:not(:first-child) {
+  position: relative;
+  margin-left: 14px;
 }
 
-.uppy-Dashboard-Item-fileInfo .uppy-Dashboard-Item-errorMessage {
+.uppy-Dashboard-Item-sourceIcon svg, .uppy-Dashboard-Item-sourceIcon svg * {
   display: inline-block;
-  position: static;
-  border: 1px solid #f7c2c8;
-  border-radius: 3px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-fileInfo .uppy-Dashboard-Item-errorMessage {
-  display: none;
+  vertical-align: text-bottom;
+  overflow: hidden;
+  fill: currentColor;
+  width: 11px;
+  max-width: 100%;
+  height: 12px;
+  max-height: 100%;
 }
 
 .uppy-Dashboard-Item-action {
-  color: #939393;
   cursor: pointer;
+  color: #939393;
 }
 
 .uppy-Dashboard-Item-action:focus {
@@ -2255,12 +1703,12 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-Item-action:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
+  box-shadow: 0 0 0 3px #2275d780;
 }
 
 .uppy-Dashboard-Item-action:hover {
-  color: #1f1f1f;
   opacity: 1;
+  color: #1f1f1f;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-Item-action {
@@ -2289,74 +1737,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-Item-action--remove:hover {
-  color: #000;
   opacity: 1;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove {
-  position: absolute;
-  top: -8px;
-  z-index: 1002;
-  width: 18px;
-  height: 18px;
-  padding: 0;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -8px;
-}
-
-.uppy-size--md .uppy-Dashboard-Item-action--remove:focus {
-  border-radius: 50%;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove {
-  position: absolute;
-  top: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 8px;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--height-md .uppy-Dashboard-Item-action--remove:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 8px;
+  color: #000;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-Item-action--remove {
@@ -2367,19 +1749,20 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   color: #333;
 }
 
-.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile.uppy-size--height-md) .uppy-Dashboard-Item-actionWrapper {
+.uppy-Dashboard:not(.uppy-size--md) .uppy-Dashboard-Item-actionWrapper {
+  display: -ms-flexbox;
   display: flex;
   align-items:  center;
 }
 
-.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile.uppy-size--height-md) .uppy-Dashboard-Item-action {
+.uppy-Dashboard:not(.uppy-size--md) .uppy-Dashboard-Item-action {
   width: 22px;
   height: 22px;
   margin-left: 3px;
   padding: 3px;
 }
 
-.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile.uppy-size--height-md) .uppy-Dashboard-Item-action:focus {
+.uppy-Dashboard:not(.uppy-size--md) .uppy-Dashboard-Item-action:focus {
   border-radius: 3px;
 }
 
@@ -2393,15 +1776,26 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   border-radius: 3px;
 }
 
+.uppy-size--md .uppy-Dashboard-Item-action--remove {
+  z-index: 1002;
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  top: -8px;
+  right: -8px;
+}
+
+.uppy-size--md .uppy-Dashboard-Item-action--remove:focus {
+  border-radius: 50%;
+}
+
 .uppy-Dashboard-Item {
+  display: -ms-flexbox;
   display: flex;
   border-bottom: 1px solid #eaeaea;
   align-items:  center;
-  padding: 10px;
-}
-
-.uppy-Dashboard:not(.uppy-Dashboard--singleFile) .uppy-Dashboard-Item {
-  padding-inline-end: 0;
+  padding: 10px 0 10px 10px;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-Item {
@@ -2411,7 +1805,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-size--md .uppy-Dashboard-Item {
   position: relative;
   display: block;
-  float: inline-start;
+  float: left;
   border-bottom: 0;
   width: calc(33.333% - 30px);
   height: 215px;
@@ -2423,58 +1817,18 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   width: calc(25% - 30px);
   height: 190px;
   margin: 5px 15px;
-  padding: 0;
 }
 
 .uppy-size--xl .uppy-Dashboard-Item {
   width: calc(20% - 30px);
   height: 210px;
-  padding: 0;
-}
-
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item {
-  display: flex;
-  position: relative;
-  border-bottom: 0;
-  flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  height: 100%;
-  padding: 15px;
-}
-
-.uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-previewInnerWrap {
-  opacity: .2;
-}
-
-.uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-name {
-  opacity: .7;
-}
-
-.uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
-  position: absolute;
-  z-index: 1005;
-  opacity: .5;
-  content: "";
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='39' viewBox='0 0 35 39'%3E%3Cpath d='M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z' fill='%2523000' fill-rule='nonzero'/%3E%3C/svg%3E");
-  background-position: 50% 10px;
-  background-repeat: no-repeat;
-  background-size: 25px;
-  inset: 0;
-}
-
-.uppy-size--md .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
-  background-position: 50%;
-  background-size: 40px;
-}
-
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
-  background-position: 50%;
-  background-size: 30%;
 }
 
 .uppy-Dashboard-Item-preview {
   position: relative;
+}
+
+.uppy-Dashboard:not(.uppy-size--md) .uppy-Dashboard-Item-preview {
   flex-grow: 0;
   flex-shrink: 0;
   width: 50px;
@@ -2494,34 +1848,20 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   height: 140px;
 }
 
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-preview {
-  flex-grow: 1;
-  width: 100%;
-  max-height: 75%;
-}
-
-.uppy-Dashboard--singleFile.uppy-size--md .uppy-Dashboard-Item-preview {
-  max-height: 100%;
-}
-
 .uppy-Dashboard-Item-fileInfoAndButtons {
+  display: -ms-flexbox;
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
   align-items:  center;
-  padding-inline-start: 12px;
-  padding-inline-end: 8px;
+  padding-left: 12px;
+  padding-right: 8px;
 }
 
-.uppy-size--md .uppy-Dashboard-Item-fileInfoAndButtons, .uppy-Dashboard--singleFile .uppy-Dashboard-Item-fileInfoAndButtons {
-  padding: 0;
+.uppy-size--md .uppy-Dashboard-Item-fileInfoAndButtons {
   align-items:  flex-start;
-  padding-top: 9px;
-}
-
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-fileInfoAndButtons {
-  flex-grow: 0;
   width: 100%;
+  padding: 9px 0 0;
 }
 
 .uppy-Dashboard-Item-fileInfo {
@@ -2538,46 +1878,26 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   display: block;
 }
 
+.uppy-Dashboard-Item.is-inprogress:not(.is-resumable) .uppy-Dashboard-Item-action--remove {
+  display: none;
+}
+
 .uppy-Dashboard-Item-errorDetails {
-  position: relative;
+  display: inline-block;
+  vertical-align: middle;
   color: #fff;
+  position: relative;
   text-align: center;
   cursor: help;
-  appearance: none;
-  top: 0;
   background-color: #939393;
-  border: none;
   border-radius: 50%;
-  flex-shrink: 0;
-  width: 13px;
-  height: 13px;
-  font-size: 10px;
+  width: 12px;
+  height: 12px;
+  font-size: 8px;
   font-weight: 600;
   line-height: 12px;
-}
-
-.uppy-Dashboard-Item-errorDetails:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 2px;
-}
-
-.uppy-Dashboard-Item-errorDetails:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 2px;
-}
-
-.uppy-Dashboard-Item-errorDetails:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  left: 2px;
-}
-
-.uppy-Dashboard-Item-errorDetails:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
-}
-
-.uppy-Dashboard-Item-errorDetails:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
-}
-
-.uppy-Dashboard-Item-errorDetails:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  right: 2px;
+  top: -1px;
+  left: 6px;
 }
 
 .uppy-Dashboard-Item-errorDetails:after {
@@ -2588,6 +1908,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-Dashboard-FileCard {
   position: absolute;
   z-index: 1005;
+  display: -ms-flexbox;
   display: flex;
   background-color: #fff;
   border-radius: 5px;
@@ -2609,6 +1930,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-FileCard-inner {
+  display: -ms-flexbox;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -2618,8 +1940,9 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-FileCard-preview {
-  position: relative;
+  display: -ms-flexbox;
   display: flex;
+  position: relative;
   border-bottom: 1px solid #eaeaea;
   flex-grow: 0;
   flex-shrink: 1;
@@ -2646,35 +1969,12 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-Dashboard-FileCard-edit {
   position: absolute;
   color: #fff;
-  top: 10px;
   background-color: #00000080;
   border-radius: 50px;
   padding: 7px 15px;
   font-size: 13px;
-}
-
-.uppy-Dashboard-FileCard-edit:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  top: 10px;
   right: 10px;
-}
-
-.uppy-Dashboard-FileCard-edit:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 10px;
-}
-
-.uppy-Dashboard-FileCard-edit:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: 10px;
-}
-
-.uppy-Dashboard-FileCard-edit:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
-}
-
-.uppy-Dashboard-FileCard-edit:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
-}
-
-.uppy-Dashboard-FileCard-edit:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: 10px;
 }
 
 .uppy-Dashboard-FileCard-edit:focus {
@@ -2686,7 +1986,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-FileCard-edit:focus {
-  box-shadow: 0 0 0 3px #1269cf80;
+  box-shadow: 0 0 0 3px #2275d780;
 }
 
 .uppy-Dashboard-FileCard-edit:hover {
@@ -2716,8 +2016,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-Dashboard-FileCard-label {
   display: inline-block;
-  color: #525252;
   vertical-align: middle;
+  color: #525252;
   width: 22%;
   font-size: 12px;
 }
@@ -2737,6 +2037,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-FileCard-actions {
+  display: -ms-flexbox;
   display: flex;
   background-color: #fafafa;
   border-top: 1px solid #eaeaea;
@@ -2757,7 +2058,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-FileCard-actionsBtn {
-  margin-inline-end: 10px;
+  margin-right: 10px;
 }
 
 .uppy-transition-slideDownUp-enter {
@@ -2901,7 +2202,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-Dashboard-inner {
   position: relative;
   outline: none;
-  background-color: #f4f4f4;
+  background-color: #fafafa;
   border: 1px solid #eaeaea;
   border-radius: 5px;
   max-width: 100%;
@@ -2914,8 +2215,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 @media only screen and (min-width: 820px) {
   .uppy-Dashboard-inner {
-    width: 650px;
-    height: 500px;
+    width: 750px;
+    height: 550px;
   }
 }
 
@@ -2927,14 +2228,11 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   background-color: #1f1f1f;
 }
 
-.uppy-Dashboard--isDisabled .uppy-Dashboard-inner {
-  cursor: not-allowed;
-}
-
 .uppy-Dashboard-innerWrap {
-  position: relative;
+  display: -ms-flexbox;
   display: flex;
   overflow: hidden;
+  position: relative;
   opacity: 0;
   border-radius: 5px;
   flex-direction: column;
@@ -2943,22 +2241,6 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-Dashboard--isInnerWrapVisible .uppy-Dashboard-innerWrap {
   opacity: 1;
-}
-
-.uppy-Dashboard--isDisabled .uppy-Dashboard-innerWrap {
-  opacity: .6;
-  filter: grayscale(100%);
-  user-select: none;
-  cursor: not-allowed;
-}
-
-.uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
-  fill: #9f9f9f;
-}
-
-.uppy-Dashboard--isDisabled [disabled], .uppy-Dashboard--isDisabled [aria-disabled] {
-  pointer-events: none;
-  cursor: not-allowed;
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
@@ -2971,44 +2253,20 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   .uppy-Dashboard--modal .uppy-Dashboard-inner {
     top: 50%;
     left: 50%;
-    right: auto;
     transform: translate(-50%, -50%);
     box-shadow: 0 5px 15px 4px #00000026;
   }
 }
 
 .uppy-Dashboard-close {
-  position: absolute;
-  z-index: 1005;
   display: block;
-  color: #ffffffe6;
+  position: absolute;
   cursor: pointer;
-  top: -33px;
+  color: #ffffffe6;
+  z-index: 1005;
   font-size: 27px;
-}
-
-.uppy-Dashboard-close:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  top: -33px;
   right: -2px;
-}
-
-.uppy-Dashboard-close:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -2px;
-}
-
-.uppy-Dashboard-close:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -2px;
-}
-
-.uppy-Dashboard-close:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -2px;
-}
-
-.uppy-Dashboard-close:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -2px;
-}
-
-.uppy-Dashboard-close:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -2px;
 }
 
 .uppy-Dashboard-close:focus {
@@ -3020,96 +2278,21 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-close:focus {
-  color: #6eabf2;
+  color: #8cb8ed;
 }
 
 @media only screen and (min-width: 820px) {
   .uppy-Dashboard-close {
-    top: -10px;
     font-size: 35px;
-  }
-
-  .uppy-Dashboard-close:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+    top: -10px;
     right: -35px;
   }
-
-  .uppy-Dashboard-close:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-    right: -35px;
-  }
-
-  .uppy-Dashboard-close:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-    right: -35px;
-  }
-
-  .uppy-Dashboard-close:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-    left: -35px;
-  }
-
-  .uppy-Dashboard-close:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-    left: -35px;
-  }
-
-  .uppy-Dashboard-close:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-    left: -35px;
-  }
-}
-
-.uppy-Dashboard-serviceMsg {
-  position: relative;
-  z-index: 1004;
-  background-color: #fffbf7;
-  border-top: 1px solid #edd4b9;
-  border-bottom: 1px solid #edd4b9;
-  padding: 12px 0;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.3;
-  top: -1px;
-}
-
-.uppy-size--md .uppy-Dashboard-serviceMsg {
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-[data-uppy-theme="dark"] .uppy-Dashboard-serviceMsg {
-  color: #eaeaea;
-  background-color: #1f1f1f;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-}
-
-.uppy-Dashboard-serviceMsg-title {
-  display: block;
-  margin-bottom: 4px;
-  padding-left: 42px;
-  line-height: 1;
-}
-
-.uppy-Dashboard-serviceMsg-text {
-  padding: 0 15px;
-}
-
-.uppy-Dashboard-serviceMsg-actionBtn {
-  color: #1269cf;
-  font-weight: inherit;
-  font-size: inherit;
-  vertical-align: initial;
-}
-
-[data-uppy-theme="dark"] .uppy-Dashboard-serviceMsg-actionBtn {
-  color: #02baf2e6;
-}
-
-.uppy-Dashboard-serviceMsg-icon {
-  position: absolute;
-  top: 10px;
-  left: 15px;
 }
 
 .uppy-Dashboard-AddFiles {
-  position: relative;
+  display: -ms-flexbox;
   display: flex;
+  position: relative;
   text-align: center;
   flex-direction: column;
   justify-content: center;
@@ -3162,8 +2345,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-browse {
-  color: #1269cf;
   cursor: pointer;
+  color: #2275d7e6;
 }
 
 .uppy-Dashboard-browse:focus {
@@ -3175,7 +2358,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-browse:hover, .uppy-Dashboard-browse:focus {
-  border-bottom: 1px solid #1269cf;
+  border-bottom: 1px solid #2275d7;
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-browse {
@@ -3203,6 +2386,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-AddFiles-list {
+  display: -ms-flexbox;
   display: flex;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -3241,17 +2425,22 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-DashboardTab-btn {
-  color: #525252;
   cursor: pointer;
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
+  color: #525252;
+  display: -ms-flexbox;
+  display: flex;
+  text-align: center;
   background-color: #0000;
+  border: 0;
   flex-direction: row;
-  justify-content: left;
   align-items:  center;
   width: 100%;
   height: 100%;
   padding: 12px 15px;
+  line-height: 1;
 }
 
 .uppy-DashboardTab-btn:focus {
@@ -3262,7 +2451,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   border-radius: 5px;
   flex-direction: column;
   width: 86px;
-  margin-inline-end: 1px;
+  margin-right: 1px;
   padding: 10px 3px;
 }
 
@@ -3275,7 +2464,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-DashboardTab-btn:hover {
-  background-color: #e9ecef;
+  background-color: #f1f3f6;
 }
 
 [data-uppy-theme="dark"] .uppy-DashboardTab-btn:hover {
@@ -3283,7 +2472,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-DashboardTab-btn:active, .uppy-DashboardTab-btn:focus {
-  background-color: #dfe6f1;
+  background-color: #eceef2;
 }
 
 [data-uppy-theme="dark"] .uppy-DashboardTab-btn:active, [data-uppy-theme="dark"] .uppy-DashboardTab-btn:focus {
@@ -3292,115 +2481,55 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-DashboardTab-btn svg {
   display: inline-block;
-  overflow: hidden;
   vertical-align: text-top;
+  overflow: hidden;
   max-width: 100%;
   max-height: 100%;
+  margin-right: 10px;
   transition: transform .15s ease-in-out;
 }
 
-.uppy-DashboardTab-inner {
-  display: flex;
-  background-color: #fff;
-  border-radius: 8px;
-  justify-content: center;
-  align-items:  center;
-  width: 32px;
-  height: 32px;
-  margin-inline-end: 10px;
-  box-shadow: 0 1px 1px #0000001a, 0 1px 2px #0000001a, 0 2px 3px #00000005;
-}
-
-.uppy-size--md .uppy-DashboardTab-inner {
-  margin-inline-end: 0;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-inner {
-  background-color: #323232;
-  box-shadow: 0 1px 1px #0003, 0 1px 2px #0003, 0 2px 3px #00000014;
+.uppy-size--md .uppy-DashboardTab-btn svg {
+  margin-right: 0;
 }
 
 .uppy-DashboardTab-name {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .uppy-size--md .uppy-DashboardTab-name {
   margin-top: 8px;
   margin-bottom: 0;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 15px;
 }
 
-.uppy-DashboardTab-iconMyDevice {
-  color: #1269cf;
+.uppy-DashboardTab svg {
+  vertical-align: middle;
+  width: 23px;
+  height: 23px;
 }
 
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconMyDevice {
-  color: #02baf2;
-}
-
-.uppy-DashboardTab-iconBox {
-  color: #0061d5;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconBox {
-  color: #eaeaea;
-}
-
-.uppy-DashboardTab-iconDropbox {
-  color: #0061fe;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconDropbox {
-  color: #eaeaea;
-}
-
-.uppy-DashboardTab-iconUnsplash {
-  color: #111;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconUnsplash {
-  color: #eaeaea;
-}
-
-.uppy-DashboardTab-iconWebdav {
-  color: #111;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconWebdav {
-  color: #eaeaea;
-}
-
-.uppy-DashboardTab-iconScreenRec {
-  color: #2c3e50;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconScreenRec {
-  color: #eaeaea;
-}
-
-.uppy-DashboardTab-iconAudio {
-  color: #8030a3;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardTab-iconAudio {
-  color: #bf6ee3;
+.uppy-size--md .uppy-DashboardTab svg {
+  width: 30px;
+  height: 30px;
 }
 
 .uppy-Dashboard-input {
+  opacity: 0;
+  overflow: hidden;
   position: absolute;
   z-index: -1;
-  overflow: hidden;
-  opacity: 0;
   width: .1px;
   height: .1px;
 }
 
 .uppy-DashboardContent-bar {
-  position: relative;
   z-index: 1004;
+  display: -ms-flexbox;
   display: flex;
+  position: relative;
   background-color: #fafafa;
   border-bottom: 1px solid #eaeaea;
   flex-shrink: 0;
@@ -3423,10 +2552,10 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-DashboardContent-title {
   position: absolute;
-  overflow-x: hidden;
-  white-space: nowrap;
   text-align: center;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: hidden;
   width: 100%;
   max-width: 170px;
   margin: auto;
@@ -3448,24 +2577,23 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   color: #eaeaea;
 }
 
-.uppy-DashboardContent-back, .uppy-DashboardContent-save {
-  color: #1269cf;
-  font-size: inherit;
+.uppy-DashboardContent-back {
   -webkit-appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: #2275d7;
   cursor: pointer;
-  margin: 0;
   background: none;
   border: 0;
   border-radius: 3px;
-  margin-inline-start: -6px;
+  margin: 0 0 0 -6px;
   padding: 7px 6px;
-  font-family: inherit;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
 }
 
-.uppy-DashboardContent-back:focus, .uppy-DashboardContent-save:focus {
+.uppy-DashboardContent-back:focus {
   outline: none;
 }
 
@@ -3473,44 +2601,39 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   border: 0;
 }
 
-.uppy-DashboardContent-save::-moz-focus-inner {
-  border: 0;
+.uppy-DashboardContent-back:hover {
+  color: #1b5dab;
 }
 
-.uppy-DashboardContent-back:hover, .uppy-DashboardContent-save:hover {
-  color: #0e51a0;
+.uppy-DashboardContent-back:focus {
+  background-color: #eceef2;
 }
 
-.uppy-DashboardContent-back:focus, .uppy-DashboardContent-save:focus {
-  background-color: #dfe6f1;
-}
-
-[data-uppy-theme="dark"] .uppy-DashboardContent-back:focus, [data-uppy-theme="dark"] .uppy-DashboardContent-save:focus {
+[data-uppy-theme="dark"] .uppy-DashboardContent-back:focus {
   background-color: #333;
 }
 
-.uppy-size--md .uppy-DashboardContent-back, .uppy-size--md .uppy-DashboardContent-save {
+.uppy-size--md .uppy-DashboardContent-back {
   font-size: 14px;
 }
 
-[data-uppy-theme="dark"] .uppy-DashboardContent-back, [data-uppy-theme="dark"] .uppy-DashboardContent-save {
+[data-uppy-theme="dark"] .uppy-DashboardContent-back {
   color: #02baf2;
 }
 
 .uppy-DashboardContent-addMore {
-  color: #1269cf;
-  font-size: inherit;
   -webkit-appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: #2275d7;
   cursor: pointer;
   background: none;
   border: 0;
   border-radius: 3px;
   width: 29px;
   height: 29px;
-  margin: 0;
-  margin-inline-end: -5px;
+  margin: 0 -5px 0 0;
   padding: 7px 8px;
-  font-family: inherit;
   font-weight: 500;
   line-height: 1;
 }
@@ -3524,11 +2647,11 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-DashboardContent-addMore:hover {
-  color: #0e51a0;
+  color: #1b5dab;
 }
 
 .uppy-DashboardContent-addMore:focus {
-  background-color: #dfe6f1;
+  background-color: #eceef2;
 }
 
 [data-uppy-theme="dark"] .uppy-DashboardContent-addMore:focus {
@@ -3538,7 +2661,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-size--md .uppy-DashboardContent-addMore {
   width: auto;
   height: auto;
-  margin-inline-end: -8px;
+  margin-right: -8px;
   font-size: 14px;
 }
 
@@ -3548,7 +2671,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-DashboardContent-addMore svg {
   vertical-align: baseline;
-  margin-inline-end: 4px;
+  margin-right: 4px;
 }
 
 .uppy-size--md .uppy-DashboardContent-addMore svg {
@@ -3566,9 +2689,10 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-DashboardContent-panel {
   position: absolute;
-  z-index: 1005;
-  display: flex;
   overflow: hidden;
+  z-index: 1005;
+  display: -ms-flexbox;
+  display: flex;
   background-color: #f5f5f5;
   border-radius: 5px;
   flex-direction: column;
@@ -3578,9 +2702,10 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-Dashboard-AddFilesPanel {
   position: absolute;
-  z-index: 1005;
-  display: flex;
   overflow: hidden;
+  z-index: 1005;
+  display: -ms-flexbox;
+  display: flex;
   background: linear-gradient(0deg, #fafafa 35%, #fafafad9 100%);
   border-radius: 5px;
   flex-direction: column;
@@ -3589,8 +2714,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 [data-uppy-theme="dark"] .uppy-Dashboard-AddFilesPanel {
-  background-color: #333;
-  background-image: linear-gradient(0deg, #1f1f1f 35%, #1f1f1fd9 100%);
+  background: linear-gradient(0deg, #1f1f1f 35%, #1f1f1fd9 100%);
 }
 
 .uppy-Dashboard--isAddFilesPanelVisible .uppy-Dashboard-files {
@@ -3606,8 +2730,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-progressBarContainer.is-active {
-  position: absolute;
   z-index: 1004;
+  position: absolute;
   width: 100%;
   height: 100%;
   top: 0;
@@ -3622,9 +2746,9 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-filesContainer:after {
+  content: "";
   display: table;
   clear: both;
-  content: "";
 }
 
 .uppy-Dashboard-files {
@@ -3639,24 +2763,18 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   padding-top: 10px;
 }
 
-.uppy-Dashboard--singleFile .uppy-Dashboard-filesInner {
-  display: flex;
-  justify-content: center;
-  align-items:  center;
-  height: 100%;
-}
-
 .uppy-Dashboard-dropFilesHereHint {
+  display: -ms-flexbox;
+  display: flex;
+  visibility: hidden;
   position: absolute;
   z-index: 2000;
-  display: flex;
-  color: #757575;
   text-align: center;
-  visibility: hidden;
-  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%231269CF' fill-rule='nonzero'/%3E%3C/svg%3E");
+  color: #757575;
+  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%232275D7' fill-rule='nonzero'/%3E%3C/svg%3E");
   background-position: 50%;
   background-repeat: no-repeat;
-  border: 1px dashed #1269cf;
+  border: 1px dashed #2275d7;
   border-radius: 3px;
   justify-content: center;
   align-items:  center;
@@ -3673,10 +2791,9 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-dropFilesHereHint {
   visibility: visible;
-  pointer-events: none;
 }
 
-.uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-DashboardContent-bar, .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-files, .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-progressindicators, .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-serviceMsg {
+.uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-DashboardContent-bar, .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-files, .uppy-Dashboard.uppy-Dashboard--isDraggingOver .uppy-Dashboard-progressindicators {
   opacity: .15;
 }
 
@@ -3684,9 +2801,18 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   opacity: .03;
 }
 
+.uppy-Dashboard-dropFilesIcon {
+  display: none;
+  margin-bottom: 15px;
+}
+
+.uppy-size--md.uppy-size--height-md .uppy-Dashboard-dropFilesIcon {
+  display: block;
+}
+
 .uppy-Dashboard-AddFiles-title {
   color: #000;
-  text-align: inline-start;
+  text-align: left;
   width: 100%;
   margin-top: 15px;
   margin-bottom: 5px;
@@ -3700,8 +2826,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   text-align: center;
   max-width: 480px;
   margin-top: 5px;
-  padding: 0 35px;
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 400;
 }
 
@@ -3722,8 +2847,8 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 }
 
 .uppy-Dashboard-note {
-  color: #757575;
   text-align: center;
+  color: #757575;
   max-width: 350px;
   margin: auto;
   padding: 0 15px;
@@ -3733,6 +2858,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 .uppy-size--md .uppy-Dashboard-note {
   max-width: 600px;
+  font-size: 15px;
   line-height: 1.35;
 }
 
@@ -3742,27 +2868,27 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 
 a.uppy-Dashboard-poweredBy {
   display: inline-block;
-  color: #939393;
   text-align: center;
+  color: #939393;
   text-decoration: none;
   margin-top: 8px;
   font-size: 11px;
 }
 
 .uppy-Dashboard-poweredByIcon {
-  position: relative;
-  vertical-align: text-top;
-  opacity: .9;
-  fill: none;
   stroke: #939393;
+  fill: none;
+  position: relative;
+  opacity: .9;
+  vertical-align: text-top;
   margin-left: 1px;
   margin-right: 1px;
   top: 1px;
 }
 
 .uppy-Dashboard-Item-previewIcon {
-  position: absolute;
   z-index: 100;
+  position: absolute;
   width: 25px;
   height: 25px;
   top: 50%;
@@ -3780,26 +2906,14 @@ a.uppy-Dashboard-poweredBy {
   height: 100%;
 }
 
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-previewIcon {
-  width: 100%;
-  max-width: 60%;
-  height: 100%;
-  max-height: 60%;
-}
-
 .uppy-Dashboard-Item-previewIconWrap {
   position: relative;
   height: 76px;
   max-height: 75%;
 }
 
-.uppy-Dashboard--singleFile .uppy-Dashboard-Item-previewIconWrap {
-  width: 100%;
-  height: 100%;
-}
-
 .uppy-Dashboard-Item-previewIconBg {
-  filter: drop-shadow(#0000001a 0 1px 1px);
+  filter: drop-shadow(#0000001a 0px 1px 1px);
   width: 100%;
   height: 100%;
 }
@@ -3824,37 +2938,14 @@ a.uppy-Dashboard-poweredBy {
 .uppy-Dashboard-uploadCount {
   position: absolute;
   color: #fff;
-  top: -12px;
   background-color: #1bb240;
   border-radius: 50%;
   width: 16px;
   height: 16px;
   font-size: 8px;
   line-height: 16px;
-}
-
-.uppy-Dashboard-uploadCount:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  top: -12px;
   right: -12px;
-}
-
-.uppy-Dashboard-uploadCount:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -12px;
-}
-
-.uppy-Dashboard-uploadCount:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
-  right: -12px;
-}
-
-.uppy-Dashboard-uploadCount:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -12px;
-}
-
-.uppy-Dashboard-uploadCount:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -12px;
-}
-
-.uppy-Dashboard-uploadCount:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
-  left: -12px;
 }
 
 .uppy-size--md .uppy-Dashboard-uploadCount {
