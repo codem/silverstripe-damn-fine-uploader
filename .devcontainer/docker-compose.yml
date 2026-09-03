@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      # Repo root (one level up from .devcontainer) is bind-mounted as the workspace.
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    depends_on:
+      - db
+    environment:
+      SS_DATABASE_CLASS: MySQLDatabase
+      SS_DATABASE_SERVER: db
+      SS_DATABASE_USERNAME: root
+      SS_DATABASE_PASSWORD: password
+      SS_DATABASE_NAME: ss_test_project
+    networks:
+      - ss-dev
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ss_test_project
+    volumes:
+      - ss-db-data:/var/lib/mysql
+    networks:
+      - ss-dev
+
+volumes:
+  ss-db-data:
+
+networks:
+  ss-dev:
