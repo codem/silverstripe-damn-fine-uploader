@@ -16,7 +16,7 @@
 
   "postCreateCommand": {
     "01-claude-permissions": "mkdir -p ~/.claude && sudo chown -R $(id -u):$(id -g) ~/.claude",
-    "02-install-bun": "npm install -g bun@^1.3"
+    "02-install-bun": "npm install -g bun@^1.3",
     "03-post-create": "bash .devcontainer/post-create.sh"
   },
 
