@@ -215,10 +215,11 @@ abstract class AbstractUppyExternalUploadField extends UppyField
                     'UploadBatchId' => '',
                     'UploadSrcRecordId' => $page ? $page->ID : 0
                 ]);
-                $id = $externalUpload->write();
+                if($externalUpload->write()) {
+                    $response = true;
+                }
             }
 
-            $response = true;
         } catch (\Exception $exception) {
             // failed to notify
             $response = false;
