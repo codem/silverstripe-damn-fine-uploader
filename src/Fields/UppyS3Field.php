@@ -32,6 +32,14 @@ class UppyS3Field extends AbstractUppyExternalUploadField
     ];
 
     /**
+     * Provide a specific notify method for this uploader
+     */
+    public function notify(HTTPRequest $request): HTTPResponse
+    {
+        return parent::notify($request);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHttpUploadMethod(): string
